@@ -35,6 +35,11 @@ INSTALLED_APPS = [
     "newsplatform.staff_security",
     "newsplatform.realtime",
     "newsplatform.ops",
+    "newsplatform.taxonomy",
+    "newsplatform.media",
+    "newsplatform.content",
+    "newsplatform.seo",
+    "newsplatform.engagement",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -174,6 +179,10 @@ CELERY_TASK_ROUTES = {
     "newsplatform.ops.tasks.*": {"queue": "ops"},
     "newsplatform.integrations.tasks.*": {"queue": "default"},
     "newsplatform.staff_security.tasks.*": {"queue": "critical"},
+    "newsplatform.content.tasks.publish_due": {"queue": "critical"},
+    "newsplatform.content.tasks.announce": {"queue": "critical"},
+    "newsplatform.content.tasks.*": {"queue": "default"},
+    "newsplatform.media.tasks.*": {"queue": "media"},
 }
 CELERY_TASK_IGNORE_RESULT = True
 CELERY_TASK_ACKS_LATE = True
@@ -193,6 +202,11 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
         "task": "newsplatform.ops.tasks.publish_queue_depths",
         "schedule": 60,
         "options": {"expires": 50},  # a late measurement is worse than none
+    },
+    "publish-due": {
+        "task": "newsplatform.content.tasks.publish_due",
+        "schedule": 60,
+        "options": {"expires": 55},
     },
     "audit-verify": {"task": "newsplatform.audit.tasks.verify_chain_task", "schedule": 6 * 3600},
     "audit-anchor": {"task": "newsplatform.audit.tasks.anchor_chain_task", "schedule": 24 * 3600},

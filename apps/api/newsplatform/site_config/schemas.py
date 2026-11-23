@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from newsplatform.engagement.policy import KillSwitches, Policy
+
 Hex = Annotated[str, Field(pattern=r"^#[0-9a-fA-F]{6}$")]
 
 
@@ -90,8 +92,16 @@ class Security(Section):
         return self
 
 
+class Engagement(Section):
+    """Global defaults and kill switches (engagement.policy)."""
+
+    defaults: Policy = Policy()
+    kill: KillSwitches = KillSwitches()
+
+
 SECTIONS: dict[str, type[Section]] = {
     "identity": Identity,
     "localization": Localization,
     "security": Security,
+    "engagement": Engagement,
 }

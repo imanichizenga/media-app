@@ -142,5 +142,10 @@ def scope_ancestors(scope_type: str, scope_id: str) -> set[str]:
     return resolver(scope_id) if resolver else set()
 
 
+def scope_exists(scope_type: str, scope_id: str) -> bool:
+    """A resolver answers with the empty set for an id it does not know."""
+    return bool(scope_ancestors(scope_type, scope_id))
+
+
 def scope_types() -> set[str]:
     return set(_SCOPES)

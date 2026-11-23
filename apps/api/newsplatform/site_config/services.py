@@ -51,7 +51,9 @@ def ip_allowed(ip: str | None, security: Security) -> bool:
 
 
 def permission_for(key: str) -> str:
-    return "settings.security" if key == "security" else "settings.manage"
+    return {"security": "settings.security", "engagement": "engagement.manage_policy"}.get(
+        key, "settings.manage"
+    )
 
 
 def _validate(key: str, data: dict[str, Any]) -> Section:

@@ -4,6 +4,7 @@ from typing import Any
 
 import structlog
 from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError as ModelValidationError
 from django.http import Http404
 from rest_framework import exceptions
 from rest_framework.response import Response
@@ -76,11 +77,17 @@ def _problem(status_code: int, code: str, detail: str, **extra: Any) -> Response
     return response
 
 
+def _model_errors(exc: ModelValidationError) -> dict[str, list[str]]:
+    return exc.message_dict if hasattr(exc, "error_dict") else {"__all__": exc.messages}
+
+
 def exception_handler(exc: Exception, ctx: dict[str, Any]) -> Response | None:
     if isinstance(exc, DomainError):
         return _problem(exc.status, exc.code, exc.detail, **exc.extra)
     if isinstance(exc, exceptions.ValidationError):
         return _problem(400, "validation_error", "The request is invalid.", errors=exc.detail)
+    if isinstance(exc, ModelValidationError):  # from a model's full_clean()
+        return _problem(400, "validation_error", "The request is invalid.", errors=_model_errors(exc))
     if isinstance(exc, Http404):
         return _problem(404, "not_found", "Not found.")
     if isinstance(exc, PermissionDenied):

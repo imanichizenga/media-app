@@ -33,6 +33,10 @@ dependencies = [
   "channels-redis~=4.3",
   "websockets>=16",
   "opentelemetry-instrumentation-asgi>=0.66b2",
+  "jsonschema~=4.25",
+  "nh3>=0.3",
+  "pyvips[binary]>=3.0",
+  "blurhash>=1.1",
 ]
 
 [dependency-groups]
@@ -54,6 +58,7 @@ dev = [
   "pip-audit",
   "types-channels>=4.3.0.20261122",
   "pytest-asyncio>=1.5.0",
+  "types-jsonschema>=4.26.0.20261006",
 ]
 
 [tool.ruff]
