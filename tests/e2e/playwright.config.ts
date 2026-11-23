@@ -38,7 +38,7 @@ export default defineConfig({
     {
       command: `${api} .venv/bin/uvicorn config.asgi_realtime:application --port 8002 --lifespan off --ws-max-size 4096 --log-level warning`,
       env: { ...env, API_SURFACE: "realtime" },
-      url: "http://127.0.0.1:8002/health/ready",
+      url: "http://127.0.0.1:8002/health/live",
       timeout: 60_000,
     },
     {
