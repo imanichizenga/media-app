@@ -3,11 +3,25 @@
 import os
 from typing import Any
 
-from newsplatform.common.logging import redact
+from newsplatform.common.logging import REDACTED, redact
 
 
 def _scrub(event: Any, _: Any) -> Any:
     return redact(event)
+
+
+_URLS = ("url.full", "http.url", "http.target", "url.path")
+
+
+def strip_query(span: Any) -> None:
+    """Query values are personal (searches) or secret (codes, cursors): traces keep the path only."""
+    attributes = dict(span.attributes or {})
+    for name in _URLS:
+        value = attributes.get(name)
+        if isinstance(value, str) and "?" in value:
+            span.set_attribute(name, value.partition("?")[0])
+    if attributes.get("url.query"):
+        span.set_attribute("url.query", REDACTED)
 
 
 def init(component: str) -> None:
@@ -43,5 +57,7 @@ def init(component: str) -> None:
         provider = TracerProvider(resource=Resource.create({"service.name": f"newsplatform-{component}"}))
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
         trace.set_tracer_provider(provider)
-        for instrumentor in (DjangoInstrumentor, CeleryInstrumentor, PsycopgInstrumentor, RedisInstrumentor):
+        # The URL is recorded after the span starts, so it is cleaned when the response is known.
+        DjangoInstrumentor().instrument(response_hook=lambda span, request, response: strip_query(span))
+        for instrumentor in (CeleryInstrumentor, PsycopgInstrumentor, RedisInstrumentor):
             instrumentor().instrument()

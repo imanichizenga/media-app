@@ -38,6 +38,8 @@ jobs:
         run: uv run python manage.py makemigrations --check --dry-run
       - name: Tests (coverage gate 85%)
         run: uv run pytest --cov --cov-report=xml --cov-fail-under=85
+      - name: Tracing works end to end
+        run: ../../scripts/verify-otel.sh
       - run: uv run bandit -q -r newsplatform config -ll
       - run: uv run pip-audit --progress-spinner off
       - name: OpenAPI is current

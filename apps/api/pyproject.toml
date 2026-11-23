@@ -32,6 +32,7 @@ dependencies = [
   "channels~=4.3",
   "channels-redis~=4.3",
   "websockets>=16",
+  "opentelemetry-instrumentation-asgi>=0.66b2",
 ]
 
 [dependency-groups]

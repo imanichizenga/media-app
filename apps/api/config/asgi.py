@@ -1,10 +1,12 @@
 import os
 
-from django.core.asgi import get_asgi_application
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
-application = get_asgi_application()
 
-from newsplatform.common.telemetry import init  # noqa: E402
+from newsplatform.common.telemetry import init
 
+# Before the application exists: instrumentation adds a middleware, and Django reads the list only once.
 init("api")
+
+from django.core.asgi import get_asgi_application  # noqa: E402
+
+application = get_asgi_application()
