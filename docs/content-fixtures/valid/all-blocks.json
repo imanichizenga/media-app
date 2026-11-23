@@ -1,0 +1,257 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000011",
+   "content": [
+    {
+     "type": "text",
+     "text": "Aya ya kawaida."
+    }
+   ]
+  },
+  {
+   "type": "heading",
+   "id": "b000012",
+   "level": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "Kichwa"
+    }
+   ]
+  },
+  {
+   "type": "heading",
+   "id": "b000013",
+   "level": 4,
+   "content": [
+    {
+     "type": "text",
+     "text": "Kidogo"
+    }
+   ]
+  },
+  {
+   "type": "list",
+   "id": "b000014",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Kwanza"
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Pili"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "image",
+   "id": "b000015",
+   "asset": "0197a000-0000-7000-8000-000000000001",
+   "alt": "Boti kando ya ziwa",
+   "caption": [
+    {
+     "type": "text",
+     "text": "Boti "
+    },
+    {
+     "type": "text",
+     "text": "mpya",
+     "marks": [
+      {
+       "type": "italic"
+      }
+     ]
+    }
+   ],
+   "credit": "Picha ya mfano",
+   "layout": "wide",
+   "sensitive": false
+  },
+  {
+   "type": "gallery",
+   "id": "b000016",
+   "layout": "carousel",
+   "items": [
+    {
+     "asset": "0197a000-0000-7000-8000-000000000002",
+     "alt": "Picha 2",
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000003",
+     "alt": "Picha 3",
+     "credit": "Mfano"
+    }
+   ]
+  },
+  {
+   "type": "video",
+   "id": "b000017",
+   "asset": "0197a000-0000-7000-8000-000000000004",
+   "caption": [
+    {
+     "type": "text",
+     "text": "Video"
+    }
+   ],
+   "credit": "Mfano",
+   "sensitive": true
+  },
+  {
+   "type": "youtube",
+   "id": "b000018",
+   "videoId": "aqz-KE-bpKQ",
+   "title": "Big Buck Bunny",
+   "start": 30,
+   "vertical": false
+  },
+  {
+   "type": "quote",
+   "id": "b000019",
+   "content": [
+    {
+     "type": "text",
+     "text": "Nukuu."
+    }
+   ]
+  },
+  {
+   "type": "pull_quote",
+   "id": "b000020",
+   "text": "Nukuu kubwa."
+  },
+  {
+   "type": "embed",
+   "id": "b000021",
+   "provider": "x",
+   "url": "https://x.com/example/status/1",
+   "author": "Mfano",
+   "text": "Ujumbe wa mfano"
+  },
+  {
+   "type": "table",
+   "id": "b000022",
+   "header": true,
+   "caption": "Matokeo",
+   "rows": [
+    {
+     "cells": [
+      {
+       "content": [
+        {
+         "type": "text",
+         "text": "Timu"
+        }
+       ]
+      },
+      {
+       "content": [
+        {
+         "type": "text",
+         "text": "Alama"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "cells": [
+      {
+       "content": [
+        {
+         "type": "text",
+         "text": "A"
+        }
+       ]
+      },
+      {
+       "content": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "callout",
+   "id": "b000023",
+   "tone": "warning",
+   "title": "Angalizo",
+   "content": [
+    {
+     "type": "text",
+     "text": "Habari inaendelea."
+    }
+   ]
+  },
+  {
+   "type": "factbox",
+   "id": "b000024",
+   "title": "Kwa ufupi",
+   "items": [
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Jambo la kwanza"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "related_link",
+   "id": "b000025",
+   "title": "Soma pia",
+   "url": "https://example.org/a"
+  },
+  {
+   "type": "poll",
+   "id": "b000026",
+   "question": "Je, unakubali?",
+   "options": [
+    {
+     "id": "option-yes",
+     "label": "Ndiyo"
+    },
+    {
+     "id": "option-no",
+     "label": "Hapana"
+    }
+   ],
+   "closesAt": "2026-12-31T20:59:59Z"
+  },
+  {
+   "type": "live_update",
+   "id": "b000028",
+   "time": "2026-11-23T14:00:00+03:00",
+   "title": "Taarifa mpya",
+   "pinned": true,
+   "author": "0197a000-0000-7000-8000-000000000009",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000027",
+     "content": [
+      {
+       "type": "text",
+       "text": "Mkutano umeanza."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

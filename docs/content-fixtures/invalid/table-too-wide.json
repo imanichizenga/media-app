@@ -1,0 +1,55 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "table",
+   "id": "block-1",
+   "header": false,
+   "rows": [
+    {
+     "cells": [
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      },
+      {
+       "content": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

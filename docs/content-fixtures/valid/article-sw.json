@@ -1,0 +1,104 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000001",
+   "content": [
+    {
+     "type": "text",
+     "text": "Serikali imetangaza mpango mpya wa kuboresha usafiri wa umma katika jiji la Dar es Salaam, ukilenga kupunguza msongamano ifikapo mwaka 2028."
+    }
+   ]
+  },
+  {
+   "type": "heading",
+   "id": "b000002",
+   "level": 2,
+   "content": [
+    {
+     "type": "text",
+     "text": "Nini kitabadilika"
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "id": "b000003",
+   "content": [
+    {
+     "type": "text",
+     "text": "Awamu ya kwanza "
+    },
+    {
+     "type": "text",
+     "text": "itaanza Januari",
+     "marks": [
+      {
+       "type": "bold"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": " katika njia kuu tatu."
+    },
+    {
+     "type": "hard_break"
+    },
+    {
+     "type": "text",
+     "text": "Maelezo zaidi yapo hapa.",
+     "marks": [
+      {
+       "type": "link",
+       "href": "/habari/usafiri"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "list",
+   "id": "b000004",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Mabasi 200 mapya"
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Vituo 35"
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "type": "text",
+       "text": "Malipo kwa simu"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "quote",
+   "id": "b000005",
+   "content": [
+    {
+     "type": "text",
+     "text": "Tunataka kila mwananchi afike kazini kwa wakati."
+    }
+   ],
+   "attribution": "Msemaji wa mradi"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "image",
+   "id": "block-1",
+   "asset": "https://x/y.jpg",
+   "alt": "a"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000044",
+   "content": [
+    {
+     "type": "text",
+     "text": "<script>alert(1)</script> & <img src=x onerror=alert(1)>"
+    }
+   ]
+  },
+  {
+   "type": "pull_quote",
+   "id": "b000045",
+   "text": "</blockquote><script>"
+  }
+ ]
+}

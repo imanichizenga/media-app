@@ -1,0 +1,26 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000040",
+   "content": [
+    {
+     "type": "text",
+     "text": "Jina la mji ni القاهرة na jina la pili ni ירושלים katika sentensi moja, 123."
+    }
+   ]
+  },
+  {
+   "type": "quote",
+   "id": "b000041",
+   "content": [
+    {
+     "type": "text",
+     "text": "مرحبا"
+    }
+   ],
+   "attribution": "مراسل"
+  }
+ ]
+}

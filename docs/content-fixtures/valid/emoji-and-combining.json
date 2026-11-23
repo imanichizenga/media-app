@@ -1,0 +1,25 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000042",
+   "content": [
+    {
+     "type": "text",
+     "text": "Hongera 👩🏾‍🚀🇹🇿 — café, ñ, ŋ̃, kẹ́."
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "id": "b000043",
+   "content": [
+    {
+     "type": "text",
+     "text": "Mstari mmoja\nna mwingine\tna kichupo"
+    }
+   ]
+  }
+ ]
+}

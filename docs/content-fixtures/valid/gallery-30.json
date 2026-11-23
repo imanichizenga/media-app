@@ -1,0 +1,292 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "gallery",
+   "id": "b000038",
+   "layout": "grid",
+   "items": [
+    {
+     "asset": "0197a000-0000-7000-8000-000000000001",
+     "alt": "Picha ya 1 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 1"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000002",
+     "alt": "Picha ya 2 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 2"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000003",
+     "alt": "Picha ya 3 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000004",
+     "alt": "Picha ya 4 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 4"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000005",
+     "alt": "Picha ya 5 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 5"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000006",
+     "alt": "Picha ya 6 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000007",
+     "alt": "Picha ya 7 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 7"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000008",
+     "alt": "Picha ya 8 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 8"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000009",
+     "alt": "Picha ya 9 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000010",
+     "alt": "Picha ya 10 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 10"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000011",
+     "alt": "Picha ya 11 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 11"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000012",
+     "alt": "Picha ya 12 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000013",
+     "alt": "Picha ya 13 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 13"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000014",
+     "alt": "Picha ya 14 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 14"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000015",
+     "alt": "Picha ya 15 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000016",
+     "alt": "Picha ya 16 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 16"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000017",
+     "alt": "Picha ya 17 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 17"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000018",
+     "alt": "Picha ya 18 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000019",
+     "alt": "Picha ya 19 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 19"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000020",
+     "alt": "Picha ya 20 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 20"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000021",
+     "alt": "Picha ya 21 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000022",
+     "alt": "Picha ya 22 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 22"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000023",
+     "alt": "Picha ya 23 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 23"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000024",
+     "alt": "Picha ya 24 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000025",
+     "alt": "Picha ya 25 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 25"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000026",
+     "alt": "Picha ya 26 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 26"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000027",
+     "alt": "Picha ya 27 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000028",
+     "alt": "Picha ya 28 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 28"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000029",
+     "alt": "Picha ya 29 ya tukio",
+     "caption": [
+      {
+       "type": "text",
+       "text": "Maelezo ya picha 29"
+      }
+     ],
+     "credit": "Mfano"
+    },
+    {
+     "asset": "0197a000-0000-7000-8000-000000000030",
+     "alt": "Picha ya 30 ya tukio",
+     "caption": [],
+     "credit": "Mfano"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "live_update",
+   "id": "live-01",
+   "time": "2026-11-23T14:00:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "block-1",
+     "content": [
+      {
+       "type": "text",
+       "text": "a"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -62,7 +62,8 @@ jobs:
       - name: Generated code is current
         run: |
           pnpm --filter @news/api-client generate
-          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart
+          pnpm --filter @news/content-schema generate
+          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart packages/content-schema/src/generated apps/api/newsplatform/content/schema
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -99,6 +100,15 @@ jobs:
         with: { flutter-version: "3.50.1", channel: stable }
       - run: flutter pub get && dart analyze --fatal-infos
         working-directory: packages/design-tokens/dart
+      - name: Content models are current and pass every fixture
+        working-directory: packages/content-schema/dart
+        run: |
+          node ../scripts/generate.mjs
+          dart pub get
+          dart format lib > /dev/null
+          git diff --exit-code -- lib
+          dart analyze --fatal-infos
+          dart test
       - name: Dart client is current and valid
         run: |
           scripts/generate-dart-client.sh
