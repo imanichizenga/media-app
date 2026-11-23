@@ -19,12 +19,13 @@ port=$(docker port "$name" 4318/tcp | head -1 | cut -d: -f2)
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:$port" OTEL_BSP_SCHEDULE_DELAY=200
 export ENVIRONMENT=dev API_SURFACE=admin DJANGO_SETTINGS_MODULE=config.settings.dev LOG_LEVEL=WARNING
 export REDIS_URL=redis://127.0.0.1:6379/7 BROKER_URL=redis://127.0.0.1:6379/8
+sentinel=SENTINEL-HEADER
 cd apps/api
 .venv/bin/python manage.py migrate -v0
 .venv/bin/uvicorn config.asgi:application --port 8011 --log-level warning & pids+=($!)
 .venv/bin/celery -A config worker -Q default,critical -c 1 -l WARNING & pids+=($!)
 for _ in $(seq 60); do curl -fs http://127.0.0.1:8011/health/live > /dev/null && break; sleep 0.5; done
-curl -fs "http://127.0.0.1:8011/health/ready?token=SENTINEL-QUERY" -H 'Authorization: Bearer SENTINEL-HEADER' > /dev/null
+curl -fs "http://127.0.0.1:8011/health/ready?token=SENTINEL-QUERY" -H "Authorization: Bearer $sentinel" > /dev/null
 # A task published inside a request's trace must join that trace in the worker.
 OTEL_SERVICE_NAME=publisher .venv/bin/python - << 'PY'
 import django
