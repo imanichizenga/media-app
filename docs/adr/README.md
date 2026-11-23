@@ -21,3 +21,4 @@
 - [0019](0019-dependency-policy.md) Dependency policy
 - [0020](0020-realtime.md) Realtime deployment and staff sockets
 - [0021](0021-queue-autoscaling.md) Worker autoscaling on queue depth
+- [0022](0022-local-stand-ins.md) Local stand-ins for cloud services
