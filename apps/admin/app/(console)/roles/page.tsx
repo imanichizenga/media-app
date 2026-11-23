@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
 import {
+  ActionBone,
   Badge,
   BoneRows,
   Button,
@@ -12,12 +13,13 @@ import {
   ErrorState,
   FormError,
   PageHeader,
+  Row,
   Table,
   Td,
   TextField,
 } from "@/components/ui";
 import { call, client } from "@/lib/api";
-import { keys, useCan, useRoles } from "@/lib/queries";
+import { keys, useCan, useRoles, useSession } from "@/lib/queries";
 
 type Role = Schemas["Role"];
 export default function Roles() {
@@ -26,6 +28,7 @@ export default function Roles() {
   const en = useLocale() === "en";
   const can = useCan();
   const queries = useQueryClient();
+  const { data: session } = useSession();
   const { data, error, refetch } = useRoles();
   const [role, setRole] = useState<Role | "new" | null>(null);
   const [problem, setProblem] = useState<unknown>(null);
@@ -72,23 +75,27 @@ export default function Roles() {
         title={t("title")}
         lead={t("lead")}
         actions={
-          can("roles.manage") && (
-            <Button
-              onClick={() => {
-                setProblem(null);
-                setRole("new");
-              }}
-            >
-              <Plus aria-hidden size={18} />
-              {t("new")}
-            </Button>
+          session ? (
+            can("roles.manage") && (
+              <Button
+                onClick={() => {
+                  setProblem(null);
+                  setRole("new");
+                }}
+              >
+                <Plus aria-hidden size={18} />
+                {t("new")}
+              </Button>
+            )
+          ) : (
+            <ActionBone />
           )
         }
       />
       <Table label={t("title")} head={[t("name"), t("permissions"), t("members"), ""]}>
         {data ? (
           data.roles.map((r) => (
-            <tr key={r.id}>
+            <Row key={r.id}>
               <Td>
                 <span className="flex flex-wrap items-center gap-2">
                   {en ? r.name_en : r.name_sw}
@@ -110,7 +117,7 @@ export default function Roles() {
                   {c("open")}
                 </Button>
               </Td>
-            </tr>
+            </Row>
           ))
         ) : (
           <BoneRows action widths={["w-40", "w-8", "w-8", "w-16"]} rows={10} />

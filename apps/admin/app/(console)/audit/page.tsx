@@ -4,6 +4,7 @@ import { Download, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
+  ActionBone,
   BoneRows,
   Button,
   Card,
@@ -13,12 +14,13 @@ import {
   FormError,
   Notice,
   PageHeader,
+  Row,
   Table,
   Td,
   TextField,
 } from "@/components/ui";
 import { call, client } from "@/lib/api";
-import { useCan, usePaged, useTime } from "@/lib/queries";
+import { useCan, usePaged, useSession, useTime } from "@/lib/queries";
 
 type Entry = Schemas["Audit"];
 function Diff({ entry }: { entry: Entry }) {
@@ -30,13 +32,13 @@ function Diff({ entry }: { entry: Entry }) {
   return (
     <Table label={t("changes")} head={[t("field"), t("before"), t("after")]}>
       {names.map((n) => (
-        <tr key={n}>
+        <Row key={n}>
           <Td>{n}</Td>
           <Td className="font-mono text-caption break-all">
             {n in before ? JSON.stringify(before[n]) : "—"}
           </Td>
           <Td className="font-mono text-caption break-all">{n in after ? JSON.stringify(after[n]) : "—"}</Td>
-        </tr>
+        </Row>
       ))}
     </Table>
   );
@@ -46,6 +48,7 @@ export default function Audit() {
   const c = useTranslations("common");
   const time = useTime();
   const can = useCan();
+  const { data: session } = useSession();
   const [action, setAction] = useState("");
   const [entry, setEntry] = useState<Entry | null>(null);
   const [report, setReport] = useState<Schemas["ChainReport"] | null>(null);
@@ -85,11 +88,15 @@ export default function Audit() {
               <ShieldCheck aria-hidden size={18} />
               {t("verify")}
             </Button>
-            {can("audit.export") && (
-              <Button variant="secondary" pending={pending === "export"} onClick={download}>
-                <Download aria-hidden size={18} />
-                {t("export")}
-              </Button>
+            {session ? (
+              can("audit.export") && (
+                <Button variant="secondary" pending={pending === "export"} onClick={download}>
+                  <Download aria-hidden size={18} />
+                  {t("export")}
+                </Button>
+              )
+            ) : (
+              <ActionBone />
             )}
           </>
         }
@@ -123,7 +130,7 @@ export default function Audit() {
         <Table label={t("title")} head={["#", t("when"), t("who"), t("action"), t("target"), ""]}>
           {list.rows ? (
             list.rows.map((e) => (
-              <tr key={e.seq}>
+              <Row key={e.seq}>
                 <Td className="tabular-nums">{e.seq}</Td>
                 <Td className="whitespace-nowrap text-text-secondary">{time(e.occurred_at)}</Td>
                 <Td>{e.actor_label}</Td>
@@ -138,7 +145,7 @@ export default function Audit() {
                     {c("open")}
                   </Button>
                 </Td>
-              </tr>
+              </Row>
             ))
           ) : (
             <BoneRows action widths={["w-6", "w-32", "w-28", "w-36", "w-28", "w-16"]} rows={10} />

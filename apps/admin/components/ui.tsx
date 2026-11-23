@@ -2,7 +2,7 @@
 import { CircleAlert, CircleCheck, CloudOff, Inbox, type LucideIcon, TriangleAlert, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Dialog as RadixDialog } from "radix-ui";
-import { type ComponentProps, type ReactNode, useId } from "react";
+import { Children, type ComponentProps, createContext, type ReactNode, useContext, useId } from "react";
 import { ApiError } from "@/lib/api";
 
 export const cx = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(" ");
@@ -13,6 +13,23 @@ export const Bone = ({ className = "w-24" }: { className?: string }) => (
     {" "}
   </span>
 );
+
+/** Holds a header button's place until permissions are known. */
+export const ActionBone = ({ className = "w-28" }: { className?: string }) => (
+  <span aria-hidden className={cx("tap bone", className)} />
+);
+
+/** Breaks after the @ when it must, never in the middle of a word it could keep whole. */
+export function Email({ value }: { value: string }) {
+  const at = value.indexOf("@") + 1;
+  return (
+    <>
+      {value.slice(0, at)}
+      <wbr />
+      {value.slice(at)}
+    </>
+  );
+}
 
 const VARIANTS = {
   primary: "bg-accent text-on-accent hover:opacity-90",
@@ -263,7 +280,9 @@ export function Dialog({
   );
 }
 
-/** Tables scroll inside their own container; the page never does. */
+const Head = createContext<string[]>([]);
+const CellLabel = createContext("");
+/** Tables on wide screens; on phones each row is a card of label and value, so nothing is cut off. */
 export function Table({ head, label, children }: { head: string[]; label: string; children: ReactNode }) {
   return (
     <section
@@ -272,8 +291,10 @@ export function Table({ head, label, children }: { head: string[]; label: string
       tabIndex={0}
       className="relative overflow-x-auto rounded-md border border-border bg-surface"
     >
-      <table className="w-full text-left text-label">
-        <thead className="border-b border-border text-text-secondary">
+      {/* Roles are explicit because display:block removes the table's own. */}
+      {/* biome-ignore lint/a11y/noRedundantRoles: see above */}
+      <table role="table" className="w-full text-left text-label max-md:block">
+        <thead className="border-b border-border text-text-secondary max-md:sr-only">
           <tr>
             {head.map((h, i) => (
               <th key={h || i} scope="col" className="px-4 py-3 font-medium whitespace-nowrap">
@@ -282,14 +303,53 @@ export function Table({ head, label, children }: { head: string[]; label: string
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-border">{children}</tbody>
+        {/* biome-ignore lint/a11y/noRedundantRoles: see above */}
+        <tbody role="rowgroup" className="divide-y divide-border max-md:block">
+          <Head value={head}>{children}</Head>
+        </tbody>
       </table>
     </section>
   );
 }
-export const Td = ({ className, ...props }: ComponentProps<"td">) => (
-  <td {...props} className={cx("px-4 py-3 align-top", className)} />
-);
+export function Td({ className, children, ...props }: ComponentProps<"td">) {
+  const label = useContext(CellLabel);
+  return (
+    <td
+      // biome-ignore lint/a11y/noRedundantRoles: display changes on phones
+      role="cell"
+      {...props}
+      className={cx(
+        "px-4 py-3 align-top max-md:flex max-md:items-baseline max-md:gap-4 max-md:px-4 max-md:py-1",
+        className,
+      )}
+    >
+      {label && (
+        <span aria-hidden className="w-28 shrink-0 text-caption text-text-secondary md:hidden">
+          {label}
+        </span>
+      )}
+      <div className="min-w-0 break-words max-md:flex-1">{children}</div>
+    </td>
+  );
+}
+export function Row({ children, ...props }: ComponentProps<"tr">) {
+  const head = useContext(Head);
+  return (
+    <tr
+      // biome-ignore lint/a11y/noRedundantRoles: display changes on phones
+      role="row"
+      {...props}
+      className="max-md:block max-md:py-2"
+    >
+      {Children.toArray(children).map((cell, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: columns never move
+        <CellLabel key={i} value={head[i] ?? ""}>
+          {cell}
+        </CellLabel>
+      ))}
+    </tr>
+  );
+}
 /** `action`: the last column holds a button, which sets the row height. */
 export const BoneRows = ({
   widths,
@@ -302,7 +362,7 @@ export const BoneRows = ({
 }) =>
   Array.from({ length: rows }, (_, r) => (
     // biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
-    <tr key={r} data-skeleton="row">
+    <Row key={r} data-skeleton="row">
       {widths.map((w, c) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
         <Td key={c}>
@@ -313,5 +373,5 @@ export const BoneRows = ({
           )}
         </Td>
       ))}
-    </tr>
+    </Row>
   ));

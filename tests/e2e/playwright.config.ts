@@ -15,6 +15,8 @@ const env = {
 };
 export default defineConfig({
   testDir: ".",
+  // The gallery is made on purpose (pnpm --filter @news/e2e screens), not on every run.
+  testMatch: process.env.SCREENS ? "screens.spec.ts" : "admin.spec.ts",
   workers: 1,
   timeout: 60_000,
   globalSetup: "./setup.ts",

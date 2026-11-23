@@ -230,6 +230,12 @@ test("phone layout: no sideways scroll, targets at least 44px", async () => {
     expect
       .soft(await page.evaluate(() => document.documentElement.scrollWidth), path)
       .toBeLessThanOrEqual(360);
+    const cut = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>("main section:has(> table)")]
+        .filter((e) => e.scrollWidth > e.clientWidth)
+        .map((e) => `${e.ariaLabel} ${e.scrollWidth} > ${e.clientWidth}`),
+    );
+    expect.soft(cut, `${path}: tables must not be cut off`).toEqual([]);
     const small = await page.evaluate(() =>
       [...document.querySelectorAll<HTMLElement>("button, a[href], select, input:not([type=checkbox])")]
         .filter((e) => e.offsetParent && !e.matches(".sr-only"))
@@ -296,6 +302,30 @@ test("skeletons match the loaded layout", async () => {
       .toBeLessThan(0.05);
     await page.unroute(data);
   }
+});
+
+test("header buttons hold their place on phones until permissions arrive", async () => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  for (const path of ["/staff", "/roles", "/audit"]) {
+    let release = () => {};
+    const gate = new Promise<void>((r) => {
+      release = r;
+    });
+    await page.route("**/api/v1/**", async (route) => {
+      await gate;
+      await route.continue();
+    });
+    await page.goto(path);
+    const top = () =>
+      page.evaluate(() => document.querySelector("main table")?.getBoundingClientRect().y ?? 0);
+    await expect(page.locator("main table .bone").first()).toBeVisible();
+    const before = await top();
+    release();
+    await expect(page.locator(".bone")).toHaveCount(0);
+    expect.soft(Math.abs((await top()) - before), path).toBeLessThanOrEqual(8);
+    await page.unroute("**/api/v1/**");
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
 });
 
 test("Trusted Types block script injection even from inside the page", async () => {

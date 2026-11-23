@@ -2,7 +2,18 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EventName } from "@/components/event-name";
-import { Badge, BoneRows, Button, Card, Empty, ErrorState, PageHeader, Table, Td } from "@/components/ui";
+import {
+  Badge,
+  BoneRows,
+  Button,
+  Card,
+  Empty,
+  ErrorState,
+  PageHeader,
+  Row,
+  Table,
+  Td,
+} from "@/components/ui";
 import { call, client } from "@/lib/api";
 import { useCan, usePaged, useTime } from "@/lib/queries";
 
@@ -19,7 +30,7 @@ function AuthLog() {
       <Table label={t("auth")} head={[t("when"), t("event"), t("result"), t("who"), "IP", t("country")]}>
         {list.rows ? (
           list.rows.map((e) => (
-            <tr key={e.id}>
+            <Row key={e.id}>
               <Td className="whitespace-nowrap text-text-secondary">{time(e.created_at)}</Td>
               <Td>
                 <EventName kind={e.kind} />
@@ -30,7 +41,7 @@ function AuthLog() {
               <Td>{e.user_name || "—"}</Td>
               <Td>{e.ip}</Td>
               <Td>{e.country || "—"}</Td>
-            </tr>
+            </Row>
           ))
         ) : (
           <BoneRows widths={["w-32", "w-32", "w-16", "w-28", "w-24", "w-8"]} />
@@ -71,7 +82,7 @@ function CallLog() {
       >
         {list.rows ? (
           list.rows.map((e) => (
-            <tr key={e.id}>
+            <Row key={e.id}>
               <Td className="whitespace-nowrap text-text-secondary">{time(e.created_at)}</Td>
               <Td>{e.provider}</Td>
               <Td className="font-mono text-caption">{e.operation}</Td>
@@ -80,7 +91,7 @@ function CallLog() {
               </Td>
               <Td className="tabular-nums">{e.latency_ms}</Td>
               <Td className="max-w-sm text-caption break-words">{e.detail}</Td>
-            </tr>
+            </Row>
           ))
         ) : (
           <BoneRows widths={["w-32", "w-24", "w-32", "w-16", "w-10", "w-40"]} />
