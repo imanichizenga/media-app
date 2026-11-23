@@ -1,17 +1,52 @@
+# Policy: docs/adr/0019-dependency-policy.md
 version: 2
 updates:
-  - {
-      package-ecosystem: uv,
-      directory: /apps/api,
-      schedule: { interval: weekly },
-      cooldown: { default-days: 7 },
-    }
-  - { package-ecosystem: npm, directory: /, schedule: { interval: weekly }, cooldown: { default-days: 7 } }
-  - {
-      package-ecosystem: github-actions,
-      directory: /,
-      schedule: { interval: weekly },
-      cooldown: { default-days: 7 },
-    }
-  - { package-ecosystem: terraform, directories: ["/infra/terraform/**"], schedule: { interval: weekly } }
-  - { package-ecosystem: docker, directories: ["/apps/*", "/infra/docker/*"], schedule: { interval: weekly } }
+  - package-ecosystem: uv
+    directory: /apps/api
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      python-minor-patch: { update-types: [minor, patch] }
+    ignore:
+      # LTS only: 5.2 stays until the next LTS.
+      - dependency-name: django
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      npm-minor-patch: { update-types: [minor, patch] }
+    ignore:
+      - { dependency-name: typescript, update-types: ["version-update:semver-major"] }
+      - { dependency-name: next, update-types: ["version-update:semver-major"] }
+      - { dependency-name: react, update-types: ["version-update:semver-major"] }
+      - { dependency-name: react-dom, update-types: ["version-update:semver-major"] }
+      - { dependency-name: "@types/node", update-types: ["version-update:semver-major"] }
+      - { dependency-name: "@types/react", update-types: ["version-update:semver-major"] }
+      - { dependency-name: "@types/react-dom", update-types: ["version-update:semver-major"] }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      actions-minor-patch: { update-types: [minor, patch] }
+  - package-ecosystem: terraform
+    directories: ["/infra/terraform/**"]
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      terraform-minor-patch: { update-types: [minor, patch] }
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
+  - package-ecosystem: docker
+    directories: ["/apps/*", "/infra/docker/*"]
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      images-minor-patch: { update-types: [minor, patch] }
+    ignore:
+      # 3.14 → 3.15 is a minor by semver, and outside requires-python.
+      - dependency-name: python
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - { dependency-name: node, update-types: ["version-update:semver-major"] }
