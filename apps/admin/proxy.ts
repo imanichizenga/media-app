@@ -28,4 +28,4 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/((?!api|_next/static|_next/image|favicon.ico|healthz).*)"] };
+export const config = { matcher: ["/((?!api|ws/|_next/static|_next/image|favicon.ico|healthz).*)"] };

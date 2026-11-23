@@ -3,9 +3,11 @@ import hmac
 import re
 import secrets
 from datetime import timedelta
+from uuid import UUID
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils import timezone
 
@@ -114,26 +116,40 @@ def revoke_all(user: User, reason: str, *, keep: StaffSession | None = None) -> 
     return rows.update(revoked_at=timezone.now(), revoke_reason=reason)
 
 
+def _live() -> QuerySet[StaffSession]:
+    return StaffSession.objects.select_related("user").filter(revoked_at__isnull=True)
+
+
+def find(token: str) -> StaffSession | None:
+    """Read only. Callers that act on a request use `resolve`, which also checks the device."""
+    return _live().filter(token_hash=hash_token(token)).first()
+
+
+def find_by_id(pk: UUID) -> StaffSession | None:
+    return _live().filter(pk=pk).first()
+
+
+def ended_because(session: StaffSession) -> str | None:
+    now = timezone.now()
+    if not session.user.can_sign_in or not session.user.is_staff_member:
+        return "account_disabled"
+    if session.expires_at <= now:
+        return "absolute_timeout"
+    idle = timedelta(minutes=get_security().idle_timeout_minutes)
+    if session.is_active_stage and now - session.last_seen_at > idle:
+        return "idle_timeout"
+    return None
+
+
 def resolve(token: str, request: HttpRequest) -> StaffSession | None:
-    session = (
-        StaffSession.objects.select_related("user")
-        .filter(token_hash=hash_token(token), revoked_at__isnull=True)
-        .first()
-    )
+    session = find(token)
     if session is None:
         return None
-    now, policy = timezone.now(), get_security()
-    if not session.user.can_sign_in or not session.user.is_staff_member:
-        reason = "account_disabled"
-    elif session.expires_at <= now:
-        reason = "absolute_timeout"
-    elif session.is_active_stage and now - session.last_seen_at > timedelta(
-        minutes=policy.idle_timeout_minutes
-    ):
-        reason = "idle_timeout"
-    elif not hmac.compare_digest(session.fingerprint, fingerprint(request)):
+    now = timezone.now()
+    reason = ended_because(session)
+    if reason is None and not hmac.compare_digest(session.fingerprint, fingerprint(request)):
         reason = "fingerprint_mismatch"
-    else:
+    if reason is None:
         if now - session.last_seen_at > timedelta(seconds=30):  # one write per 30s, not per request
             StaffSession.objects.filter(pk=session.pk).update(last_seen_at=now)
         return session

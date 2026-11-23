@@ -1,7 +1,9 @@
 "use client";
-import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormatter } from "next-intl";
+import { useEffect, useSyncExternalStore } from "react";
 import { call, client } from "./api";
+import { realtime } from "./realtime";
 
 export const keys = {
   session: ["session"] as const,
@@ -31,14 +33,39 @@ export const useIntegrations = (enabled = true) =>
     enabled,
     refetchInterval: 60_000,
   });
-export const useIntegration = (key: string) =>
-  useQuery({
+const useConnected = () =>
+  useSyncExternalStore(
+    (notify) => {
+      const off = realtime.onStatus(notify);
+      return () => void off();
+    },
+    () => realtime.connected,
+    () => false,
+  );
+
+/** Refetches `queryKey` whenever the server signals `topic`. A null topic watches nothing. */
+function useSignal(topic: string | null, queryKey: readonly string[]) {
+  const queries = useQueryClient();
+  const id = queryKey.join("/");
+  useEffect(() => {
+    if (!topic) return;
+    return realtime.subscribe(topic, () => queries.invalidateQueries({ queryKey: id.split("/") }));
+  }, [topic, id, queries]);
+}
+
+export function useIntegration(key: string) {
+  const connected = useConnected();
+  const query = useQuery({
     queryKey: keys.integration(key),
     queryFn: () => call(() => client.GET("/api/v1/integrations/{key}", { params: { path: { key } } })),
-    // Follow a running test step by step.
-    refetchInterval: (q) =>
-      ["queued", "running"].includes(q.state.data?.latest_test?.status ?? "") ? 700 : false,
+    // Signals drive a running test. Polling covers a missing socket, and a lost signal.
+    refetchInterval: (q) => (running(q.state.data?.latest_test) ? (connected ? 5_000 : 700) : false),
   });
+  const run = query.data?.latest_test;
+  useSignal(run && running(run) ? `integration_test:${run.id}` : null, keys.integration(key));
+  return query;
+}
+const running = (run?: { status: string } | null) => ["queued", "running"].includes(run?.status ?? "");
 export const useStaff = () =>
   useQuery({ queryKey: keys.staff, queryFn: () => call(() => client.GET("/api/v1/staff")) });
 export const useRoles = () =>

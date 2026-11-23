@@ -113,12 +113,18 @@ test("S3: the test reports each step, refuses an emulator, and blocks activation
   await expect(page.getByText("Draft saved.")).toBeVisible();
   await expect(page.getByLabel("Secret access key")).toHaveAttribute("placeholder", "••••7890");
   expect(await page.content()).not.toContain("super-secret-value");
+  // Progress arrives over the socket: one ticketed connection, subscribed to this run and nothing else.
+  const socket = page.waitForEvent("websocket");
   await page.getByRole("button", { name: "Run test" }).click();
+  const signals: string[] = [];
+  (await socket).on("framereceived", (f) => signals.push(String(f.payload)));
   const steps = page.getByRole("list", { name: "Test steps" });
   await expect(steps.getByText("Write probe object passed")).toBeVisible({ timeout: 20_000 });
   await expect(steps.getByText("Read it back passed")).toBeVisible();
   await expect(steps.getByText("AWS is emulated here")).toBeVisible();
   await expect(steps.getByText("Delete probe object passed")).toBeVisible();
+  expect(signals.some((s) => s.includes('"ready"'))).toBe(true);
+  expect(signals.join()).not.toMatch(/probe|news-media|AKIA/);
   await expect(page.getByRole("button", { name: "Activate version 1" })).toBeDisabled();
 });
 

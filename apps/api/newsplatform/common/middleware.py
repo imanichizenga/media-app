@@ -13,12 +13,12 @@ from newsplatform.common import context
 _RID = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
 
 
-def client_ip(request: HttpRequest) -> str | None:
+def resolve_ip(remote: str, forwarded: str) -> str | None:
     """Right-most-untrusted parsing: only the hops we operate may append to X-Forwarded-For."""
     hops: int = settings.TRUSTED_PROXY_HOPS
-    raw = request.META.get("REMOTE_ADDR", "")
+    raw = remote
     if hops:
-        chain = [p.strip() for p in request.META.get("HTTP_X_FORWARDED_FOR", "").split(",") if p.strip()]
+        chain = [p.strip() for p in forwarded.split(",") if p.strip()]
         raw = chain[-hops] if len(chain) >= hops else raw
     try:
         ip = ipaddress.ip_address(raw)
@@ -26,6 +26,10 @@ def client_ip(request: HttpRequest) -> str | None:
         return None
     mapped = getattr(ip, "ipv4_mapped", None)
     return str(mapped or ip)
+
+
+def client_ip(request: HttpRequest) -> str | None:
+    return resolve_ip(request.META.get("REMOTE_ADDR", ""), request.META.get("HTTP_X_FORWARDED_FOR", ""))
 
 
 class RequestContextMiddleware:

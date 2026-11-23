@@ -15,21 +15,7 @@ from newsplatform.staff_security import mfa, sessions
 from newsplatform.staff_security.models import SessionStage, StaffSession
 from newsplatform.staff_security.staff import accept_invite
 
-pytestmark = pytest.mark.django_db(transaction=True)
-
-
-@pytest.fixture(autouse=True)
-def _allow_flush(transactional_db):
-    """pytest truncates tables after each test; production triggers (rightly) forbid that."""
-    yield
-    with connection.cursor() as cur:
-        for table in ("audit_auditentry", "audit_chainanchor"):
-            cur.execute(f"ALTER TABLE {table} DISABLE TRIGGER USER")
-            cur.execute(f"TRUNCATE {table}")
-            cur.execute(f"ALTER TABLE {table} ENABLE TRIGGER USER")
-        # The flush that follows also truncates; keep the statement trigger off until the next migration run.
-        cur.execute("ALTER TABLE audit_auditentry DISABLE TRIGGER audit_entry_no_truncate")
-        cur.execute("ALTER TABLE audit_chainanchor DISABLE TRIGGER audit_anchor_no_truncate")
+pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.usefixtures("allow_flush")]
 
 
 def race(fn, n=12):
@@ -45,7 +31,7 @@ def race(fn, n=12):
         return list(pool.map(call, range(n)))
 
 
-def test_parallel_appends_never_fork_the_chain(_allow_flush):
+def test_parallel_appends_never_fork_the_chain():
     def append(i):
         with transaction.atomic():
             record(actor=None, action=f"p.{i}")
@@ -92,7 +78,7 @@ def test_invite_accepted_once(make_staff):
     assert sum(not isinstance(o, Exception) for o in out) == 1
 
 
-def test_runtime_role_cannot_rewrite_history(_allow_flush, monkeypatch):
+def test_runtime_role_cannot_rewrite_history(monkeypatch):
     with transaction.atomic():
         record(actor=None, action="kept")
     monkeypatch.setenv("APP_DB_USER", "news_app_test")

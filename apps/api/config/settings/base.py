@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "newsplatform.approvals",
     "newsplatform.integrations",
     "newsplatform.staff_security",
+    "newsplatform.realtime",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -81,6 +82,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REDIS_URL = env_str("REDIS_URL", None if IS_DEPLOYED else "redis://127.0.0.1:6379/0")
 REDIS_CLUSTER = env_bool("REDIS_CLUSTER")
 BROKER_URL = env_str("BROKER_URL", None if IS_DEPLOYED else "redis://127.0.0.1:6379/1")
+
+# Pub/sub on the non-cluster group: signals are ephemeral, so nothing is stored (ADR-0020).
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
+        "CONFIG": {"hosts": [BROKER_URL], "prefix": f"rt:{ENVIRONMENT}"},
+    }
+}
 
 AUTH_USER_MODEL = "accounts.User"
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.Argon2PasswordHasher"]

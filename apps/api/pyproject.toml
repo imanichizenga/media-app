@@ -29,6 +29,9 @@ dependencies = [
   "opentelemetry-instrumentation-psycopg",
   "opentelemetry-instrumentation-redis",
   "uvicorn-worker>=0.4",
+  "channels~=4.3",
+  "channels-redis~=4.3",
+  "websockets>=16",
 ]
 
 [dependency-groups]
@@ -48,6 +51,8 @@ dev = [
   "freezegun",
   "bandit",
   "pip-audit",
+  "types-channels>=4.3.0.20261122",
+  "pytest-asyncio>=1.5.0",
 ]
 
 [tool.ruff]
@@ -78,6 +83,7 @@ django_settings_module = "config.settings.test"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
 addopts = "-q --strict-markers"
 markers = ["live: needs real external credentials"]
 [tool.coverage.run]

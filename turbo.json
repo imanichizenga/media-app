@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["API_PROXY_TARGET"]
+      "env": ["API_PROXY_TARGET", "REALTIME_PROXY_TARGET"]
     },
     "typecheck": { "dependsOn": ["^build"] },
     "test": { "dependsOn": ["build"] }

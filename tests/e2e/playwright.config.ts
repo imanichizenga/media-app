@@ -34,6 +34,12 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
+      command: `${api} .venv/bin/uvicorn config.asgi_realtime:application --port 8002 --lifespan off --ws-max-size 4096 --log-level warning`,
+      env: { ...env, API_SURFACE: "realtime" },
+      url: "http://127.0.0.1:8002/health/ready",
+      timeout: 60_000,
+    },
+    {
       command: `${api} .venv/bin/celery -A config worker -Q critical,default -c 2 -l WARNING`,
       env,
       timeout: 60_000,
