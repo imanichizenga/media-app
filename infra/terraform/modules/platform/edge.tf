@@ -177,6 +177,7 @@ resource "aws_lb_target_group" "this" {
   for_each = {
     api-public = { port = 8000, path = "/health/ready" }
     api-admin  = { port = 8000, path = "/health/ready" }
+    ws-admin   = { port = 8000, path = "/health/ready" }
     admin-web  = { port = 3001, path = "/healthz" }
   }
   name                 = "${local.prefix}-${each.key}"
@@ -215,6 +216,19 @@ resource "aws_lb_listener_rule" "admin_api" {
   condition {
     path_pattern {
       values = ["/api/v1/*"]
+    }
+  }
+}
+resource "aws_lb_listener_rule" "admin_ws" {
+  listener_arn = aws_lb_listener.this["admin"].arn
+  priority     = 5
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.this["ws-admin"].arn
+  }
+  condition {
+    path_pattern {
+      values = ["/ws/*"]
     }
   }
 }

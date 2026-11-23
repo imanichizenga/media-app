@@ -32,6 +32,7 @@ variables {
     api-public      = { cpu = 1024, memory = 2048, min = 3, max = 60 }
     api-admin       = { cpu = 512, memory = 1024, min = 3, max = 4 }
     admin-web       = { cpu = 512, memory = 1024, min = 3, max = 4 }
+    ws-admin        = { cpu = 256, memory = 1024, min = 2, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 3, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 3, max = 10 }
     beat            = { cpu = 256, memory = 512, min = 1, max = 1 }
@@ -91,5 +92,41 @@ run "beat_is_a_singleton" {
   assert {
     condition     = alltrue([for s in aws_ecs_service.this : s.deployment_circuit_breaker[0].enable && s.deployment_circuit_breaker[0].rollback])
     error_message = "Every service needs automatic rollback."
+  }
+}
+run "workers_scale_on_backlog" {
+  command = plan
+  assert {
+    condition     = toset(keys(aws_appautoscaling_policy.backlog)) == toset([for k, _ in aws_ecs_service.this : k if startswith(k, "worker-")])
+    error_message = "Every worker service scales on its queues."
+  }
+  assert {
+    condition = alltrue([for p in aws_appautoscaling_policy.backlog : length([
+      for m in p.target_tracking_scaling_policy_configuration[0].customized_metric_specification[0].metrics : m if m.return_data
+    ]) == 1])
+    error_message = "Target tracking needs exactly one returned metric."
+  }
+  assert {
+    condition     = alltrue([for k, d in local.definitions : strcontains(join(" ", d.command), "-Q ops,${join(",", local.worker_queues[k])} ") if startswith(k, "worker-")])
+    error_message = "Every worker consumes the measurement queue, or a backlog hides itself."
+  }
+  assert {
+    condition     = aws_cloudwatch_metric_alarm.this["queue-metric-missing"].treat_missing_data == "breaching"
+    error_message = "A silent publisher must alarm."
+  }
+}
+run "sockets_are_separate" {
+  command = plan
+  assert {
+    condition     = one(one(aws_lb_listener_rule.admin_ws.condition).path_pattern).values == toset(["/ws/*"]) && aws_lb_listener_rule.admin_ws.priority < aws_lb_listener_rule.admin_api.priority
+    error_message = "Sockets have their own service, matched first."
+  }
+  assert {
+    condition     = !contains(keys(aws_iam_role_policy.task), "realtime")
+    error_message = "The socket service needs no AWS permissions."
+  }
+  assert {
+    condition     = !contains(keys(aws_appautoscaling_policy.requests), "ws-admin")
+    error_message = "Request counts do not describe sockets."
   }
 }

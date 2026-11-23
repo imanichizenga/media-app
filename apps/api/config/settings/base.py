@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "newsplatform.integrations",
     "newsplatform.staff_security",
     "newsplatform.realtime",
+    "newsplatform.ops",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -167,9 +168,10 @@ CELERY_BROKER_URL = BROKER_URL
 CELERY_TASK_DEFAULT_QUEUE = "default"
 CELERY_TASK_QUEUES = {
     name: {"exchange": name, "routing_key": name}
-    for name in ("critical", "media", "notifications", "analytics", "sync", "default")
+    for name in ("critical", "media", "notifications", "analytics", "sync", "default", "ops")
 }
 CELERY_TASK_ROUTES = {
+    "newsplatform.ops.tasks.*": {"queue": "ops"},
     "newsplatform.integrations.tasks.*": {"queue": "default"},
     "newsplatform.staff_security.tasks.*": {"queue": "critical"},
 }
@@ -184,7 +186,14 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+# CloudWatch namespace for our own metrics. Empty outside AWS: nothing is sent.
+METRICS_NAMESPACE = env_str("METRICS_NAMESPACE", None if IS_DEPLOYED else "")
 CELERY_BEAT_SCHEDULE: dict[str, Any] = {
+    "queue-depths": {
+        "task": "newsplatform.ops.tasks.publish_queue_depths",
+        "schedule": 60,
+        "options": {"expires": 50},  # a late measurement is worse than none
+    },
     "audit-verify": {"task": "newsplatform.audit.tasks.verify_chain_task", "schedule": 6 * 3600},
     "audit-anchor": {"task": "newsplatform.audit.tasks.anchor_chain_task", "schedule": 24 * 3600},
     "approvals-expire": {"task": "newsplatform.approvals.tasks.expire_requests", "schedule": 900},

@@ -266,6 +266,9 @@ wheels = [
 cloudfront = [
     { name = "mypy-boto3-cloudfront" },
 ]
+cloudwatch = [
+    { name = "mypy-boto3-cloudwatch" },
+]
 kms = [
     { name = "mypy-boto3-kms" },
 ]
@@ -1394,6 +1397,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mypy-boto3-cloudwatch"
+version = "1.44.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/11/87/c2abcc3b5d117eabdf9af2735d875d9892ed09c36e829549595e9574729b/mypy_boto3_cloudwatch-1.44.2.tar.gz", hash = "sha256:0756d58755bc7d5ab7fccbd48efd08fb7731b681bd30ee7a08e4e065d225d071", size = 42651, upload-time = "2026-11-13T00:32:45.223Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/92/2d/315a2a172e9ebdb2556652a6030a2428d528a8fab4f2c447adc45a211282/mypy_boto3_cloudwatch-1.44.2-py3-none-any.whl", hash = "sha256:2b731d6d535dcf9a159177cf5807c94e457d19b82414c9f40c581ab3f2d27ada", size = 52283, upload-time = "2026-11-13T00:32:42.821Z" },
+]
+
+[[package]]
 name = "mypy-boto3-kms"
 version = "1.44.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1494,7 +1506,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "bandit" },
-    { name = "boto3-stubs", extra = ["cloudfront", "kms", "s3", "sesv2", "sts", "wafv2"] },
+    { name = "boto3-stubs", extra = ["cloudfront", "cloudwatch", "kms", "s3", "sesv2", "sts", "wafv2"] },
     { name = "django-stubs" },
     { name = "djangorestframework-stubs" },
     { name = "factory-boy" },
@@ -1547,12 +1559,12 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "bandit" },
-    { name = "boto3-stubs", extras = ["s3", "sesv2", "kms", "sts", "wafv2", "cloudfront"], specifier = "~=1.44" },
+    { name = "boto3-stubs", extras = ["cloudwatch", "s3", "sesv2", "kms", "sts", "wafv2", "cloudfront"], specifier = "~=1.44" },
     { name = "django-stubs", specifier = "~=6.1" },
     { name = "djangorestframework-stubs", specifier = "~=3.18" },
     { name = "factory-boy", specifier = "~=3.3" },
     { name = "freezegun" },
-    { name = "moto", extras = ["kms", "s3", "server", "ses", "sesv2", "sts", "wafv2"], specifier = "~=5.2" },
+    { name = "moto", extras = ["cloudwatch", "kms", "s3", "server", "ses", "sesv2", "sts", "wafv2"], specifier = "~=5.2" },
     { name = "mypy", specifier = "~=2.4" },
     { name = "pip-audit" },
     { name = "pytest", specifier = "~=9.2" },

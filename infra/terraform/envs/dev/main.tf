@@ -59,6 +59,7 @@ module "platform" {
     api-public      = { cpu = 1024, memory = 2048, min = 1, max = 2 }
     api-admin       = { cpu = 512, memory = 1024, min = 1, max = 4 }
     admin-web       = { cpu = 512, memory = 1024, min = 1, max = 4 }
+    ws-admin        = { cpu = 256, memory = 1024, min = 1, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 1, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 1, max = 10 }
     beat            = { cpu = 256, memory = 512, min = 1, max = 1 }
