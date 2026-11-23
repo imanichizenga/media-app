@@ -17,7 +17,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale} data-theme={theme === "dark" || theme === "light" ? theme : undefined}>
       <body>
         <NextIntlClientProvider>
-          <Providers nonce={head.get("x-nonce") ?? ""}>{children}</Providers>
+          <Providers nonce={head.get("x-nonce") ?? ""} monitoring={Boolean(process.env.SENTRY_DSN)}>
+            {children}
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>

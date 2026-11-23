@@ -27,11 +27,24 @@ services:
   seaweedfs:
     image: chrislusf/seaweedfs:4.55
     profiles: [storage]
-    command: ["server", "-dir=/data", "-ip.bind=0.0.0.0", "-s3", "-s3.config=/etc/seaweedfs/s3.json", "-master.volumeSizeLimitMB=256"]
+    command:
+      [
+        "server",
+        "-dir=/data",
+        "-ip.bind=0.0.0.0",
+        "-s3",
+        "-s3.config=/etc/seaweedfs/s3.json",
+        "-master.volumeSizeLimitMB=256",
+      ]
     ports: ["127.0.0.1:8333:8333"]
     volumes: ["s3:/data", "./infra/local/seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro"]
     healthcheck:
-      { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8333/status"], interval: 3s, timeout: 3s, retries: 30 }
+      {
+        test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8333/status"],
+        interval: 3s,
+        timeout: 3s,
+        retries: 30,
+      }
   opensearch:
     image: opensearchproject/opensearch:3.9.0
     profiles: [search]
@@ -44,7 +57,8 @@ services:
     volumes: ["os:/usr/share/opensearch/data"]
     healthcheck:
       {
-        test: ["CMD-SHELL", "curl -fs 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=2s'"],
+        test:
+          ["CMD-SHELL", "curl -fs 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=2s'"],
         interval: 5s,
         timeout: 5s,
         retries: 40,

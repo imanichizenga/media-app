@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { english, expect, joinWithPasskey, manage, PASSWORD, sql, test } from "./helpers";
@@ -351,6 +352,40 @@ test("Trusted Types block script injection even from inside the page", async () 
   });
   expect(blocked).toEqual(["html", "script"]); // eval is covered by the CSP test: DevTools-driven code may always eval
   problems.length = 0; // the browser logs each refusal
+});
+
+test("an uncaught error is reported without personal data, through our own origin", async () => {
+  const received: string[] = [];
+  const sink = createServer((req, res) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+    req.on("end", () => {
+      received.push(`${req.url}\n${body}`);
+      res.end("{}");
+    });
+  }).listen(5056, "127.0.0.1");
+  const outside: string[] = [];
+  page.on("request", (r) => new URL(r.url()).host !== "localhost:3001" && outside.push(r.url()));
+  try {
+    await page.goto("/settings");
+    await expect(page.locator(".bone")).toHaveCount(0);
+    await page.evaluate(() => {
+      setTimeout(() => {
+        throw new TypeError("boom for amina@example.test");
+      });
+    });
+    await expect.poll(() => received.length, { timeout: 10_000 }).toBe(1);
+  } finally {
+    sink.close();
+  }
+  expect(received[0]).toContain("/api/7/envelope/?sentry_version=7&sentry_key=key");
+  expect(received[0]).toContain("TypeError");
+  expect(received[0]).toContain("boom for [redacted]");
+  expect(received[0]).not.toMatch(/amina|cookie|breadcrumb/i);
+  expect(outside).toEqual([]);
+  problems.length = 0; // the error was ours
 });
 
 test("a dropped connection is explained and recoverable", async () => {

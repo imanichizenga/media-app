@@ -58,6 +58,11 @@ variable "backlog_per_task" {
   type        = map(number)
   default     = { worker-critical = 10, worker-default = 100 }
 }
+variable "sentry_browser_dsn" {
+  description = "Project that receives the admin console's browser errors. Empty turns reporting off."
+  type        = string
+  default     = ""
+}
 variable "image_tag" {
   description = "Used only to create the first task definitions. CI/CD owns later releases."
   type        = string

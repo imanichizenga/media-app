@@ -22,6 +22,10 @@ variable "alarm_emails" {
   type    = set(string)
   default = []
 }
+variable "sentry_browser_dsn" {
+  type    = string
+  default = ""
+}
 provider "aws" {
   region = var.region
   default_tags {
@@ -55,6 +59,7 @@ module "platform" {
   deletion_protection  = false
   audit_retention_days = 1
   alarm_emails         = var.alarm_emails
+  sentry_browser_dsn   = var.sentry_browser_dsn
   services = {
     api-public      = { cpu = 1024, memory = 2048, min = 1, max = 2 }
     api-admin       = { cpu = 512, memory = 1024, min = 1, max = 4 }

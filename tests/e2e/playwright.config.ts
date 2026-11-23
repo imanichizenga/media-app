@@ -48,7 +48,7 @@ export default defineConfig({
     },
     {
       command:
-        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
+        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && SENTRY_DSN=http://key@127.0.0.1:5056/7 PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
       url: "http://localhost:3001/healthz",
       timeout: 60_000,
     },

@@ -174,7 +174,7 @@ resource "aws_ecs_task_definition" "this" {
       mountPoints            = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
       portMappings           = each.value.port > 0 ? [{ containerPort = each.value.port, protocol = "tcp" }] : []
       environment = each.value.image == "admin" ? [
-        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }
+        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }, { name = "SENTRY_DSN", value = var.sentry_browser_dsn }
       ] : [for k, v in merge(local.bootstrap_env, each.value.env) : { name = k, value = v }]
       secrets = each.value.image == "admin" ? [] : each.key == "migrate" ? concat(
         [for n in ["DJANGO_SECRET_KEY", "REDIS_URL", "BROKER_URL", "APP_DB_PASSWORD"] : { name = n, valueFrom = aws_secretsmanager_secret.this[n].arn }],
