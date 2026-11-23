@@ -1,0 +1,3249 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "News Platform admin API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/approvals": {
+            "get": {
+                "operationId": "approvals_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "approvals"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApprovalPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/approvals/{approval_id}/{decision}": {
+            "post": {
+                "operationId": "approvals_decide",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "approval_id",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f-]{36}$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "decision",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "approve",
+                                "reject"
+                            ]
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "approvals"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoteRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Approval"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/assignments": {
+            "post": {
+                "operationId": "assignments_create",
+                "tags": [
+                    "assignments"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignmentCreateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AssignmentResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/assignments/{assignment_id}": {
+            "delete": {
+                "operationId": "assignments_delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "assignment_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "assignments"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/audit": {
+            "get": {
+                "operationId": "audit_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "action",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "actor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "since",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "target_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "until",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuditPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/audit/export": {
+            "post": {
+                "operationId": "audit_export",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "action",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "actor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "since",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "target_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "until",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "audit"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "text/csv": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/audit/verify": {
+            "post": {
+                "operationId": "audit_verify",
+                "tags": [
+                    "audit"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChainReport"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/invite/accept": {
+            "post": {
+                "operationId": "auth_accept_invite",
+                "description": "Before sign-in: strict per-IP limit that fails closed, plus an Origin check.",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AcceptRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "operationId": "auth_login",
+                "description": "Before sign-in: strict per-IP limit that fails closed, plus an Origin check.",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/passkey/options": {
+            "post": {
+                "operationId": "mfa_passkey_options",
+                "description": "Any live session, including before MFA. Each view states which stages it accepts.",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/passkey/register": {
+            "post": {
+                "operationId": "mfa_passkey_register",
+                "description": "First enrolment, or adding a factor later; the latter needs a fresh MFA check.",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CredentialRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnrolResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/passkey/register/options": {
+            "post": {
+                "operationId": "mfa_passkey_register_options",
+                "description": "First enrolment, or adding a factor later; the latter needs a fresh MFA check.",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/passkey/verify": {
+            "post": {
+                "operationId": "mfa_passkey_verify",
+                "description": "The same check completes sign-in (mfa_challenge) or refreshes it for step-up (active).",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CredentialRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/recovery/verify": {
+            "post": {
+                "operationId": "mfa_recovery_verify",
+                "description": "The same check completes sign-in (mfa_challenge) or refreshes it for step-up (active).",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CodeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/totp/begin": {
+            "post": {
+                "operationId": "mfa_totp_begin",
+                "description": "First enrolment, or adding a factor later; the latter needs a fresh MFA check.",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TotpBegin"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/totp/confirm": {
+            "post": {
+                "operationId": "mfa_totp_confirm",
+                "description": "First enrolment, or adding a factor later; the latter needs a fresh MFA check.",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CodeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnrolResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/mfa/totp/verify": {
+            "post": {
+                "operationId": "mfa_totp_verify",
+                "description": "The same check completes sign-in (mfa_challenge) or refreshes it for step-up (active).",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CodeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/reset/complete": {
+            "post": {
+                "operationId": "auth_complete_reset",
+                "description": "Before sign-in: strict per-IP limit that fails closed, plus an Origin check.",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResetRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/session": {
+            "get": {
+                "operationId": "auth_session",
+                "description": "Any live session, including before MFA. Each view states which stages it accepts.",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SessionInfo"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "auth_logout",
+                "description": "Any live session, including before MFA. Each view states which stages it accepts.",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations": {
+            "get": {
+                "operationId": "integrations_list",
+                "tags": [
+                    "integrations"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Summary"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/{key}": {
+            "get": {
+                "operationId": "integrations_get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "integrations_save",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IntegrationSaveRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/{key}/versions/{number}/activate": {
+            "post": {
+                "operationId": "integrations_activate",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "number",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ActivateRequestRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActivateResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/{key}/versions/{number}/test": {
+            "post": {
+                "operationId": "integrations_test",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "number",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestRequestRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestRun"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/runs/{run_id}": {
+            "get": {
+                "operationId": "integrations_test_run",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "run_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestRun"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/logs/auth": {
+            "get": {
+                "operationId": "auth_events",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "kind",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthEventPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/logs/integrations": {
+            "get": {
+                "operationId": "integration_calls",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "ok",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "provider",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logs"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CallPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me/factors/{factor}": {
+            "delete": {
+                "operationId": "me_factor_remove",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "factor",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "'totp' or a passkey id",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/me/password": {
+            "post": {
+                "operationId": "me_password",
+                "tags": [
+                    "me"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/me/recovery-codes": {
+            "post": {
+                "operationId": "me_recovery_codes",
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecoveryCodes"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me/security": {
+            "get": {
+                "operationId": "me_security",
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SecurityOverview"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me/sessions/{session_id}": {
+            "delete": {
+                "operationId": "me_session_revoke",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "session_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/roles": {
+            "get": {
+                "operationId": "roles_list",
+                "tags": [
+                    "roles"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "roles_create",
+                "tags": [
+                    "roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleWriteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/roles/{role_id}": {
+            "put": {
+                "operationId": "roles_update",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "role_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleWriteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Role"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "roles_delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "role_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "roles"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/settings/{key}": {
+            "get": {
+                "operationId": "settings_get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SettingsSection"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "settings_put",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SettingsSaveRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SettingsResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/staff": {
+            "get": {
+                "operationId": "staff_list",
+                "tags": [
+                    "staff"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StaffList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/staff/{user_id}/logout": {
+            "post": {
+                "operationId": "staff_force_logout",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/staff/{user_id}/reset": {
+            "post": {
+                "operationId": "staff_reset",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StaffResetRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LinkResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "202": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LinkResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/staff/{user_id}/status": {
+            "post": {
+                "operationId": "staff_status",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StaffStatusRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/staff/invites": {
+            "post": {
+                "operationId": "staff_invite",
+                "tags": [
+                    "staff"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InviteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LinkResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "202": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LinkResult"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/staff/invites/{invite_id}": {
+            "delete": {
+                "operationId": "staff_invite_revoke",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "invite_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AcceptRequest": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                    },
+                    "display_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                    },
+                    "locale": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/LocaleEnum"
+                            }
+                        ],
+                        "default": "sw"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "password",
+                    "token"
+                ]
+            },
+            "ActivateRequestRequest": {
+                "type": "object",
+                "properties": {
+                    "override_reason": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "override_reason"
+                ]
+            },
+            "ActivateResult": {
+                "type": "object",
+                "properties": {
+                    "approval_required": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "approval_required"
+                ]
+            },
+            "Approval": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "summary": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "payload": {},
+                    "reason": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/ApprovalStatusEnum"
+                    },
+                    "requested_by": {
+                        "$ref": "#/components/schemas/Person"
+                    },
+                    "decided_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Person"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "decided_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "decision_note": {
+                        "type": "string"
+                    },
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "action",
+                    "created_at",
+                    "decided_by",
+                    "expires_at",
+                    "id",
+                    "payload",
+                    "requested_by",
+                    "status",
+                    "summary"
+                ]
+            },
+            "ApprovalPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Approval"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "ApprovalStatusEnum": {
+                "enum": [
+                    "pending",
+                    "executed",
+                    "rejected",
+                    "cancelled",
+                    "expired"
+                ],
+                "type": "string",
+                "description": "* `pending` - Pending\n* `executed` - Executed\n* `rejected` - Rejected\n* `cancelled` - Cancelled\n* `expired` - Expired"
+            },
+            "AssignmentCreateRequest": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "role": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "scope_type": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "scope_id": {
+                        "type": "string",
+                        "default": ""
+                    }
+                },
+                "required": [
+                    "role",
+                    "user"
+                ]
+            },
+            "AssignmentResult": {
+                "type": "object",
+                "properties": {
+                    "approval_required": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "approval_required"
+                ]
+            },
+            "Audit": {
+                "type": "object",
+                "properties": {
+                    "seq": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": -9223372036854775808,
+                        "format": "int64"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "occurred_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "actor_id": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "actor_label": {
+                        "type": "string",
+                        "maxLength": 120
+                    },
+                    "approved_by_id": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "action": {
+                        "type": "string",
+                        "maxLength": 80
+                    },
+                    "target_type": {
+                        "type": "string",
+                        "maxLength": 80
+                    },
+                    "target_id": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "target_label": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "before": {},
+                    "after": {},
+                    "reason": {
+                        "type": "string"
+                    },
+                    "ip": {
+                        "type": "string",
+                        "maxLength": 45
+                    },
+                    "user_agent": {
+                        "type": "string",
+                        "maxLength": 400
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "prev_hash": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "hash": {
+                        "type": "string",
+                        "maxLength": 64
+                    }
+                },
+                "required": [
+                    "action",
+                    "actor_label",
+                    "hash",
+                    "id",
+                    "occurred_at",
+                    "prev_hash",
+                    "seq"
+                ]
+            },
+            "AuditPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Audit"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "AuthEvent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "kind": {
+                        "type": "string",
+                        "maxLength": 40
+                    },
+                    "ok": {
+                        "type": "boolean"
+                    },
+                    "user": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    },
+                    "user_name": {
+                        "type": "string",
+                        "readOnly": true,
+                        "default": ""
+                    },
+                    "ip": {
+                        "type": "string",
+                        "maxLength": 45
+                    },
+                    "country": {
+                        "type": "string",
+                        "maxLength": 2
+                    },
+                    "user_agent": {
+                        "type": "string",
+                        "maxLength": 400
+                    },
+                    "detail": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "id",
+                    "kind",
+                    "ok",
+                    "user_name"
+                ]
+            },
+            "AuthEventPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AuthEvent"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "Call": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "provider": {
+                        "type": "string",
+                        "maxLength": 48,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "operation": {
+                        "type": "string",
+                        "maxLength": 120
+                    },
+                    "ok": {
+                        "type": "boolean"
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                    },
+                    "detail": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "id",
+                    "latency_ms",
+                    "ok",
+                    "operation",
+                    "provider"
+                ]
+            },
+            "CallPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Call"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "ChainReport": {
+                "type": "object",
+                "properties": {
+                    "ok": {
+                        "type": "boolean"
+                    },
+                    "checked": {
+                        "type": "integer"
+                    },
+                    "head_seq": {
+                        "type": "integer"
+                    },
+                    "anchors_checked": {
+                        "type": "integer"
+                    },
+                    "problems": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    }
+                },
+                "required": [
+                    "anchors_checked",
+                    "checked",
+                    "head_seq",
+                    "ok",
+                    "problems"
+                ]
+            },
+            "CodeRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20
+                    }
+                },
+                "required": [
+                    "code"
+                ]
+            },
+            "CredentialRequest": {
+                "type": "object",
+                "properties": {
+                    "credential": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "name": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 60
+                    }
+                },
+                "required": [
+                    "credential"
+                ]
+            },
+            "Detail": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "description_sw": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/IntegrationSummaryStatusEnum"
+                    },
+                    "last_tested_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "last_test_passed": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Field"
+                        }
+                    },
+                    "test_params": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "latest": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Version"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "active_number": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "latest_test": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/TestRun"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "history": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TestRun"
+                        }
+                    }
+                },
+                "required": [
+                    "active_number",
+                    "category",
+                    "description_en",
+                    "description_sw",
+                    "history",
+                    "last_test_passed",
+                    "last_tested_at",
+                    "latest",
+                    "latest_test",
+                    "name",
+                    "provider",
+                    "schema",
+                    "status",
+                    "test_params"
+                ]
+            },
+            "EnrolResult": {
+                "type": "object",
+                "properties": {
+                    "session": {
+                        "$ref": "#/components/schemas/SessionInfo"
+                    },
+                    "recovery_codes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "recovery_codes",
+                    "session"
+                ]
+            },
+            "Field": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "$ref": "#/components/schemas/KindEnum"
+                    },
+                    "label_en": {
+                        "type": "string"
+                    },
+                    "label_sw": {
+                        "type": "string"
+                    },
+                    "help_en": {
+                        "type": "string"
+                    },
+                    "help_sw": {
+                        "type": "string"
+                    },
+                    "is_required": {
+                        "type": "boolean"
+                    },
+                    "default": {}
+                },
+                "required": [
+                    "default",
+                    "help_en",
+                    "help_sw",
+                    "is_required",
+                    "kind",
+                    "label_en",
+                    "label_sw",
+                    "name"
+                ]
+            },
+            "GrantRequest": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "scope_type": {
+                        "type": "string",
+                        "default": ""
+                    },
+                    "scope_id": {
+                        "type": "string",
+                        "default": ""
+                    }
+                },
+                "required": [
+                    "role"
+                ]
+            },
+            "IntegrationSaveRequest": {
+                "type": "object",
+                "properties": {
+                    "base_number": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "fields_": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "title": "Fields "
+                    },
+                    "secrets": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "minLength": 1,
+                            "maxLength": 20000
+                        }
+                    }
+                },
+                "required": [
+                    "base_number",
+                    "fields_"
+                ]
+            },
+            "IntegrationSummaryStatusEnum": {
+                "enum": [
+                    "unconfigured",
+                    "draft",
+                    "active",
+                    "failing"
+                ],
+                "type": "string",
+                "description": "* `unconfigured` - unconfigured\n* `draft` - Draft\n* `active` - Active\n* `failing` - Failing"
+            },
+            "InviteRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    },
+                    "grants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GrantRequest"
+                        }
+                    }
+                },
+                "required": [
+                    "email",
+                    "grants"
+                ]
+            },
+            "InviteRow": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "grants": {},
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "email",
+                    "expires_at",
+                    "id"
+                ]
+            },
+            "KindEnum": {
+                "enum": [
+                    "text",
+                    "integer",
+                    "boolean",
+                    "secret"
+                ],
+                "type": "string",
+                "description": "* `text` - text\n* `integer` - integer\n* `boolean` - boolean\n* `secret` - secret"
+            },
+            "LinkResult": {
+                "type": "object",
+                "properties": {
+                    "approval_required": {
+                        "type": "boolean"
+                    },
+                    "emailed": {
+                        "type": "boolean"
+                    },
+                    "link": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "approval_required",
+                    "emailed",
+                    "link"
+                ]
+            },
+            "LocaleEnum": {
+                "enum": [
+                    "sw",
+                    "en"
+                ],
+                "type": "string",
+                "description": "* `sw` - sw\n* `en` - en"
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "NoteRequest": {
+                "type": "object",
+                "properties": {
+                    "note": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 500
+                    }
+                }
+            },
+            "Passkey": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "backed_up": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "last_used_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "id",
+                    "name"
+                ]
+            },
+            "PasswordRequest": {
+                "type": "object",
+                "properties": {
+                    "current": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                    },
+                    "new": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                    }
+                },
+                "required": [
+                    "current",
+                    "new"
+                ]
+            },
+            "Permission": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "en": {
+                        "type": "string"
+                    },
+                    "sw": {
+                        "type": "string"
+                    },
+                    "scopable": {
+                        "type": "boolean"
+                    },
+                    "sensitive": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "code",
+                    "en",
+                    "scopable",
+                    "sensitive",
+                    "sw"
+                ]
+            },
+            "Person": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "display_name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "id"
+                ]
+            },
+            "RecoveryCodes": {
+                "type": "object",
+                "properties": {
+                    "recovery_codes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "recovery_codes"
+                ]
+            },
+            "ResetRequest": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                    }
+                },
+                "required": [
+                    "password",
+                    "token"
+                ]
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "key": {
+                        "type": "string",
+                        "maxLength": 48,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "name_en": {
+                        "type": "string",
+                        "maxLength": 80
+                    },
+                    "name_sw": {
+                        "type": "string",
+                        "maxLength": 80
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "is_system": {
+                        "type": "boolean"
+                    },
+                    "is_staff": {
+                        "type": "boolean"
+                    },
+                    "is_privileged": {
+                        "type": "boolean"
+                    },
+                    "members": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "default": 0
+                    }
+                },
+                "required": [
+                    "id",
+                    "key",
+                    "members",
+                    "name_en",
+                    "name_sw",
+                    "permissions"
+                ]
+            },
+            "RoleList": {
+                "type": "object",
+                "properties": {
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    }
+                },
+                "required": [
+                    "permissions",
+                    "roles"
+                ]
+            },
+            "RoleWriteRequest": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "default": "",
+                        "maxLength": 48,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "name_en": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                    },
+                    "name_sw": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                    },
+                    "description": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 300
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 64
+                        },
+                        "maxItems": 200
+                    }
+                },
+                "required": [
+                    "name_en",
+                    "name_sw",
+                    "permissions"
+                ]
+            },
+            "SecurityOverview": {
+                "type": "object",
+                "properties": {
+                    "passkeys": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Passkey"
+                        }
+                    },
+                    "totp": {
+                        "type": "boolean"
+                    },
+                    "recovery_codes_left": {
+                        "type": "integer"
+                    },
+                    "sessions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StaffSession"
+                        }
+                    },
+                    "recent_events": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AuthEvent"
+                        }
+                    }
+                },
+                "required": [
+                    "passkeys",
+                    "recent_events",
+                    "recovery_codes_left",
+                    "sessions",
+                    "totp"
+                ]
+            },
+            "SessionInfo": {
+                "type": "object",
+                "properties": {
+                    "stage": {
+                        "$ref": "#/components/schemas/SessionStageEnum"
+                    },
+                    "brand_name": {
+                        "type": "string"
+                    },
+                    "csrf_token": {
+                        "type": "string"
+                    },
+                    "mfa_methods": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/SessionUser"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "expires_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "brand_name",
+                    "csrf_token",
+                    "expires_at",
+                    "mfa_methods",
+                    "permissions",
+                    "stage",
+                    "user"
+                ]
+            },
+            "SessionStageEnum": {
+                "enum": [
+                    "mfa_enroll",
+                    "mfa_challenge",
+                    "active"
+                ],
+                "type": "string",
+                "description": "* `mfa_enroll` - Mfa Enroll\n* `mfa_challenge` - Mfa Challenge\n* `active` - Active"
+            },
+            "SessionUser": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "locale": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "email",
+                    "id",
+                    "locale"
+                ]
+            },
+            "SettingsResult": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer"
+                    },
+                    "approval_required": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "approval_required",
+                    "version"
+                ]
+            },
+            "SettingsSaveRequest": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "values": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "reason": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 500
+                    }
+                },
+                "required": [
+                    "values",
+                    "version"
+                ]
+            },
+            "SettingsSection": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "integer"
+                    },
+                    "values": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "can_edit": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "can_edit",
+                    "key",
+                    "values",
+                    "version"
+                ]
+            },
+            "StaffList": {
+                "type": "object",
+                "properties": {
+                    "staff": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StaffMember"
+                        }
+                    },
+                    "invites": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/InviteRow"
+                        }
+                    }
+                },
+                "required": [
+                    "invites",
+                    "staff"
+                ]
+            },
+            "StaffMember": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "mfa": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        },
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "email",
+                    "id",
+                    "mfa",
+                    "roles",
+                    "status"
+                ]
+            },
+            "StaffResetRequest": {
+                "type": "object",
+                "properties": {
+                    "reset_mfa": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "reset_mfa"
+                ]
+            },
+            "StaffSession": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "device_label": {
+                        "type": "string",
+                        "maxLength": 120
+                    },
+                    "ip": {
+                        "type": "string",
+                        "maxLength": 45
+                    },
+                    "country": {
+                        "type": "string",
+                        "maxLength": 2
+                    },
+                    "mfa_method": {
+                        "type": "string",
+                        "maxLength": 16
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "last_seen_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "current": {
+                        "type": "boolean",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "current",
+                    "device_label",
+                    "id",
+                    "last_seen_at"
+                ]
+            },
+            "StaffStatusRequest": {
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "type": "boolean"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                    }
+                },
+                "required": [
+                    "active",
+                    "reason"
+                ]
+            },
+            "Step": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "label_en": {
+                        "type": "string"
+                    },
+                    "label_sw": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/StepStatusEnum"
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "detail": {
+                        "type": "string"
+                    },
+                    "remediation": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "detail",
+                    "key",
+                    "label_en",
+                    "label_sw",
+                    "latency_ms",
+                    "remediation",
+                    "status"
+                ]
+            },
+            "StepStatusEnum": {
+                "enum": [
+                    "pending",
+                    "running",
+                    "passed",
+                    "failed",
+                    "skipped"
+                ],
+                "type": "string",
+                "description": "* `pending` - pending\n* `running` - running\n* `passed` - passed\n* `failed` - failed\n* `skipped` - skipped"
+            },
+            "Summary": {
+                "type": "object",
+                "properties": {
+                    "provider": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "description_en": {
+                        "type": "string"
+                    },
+                    "description_sw": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/IntegrationSummaryStatusEnum"
+                    },
+                    "last_tested_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "last_test_passed": {
+                        "type": [
+                            "boolean",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "category",
+                    "description_en",
+                    "description_sw",
+                    "last_test_passed",
+                    "last_tested_at",
+                    "name",
+                    "provider",
+                    "status"
+                ]
+            },
+            "TestRequestRequest": {
+                "type": "object",
+                "properties": {
+                    "params": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    }
+                },
+                "required": [
+                    "params"
+                ]
+            },
+            "TestRun": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/TestRunStatusEnum"
+                    },
+                    "steps": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Step"
+                        }
+                    },
+                    "version_number": {
+                        "type": "integer"
+                    },
+                    "started_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Person"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "finished_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "id",
+                    "started_by",
+                    "status",
+                    "steps",
+                    "version_number"
+                ]
+            },
+            "TestRunStatusEnum": {
+                "enum": [
+                    "queued",
+                    "running",
+                    "passed",
+                    "failed"
+                ],
+                "type": "string",
+                "description": "* `queued` - Queued\n* `running` - Running\n* `passed` - Passed\n* `failed` - Failed"
+            },
+            "TotpBegin": {
+                "type": "object",
+                "properties": {
+                    "secret": {
+                        "type": "string"
+                    },
+                    "qr_svg": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "qr_svg",
+                    "secret"
+                ]
+            },
+            "Version": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "number": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                    },
+                    "fields_": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "title": "Fields "
+                    },
+                    "secret_hints": {},
+                    "created_by": {
+                        "$ref": "#/components/schemas/Person"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "created_by",
+                    "fields_",
+                    "id",
+                    "number"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "staffSession": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "__Host-staff_session"
+            }
+        }
+    }
+}

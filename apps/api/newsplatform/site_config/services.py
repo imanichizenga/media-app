@@ -1,0 +1,140 @@
+import ipaddress
+from typing import Any
+
+from django.db import transaction
+from pydantic import ValidationError
+
+from newsplatform.accounts.models import User
+from newsplatform.approvals import services as approvals
+from newsplatform.approvals.models import ApprovalRequest
+from newsplatform.audit.services import record
+from newsplatform.common import context
+from newsplatform.common.errors import Conflict, DomainError, NotFound
+from newsplatform.rbac import selectors as rbac
+from newsplatform.site_config.models import SettingsSection
+from newsplatform.site_config.schemas import SECTIONS, Identity, Localization, Section, Security
+
+
+def get_section(key: str) -> tuple[Section, int]:
+    if key not in SECTIONS:
+        raise NotFound("Unknown settings section")
+    row = SettingsSection.objects.filter(key=key).first()
+    return SECTIONS[key].model_validate(row.data if row else {}), row.version if row else 0
+
+
+def get_security() -> Security:
+    section = get_section("security")[0]
+    assert isinstance(section, Security)  # noqa: S101 (type narrowing)
+    return section
+
+
+def brand_name() -> str:
+    section = get_section("identity")[0]
+    assert isinstance(section, Identity)  # noqa: S101 (type narrowing)
+    return section.brand_name
+
+
+def public_config() -> dict[str, Any]:
+    identity, v1 = get_section("identity")
+    local, v2 = get_section("localization")
+    assert isinstance(identity, Identity) and isinstance(local, Localization)  # noqa: S101, PT018
+    return {"version": f"{v1}.{v2}", "identity": identity.model_dump(), "localization": local.model_dump()}
+
+
+def ip_allowed(ip: str | None, security: Security) -> bool:
+    if not security.ip_allowlist_enabled:
+        return True
+    if not ip:
+        return False
+    addr = ipaddress.ip_address(ip)
+    return any(addr in ipaddress.ip_network(n) for n in security.ip_allowlist)
+
+
+def permission_for(key: str) -> str:
+    return "settings.security" if key == "security" else "settings.manage"
+
+
+def _validate(key: str, data: dict[str, Any]) -> Section:
+    try:
+        return SECTIONS[key].model_validate(data)
+    except ValidationError as exc:
+        raise DomainError(
+            "The settings are invalid.",
+            code="validation_error",
+            errors=[{"field": ".".join(map(str, e["loc"])), "message": e["msg"]} for e in exc.errors()],
+        ) from exc
+
+
+def _write(*, actor: User, key: str, data: dict[str, Any], version: int, approved_by: User | None) -> int:
+    SettingsSection.objects.get_or_create(key=key, defaults={"version": 0, "data": {}})
+    row = SettingsSection.objects.select_for_update().get(key=key)
+    if row.version != version:
+        raise Conflict(
+            "Someone else changed these settings. Reload and try again.",
+            code="stale_version",
+            current=row.version,
+        )
+    before = SECTIONS[key].model_validate(row.data).model_dump()
+    row.data, row.version, row.updated_by = data, row.version + 1, actor
+    row.save()
+    changed = {k for k in data if before.get(k) != data[k]}
+    record(
+        actor=actor,
+        approved_by=approved_by,
+        action="settings.updated",
+        target=row,
+        label=key,
+        before={k: before.get(k) for k in changed},
+        after={k: data[k] for k in changed},
+    )
+    if key == "security":
+        from newsplatform.staff_security.tasks import sync_waf_allowlist
+
+        transaction.on_commit(sync_waf_allowlist.delay)
+    return row.version
+
+
+@transaction.atomic
+def update_section(
+    *, actor: User, key: str, data: dict[str, Any], version: int, reason: str = ""
+) -> int | ApprovalRequest:
+    if key not in SECTIONS:
+        raise NotFound("Unknown settings section")
+    rbac.require(actor, permission_for(key))
+    section = _validate(key, data)
+    clean = section.model_dump()
+    if isinstance(section, Security):
+        if not ip_allowed(context.current().ip, section):
+            raise DomainError(
+                "This would lock you out: your own address is not in the list.",
+                code="self_lockout",
+                ip=context.current().ip,
+            )
+        # Judged by the policy in force now, so turning four-eyes off itself needs four eyes.
+        if approvals.is_required("settings.security"):
+            return approvals.request_approval(
+                actor=actor,
+                action="settings.security",
+                summary="Change security settings",
+                payload={"data": clean, "version": version},
+                dedupe_key="security",
+                reason=reason,
+            )
+    return _write(actor=actor, key=key, data=clean, version=version, approved_by=None)
+
+
+@approvals.register("settings.security", "settings.security")
+def _execute(payload: dict[str, Any], requester: User, approver: User) -> None:
+    section = _validate("security", payload["data"])
+    assert isinstance(section, Security)  # noqa: S101
+    if not ip_allowed(context.current().ip, section):
+        raise DomainError(
+            "This would lock you out: your own address is not in the list.", code="self_lockout"
+        )
+    _write(
+        actor=requester,
+        key="security",
+        data=section.model_dump(),
+        version=payload["version"],
+        approved_by=approver,
+    )

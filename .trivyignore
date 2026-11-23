@@ -1,0 +1,6 @@
+# AWS-0132 (customer-managed keys for S3): media is public by design and ALB log delivery supports only SSE-S3.
+# Integrity of the audit bucket comes from Object Lock, not from encryption. ADR-0014.
+AWS-0132
+# AWS-0104 (egress to any address): integrations (SES, FCM, Apple, Meta, ...) have no stable addresses. Egress is
+# limited to TCP 443, data subnets have no internet route, and application HTTP is SSRF-filtered. ADR-0014.
+AWS-0104

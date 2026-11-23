@@ -1,0 +1,20 @@
+# Architecture decisions
+
+- [0001](0001-monorepo-tooling.md) Monorepo tooling
+- [0002](0002-version-baseline.md) Version baseline
+- [0003](0003-two-api-surfaces.md) Separate public and admin API surfaces
+- [0004](0004-one-user-table.md) One user table, isolated staff realm
+- [0005](0005-staff-sessions.md) Staff sessions
+- [0006](0006-mfa.md) Mandatory MFA and step-up
+- [0007](0007-rbac.md) Scoped RBAC
+- [0008](0008-audit-chain.md) Audit hash chain
+- [0009](0009-integration-config.md) Integration configuration
+- [0010](0010-four-eyes.md) Four-eyes approvals
+- [0011](0011-bootstrap-env.md) Bootstrap environment variables
+- [0012](0012-design-tokens.md) Design tokens
+- [0013](0013-api-contract.md) API contract and clients
+- [0014](0014-aws-topology.md) AWS topology
+- [0015](0015-database-access.md) Database access
+- [0016](0016-delivery.md) CI/CD and rollback
+- [0017](0017-rate-limits.md) Rate limits and lockout
+- [0018](0018-admin-csp.md) Admin CSP and data fetching

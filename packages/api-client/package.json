@@ -1,0 +1,21 @@
+{
+  "name": "@news/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./admin": "./src/admin.ts",
+    "./public": "./src/public.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript ../../docs/api/openapi-admin.json -o src/generated/admin.ts && openapi-typescript ../../docs/api/openapi-public.json -o src/generated/public.ts",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "openapi-fetch": "0.17.0"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
+  "files": {
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/.next",
+      "!**/.turbo",
+      "!**/generated",
+      "!apps/api",
+      "!infra",
+      "!docs",
+      "!**/dart",
+      "!**/test-results",
+      "!**/playwright-report"
+    ]
+  },
+  "formatter": { "indentStyle": "space", "lineWidth": 110 },
+  "linter": { "enabled": true },
+  "css": { "parser": { "tailwindDirectives": true } }
+}

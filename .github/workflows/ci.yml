@@ -1,0 +1,168 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+env:
+  API_SURFACE: admin
+jobs:
+  api:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services: &services
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: news_owner, POSTGRES_PASSWORD: local-dev-only, POSTGRES_DB: news }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U news_owner" --health-interval 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-retries 20
+    defaults: { run: { working-directory: apps/api } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with: { version: "0.13.9" }
+      - run: uv sync --locked
+      - run: uv run ruff format --check . && uv run ruff check . --exclude '*/migrations/*'
+      - run: uv run mypy newsplatform config
+      - name: Migrations are complete
+        run: uv run python manage.py makemigrations --check --dry-run
+      - name: Tests (coverage gate 85%)
+        run: uv run pytest --cov --cov-report=xml --cov-fail-under=85
+      - run: uv run bandit -q -r newsplatform config -ll
+      - run: uv run pip-audit --progress-spinner off
+      - name: OpenAPI is current
+        run: |
+          for s in admin public; do
+            API_SURFACE=$s uv run python manage.py spectacular --format openapi-json --file ../../docs/api/openapi-$s.json --validate --fail-on-warn
+          done
+          git diff --exit-code -- ../../docs/api
+  web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @news/design-tokens build
+      - name: Generated code is current
+        run: |
+          pnpm --filter @news/api-client generate
+          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm audit --audit-level high
+  e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services: *services
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with: { version: "0.13.9" }
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: pnpm }
+      - run: uv sync --locked
+        working-directory: apps/api
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @news/admin... build
+        env: { API_PROXY_TARGET: "http://127.0.0.1:8001" }
+      - run: pnpm --filter @news/e2e exec playwright install --with-deps chromium
+      - run: pnpm --filter @news/e2e e2e
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with: { name: playwright, path: "tests/e2e/playwright-report", retention-days: 7 }
+  dart:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "3.50.1", channel: stable }
+      - run: flutter pub get && dart analyze --fatal-infos
+        working-directory: packages/design-tokens/dart
+      - name: Dart client is current and valid
+        run: |
+          scripts/generate-dart-client.sh
+          git diff --exit-code -- packages/api-client-dart/lib
+          cd packages/api-client-dart && dart analyze
+  infra:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with: { terraform_version: "1.17.2" }
+      - run: terraform fmt -check -recursive infra/terraform
+      - run: |
+          for d in bootstrap envs/dev envs/staging envs/prod; do
+            terraform -chdir=infra/terraform/$d init -backend=false -input=false -lockfile=readonly
+            terraform -chdir=infra/terraform/$d validate
+          done
+      - run: terraform -chdir=infra/terraform/modules/platform init -backend=false -input=false && terraform -chdir=infra/terraform/modules/platform test
+  images:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      matrix:
+        include:
+          - { name: api, context: apps/api, file: apps/api/Dockerfile }
+          - { name: admin, context: ., file: apps/admin/Dockerfile }
+          - { name: pgbouncer, context: infra/docker/pgbouncer, file: infra/docker/pgbouncer/Dockerfile }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          {
+            context: "${{ matrix.context }}",
+            file: "${{ matrix.file }}",
+            load: true,
+            tags: "scan:${{ matrix.name }}",
+          }
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          {
+            image-ref: "scan:${{ matrix.name }}",
+            severity: "HIGH,CRITICAL",
+            ignore-unfixed: true,
+            exit-code: "1",
+          }
+  security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false, fetch-depth: 0 }
+      - name: Secrets (gitleaks)
+        run: docker run --rm -v "$PWD:/repo:ro" ghcr.io/gitleaks/gitleaks:v8.30.0 git /repo --redact --no-banner
+      - name: Static analysis (Semgrep)
+        run: docker run --rm -v "$PWD:/src:ro" semgrep/semgrep@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d semgrep scan --error --severity ERROR --metrics off --config p/python --config p/django --config p/typescript --config p/react --config p/github-actions
+      - name: Known vulnerabilities (OSV)
+        run: docker run --rm -v "$PWD:/src:ro" ghcr.io/google/osv-scanner@sha256:a70ffffc2bfd33482953e5d6b64c6fcdb30239717a07b0f0d3ab2859ce3e4cde scan source --lockfile /src/apps/api/uv.lock --lockfile /src/pnpm-lock.yaml
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with: { scan-type: config, scan-ref: infra, severity: "HIGH,CRITICAL", exit-code: "1" }
+  required:
+    if: always()
+    needs: [api, web, e2e, dart, infra, images, security]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

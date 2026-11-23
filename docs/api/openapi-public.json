@@ -1,0 +1,102 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "News Platform public API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/site-config": {
+            "get": {
+                "operationId": "site_config",
+                "tags": [
+                    "site-config"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SiteConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DefaultLocaleEnum": {
+                "enum": [
+                    "sw",
+                    "en"
+                ],
+                "type": "string",
+                "description": "* `sw` - sw\n* `en` - en"
+            },
+            "SiteConfig": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "string"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/SiteIdentity"
+                    },
+                    "localization": {
+                        "$ref": "#/components/schemas/SiteLocalization"
+                    }
+                },
+                "required": [
+                    "identity",
+                    "localization",
+                    "version"
+                ]
+            },
+            "SiteIdentity": {
+                "type": "object",
+                "properties": {
+                    "brand_name": {
+                        "type": "string"
+                    },
+                    "tagline_sw": {
+                        "type": "string"
+                    },
+                    "tagline_en": {
+                        "type": "string"
+                    },
+                    "accent_light": {
+                        "type": "string"
+                    },
+                    "accent_dark": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "accent_dark",
+                    "accent_light",
+                    "brand_name",
+                    "tagline_en",
+                    "tagline_sw"
+                ]
+            },
+            "SiteLocalization": {
+                "type": "object",
+                "properties": {
+                    "default_locale": {
+                        "$ref": "#/components/schemas/DefaultLocaleEnum"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "default_locale",
+                    "timezone"
+                ]
+            }
+        }
+    }
+}

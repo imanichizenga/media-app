@@ -1,0 +1,29 @@
+{
+  "color": {
+    "$type": "color",
+    "bg": { "$value": "#121315" },
+    "surface": { "$value": "#1c1d20" },
+    "surface-raised": { "$value": "#26282c" },
+    "surface-sunken": { "$value": "#16171a" },
+    "text-primary": { "$value": "#f2f2f0" },
+    "text-secondary": { "$value": "#c0c3c8" },
+    "text-tertiary": { "$value": "#9ea2a9" },
+    "border": { "$value": "#34363b" },
+    "border-strong": { "$value": "#7d8188" },
+    "accent": { "$value": "#7db8f5" },
+    "on-accent": { "$value": "#0a1a2b" },
+    "accent-soft": { "$value": "#17293c" },
+    "success": { "$value": "#7fd3a0" },
+    "success-soft": { "$value": "#14301f" },
+    "warning": { "$value": "#f2c274" },
+    "warning-soft": { "$value": "#35270f" },
+    "danger": { "$value": "#f5a58c" },
+    "danger-soft": { "$value": "#3a1d14" },
+    "on-danger": { "$value": "#2b0f07" },
+    "live": { "$value": "#ff6b7d" },
+    "on-live": { "$value": "#2a0308" },
+    "focus": { "$value": "#7db8f5" },
+    "skeleton": { "$value": "#2a2c30" },
+    "skeleton-shine": { "$value": "#34363b" }
+  }
+}

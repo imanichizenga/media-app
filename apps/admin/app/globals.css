@@ -1,0 +1,97 @@
+@import "tailwindcss";
+@import "@news/design-tokens/tokens.css";
+@import "@news/design-tokens/theme.css";
+
+@font-face {
+  font-family: "Inter Variable";
+  src: url("../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader Variable";
+  src: url("../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2")
+    format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@layer base {
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-m);
+    line-height: var(--text-body-m--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button,
+  [role="button"],
+  select {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-text-primary);
+  }
+}
+@utility tap {
+  min-height: 44px;
+}
+@utility bone {
+  display: inline-block;
+  border-radius: 8px;
+  color: transparent;
+  user-select: none;
+  max-width: 100%;
+  vertical-align: top;
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton) 25%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton) 75%
+  );
+  background-size: 400% 100%;
+  background-clip: padding-box;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+    background: var(--color-skeleton);
+  }
+}
+.dark-only {
+  display: none;
+}
+:root[data-theme="dark"] .dark-only {
+  display: block;
+}
+:root[data-theme="dark"] .light-only {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dark-only {
+    display: block;
+  }
+  :root:not([data-theme="light"]) .light-only {
+    display: none;
+  }
+}
