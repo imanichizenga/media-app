@@ -1,4 +1,4 @@
-FROM alpine:3.22
+FROM alpine:3.24
 RUN apk add --no-cache pgbouncer && apk upgrade --no-cache && adduser -D -H -u 10002 -s /sbin/nologin bouncer
 # RDS certificate authorities, pinned by digest at build time.
 ARG RDS_CA_SHA256
