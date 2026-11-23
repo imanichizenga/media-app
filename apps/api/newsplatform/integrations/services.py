@@ -27,6 +27,7 @@ from newsplatform.integrations.models import (
     RunStatus,
 )
 from newsplatform.rbac import selectors as rbac
+from newsplatform.realtime.publish import changed
 
 log = structlog.get_logger(__name__)
 _CHANNEL = "integrations:changed"
@@ -172,10 +173,12 @@ def execute_test(run_id: str) -> None:
         return  # redelivered by the broker
     run.status = RunStatus.RUNNING
     run.save(update_fields=["status", "updated_at"])
+    changed("integration_test", run.pk)
 
     def emit(steps: list[Any]) -> None:
         run.steps = [s.as_dict() for s in steps]
         run.save(update_fields=["steps", "updated_at"])
+        changed("integration_test", run.pk)
 
     config = run.version.config
     test = Test(config.provider, emit)
@@ -191,6 +194,7 @@ def execute_test(run_id: str) -> None:
         if config.active_version_id == run.version_id:
             config.status = ConfigStatus.ACTIVE if test.passed else ConfigStatus.FAILING
         config.save()
+        changed("integration_test", run.pk)
 
 
 def last_test(version: IntegrationVersion) -> IntegrationTestRun | None:

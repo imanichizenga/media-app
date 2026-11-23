@@ -2,7 +2,8 @@
 
 ```
 Browser ─ CloudFront+WAF ─ VPC origin ─ internal ALB ─┬ /api/v1/* → api-admin  ─┐
- (admin host)                                         └ everything else → admin-web (Next.js)
+ (admin host)                                         ├ /ws/* → ws-admin (Channels)    │
+                                                      └ everything else → admin-web (Next.js)
 Clients ─ CloudFront+WAF ─ VPC origin ─ internal ALB ── api-public ─────────────┤
 Media   ─ CloudFront+WAF ─ OAC ─ S3 (private)                                   │
                                    PgBouncer sidecars → RDS PostgreSQL 17 ◄─────┤
@@ -20,6 +21,7 @@ Media   ─ CloudFront+WAF ─ OAC ─ S3 (private)                             
 | `approvals` | Four-eyes requests |
 | `site_config` | Typed, versioned settings |
 | `integrations` | Provider contract, versions, tests, call log |
+| `realtime` | Staff sockets: tickets, topics, change signals |
 | `staff_security` | Sign-in, MFA, sessions, invitations |
 
 Views validate and delegate. Services write, inside transactions, with audit. Selectors read.

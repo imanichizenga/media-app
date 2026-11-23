@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { english, expect, joinWithPasskey, manage, PASSWORD, sql, test } from "./helpers";
@@ -113,12 +114,18 @@ test("S3: the test reports each step, refuses an emulator, and blocks activation
   await expect(page.getByText("Draft saved.")).toBeVisible();
   await expect(page.getByLabel("Secret access key")).toHaveAttribute("placeholder", "••••7890");
   expect(await page.content()).not.toContain("super-secret-value");
+  // Progress arrives over the socket: one ticketed connection, subscribed to this run and nothing else.
+  const socket = page.waitForEvent("websocket");
   await page.getByRole("button", { name: "Run test" }).click();
+  const signals: string[] = [];
+  (await socket).on("framereceived", (f) => signals.push(String(f.payload)));
   const steps = page.getByRole("list", { name: "Test steps" });
   await expect(steps.getByText("Write probe object passed")).toBeVisible({ timeout: 20_000 });
   await expect(steps.getByText("Read it back passed")).toBeVisible();
   await expect(steps.getByText("AWS is emulated here")).toBeVisible();
   await expect(steps.getByText("Delete probe object passed")).toBeVisible();
+  expect(signals.some((s) => s.includes('"ready"'))).toBe(true);
+  expect(signals.join()).not.toMatch(/probe|news-media|AKIA/);
   await expect(page.getByRole("button", { name: "Activate version 1" })).toBeDisabled();
 });
 
@@ -224,6 +231,12 @@ test("phone layout: no sideways scroll, targets at least 44px", async () => {
     expect
       .soft(await page.evaluate(() => document.documentElement.scrollWidth), path)
       .toBeLessThanOrEqual(360);
+    const cut = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>("main section:has(> table)")]
+        .filter((e) => e.scrollWidth > e.clientWidth)
+        .map((e) => `${e.ariaLabel} ${e.scrollWidth} > ${e.clientWidth}`),
+    );
+    expect.soft(cut, `${path}: tables must not be cut off`).toEqual([]);
     const small = await page.evaluate(() =>
       [...document.querySelectorAll<HTMLElement>("button, a[href], select, input:not([type=checkbox])")]
         .filter((e) => e.offsetParent && !e.matches(".sr-only"))
@@ -292,6 +305,30 @@ test("skeletons match the loaded layout", async () => {
   }
 });
 
+test("header buttons hold their place on phones until permissions arrive", async () => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  for (const path of ["/staff", "/roles", "/audit"]) {
+    let release = () => {};
+    const gate = new Promise<void>((r) => {
+      release = r;
+    });
+    await page.route("**/api/v1/**", async (route) => {
+      await gate;
+      await route.continue();
+    });
+    await page.goto(path);
+    const top = () =>
+      page.evaluate(() => document.querySelector("main table")?.getBoundingClientRect().y ?? 0);
+    await expect(page.locator("main table .bone").first()).toBeVisible();
+    const before = await top();
+    release();
+    await expect(page.locator(".bone")).toHaveCount(0);
+    expect.soft(Math.abs((await top()) - before), path).toBeLessThanOrEqual(8);
+    await page.unroute("**/api/v1/**");
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
+});
+
 test("Trusted Types block script injection even from inside the page", async () => {
   const blocked = await page.evaluate(() => {
     const attempts: Record<string, () => void> = {
@@ -315,6 +352,40 @@ test("Trusted Types block script injection even from inside the page", async () 
   });
   expect(blocked).toEqual(["html", "script"]); // eval is covered by the CSP test: DevTools-driven code may always eval
   problems.length = 0; // the browser logs each refusal
+});
+
+test("an uncaught error is reported without personal data, through our own origin", async () => {
+  const received: string[] = [];
+  const sink = createServer((req, res) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+    req.on("end", () => {
+      received.push(`${req.url}\n${body}`);
+      res.end("{}");
+    });
+  }).listen(5056, "127.0.0.1");
+  const outside: string[] = [];
+  page.on("request", (r) => new URL(r.url()).host !== "localhost:3001" && outside.push(r.url()));
+  try {
+    await page.goto("/settings");
+    await expect(page.locator(".bone")).toHaveCount(0);
+    await page.evaluate(() => {
+      setTimeout(() => {
+        throw new TypeError("boom for amina@example.test");
+      });
+    });
+    await expect.poll(() => received.length, { timeout: 10_000 }).toBe(1);
+  } finally {
+    sink.close();
+  }
+  expect(received[0]).toContain("/api/7/envelope/?sentry_version=7&sentry_key=key");
+  expect(received[0]).toContain("TypeError");
+  expect(received[0]).toContain("boom for [redacted]");
+  expect(received[0]).not.toMatch(/amina|cookie|breadcrumb/i);
+  expect(outside).toEqual([]);
+  problems.length = 0; // the error was ours
 });
 
 test("a dropped connection is explained and recoverable", async () => {

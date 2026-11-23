@@ -12,8 +12,16 @@ STRIDE per component. Each milestone extends this document. "Test" names the aut
 | | **D** Locking a victim out | Lockout per account and IP | `test_lockout_is_per_ip...` |
 | Session | **S** Stolen cookie | httpOnly, Strict, `__Host-`; device fingerprint; immediate revocation | `test_stolen_cookie_on_another_device...` |
 | | **T** CSRF | Exact Origin, session-bound token | `test_foreign_or_missing_origin_refused` |
+| Staff sockets | **S** Cross-site WebSocket hijacking | Exact Origin, `SameSite=Strict` cookie | `test_cross_site_socket_is_refused` |
+| | **S** Stolen cookie on another device | Single-use ticket issued only after the device check | `test_ticket_of_another_session_is_refused` |
+| | **I** Data leaking past a permission | Messages carry no data; topics need their permission | `test_topic_needs_its_permission` |
+| | **E** Socket outliving its session | Revalidated every 10 seconds, fails closed | `test_an_ended_session_closes_open_sockets` |
+| | **D** Flooding | 4 KB messages, 20 topics, ticket rate limit, 5-second sign-in window | `test_silent_client_is_dropped`, `test_number_of_topics_is_capped` |
 | Admin web | **E** XSS | Nonce CSP, Trusted Types, no data in HTML, no tokens in storage | E2E, every page |
 | | **T** Open redirect | Same-site path check on `next` | E2E |
+| Browser errors | **I** Personal data in reports | Rebuilt from an allowlist, text redacted, no breadcrumbs or replay | `monitoring.test.ts`, E2E |
+| | **E** Tunnel used as an open relay | Fixed destination, same-origin only, one event per request, size and rate limits | `monitoring.test.ts` |
+| Traces | **I** Query values exported | Stripped before export | `test_query_values_never_reach_a_trace`, `verify-otel.sh` |
 | Authorisation | **E** Self-promotion, granting beyond own rights, takeover by reset | Ceiling checks in services, deny by default | `test_rbac.py`, `test_admin_cannot_take_over...` |
 | | **E** Invitation outliving its author's authority | Re-checked on acceptance | `test_invite_dies_with_the_inviters_authority` |
 | Approvals | **E** Self-approval, swapping the content | CHECK constraint; immutable versions | `test_database_itself_refuses_self_approval`, `test_newer_draft_voids_the_approval` |

@@ -1192,6 +1192,31 @@
                 }
             }
         },
+        "/api/v1/realtime/ticket": {
+            "post": {
+                "operationId": "realtime_ticket",
+                "tags": [
+                    "realtime"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RealtimeTicket"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/roles": {
             "get": {
                 "operationId": "roles_list",
@@ -2556,6 +2581,17 @@
                 "required": [
                     "display_name",
                     "id"
+                ]
+            },
+            "RealtimeTicket": {
+                "type": "object",
+                "properties": {
+                    "ticket": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "ticket"
                 ]
             },
             "RecoveryCodes": {

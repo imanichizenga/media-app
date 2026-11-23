@@ -6,7 +6,7 @@ Status: accepted, 2026-11-23
 The brief limits environment variables.
 
 ## Decision
-Bootstrap only: database, Redis, broker, Django key, KMS ARN, environment, hosts, admin origin, RP ID, proxy hops, origin secret. Exception: `SENTRY_DSN` and `OTEL_*`, which must work when the database is down.
+Bootstrap only: database, Redis, broker, Django key, KMS ARN, environment, hosts, admin origin, RP ID, proxy hops, origin secret. Exception: `SENTRY_DSN`, `METRICS_NAMESPACE` and `OTEL_*`, which must work when the database is down.
 
 ## Alternatives
 Telemetry settings in the DB.

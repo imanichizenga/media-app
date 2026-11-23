@@ -141,5 +141,19 @@ def tamper(db):
     return run
 
 
+@pytest.fixture
+def allow_flush(transactional_db):
+    """pytest truncates tables after each test; production triggers (rightly) forbid that."""
+    yield
+    with connection.cursor() as cur:
+        for table in ("audit_auditentry", "audit_chainanchor"):
+            cur.execute(f"ALTER TABLE {table} DISABLE TRIGGER USER")
+            cur.execute(f"TRUNCATE {table}")
+            cur.execute(f"ALTER TABLE {table} ENABLE TRIGGER USER")
+        # The flush that follows also truncates; keep the statement trigger off until the next migration run.
+        cur.execute("ALTER TABLE audit_auditentry DISABLE TRIGGER audit_entry_no_truncate")
+        cur.execute("ALTER TABLE audit_chainanchor DISABLE TRIGGER audit_anchor_no_truncate")
+
+
 def b64(raw: bytes) -> str:
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()

@@ -10,9 +10,10 @@ import { call, client } from "@/lib/api";
 import { keys, useCan, useIntegrations, useMySecurity, usePaged, useSession, useTime } from "@/lib/queries";
 
 const ROW = "flex min-h-11 items-center justify-between gap-4 py-2";
-function Panel({ title, href, children }: { title: string; href: string; children: ReactNode }) {
+type PanelProps = { title: string; href: string; className?: string; children: ReactNode };
+function Panel({ title, href, className, children }: PanelProps) {
   return (
-    <Card>
+    <Card className={className}>
       <h2 className="text-headline-s">
         <Link href={href} prefetch={false} className="tap inline-flex items-center gap-1 hover:text-accent">
           {title}
@@ -92,7 +93,7 @@ export default function Dashboard() {
             )}
           </Panel>
         )}
-        <Panel title={t("activity")} href="/security">
+        <Panel title={t("activity")} href="/security" className="md:col-span-full">
           {security.error ? (
             <li>
               <ErrorState error={security.error} retry={security.refetch} />

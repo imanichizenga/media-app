@@ -38,6 +38,8 @@ jobs:
         run: uv run python manage.py makemigrations --check --dry-run
       - name: Tests (coverage gate 85%)
         run: uv run pytest --cov --cov-report=xml --cov-fail-under=85
+      - name: Tracing works end to end
+        run: ../../scripts/verify-otel.sh
       - run: uv run bandit -q -r newsplatform config -ll
       - run: uv run pip-audit --progress-spinner off
       - name: OpenAPI is current
@@ -81,7 +83,7 @@ jobs:
         working-directory: apps/api
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @news/admin... build
-        env: { API_PROXY_TARGET: "http://127.0.0.1:8001" }
+        env: { API_PROXY_TARGET: "http://127.0.0.1:8001", REALTIME_PROXY_TARGET: "http://127.0.0.1:8002" }
       - run: pnpm --filter @news/e2e exec playwright install --with-deps chromium
       - run: pnpm --filter @news/e2e e2e
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

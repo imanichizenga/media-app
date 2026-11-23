@@ -1,3 +1,5 @@
+import { watch } from "@/lib/early-errors";
+
 // Runs before the app. Trusted Types blocks every string-to-DOM sink; the one exception is loading our own
 // bundles. There is deliberately no createHTML or createScript, so those sinks stay blocked.
 type Factory = {
@@ -17,3 +19,4 @@ if (factory) {
     // Already installed (fast refresh).
   }
 }
+watch();

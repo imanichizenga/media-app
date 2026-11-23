@@ -1,10 +1,17 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setNonce } from "get-nonce";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { ApiError } from "@/lib/api";
+import { drain } from "@/lib/early-errors";
 
-export function Providers({ nonce, children }: { nonce: string; children: ReactNode }) {
+type Props = { nonce: string; monitoring: boolean; children: ReactNode };
+export function Providers({ nonce, monitoring, children }: Props) {
+  useEffect(() => {
+    // Loaded after the page works, so reporting costs nothing at start.
+    if (!monitoring) drain();
+    else import("@/lib/monitoring").then(({ start }) => start(drain())).catch(() => {});
+  }, [monitoring]);
   const [queries] = useState(() => {
     if (nonce) setNonce(nonce); // the scroll lock in dialogs injects one style element
     return new QueryClient({

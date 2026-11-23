@@ -16,6 +16,7 @@ const security = [
   { key: "X-Robots-Tag", value: "noindex, nofollow" },
 ];
 const api = process.env.API_PROXY_TARGET;
+const realtime = process.env.REALTIME_PROXY_TARGET;
 
 const config: NextConfig = {
   output: "standalone",
@@ -23,8 +24,11 @@ const config: NextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@news/api-client"],
   headers: async () => [{ source: "/(.*)", headers: security }],
-  // Local and E2E only. In AWS the load balancer routes /api to the admin API, on the same origin.
-  rewrites: async () => (api ? [{ source: "/api/v1/:path*", destination: `${api}/api/v1/:path*` }] : []),
+  // Local and E2E only. In AWS the load balancer routes /api and /ws on the same origin.
+  rewrites: async () => [
+    ...(api ? [{ source: "/api/v1/:path*", destination: `${api}/api/v1/:path*` }] : []),
+    ...(realtime ? [{ source: "/ws/v1/:path*", destination: `${realtime}/ws/v1/:path*` }] : []),
+  ],
 };
 
 export default createNextIntlPlugin("./lib/i18n.ts")(config);

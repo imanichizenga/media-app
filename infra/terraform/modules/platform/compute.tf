@@ -77,7 +77,7 @@ resource "aws_iam_role_policy" "execution" {
   })
 }
 resource "aws_iam_role" "task" {
-  for_each           = toset(["public", "admin", "worker", "web", "migrate"])
+  for_each           = toset(["public", "admin", "realtime", "worker", "web", "migrate"])
   name               = "${local.prefix}-task-${each.key}"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 }
@@ -96,10 +96,14 @@ locals {
   ]
   policy_mail = [{ Effect = "Allow", Action = ["ses:SendEmail", "ses:GetAccount", "ses:GetEmailIdentity"], Resource = "*" }]
   policy_waf  = [{ Effect = "Allow", Action = ["wafv2:GetIPSet", "wafv2:UpdateIPSet"], Resource = [for s in aws_wafv2_ip_set.admin : s.arn] }]
+  policy_metrics = [{
+    Effect    = "Allow", Action = ["cloudwatch:PutMetricData"], Resource = "*"
+    Condition = { StringEquals = { "cloudwatch:namespace" = local.prefix } }
+  }]
   task_policies = {
     public = [local.policy_kms_decrypt]
     admin  = concat([local.policy_kms_decrypt, local.policy_kms_encrypt], local.policy_mail)
-    worker = concat([local.policy_kms_decrypt], local.policy_media, local.policy_audit, local.policy_mail, local.policy_waf)
+    worker = concat([local.policy_kms_decrypt], local.policy_media, local.policy_audit, local.policy_mail, local.policy_waf, local.policy_metrics)
   }
 }
 resource "aws_iam_role_policy" "task" {
@@ -122,15 +126,21 @@ locals {
     TRUSTED_PROXY_HOPS     = "2"       # CloudFront, then the load balancer
     DATABASE_SSLMODE       = "disable" # loopback to PgBouncer, which uses verify-full to RDS
     API_SURFACE            = "public"
+    METRICS_NAMESPACE      = local.prefix
   }
   runtime_secrets = ["DJANGO_SECRET_KEY", "ORIGIN_VERIFY_SECRET", "DATABASE_URL", "REDIS_URL", "BROKER_URL"]
   uvicorn         = ["gunicorn", "config.asgi:application", "-k", "uvicorn_worker.UvicornWorker", "-b", "0.0.0.0:8000", "--access-logfile", "-"]
-  celery          = ["celery", "-A", "config"]
+  # Staff sockets (ADR-0020). Pings keep idle sockets inside the load balancer's 60-second timeout.
+  sockets = ["uvicorn", "config.asgi_realtime:application", "--host", "0.0.0.0", "--port", "8000", "--lifespan", "off", "--ws-max-size", "4096", "--ws-ping-interval", "20", "--no-server-header", "--timeout-graceful-shutdown", "30"]
+  celery  = ["celery", "-A", "config"]
+  # "ops" carries the queue measurement itself. Both services consume it, so a backlog cannot hide itself (ADR-0021).
+  worker_queues = { worker-critical = ["critical"], worker-default = ["default", "sync"] }
   definitions = {
     api-public      = { image = "api", role = "public", port = 8000, env = { API_SURFACE = "public" }, command = local.uvicorn, tg = "api-public" }
     api-admin       = { image = "api", role = "admin", port = 8000, env = { API_SURFACE = "admin" }, command = local.uvicorn, tg = "api-admin" }
-    worker-critical = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", "critical", "-c", "4", "-l", "INFO"]), tg = null }
-    worker-default  = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", "default,sync", "-c", "4", "-l", "INFO"]), tg = null }
+    ws-admin        = { image = "api", role = "realtime", port = 8000, env = { API_SURFACE = "realtime" }, command = local.sockets, tg = "ws-admin" }
+    worker-critical = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-critical"])), "-c", "4", "-l", "INFO"]), tg = null }
+    worker-default  = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-default"])), "-c", "4", "-l", "INFO"]), tg = null }
     beat            = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["beat", "-l", "INFO", "-s", "/tmp/celerybeat"]), tg = null }
     admin-web       = { image = "admin", role = "web", port = 3001, env = {}, command = ["apps/admin/server.js"], tg = "admin-web" }
     migrate         = { image = "api", role = "migrate", port = 0, env = { APP_DB_USER = "news_app", DATABASE_SSLMODE = "verify-full" }, command = ["python", "manage.py", "release"], tg = null }
@@ -164,7 +174,7 @@ resource "aws_ecs_task_definition" "this" {
       mountPoints            = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
       portMappings           = each.value.port > 0 ? [{ containerPort = each.value.port, protocol = "tcp" }] : []
       environment = each.value.image == "admin" ? [
-        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }
+        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }, { name = "SENTRY_DSN", value = var.sentry_browser_dsn }
       ] : [for k, v in merge(local.bootstrap_env, each.value.env) : { name = k, value = v }]
       secrets = each.value.image == "admin" ? [] : each.key == "migrate" ? concat(
         [for n in ["DJANGO_SECRET_KEY", "REDIS_URL", "BROKER_URL", "APP_DB_PASSWORD"] : { name = n, valueFrom = aws_secretsmanager_secret.this[n].arn }],
@@ -216,7 +226,7 @@ resource "aws_ecs_service" "this" {
       container_port   = each.value.port
     }
   }
-  depends_on = [aws_lb_listener.this, aws_lb_listener_rule.admin_api]
+  depends_on = [aws_lb_listener.this, aws_lb_listener_rule.admin_api, aws_lb_listener_rule.admin_ws]
   lifecycle {
     ignore_changes = [task_definition, desired_count] # owned by CI/CD and autoscaling
   }
@@ -246,7 +256,8 @@ resource "aws_appautoscaling_policy" "cpu" {
   }
 }
 resource "aws_appautoscaling_policy" "requests" {
-  for_each           = { for k, d in local.deployed : k => d if d.tg != null }
+  # A socket is one request for hours, so request counts say nothing about ws-admin: it scales on CPU.
+  for_each           = { for k, d in local.deployed : k => d if d.tg != null && k != "ws-admin" }
   name               = "requests"
   policy_type        = "TargetTrackingScaling"
   service_namespace  = "ecs"
@@ -259,6 +270,65 @@ resource "aws_appautoscaling_policy" "requests" {
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
       resource_label         = "${aws_lb.this[each.key == "api-public" ? "api" : "admin"].arn_suffix}/${aws_lb_target_group.this[each.value.tg].arn_suffix}"
+    }
+  }
+}
+# Waiting messages per running task. Scale-in happens only when the CPU policy agrees.
+resource "aws_appautoscaling_policy" "backlog" {
+  for_each           = local.worker_queues
+  name               = "backlog"
+  policy_type        = "TargetTrackingScaling"
+  service_namespace  = "ecs"
+  resource_id        = aws_appautoscaling_target.this[each.key].resource_id
+  scalable_dimension = "ecs:service:DesiredCount"
+  target_tracking_scaling_policy_configuration {
+    target_value       = var.backlog_per_task[each.key]
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 60
+    customized_metric_specification {
+      dynamic "metrics" {
+        for_each = each.value
+        content {
+          id          = "q${metrics.key}"
+          return_data = false
+          metric_stat {
+            stat = "Maximum"
+            metric {
+              namespace   = local.prefix
+              metric_name = "QueueDepth"
+              dimensions {
+                name  = "Queue"
+                value = metrics.value
+              }
+            }
+          }
+        }
+      }
+      metrics {
+        id          = "tasks"
+        return_data = false
+        metric_stat {
+          stat = "Average"
+          metric {
+            namespace   = "ECS/ContainerInsights"
+            metric_name = "RunningTaskCount"
+            dimensions {
+              name  = "ClusterName"
+              value = aws_ecs_cluster.this.name
+            }
+            dimensions {
+              name  = "ServiceName"
+              value = each.key
+            }
+          }
+        }
+      }
+      metrics {
+        id          = "backlog"
+        label       = "Waiting messages per task"
+        expression  = "(${join(" + ", [for i, _ in each.value : "q${i}"])}) / tasks"
+        return_data = true
+      }
     }
   }
 }

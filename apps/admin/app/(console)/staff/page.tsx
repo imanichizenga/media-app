@@ -5,15 +5,18 @@ import { Copy, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
 import {
+  ActionBone,
   Badge,
   BoneRows,
   Button,
   Dialog,
+  Email,
   ErrorState,
   Field,
   FormError,
   Notice,
   PageHeader,
+  Row,
   Table,
   Td,
   TextField,
@@ -80,6 +83,10 @@ export default function Staff() {
   const member = open?.kind === "member" ? data?.staff.find((s) => s.id === open.id) : undefined;
   const self = member?.id === session?.user.id;
   const options = roles.data?.roles.filter((r) => r.is_staff);
+  const roleName = (key: string) => {
+    const role = roles.data?.roles.find((r) => r.key === key);
+    return role ? (en ? role.name_en : role.name_sw) : key;
+  };
   const roleSelect = (control: object) => (
     <select name="role" {...control} required>
       {options?.map((r) => (
@@ -119,20 +126,26 @@ export default function Staff() {
         title={t("title")}
         lead={t("lead")}
         actions={
-          can("staff.invite") && (
-            <Button onClick={() => show({ kind: "invite" })}>
-              <UserPlus aria-hidden size={18} />
-              {t("invite")}
-            </Button>
+          session ? (
+            can("staff.invite") && (
+              <Button onClick={() => show({ kind: "invite" })}>
+                <UserPlus aria-hidden size={18} />
+                {t("invite")}
+              </Button>
+            )
+          ) : (
+            <ActionBone />
           )
         }
       />
       <Table label={t("title")} head={[t("name"), t("email"), t("roles"), t("mfa"), t("status"), ""]}>
         {data ? (
           data.staff.map((s) => (
-            <tr key={s.id}>
+            <Row key={s.id}>
               <Td>{s.display_name}</Td>
-              <Td className="text-text-secondary">{s.email}</Td>
+              <Td className="text-text-secondary">
+                <Email value={s.email} />
+              </Td>
               <Td>
                 <span className="flex flex-wrap gap-1">
                   {s.roles.map((r) => (
@@ -159,7 +172,7 @@ export default function Staff() {
                   </Button>
                 )}
               </Td>
-            </tr>
+            </Row>
           ))
         ) : (
           <BoneRows action widths={["w-32", "w-48", "w-24", "w-16", "w-16", "w-16"]} />
@@ -170,9 +183,17 @@ export default function Staff() {
           <h2 className="mb-3 text-headline-s">{t("pendingInvites")}</h2>
           <Table label={t("pendingInvites")} head={[t("email"), t("roles"), t("expires"), ""]}>
             {data.invites.map((i) => (
-              <tr key={i.id}>
-                <Td>{i.email}</Td>
-                <Td>{(i.grants as { role: string }[]).map((g) => g.role).join(", ")}</Td>
+              <Row key={i.id}>
+                <Td>
+                  <Email value={i.email} />
+                </Td>
+                <Td>
+                  <span className="flex flex-wrap gap-1">
+                    {(i.grants as { role: string }[]).map((g) => (
+                      <Badge key={g.role}>{roleName(g.role)}</Badge>
+                    ))}
+                  </span>
+                </Td>
                 <Td className="text-text-secondary">{time(i.expires_at)}</Td>
                 <Td>
                   {can("staff.invite") && (
@@ -193,7 +214,7 @@ export default function Staff() {
                     </Button>
                   )}
                 </Td>
-              </tr>
+              </Row>
             ))}
           </Table>
         </section>

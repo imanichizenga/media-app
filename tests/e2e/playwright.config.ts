@@ -15,6 +15,8 @@ const env = {
 };
 export default defineConfig({
   testDir: ".",
+  // The gallery is made on purpose (pnpm --filter @news/e2e screens), not on every run.
+  testMatch: process.env.SCREENS ? "screens.spec.ts" : "admin.spec.ts",
   workers: 1,
   timeout: 60_000,
   globalSetup: "./setup.ts",
@@ -34,13 +36,19 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
+      command: `${api} .venv/bin/uvicorn config.asgi_realtime:application --port 8002 --lifespan off --ws-max-size 4096 --log-level warning`,
+      env: { ...env, API_SURFACE: "realtime" },
+      url: "http://127.0.0.1:8002/health/live",
+      timeout: 60_000,
+    },
+    {
       command: `${api} .venv/bin/celery -A config worker -Q critical,default -c 2 -l WARNING`,
       env,
       timeout: 60_000,
     },
     {
       command:
-        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
+        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && SENTRY_DSN=http://key@127.0.0.1:5056/7 PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
       url: "http://localhost:3001/healthz",
       timeout: 60_000,
     },

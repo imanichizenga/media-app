@@ -18,6 +18,25 @@ jobs:
   ci:
     uses: ./.github/workflows/ci.yml
     permissions: { contents: read }
+  # A skipped job looks green in the run list. This one says out loud that nothing was deployed.
+  not-deployed:
+    needs: ci
+    if: vars.AWS_DEPLOY_READY != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    permissions: {}
+    env:
+      TARGET: ${{ inputs.environment || 'staging' }}
+    steps:
+      - run: |
+          echo "::warning title=Nothing was deployed::AWS_DEPLOY_READY is not 'true', so the deploy to $TARGET was skipped. Follow docs/runbooks/first-deploy.md."
+          {
+            echo "## ⚠️ Nothing was deployed"
+            echo
+            echo "CI passed, but the deploy to **$TARGET** was **skipped**: the repository variable \`AWS_DEPLOY_READY\` is not \`true\`."
+            echo
+            echo "To enable it, follow \`docs/runbooks/first-deploy.md\` (human action A1 in \`docs/runbooks/human-actions.md\`)."
+          } >> "$GITHUB_STEP_SUMMARY"
   deploy:
     needs: ci
     # Nothing to deploy to until infra/terraform/bootstrap has been applied and the variables set.

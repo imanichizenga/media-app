@@ -5,6 +5,7 @@ from newsplatform.audit import api as audit
 from newsplatform.common import health
 from newsplatform.integrations import api as integrations
 from newsplatform.rbac import api as rbac
+from newsplatform.realtime import api as realtime
 from newsplatform.site_config import api as site
 from newsplatform.staff_security import api as staff
 
@@ -29,6 +30,7 @@ urlpatterns = [
     path(API + "me/recovery-codes", staff.RecoveryCodesView.as_view()),
     re_path(r"^api/v1/me/factors/(?P<factor>totp|[0-9a-f-]{36})$", staff.FactorView.as_view()),
     path(API + "me/sessions/<uuid:session_id>", staff.MySessionView.as_view()),
+    path(API + "realtime/ticket", realtime.RealtimeTicketView.as_view()),
     path(API + "staff", staff.StaffListView.as_view()),
     path(API + "staff/invites", staff.StaffInviteView.as_view()),
     path(API + "staff/invites/<uuid:invite_id>", staff.StaffInviteItemView.as_view()),

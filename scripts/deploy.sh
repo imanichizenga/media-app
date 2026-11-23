@@ -4,7 +4,7 @@
 set -euo pipefail
 : "${ENVIRONMENT:?}" "${REGISTRY:?}" "${TAG:?}" "${SUBNETS:?}" "${SECURITY_GROUP:?}" "${API_HOST:?}" "${ADMIN_HOST:?}"
 prefix="news-$ENVIRONMENT"
-services=(worker-critical worker-default beat api-public api-admin admin-web)
+services=(worker-critical worker-default beat api-public api-admin ws-admin admin-web)
 network="awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SECURITY_GROUP],assignPublicIp=DISABLED}"
 
 # New revision of a family with every image of ours moved to $TAG; prints its ARN.
@@ -57,4 +57,8 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "https://$ADMIN_HOST/api/v1/auth/s
 [ "$code" = "401" ] || { echo "Admin API answered $code, expected 401"; false; }
 code=$(curl -s -o /dev/null -w '%{http_code}' "https://$API_HOST/api/v1/auth/session")
 [ "$code" = "404" ] || { echo "The public host exposes admin routes ($code)"; false; }
+# No session and no Origin: the socket service must answer, and must refuse.
+code=$(curl -s -o /dev/null -w '%{http_code}' --http1.1 -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' \
+  -H 'Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA==' "https://$ADMIN_HOST/ws/v1/staff")
+[ "$code" = "403" ] || { echo "The staff socket answered $code, expected 403"; false; }
 echo "Deployed $TAG to $ENVIRONMENT"
