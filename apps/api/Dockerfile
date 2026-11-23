@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
-FROM python:3.14-slim-trixie AS build
+FROM python:3.15-slim-trixie AS build
 COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /bin/uv
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/opt/venv UV_PYTHON_DOWNLOADS=never
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev --no-install-project
 
-FROM python:3.14-slim-trixie
+FROM python:3.15-slim-trixie
 RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/* \
   # The runtime installs nothing: pip and its vendored libraries are only attack surface.
   && rm -rf /usr/local/lib/python3.14/site-packages/pip* /usr/local/lib/python3.14/ensurepip /usr/local/bin/pip* \
