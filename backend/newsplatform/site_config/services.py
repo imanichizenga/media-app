@@ -12,7 +12,7 @@ from newsplatform.common import context
 from newsplatform.common.errors import Conflict, DomainError, NotFound
 from newsplatform.rbac import selectors as rbac
 from newsplatform.site_config.models import SettingsSection
-from newsplatform.site_config.schemas import SECTIONS, Brand, Identity, Localization, Section, Security
+from newsplatform.site_config.schemas import SECTIONS, App, Brand, Identity, Localization, Section, Security
 
 
 def get_section(key: str) -> tuple[Section, int]:
@@ -56,6 +56,64 @@ def public_config() -> dict[str, Any]:
         "theme": brand.theme_body(config.appearance),
         "localization": local.model_dump(),
     }
+
+
+_LINKS = ("about", "editorial", "corrections", "contact", "privacy", "terms")
+_FLAGS = ("shorts", "youtube", "offline_saving")
+
+
+def get_app() -> tuple[App, int]:
+    section, version = get_section("app")
+    assert isinstance(section, App)  # noqa: S101 (type narrowing)
+    return section, version
+
+
+def app_config() -> dict[str, Any]:
+    """Everything an installed app needs before it shows anything, in one answer."""
+    app, version = get_app()
+    site = public_config()
+    return {
+        "version": f"{site['version']}.{version}",
+        "media_base_url": site["media_base_url"],
+        "versions": {
+            "android": {
+                "minimum": app.min_android,
+                "recommended": app.recommended_android,
+                "store": app.store_android,
+            },
+            "ios": {"minimum": app.min_ios, "recommended": app.recommended_ios, "store": app.store_ios},
+        },
+        "maintenance": {"on": app.maintenance, "sw": app.maintenance_sw, "en": app.maintenance_en},
+        "flags": {n: getattr(app, n) for n in _FLAGS},
+        "links": {n: getattr(app, f"link_{n}") for n in _LINKS},
+        "pinning": {"enabled": app.pinning, "pins": app.pins if app.pinning else []},
+        "identity": site["identity"],
+        "theme": site["theme"],
+        "localization": site["localization"],
+    }
+
+
+def asset_links() -> list[dict[str, Any]]:
+    app = get_app()[0]
+    return [
+        {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+                "namespace": "android_app",
+                "package_name": package,
+                "sha256_cert_fingerprints": app.android_certificates,
+            },
+        }
+        for package in app.android_packages
+        if app.android_certificates
+    ]
+
+
+def apple_links() -> dict[str, Any]:
+    # Everything a reader opens; nothing of the website's own machinery.
+    no = ("/api/*", "/theme/*", "/media/*", "/_next/*", "/healthz", "/monitoring")
+    components = [*({"/": p, "exclude": True} for p in no), {"/": "/*"}]
+    return {"applinks": {"details": [{"appIDs": get_app()[0].ios_app_ids, "components": components}]}}
 
 
 def ip_allowed(ip: str | None, security: Security) -> bool:
@@ -106,6 +164,10 @@ def _write(*, actor: User, key: str, data: dict[str, Any], version: int, approve
         before={k: before.get(k) for k in changed},
         after={k: data[k] for k in changed},
     )
+    if key == "app":
+        from newsplatform.content.tasks import announce
+
+        transaction.on_commit(lambda: announce.delay(["app-config"], []), robust=True)
     if key == "security":
         from newsplatform.staff_security.tasks import sync_waf_allowlist
 
@@ -141,7 +203,42 @@ def update_section(
                 dedupe_key="security",
                 reason=reason,
             )
+    trust = isinstance(section, App) and _sensitive(section) != _sensitive(get_app()[0])
+    if trust and approvals.is_required("settings.app_trust"):
+        return approvals.request_approval(
+            actor=actor,
+            action="settings.app_trust",
+            summary="Change what installed apps trust: pins, links or the oldest version allowed",
+            payload={"data": clean, "version": version},
+            dedupe_key="app_trust",
+            reason=reason,
+        )
     return _write(actor=actor, key=key, data=clean, version=version, approved_by=None)
+
+
+def _sensitive(app: App) -> dict[str, Any]:
+    """A mistake here locks every phone out, or lets another app open our links."""
+    names = (
+        "pinning",
+        "pins",
+        "android_packages",
+        "android_certificates",
+        "ios_app_ids",
+        "min_android",
+        "min_ios",
+    )
+    return {n: getattr(app, n) for n in names}
+
+
+@approvals.register("settings.app_trust", "settings.manage")
+def _execute_app(payload: dict[str, Any], requester: User, approver: User) -> None:
+    _write(
+        actor=requester,
+        key="app",
+        data=_validate("app", payload["data"]).model_dump(),
+        version=payload["version"],
+        approved_by=approver,
+    )
 
 
 @approvals.register("settings.security", "settings.security")

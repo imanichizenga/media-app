@@ -48,15 +48,13 @@ Please follow the [installation procedure](#installation--usage) and then run th
 import 'package:news_api_client/news_api_client.dart';
 
 
-final api = NewsApiClient().getContentApi();
-final String slug = slug_example; // String | 
-final String locale = locale_example; // String | 
+final api = NewsApiClient().getAppConfigApi();
 
 try {
-    final response = await api.article(slug, locale);
+    final response = await api.appConfig();
     print(response);
 } on DioException catch (e) {
-    print("Exception when calling ContentApi->article: $e\n");
+    print("Exception when calling AppConfigApi->appConfig: $e\n");
 }
 
 ```
@@ -67,6 +65,7 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+[*AppConfigApi*](doc/AppConfigApi.md) | [**appConfig**](doc/AppConfigApi.md#appconfig) | **GET** /api/v1/app-config | 
 [*ContentApi*](doc/ContentApi.md) | [**article**](doc/ContentApi.md#article) | **GET** /api/v1/content/articles/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**author**](doc/ContentApi.md#author) | **GET** /api/v1/content/authors/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**byType**](doc/ContentApi.md#bytype) | **GET** /api/v1/content/types/{kind} | 
@@ -84,6 +83,14 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [AppConfig](doc/AppConfig.md)
+ - [AppFlags](doc/AppFlags.md)
+ - [AppLinks](doc/AppLinks.md)
+ - [AppLocalization](doc/AppLocalization.md)
+ - [AppMaintenance](doc/AppMaintenance.md)
+ - [AppPinning](doc/AppPinning.md)
+ - [AppPlatformVersions](doc/AppPlatformVersions.md)
+ - [AppVersions](doc/AppVersions.md)
  - [Article](doc/Article.md)
  - [AuthorPage](doc/AuthorPage.md)
  - [Card](doc/Card.md)

@@ -5,7 +5,7 @@ from newsplatform.common import health
 from newsplatform.content import public_api as content
 from newsplatform.media import dev
 from newsplatform.site_config import brand_api as brand
-from newsplatform.site_config.api import PublicConfigView
+from newsplatform.site_config.api import AppConfigView, PublicConfigView, well_known
 
 API = "api/v1/"
 CONTENT = API + "content/"  # one prefix, so one CDN purge covers it
@@ -20,6 +20,8 @@ urlpatterns = [
     path("health/live", health.live),
     path("health/ready", health.ready),
     path(API + "site-config", PublicConfigView.as_view()),
+    path(API + "app-config", AppConfigView.as_view()),
+    re_path(r"^\.well-known/(?P<name>assetlinks\.json|apple-app-site-association)$", well_known),
     path(CONTENT + "home", content.HomeView.as_view()),
     path(CONTENT + "latest", content.LatestView.as_view()),
     path(CONTENT + "types/<slug:kind>", content.TypeView.as_view()),

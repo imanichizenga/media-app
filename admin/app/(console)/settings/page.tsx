@@ -26,6 +26,31 @@ const SECTIONS: Record<string, Spec[]> = {
     { name: "default_locale", kind: "select", options: ["sw", "en"] },
     { name: "timezone", kind: "text" },
   ],
+  app: [
+    { name: "min_android", kind: "text" },
+    { name: "recommended_android", kind: "text" },
+    { name: "store_android", kind: "text" },
+    { name: "min_ios", kind: "text" },
+    { name: "recommended_ios", kind: "text" },
+    { name: "store_ios", kind: "text" },
+    { name: "maintenance", kind: "check" },
+    { name: "maintenance_sw", kind: "text" },
+    { name: "maintenance_en", kind: "text" },
+    { name: "shorts", kind: "check" },
+    { name: "youtube", kind: "check" },
+    { name: "offline_saving", kind: "check" },
+    { name: "link_about", kind: "text" },
+    { name: "link_editorial", kind: "text" },
+    { name: "link_corrections", kind: "text" },
+    { name: "link_contact", kind: "text" },
+    { name: "link_privacy", kind: "text" },
+    { name: "link_terms", kind: "text" },
+    { name: "pinning", kind: "check" },
+    { name: "pins", kind: "list" },
+    { name: "android_packages", kind: "list" },
+    { name: "android_certificates", kind: "list" },
+    { name: "ios_app_ids", kind: "list" },
+  ],
   security: [
     { name: "idle_timeout_minutes", kind: "number" },
     { name: "absolute_timeout_hours", kind: "number" },
@@ -124,7 +149,12 @@ function Section({ name, specs }: { name: string; specs: Spec[] }) {
               );
             if (s.kind === "list")
               return (
-                <Field key={s.name} label={label} help={t("cidrHelp")} error={fields[s.name]}>
+                <Field
+                  key={s.name}
+                  label={label}
+                  help={s.name === "ip_allowlist" ? t("cidrHelp") : t("listHelp")}
+                  error={fields[s.name]}
+                >
                   {(p) => (
                     <textarea
                       name={s.name}
