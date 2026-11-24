@@ -103,8 +103,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }
+      - id: flutter
+        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with: { flutter-version: "3.50.1", channel: stable }
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
       - run: flutter pub get && dart analyze --fatal-infos && flutter test
         working-directory: support/packages/design-tokens/dart
       - name: Content models are current and pass every fixture
@@ -121,6 +123,124 @@ jobs:
           support/scripts/generate-dart-client.sh
           git diff --exit-code -- support/generated/api-client-dart/lib
           cd support/generated/api-client-dart && dart analyze
+  mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    defaults: { run: { working-directory: mobile } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with: { distribution: temurin, java-version: "21" }
+      - id: flutter
+        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
+      - name: Generated code is current
+        run: |
+          node ../support/packages/i18n/generate.mjs
+          flutter gen-l10n
+          dart run build_runner build
+          dart format lib > /dev/null
+          git diff --exit-code -- lib
+      - run: dart format --output=none --set-exit-if-changed lib test integration_test
+      - run: dart analyze --fatal-infos
+      - name: Unit, widget and golden tests
+        run: flutter test
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with: { name: golden-failures, path: "mobile/test/**/failures", retention-days: 7 }
+      - name: App bundle and an APK per processor
+        run: |
+          flutter build appbundle --release --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
+          flutter build apk --release --flavor prod --split-per-abi --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
+      - name: Under 30 MB each
+        run: |
+          for f in build/app/outputs/flutter-apk/app-*-prod-release.apk; do
+            size=$(stat -c %s "$f"); echo "$(basename "$f") $((size / 1048576)) MB" | tee -a "$GITHUB_STEP_SUMMARY"
+            test "$size" -lt $((30 * 1048576))
+          done
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          {
+            name: android,
+            path: "mobile/build/app/outputs/flutter-apk/*-prod-release.apk",
+            retention-days: 7,
+          }
+  mobile-android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    services: *services
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with: { version: "0.13.9" }
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with: { distribution: temurin, java-version: "21" }
+      - id: flutter
+        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
+      - name: The API, filled by the demo seed
+        working-directory: backend
+        env:
+          {
+            STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
+            LOCAL_TRANSCODER: "1",
+            LOCAL_SCANNER: "eicar",
+            AWS_ACCESS_KEY_ID: test,
+            AWS_SECRET_ACCESS_KEY: test,
+          }
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          (cd .. && docker compose --profile storage up -d --wait seaweedfs)
+          uv sync --locked
+          uv run python manage.py migrate -v0
+          uv run python manage.py seed_demo --posts=60 --images=8 --videos=2
+          uv run python manage.py shell -v0 -c "
+          from newsplatform.site_config.models import SettingsSection as S
+          S.objects.update_or_create(key='app', defaults={'data': {'min_android': '0.1.0', 'store_android': 'https://example.com'}})
+          b = S.objects.get(key='brand'); b.data['appearance'] = {'theme': 'bold'}; b.save()"
+          API_SURFACE=public nohup uv run uvicorn config.asgi:application --port 8010 --log-level warning > /tmp/api.log 2>&1 &
+          for i in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:8010/api/v1/app-config | head -c 200
+      - name: Virtualisation for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          working-directory: mobile
+          script: flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json --timeout 8m
+  mobile-ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults: { run: { working-directory: mobile } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - id: flutter
+        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
+      - run: flutter pub get --enforce-lockfile
+      - name: A release that only lacks a signature
+        run: |
+          flutter build ios --release --no-codesign --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
+          du -sh build/ios/iphoneos/*.app | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: On a simulator, against the recorded API
+        run: |
+          node ../support/tests/replay.mjs 8010 &
+          device=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          xcrun simctl boot "$device" && xcrun simctl bootstatus "$device" -b
+          flutter test integration_test -d "$device" --flavor dev --dart-define-from-file=config/dev-ios.json --timeout 10m
   infra:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -185,7 +305,7 @@ jobs:
         with: { scan-type: config, scan-ref: support/infra, severity: "HIGH,CRITICAL", exit-code: "1" }
   required:
     if: always()
-    needs: [api, web, e2e, dart, infra, images, security]
+    needs: [api, web, e2e, dart, mobile, mobile-android, mobile-ios, infra, images, security]
     runs-on: ubuntu-24.04
     steps:
       - run: test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

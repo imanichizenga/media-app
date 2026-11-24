@@ -70,8 +70,6 @@ void main() {
             t,
             dpr: 1,
             photographs: false,
-            dpr: 1,
-            photographs: false,
             scheme: scheme,
             locale: locale,
             api: FakeApi(offline: true),

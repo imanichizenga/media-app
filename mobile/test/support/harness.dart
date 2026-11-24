@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -113,7 +114,7 @@ class Phone {
   }
 
   Future<void> push(String path, {Object? extra}) async {
-    container.read(routerProvider).push<void>(path, extra: extra);
+    unawaited(container.read(routerProvider).push<void>(path, extra: extra));
     await settle();
   }
 }

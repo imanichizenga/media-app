@@ -31,8 +31,10 @@ class FakeVideo extends VideoPlayerPlatform {
     alive.add(id);
     created.add(options.dataSource.uri ?? '');
     if (alive.length > most) most = alive.length;
+    // ignore: close_sinks, closed in dispose
     _events[id] = StreamController<VideoEvent>.broadcast();
     scheduleMicrotask(() {
+      // ignore: close_sinks, closed in dispose
       final events = _events[id];
       if (events == null || events.isClosed) return;
       Timer(Duration.zero, () {

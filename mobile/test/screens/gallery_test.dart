@@ -13,7 +13,7 @@ import 'package:news_app/features/article/photo_viewer.dart';
 import '../support/harness.dart';
 
 /// Draws the gallery into build/gallery: `flutter test --run-skipped --tags look test/screens/gallery_test.dart`.
-/// Names: <theme>--<scheme>--<locale>--<screen>.png
+/// Names: `theme--scheme--locale--screen.png`
 void main() {
   setUpAll(loadFonts);
   final out = Directory('build/gallery')..createSync(recursive: true);
