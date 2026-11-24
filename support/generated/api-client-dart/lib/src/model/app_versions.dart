@@ -19,8 +19,16 @@ part 'app_versions.g.dart';
 class AppVersions {
   /// Returns a new [AppVersions] instance.
   AppVersions({
+    required this.android,
     required this.ios,
   });
+
+  @JsonKey(
+    name: r'android',
+    required: true,
+    includeIfNull: false,
+  )
+  final AppPlatformVersions android;
 
   @JsonKey(
     name: r'ios',
@@ -31,10 +39,11 @@ class AppVersions {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is AppVersions && other.ios == ios;
+      identical(this, other) ||
+      other is AppVersions && other.android == android && other.ios == ios;
 
   @override
-  int get hashCode => ios.hashCode;
+  int get hashCode => android.hashCode + ios.hashCode;
 
   factory AppVersions.fromJson(Map<String, dynamic> json) =>
       _$AppVersionsFromJson(json);

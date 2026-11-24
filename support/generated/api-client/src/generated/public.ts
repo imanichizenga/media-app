@@ -289,7 +289,7 @@ export interface components {
             store: string;
         };
         AppVersions: {
-            /** Android */
+            android: components["schemas"]["AppPlatformVersions"];
             ios: components["schemas"]["AppPlatformVersions"];
         };
         /** @description `body` is a content document (support/packages/content-schema). `assets` holds its files, by id. */

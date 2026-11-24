@@ -800,16 +800,15 @@
             "AppVersions": {
                 "type": "object",
                 "properties": {
+                    "android": {
+                        "$ref": "#/components/schemas/AppPlatformVersions"
+                    },
                     "ios": {
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/AppPlatformVersions"
-                            }
-                        ],
-                        "title": "Android"
+                        "$ref": "#/components/schemas/AppPlatformVersions"
                     }
                 },
                 "required": [
+                    "android",
                     "ios"
                 ]
             },

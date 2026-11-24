@@ -42,14 +42,10 @@ class PublicConfigView(APIView):
         )
 
 
-def _platform() -> Any:
-    """A new one each time: a serializer belongs to one field only."""
-    return schema(
-        "AppPlatformVersions",
-        minimum=serializers.CharField(allow_blank=True),
-        recommended=serializers.CharField(allow_blank=True),
-        store=serializers.CharField(allow_blank=True),
-    )
+class AppPlatformVersionsSerializer(serializers.Serializer[Any]):
+    minimum = serializers.CharField(allow_blank=True)
+    recommended = serializers.CharField(allow_blank=True)
+    store = serializers.CharField(allow_blank=True)
 
 
 class AppConfigView(APIView):
@@ -65,7 +61,9 @@ class AppConfigView(APIView):
             "AppConfig",
             version=serializers.CharField(),
             media_base_url=serializers.CharField(allow_blank=True),
-            versions=schema("AppVersions", android=_platform(), ios=_platform()),
+            versions=schema(
+                "AppVersions", android=AppPlatformVersionsSerializer(), ios=AppPlatformVersionsSerializer()
+            ),
             maintenance=schema(
                 "AppMaintenance",
                 on=serializers.BooleanField(),

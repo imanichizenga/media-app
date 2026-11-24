@@ -7,6 +7,8 @@ part of 'app_versions.dart';
 // **************************************************************************
 
 abstract class _$AppVersionsCWProxy {
+  AppVersions android(AppPlatformVersions android);
+
   AppVersions ios(AppPlatformVersions ios);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppVersions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -16,6 +18,7 @@ abstract class _$AppVersionsCWProxy {
   /// AppVersions(...).copyWith(id: 12, name: "My name")
   /// ````
   AppVersions call({
+    AppPlatformVersions android,
     AppPlatformVersions ios,
   });
 }
@@ -25,6 +28,9 @@ class _$AppVersionsCWProxyImpl implements _$AppVersionsCWProxy {
   const _$AppVersionsCWProxyImpl(this._value);
 
   final AppVersions _value;
+
+  @override
+  AppVersions android(AppPlatformVersions android) => this(android: android);
 
   @override
   AppVersions ios(AppPlatformVersions ios) => this(ios: ios);
@@ -38,9 +44,14 @@ class _$AppVersionsCWProxyImpl implements _$AppVersionsCWProxy {
   /// AppVersions(...).copyWith(id: 12, name: "My name")
   /// ````
   AppVersions call({
+    Object? android = const $CopyWithPlaceholder(),
     Object? ios = const $CopyWithPlaceholder(),
   }) {
     return AppVersions(
+      android: android == const $CopyWithPlaceholder()
+          ? _value.android
+          // ignore: cast_nullable_to_non_nullable
+          : android as AppPlatformVersions,
       ios: ios == const $CopyWithPlaceholder()
           ? _value.ios
           // ignore: cast_nullable_to_non_nullable
@@ -65,9 +76,11 @@ AppVersions _$AppVersionsFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         $checkKeys(
           json,
-          requiredKeys: const ['ios'],
+          requiredKeys: const ['android', 'ios'],
         );
         final val = AppVersions(
+          android: $checkedConvert('android',
+              (v) => AppPlatformVersions.fromJson(v as Map<String, dynamic>)),
           ios: $checkedConvert('ios',
               (v) => AppPlatformVersions.fromJson(v as Map<String, dynamic>)),
         );
@@ -77,5 +90,6 @@ AppVersions _$AppVersionsFromJson(Map<String, dynamic> json) => $checkedCreate(
 
 Map<String, dynamic> _$AppVersionsToJson(AppVersions instance) =>
     <String, dynamic>{
+      'android': instance.android.toJson(),
       'ios': instance.ios.toJson(),
     };
