@@ -60,24 +60,25 @@ def _process(asset: Asset) -> None:
     store = storage()
     if asset.job_id:
         return _follow(store, asset)
-    with tempfile.TemporaryDirectory() as tmp:
-        source = Path(tmp) / "source"
-        store.download(asset.original_key, source)
-        digest, head = hashlib.sha256(), b""
-        with source.open("rb") as f:
-            while chunk := f.read(1 << 20):
-                head = head or chunk[:64]
-                digest.update(chunk)
-        if not scanner().is_clean(store, asset.original_key, source):
-            services.failed(asset.pk, "malware", rejected=True)
-            store.delete([asset.original_key])
-            return None
-        mime = sniff(head)
-        Asset.objects.filter(pk=asset.pk).update(
-            status=AssetStatus.PROCESSING, sha256=digest.hexdigest(), mime=mime
-        )
-        if asset.kind == Kind.IMAGE:
-            return _image(store, asset, source, Path(tmp))
+    guard = scanner()
+    # A verdict that is still pending costs one small request, not the whole file again.
+    if guard.remote and not guard.is_clean(store, asset.original_key, None):
+        return _infected(store, asset)
+    mime = sniff(store.head(asset.original_key))
+    if asset.kind == Kind.VIDEO and guard.remote:
+        # The transcoder reads storage itself: gigabytes never pass through the worker.
+        Asset.objects.filter(pk=asset.pk).update(status=AssetStatus.PROCESSING, mime=mime)
+    else:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source"
+            store.download(asset.original_key, source)
+            if not guard.remote and not guard.is_clean(store, asset.original_key, source):
+                return _infected(store, asset)
+            with source.open("rb") as f:
+                digest = hashlib.file_digest(f, "sha256").hexdigest()
+            Asset.objects.filter(pk=asset.pk).update(status=AssetStatus.PROCESSING, sha256=digest, mime=mime)
+            if asset.kind == Kind.IMAGE:
+                return _image(store, asset, source, Path(tmp))
     if mime not in VIDEO_TYPES:
         services.failed(asset.pk, "unsupported_type", rejected=True)
         return None
@@ -85,6 +86,11 @@ def _process(asset: Asset) -> None:
     Asset.objects.filter(pk=asset.pk).update(job_id=job)
     asset.job_id = job
     return _follow(store, asset)
+
+
+def _infected(store: Storage, asset: Asset) -> None:
+    services.failed(asset.pk, "malware", rejected=True)
+    store.delete([asset.original_key])
 
 
 def _image(store: Storage, asset: Asset, source: Path, tmp: Path) -> None:

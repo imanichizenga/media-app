@@ -350,6 +350,64 @@ def test_guardduty_waits_for_a_verdict():
         scanning.GuardDuty().is_clean(Fake(), "k", Path())
 
 
+class RemoteScanner:
+    remote = True
+
+    def __init__(self, verdict: bool | None):
+        self.verdict = verdict
+
+    def is_clean(self, storage, key, path):
+        assert path is None
+        if self.verdict is None:
+            raise scanning.NotReady
+        return self.verdict
+
+
+def _uploaded(journalist, kind="image", data=b"\xff\xd8\xff" + b"0" * 1000):
+    asset = upload(journalist, data, kind=kind)
+    services.complete_upload(actor=journalist, asset_id=asset.pk)
+    asset.refresh_from_db()
+    return asset
+
+
+@pytest.mark.parametrize("verdict", [None, False])
+def test_an_original_is_never_opened_before_a_clean_remote_verdict(journalist, store, monkeypatch, verdict):
+    asset = _uploaded(journalist)
+    monkeypatch.setattr(tasks, "scanner", lambda: RemoteScanner(verdict))
+    for name in ("download", "head", "read"):
+        monkeypatch.setattr(type(store), name, lambda *a, **k: pytest.fail("read before the verdict"))
+    if verdict is None:
+        with pytest.raises(scanning.NotReady):
+            tasks._process(asset)
+    else:
+        tasks._process(asset)
+        asset.refresh_from_db()
+        assert (asset.status, asset.error_code) == (AssetStatus.REJECTED, "malware")
+        assert store.keys("originals/") == []
+
+
+def test_video_does_not_pass_through_the_worker_when_the_scan_is_remote(journalist, store, monkeypatch):
+    asset = _uploaded(journalist, "video", b"\0\0\0\x18ftypmp42" + b"0" * 1000)
+    started = []
+
+    class Transcoder:
+        def start(self, storage, asset, prefix):
+            started.append(prefix)
+            return "job-1"
+
+        def status(self, job_id):
+            return "running", ""
+
+    monkeypatch.setattr(tasks, "scanner", lambda: RemoteScanner(True))
+    monkeypatch.setattr(transcoding, "transcoder", Transcoder)
+    monkeypatch.setattr(type(store), "download", lambda *a, **k: pytest.fail("downloaded"))
+    with pytest.raises(scanning.NotReady):
+        tasks._process(asset)
+    asset.refresh_from_db()
+    assert (asset.status, asset.mime, asset.job_id) == (AssetStatus.PROCESSING, "video/mp4", "job-1")
+    assert started == [transcoding.prefix_of(asset)]
+
+
 def clamd(reply: bytes):
     """A tiny clamd: reads INSTREAM frames and answers."""
     server = socket.create_server(("127.0.0.1", 0))

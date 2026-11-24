@@ -8,6 +8,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/admin/package.json apps/admin/
 COPY packages/design-tokens/package.json packages/design-tokens/
 COPY packages/api-client/package.json packages/api-client/
+COPY packages/content-schema/package.json packages/content-schema/
+COPY packages/ui/package.json packages/ui/
 RUN pnpm install --frozen-lockfile --filter @news/admin...
 COPY packages packages
 COPY apps/admin apps/admin

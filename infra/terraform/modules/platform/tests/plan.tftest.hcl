@@ -35,6 +35,7 @@ variables {
     ws-admin        = { cpu = 256, memory = 1024, min = 2, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 3, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 3, max = 10 }
+    worker-media    = { cpu = 2048, memory = 4096, min = 2, max = 20 }
     beat            = { cpu = 256, memory = 512, min = 1, max = 1 }
   }
 }
@@ -128,5 +129,31 @@ run "sockets_are_separate" {
   assert {
     condition     = !contains(keys(aws_appautoscaling_policy.requests), "ws-admin")
     error_message = "Request counts do not describe sockets."
+  }
+}
+run "uploads_are_scanned_before_anything_opens_them" {
+  command = plan
+  assert {
+    condition     = aws_guardduty_malware_protection_plan.media.actions[0].tagging[0].status == "ENABLED" && contains(one(one(aws_guardduty_malware_protection_plan.media.protected_resource).s3_bucket).object_prefixes, "originals/")
+    error_message = "Every original is scanned and tagged with its verdict."
+  }
+  assert {
+    condition     = toset([for s in data.aws_iam_policy_document.bucket["media"].statement : s.sid if s.effect == "Deny"]) == toset(["TlsOnly", "NoReadUnlessClean", "OnlyTheScannerGivesVerdicts"])
+    error_message = "The bucket itself refuses unscanned originals and forged verdicts."
+  }
+  assert {
+    condition     = one(aws_s3_bucket_cors_configuration.media.cors_rule).allowed_origins == toset(["https://admin.example.com"]) && one(aws_s3_bucket_cors_configuration.media.cors_rule).allowed_methods == toset(["PUT"])
+    error_message = "Only the console may upload from a browser, and only with PUT."
+  }
+}
+run "the_media_worker_is_confined" {
+  command = plan
+  assert {
+    condition     = local.definitions["worker-media"].role == "media" && !anytrue([for a in flatten([for s in local.task_policies.media : s.Action]) : startswith(a, "ses:") || a == "kms:GenerateDataKey"])
+    error_message = "The process that opens uploaded files can neither send mail nor encrypt secrets."
+  }
+  assert {
+    condition     = !anytrue([for a in flatten([for s in local.task_policies.admin : s.Action]) : startswith(a, "s3:Get") || startswith(a, "s3:Delete")])
+    error_message = "The console signs uploads. It does not read or delete media."
   }
 }

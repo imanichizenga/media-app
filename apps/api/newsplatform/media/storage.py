@@ -114,6 +114,12 @@ class Storage:
             body: bytes = self.s3.get_object(Bucket=self.bucket, Key=key)["Body"].read()
         return body
 
+    def head(self, key: str, size: int = 64) -> bytes:
+        with guarded_call("aws_s3", "get_head"):
+            got = self.s3.get_object(Bucket=self.bucket, Key=key, Range=f"bytes=0-{size - 1}")
+            body: bytes = got["Body"].read()
+        return body
+
     def tags(self, key: str) -> dict[str, str]:
         with guarded_call("aws_s3", "get_tags"):
             out = self.s3.get_object_tagging(Bucket=self.bucket, Key=key)

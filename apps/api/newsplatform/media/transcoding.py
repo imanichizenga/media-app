@@ -385,7 +385,7 @@ class MediaConvertProvider(Provider[MediaConvertConfig]):
             from newsplatform.media.storage import Storage as S
 
             storage, token = S(client(config, "s3"), config.bucket), uuid.uuid4().hex
-            source, prefix = f"originals/_probe/{token}", f"media/_probe/{token}/"
+            source, prefix = f"probe/{token}", f"media/_probe/{token}/"
             api = client(config, "mediaconvert")
             storage.upload(SAMPLE, source, "video/mp4")
             try:

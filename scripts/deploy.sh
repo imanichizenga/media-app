@@ -4,7 +4,7 @@
 set -euo pipefail
 : "${ENVIRONMENT:?}" "${REGISTRY:?}" "${TAG:?}" "${SUBNETS:?}" "${SECURITY_GROUP:?}" "${API_HOST:?}" "${ADMIN_HOST:?}"
 prefix="news-$ENVIRONMENT"
-services=(worker-critical worker-default beat api-public api-admin ws-admin admin-web)
+services=(worker-critical worker-default worker-media beat api-public api-admin ws-admin admin-web)
 network="awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SECURITY_GROUP],assignPublicIp=DISABLED}"
 
 # New revision of a family with every image of ours moved to $TAG; prints its ARN.

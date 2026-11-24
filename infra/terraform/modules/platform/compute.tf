@@ -77,7 +77,7 @@ resource "aws_iam_role_policy" "execution" {
   })
 }
 resource "aws_iam_role" "task" {
-  for_each           = toset(["public", "admin", "realtime", "worker", "web", "migrate"])
+  for_each           = toset(["public", "admin", "realtime", "worker", "media", "web", "migrate"])
   name               = "${local.prefix}-task-${each.key}"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 }
@@ -85,9 +85,23 @@ locals {
   policy_kms_decrypt = { Effect = "Allow", Action = ["kms:Decrypt"], Resource = aws_kms_key.app.arn }
   policy_kms_encrypt = { Effect = "Allow", Action = ["kms:GenerateDataKey"], Resource = aws_kms_key.app.arn }
   policy_media = [
-    { Effect = "Allow", Action = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"], Resource = "${aws_s3_bucket.this["media"].arn}/*" },
+    { Effect = "Allow", Action = ["s3:PutObject", "s3:GetObject", "s3:GetObjectTagging", "s3:DeleteObject", "s3:AbortMultipartUpload"], Resource = "${aws_s3_bucket.this["media"].arn}/*" },
     { Effect = "Allow", Action = ["s3:GetBucketPublicAccessBlock", "s3:ListBucket"], Resource = aws_s3_bucket.this["media"].arn },
     { Effect = "Allow", Action = ["cloudfront:GetDistributionConfig"], Resource = aws_cloudfront_distribution.media.arn },
+    { Effect = "Allow", Action = ["mediaconvert:CreateJob", "mediaconvert:GetJob", "mediaconvert:GetQueue"], Resource = "arn:aws:mediaconvert:${local.region}:${local.account}:*" },
+    { Effect = "Allow", Action = ["mediaconvert:Probe"], Resource = "*" }, # it has no resource type
+    { Effect = "Allow", Action = ["iam:GetRole"], Resource = aws_iam_role.mediaconvert.arn },
+    {
+      Effect    = "Allow", Action = ["iam:PassRole"], Resource = aws_iam_role.mediaconvert.arn
+      Condition = { StringEquals = { "iam:PassedToService" = "mediaconvert.amazonaws.com" } }
+    },
+  ]
+  # The console signs uploads and lists what arrived. It reads nothing and deletes nothing.
+  policy_upload = [
+    { Effect = "Allow", Action = ["s3:PutObject", "s3:AbortMultipartUpload", "s3:ListMultipartUploadParts"], Resource = "${aws_s3_bucket.this["media"].arn}/originals/*" },
+  ]
+  policy_purge = [
+    { Effect = "Allow", Action = ["cloudfront:CreateInvalidation"], Resource = [for d in aws_cloudfront_distribution.app : d.arn] },
   ]
   policy_audit = [
     # No delete and no retention bypass: the anchor can only ever be added to. DeleteObjectVersion stays denied.
@@ -102,8 +116,10 @@ locals {
   }]
   task_policies = {
     public = [local.policy_kms_decrypt]
-    admin  = concat([local.policy_kms_decrypt, local.policy_kms_encrypt], local.policy_mail)
-    worker = concat([local.policy_kms_decrypt], local.policy_media, local.policy_audit, local.policy_mail, local.policy_waf, local.policy_metrics)
+    admin  = concat([local.policy_kms_decrypt, local.policy_kms_encrypt], local.policy_mail, local.policy_upload)
+    worker = concat([local.policy_kms_decrypt], local.policy_media, local.policy_purge, local.policy_audit, local.policy_mail, local.policy_waf, local.policy_metrics)
+    # Opens files strangers may have made, so it can reach little else. Metrics: it also measures queues.
+    media = concat([local.policy_kms_decrypt], local.policy_media, local.policy_metrics)
   }
 }
 resource "aws_iam_role_policy" "task" {
@@ -134,13 +150,14 @@ locals {
   sockets = ["uvicorn", "config.asgi_realtime:application", "--host", "0.0.0.0", "--port", "8000", "--lifespan", "off", "--ws-max-size", "4096", "--ws-ping-interval", "20", "--no-server-header", "--timeout-graceful-shutdown", "30"]
   celery  = ["celery", "-A", "config"]
   # "ops" carries the queue measurement itself. Both services consume it, so a backlog cannot hide itself (ADR-0021).
-  worker_queues = { worker-critical = ["critical"], worker-default = ["default", "sync"] }
+  worker_queues = { worker-critical = ["critical"], worker-default = ["default", "sync"], worker-media = ["media"] }
   definitions = {
     api-public      = { image = "api", role = "public", port = 8000, env = { API_SURFACE = "public" }, command = local.uvicorn, tg = "api-public" }
     api-admin       = { image = "api", role = "admin", port = 8000, env = { API_SURFACE = "admin" }, command = local.uvicorn, tg = "api-admin" }
     ws-admin        = { image = "api", role = "realtime", port = 8000, env = { API_SURFACE = "realtime" }, command = local.sockets, tg = "ws-admin" }
     worker-critical = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-critical"])), "-c", "4", "-l", "INFO"]), tg = null }
     worker-default  = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-default"])), "-c", "4", "-l", "INFO"]), tg = null }
+    worker-media    = { image = "api", role = "media", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-media"])), "-c", "2", "-l", "INFO"]), tg = null }
     beat            = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["beat", "-l", "INFO", "-s", "/tmp/celerybeat"]), tg = null }
     admin-web       = { image = "admin", role = "web", port = 3001, env = {}, command = ["apps/admin/server.js"], tg = "admin-web" }
     migrate         = { image = "api", role = "migrate", port = 0, env = { APP_DB_USER = "news_app", DATABASE_SSLMODE = "verify-full" }, command = ["python", "manage.py", "release"], tg = null }
@@ -174,7 +191,9 @@ resource "aws_ecs_task_definition" "this" {
       mountPoints            = [{ sourceVolume = "tmp", containerPath = "/tmp" }]
       portMappings           = each.value.port > 0 ? [{ containerPort = each.value.port, protocol = "tcp" }] : []
       environment = each.value.image == "admin" ? [
-        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }, { name = "SENTRY_DSN", value = var.sentry_browser_dsn }
+        { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }, { name = "SENTRY_DSN", value = var.sentry_browser_dsn },
+        { name = "MEDIA_ORIGIN", value = "https://${var.media_host}" },
+        { name = "UPLOAD_ORIGIN", value = "https://${aws_s3_bucket.this["media"].bucket_regional_domain_name}" },
       ] : [for k, v in merge(local.bootstrap_env, each.value.env) : { name = k, value = v }]
       secrets = each.value.image == "admin" ? [] : each.key == "migrate" ? concat(
         [for n in ["DJANGO_SECRET_KEY", "REDIS_URL", "BROKER_URL", "APP_DB_PASSWORD"] : { name = n, valueFrom = aws_secretsmanager_secret.this[n].arn }],

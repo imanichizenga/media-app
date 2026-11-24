@@ -19,13 +19,18 @@ class NotReady(Exception):
 
 
 class Scanner(Protocol):
-    def is_clean(self, storage: Storage, key: str, path: Path) -> bool: ...
+    remote: bool  # the verdict comes without us opening the file
+
+    def is_clean(self, storage: Storage, key: str, path: Path | None) -> bool: ...
 
 
 class GuardDuty:
-    """GuardDuty Malware Protection for S3 tags every new object with its verdict."""
+    """GuardDuty Malware Protection for S3 tags every new object with its verdict. The bucket
+    refuses to hand out an original without a clean one, so this comes before anything reads it."""
 
-    def is_clean(self, storage: Storage, key: str, path: Path) -> bool:
+    remote = True
+
+    def is_clean(self, storage: Storage, key: str, path: Path | None) -> bool:
         verdict = storage.tags(key).get("GuardDutyMalwareScanStatus")
         if verdict is None:
             raise NotReady
@@ -34,10 +39,14 @@ class GuardDuty:
 
 
 class ClamAv:
+    remote = False
+
     def __init__(self, host: str, port: int) -> None:
         self.address = (host, port)
 
-    def is_clean(self, storage: Storage, key: str, path: Path) -> bool:
+    def is_clean(self, storage: Storage, key: str, path: Path | None) -> bool:
+        if path is None:
+            raise ValueError("clamd needs the file")
         with (
             guarded_call("clamav", "instream"),
             socket.create_connection(self.address, timeout=10) as conn,
@@ -64,7 +73,11 @@ class ClamAv:
 class EicarOnly:
     """Tests and local development: knows one signature. Refused by a system check when deployed."""
 
-    def is_clean(self, storage: Storage, key: str, path: Path) -> bool:
+    remote = False
+
+    def is_clean(self, storage: Storage, key: str, path: Path | None) -> bool:
+        if path is None:
+            raise ValueError("a file is needed")
         with path.open("rb") as f:
             tail = b""
             while chunk := f.read(1 << 20):

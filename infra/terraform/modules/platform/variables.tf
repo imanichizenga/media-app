@@ -56,7 +56,7 @@ variable "services" {
 variable "backlog_per_task" {
   description = "Waiting Celery messages each worker task may have before another is started."
   type        = map(number)
-  default     = { worker-critical = 10, worker-default = 100 }
+  default     = { worker-critical = 10, worker-default = 100, worker-media = 4 }
 }
 variable "sentry_browser_dsn" {
   description = "Project that receives the admin console's browser errors. Empty turns reporting off."
