@@ -100,6 +100,10 @@ class Storage:
                 ExtraArgs={"ContentType": content_type, "CacheControl": IMMUTABLE},
             )
 
+    def put(self, key: str, data: bytes) -> None:
+        with guarded_call("aws_s3", "put"):
+            self.s3.put_object(Bucket=self.bucket, Key=key, Body=data, ContentType="application/octet-stream")
+
     def read(self, key: str) -> bytes:
         with guarded_call("aws_s3", "get"):
             body: bytes = self.s3.get_object(Bucket=self.bucket, Key=key)["Body"].read()
@@ -130,3 +134,11 @@ def storage() -> Storage:
     if config is None:
         raise ServiceUnavailable("Storage is not configured.", code="storage_not_configured")
     return Storage(client(config, "s3"), config.bucket)
+
+
+def base_url() -> str:
+    """Where delivered media lives. Empty means this origin, which only local development serves."""
+    if settings.STORAGE_ENDPOINT_URL:
+        return ""
+    config = get_active("aws_s3", S3Config)
+    return f"https://{config.cdn_domain}" if config else ""

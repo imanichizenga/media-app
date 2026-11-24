@@ -50,5 +50,6 @@ TRANSITIONS: dict[str, Transition] = {
         _t("restore", {S.ARCHIVED}, S.DRAFT, Need.DELETE),
     ]
 }
+KEYS = [(k, k) for k in sorted(TRANSITIONS)]
 # Anyone else editing here would change what a reviewer has already read.
 EDITABLE_BY_AUTHOR = frozenset({S.DRAFT, S.UNPUBLISHED, S.PUBLISHED})

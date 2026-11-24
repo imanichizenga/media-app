@@ -109,6 +109,28 @@ def cancel_upload(*, actor: User, asset_id: UUID) -> None:
     asset.delete()
 
 
+def ingest(*, actor: User, kind: str, filename: str, data: bytes, **details: Any) -> Asset:
+    """Bytes we fetched ourselves, e.g. a video's thumbnail. From here on the same pipeline as any upload."""
+    rbac.require(actor, "media.upload")
+    if not 0 < len(data) <= LIMITS[Kind(kind)]:
+        raise DomainError("The file is too large.", code="file_too_large", limit=LIMITS[Kind(kind)])
+    key = f"originals/{secrets.token_hex(20)}"
+    storage().put(key, data)
+    with transaction.atomic():
+        asset = Asset.objects.create(
+            kind=kind,
+            status=AssetStatus.SCANNING,
+            filename=filename[:200],
+            original_key=key,
+            bytes=len(data),
+            uploaded_by=actor,
+            **details,
+        )
+        record(actor=actor, action="media.imported", target=asset, label=asset.filename)
+        _queue(asset)
+    return asset
+
+
 def _queue(asset: Asset) -> None:
     from newsplatform.media.tasks import process
 
@@ -188,6 +210,17 @@ def usage(asset: Asset) -> list[UUID]:
     return list(rows.distinct().order_by("-updated_at").values_list("pk", flat=True)[:100])
 
 
+def elsewhere(asset: Asset) -> list[str]:
+    """Uses outside articles, by name."""
+    from newsplatform.site_config.services import identity
+
+    current, used = identity(), []
+    if asset.avatar_of.exists():
+        used.append("author")
+    used += [n for n in ("logo_light", "logo_dark", "favicon") if getattr(current, n) == str(asset.pk)]
+    return used
+
+
 def _refresh_posts(asset: Asset) -> None:
     from newsplatform.content.models import Publication
     from newsplatform.content.tasks import rebuild_posts
@@ -206,8 +239,8 @@ def delete(*, actor: User, asset_id: UUID) -> None:
         raise NotFound("Not found")
     if asset.uploaded_by_id != actor.pk:
         rbac.require(actor, "media.manage")
-    if usage(asset):
-        raise Conflict("This file is used in a post.", code="asset_in_use")
+    if usage(asset) or elsewhere(asset):
+        raise Conflict("This file is in use.", code="asset_in_use")
     asset.deleted_at = timezone.now()
     asset.save(update_fields=["deleted_at", "updated_at"])
     record(actor=actor, action="media.deleted", target=asset, label=asset.filename)

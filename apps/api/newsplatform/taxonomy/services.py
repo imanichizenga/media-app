@@ -22,6 +22,10 @@ def lock_tree() -> None:
         cur.execute("SELECT pg_advisory_xact_lock(hashtext('taxonomy.tree'))")
 
 
+def text_body(text: CategoryText) -> dict[str, str]:
+    return {f: getattr(text, f) for f in _TEXT}
+
+
 def snapshot(category: Category) -> dict[str, Any]:
     return {
         "parent": str(category.parent_id) if category.parent_id else None,
@@ -30,7 +34,7 @@ def snapshot(category: Category) -> dict[str, Any]:
         "color": category.color,
         "visibility": category.visibility,
         "engagement": category.engagement,
-        "texts": {t.locale: {f: getattr(t, f) for f in _TEXT} for t in category.texts.order_by("locale")},
+        "texts": {t.locale: text_body(t) for t in category.texts.order_by("locale")},
     }
 
 

@@ -1,5 +1,6 @@
 from celery import shared_task
 from django.db import transaction
+from django.db.models import Q
 
 from newsplatform.content import publishing, services
 from newsplatform.content.models import Post, Status
@@ -29,12 +30,19 @@ def rebuild_posts(ids: list[str]) -> None:
 
 @shared_task
 def rebuild_category(category_id: str) -> None:
-    """A category, its branch and everything filed in it, in batches of 100."""
-    ids = Post.objects.filter(status=Status.PUBLISHED).filter(
-        category__ancestors__contains=[category_id]
-    ) | Post.objects.filter(status=Status.PUBLISHED, category_id=category_id)
+    """A category, its branch and everything filed in it."""
+    _rebuild(Q(category__ancestors__contains=[category_id]) | Q(category_id=category_id))
+
+
+@shared_task
+def rebuild_author(user_id: str) -> None:
+    _rebuild(Q(bylines__user_id=user_id))
+
+
+def _rebuild(which: Q) -> None:
+    ids = Post.objects.filter(which, status=Status.PUBLISHED).values_list("pk", flat=True)
     batch: list[str] = []
-    for pk in ids.values_list("pk", flat=True).order_by("pk").iterator(chunk_size=500):
+    for pk in ids.order_by("pk").iterator(chunk_size=500):
         batch.append(str(pk))
         if len(batch) == 100:
             rebuild_posts.delay(batch)

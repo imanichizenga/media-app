@@ -14,6 +14,9 @@ class CommentMode(StrEnum):
     CLOSED = "closed"
 
 
+COMMENT_MODES = [(m.value, m.name) for m in CommentMode]
+
+
 class Policy(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     likes: bool = True

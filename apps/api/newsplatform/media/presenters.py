@@ -23,6 +23,7 @@ def image(asset: Asset, locale: str) -> dict[str, Any]:
         **_common(asset, locale),
         "focal": [asset.focal_x, asset.focal_y],
         "variants": asset.outputs.get("variants", {}),
+        "crops": asset.outputs.get("crops", {}),
     }
 
 

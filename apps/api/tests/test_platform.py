@@ -1,3 +1,4 @@
+import re
 import socket
 
 import pytest
@@ -9,6 +10,7 @@ from newsplatform.common.errors import RateLimited
 from newsplatform.common.logging import redact, redact_text
 from newsplatform.common.middleware import client_ip
 from newsplatform.common.ratelimit import Limit, check
+from newsplatform.content.public_api import PublicView
 
 ANONYMOUS = {"LoginView", "AcceptInviteView", "CompleteResetView"}
 
@@ -44,18 +46,39 @@ def test_no_endpoint_answers_anonymously(new_api):
         if cls.__name__ in ANONYMOUS:
             continue
         url = path.replace("api/v1/", "").replace("<slug:key>", "aws_s3").replace("<int:number>", "1")
-        for token in ("session_id", "invite_id", "user_id", "role_id", "assignment_id", "run_id"):
-            url = url.replace(f"<uuid:{token}>", "0198c000-0000-7000-8000-000000000000")
+        url = re.sub(r"<uuid:\w+>", "0198c000-0000-7000-8000-000000000000", url)
         if "(?P" in url:
             continue
-        for method in ("get", "post", "put", "delete"):
+        for method in ("get", "post", "put", "patch", "delete"):
             if hasattr(cls, method):
                 assert new_api().request(method.upper(), url).status_code in (401, 403), (method, url)
 
 
 def test_public_surface_has_no_admin_routes():
-    paths = {str(p.pattern) for p in get_resolver("config.urls_public").url_patterns}
-    assert paths == {"health/live", "health/ready", "api/v1/site-config"}
+    """Every public address is listed here on purpose, and can only be read."""
+    patterns = get_resolver("config.urls_public").url_patterns
+    content = {
+        str(p.pattern).removeprefix("api/v1/content/") for p in patterns if "/content/" in str(p.pattern)
+    }
+    other = {str(p.pattern) for p in patterns if "/content/" not in str(p.pattern)}
+    assert other == {"health/live", "health/ready", "api/v1/site-config"}
+    assert content == {
+        "home",
+        "latest",
+        "types/<slug:kind>",
+        "categories/<slug:slug>",
+        "tags/<slug:slug>",
+        "stories/<slug:slug>",
+        "authors/<slug:slug>",
+        "articles/<slug:slug>",
+        "articles/<slug:slug>/related",
+        "navigation",
+        "search",
+        "resolve",
+    }
+    for p in patterns:
+        if "/content/" in str(p.pattern):
+            assert issubclass(p.callback.view_class, PublicView)
 
 
 @pytest.mark.django_db

@@ -46,7 +46,7 @@ class Asset(BaseModel):
     outputs = models.JSONField(default=dict)
     job_id = models.CharField(max_length=120, blank=True, default="", db_index=True)
     attempts = models.PositiveSmallIntegerField(default=0)
-    # Raised by a person's retry: part of the job token, so AWS starts a new job instead of returning the failed one.
+    # Raised by a person's retry, and part of the job token: AWS then starts a new job.
     run = models.PositiveSmallIntegerField(default=0)
     error_code = models.CharField(max_length=60, blank=True, default="")
     error_detail = models.CharField(max_length=500, blank=True, default="")

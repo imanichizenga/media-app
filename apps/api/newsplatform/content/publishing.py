@@ -9,8 +9,10 @@ from django.db import transaction
 from django.utils import timezone
 
 from newsplatform.common.canonical import canonical_json
-from newsplatform.common.errors import DomainError
+from newsplatform.common.errors import DomainError, NotFound
 from newsplatform.content import blocks
+from newsplatform.content.authors import byline
+from newsplatform.content.authors import ensure as author_profile
 from newsplatform.content.models import Feed, Listing, Post, PostText, PostType, Publication, RevisionKind
 from newsplatform.engagement.services import resolved
 from newsplatform.media.models import Asset, AssetStatus
@@ -21,6 +23,7 @@ from newsplatform.taxonomy.models import Visibility
 from newsplatform.taxonomy.selectors import policy_chain, tree
 
 _NEEDS_VIDEO = {PostType.VIDEO, PostType.SHORT}
+_LIVE = {PostType.LIVE_BLOG, PostType.LIVE_STREAM}
 
 
 def ready_texts(post: Post) -> list[PostText]:
@@ -29,6 +32,12 @@ def ready_texts(post: Post) -> list[PostText]:
 
 
 def check_ready(post: Post) -> None:
+    if missing := problems(post):
+        raise DomainError("This is not ready to publish.", code="not_ready", missing=missing)
+
+
+def problems(post: Post) -> list[str]:
+    """What stands between this post and publication; the editor shows it before anyone tries."""
     missing: list[str] = []
     texts = ready_texts(post)
     if not texts:
@@ -54,8 +63,7 @@ def check_ready(post: Post) -> None:
     hero = next((a for a in used if a.pk == post.hero_id), None)
     if hero and not all(getattr(hero, f"alt_{t.locale}") for t in texts):
         missing.append("alt")
-    if missing:
-        raise DomainError("This is not ready to publish.", code="not_ready", missing=missing)
+    return missing
 
 
 @transaction.atomic
@@ -85,6 +93,8 @@ def refresh(post: Post) -> None:
         setattr(live, name, UUID(snap[name[:-3]]) if snap[name[:-3]] else None)
     for name in ("youtube_id", "source_url", "is_sensitive", "content_warning", "engagement"):
         setattr(live, name, snap[name])
+    for name in ("breaking_until", "live_ended_at"):
+        setattr(live, name, datetime.fromisoformat(snap[name]) if snap.get(name) else None)
     texts = [
         PostText(post=live, locale=loc, **values)
         for loc, values in snap["texts"].items()
@@ -112,7 +122,9 @@ def _assign_slugs(post: Post, texts: list[PostText]) -> None:
         text.save(update_fields=["slug", "updated_at"])
 
 
-def _context(post: Post, texts: list[PostText], nodes: dict[UUID, Any]) -> dict[str, Any]:
+def _context(
+    post: Post, texts: list[PostText], nodes: dict[UUID, Any], *, writing: bool = True
+) -> dict[str, Any]:
     ids = {i for t in texts for i in blocks.asset_ids(t.body)} | {
         i for i in (post.hero_id, post.video_id) if i
     }
@@ -121,7 +133,10 @@ def _context(post: Post, texts: list[PostText], nodes: dict[UUID, Any]) -> dict[
         "nodes": nodes,
         "node": node,
         "assets": {a.pk: a for a in Asset.objects.filter(pk__in=ids)},
-        "authors": [b.user for b in post.bylines.select_related("user")],
+        "authors": [
+            author_profile(b.user, save=writing)
+            for b in post.bylines.select_related("user__author__avatar").order_by("position")
+        ],
         "tags": list(post.tags.filter(merged_into__isnull=True).order_by("slug")),
         "regions": list(post.regions.order_by("slug")),
         "secondary": list(post.secondary_categories.all()),
@@ -139,40 +154,39 @@ def _category(node: Any, locale: str) -> dict[str, Any]:
     }
 
 
-def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
+def build(
+    post: Post, text: PostText, ctx: dict[str, Any], path: str
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """The card and the article, exactly as readers get them. Writes nothing, so previews use it too."""
     locale = text.locale
     node, assets = ctx["node"], ctx["assets"]
-    path = paths.post_path(locale, node.slug(locale), text.slug)
-    minutes = blocks.reading_minutes(text.body)
     hero = assets.get(post.hero_id)
     clip = assets.get(post.video_id)
-    authors = [{"id": str(u.pk), "name": u.display_name} for u in ctx["authors"]]
     card = {
         "id": str(post.pk),
         "type": post.type,
         "locale": locale,
         "path": path,
+        "slug": text.slug,
         "headline": text.headline,
         "standfirst": text.standfirst,
         "category": _category(node, locale),
-        "authors": authors,
+        "authors": [byline(a, locale) for a in ctx["authors"]],
         "image": image(hero, locale) if hero else None,
         "video": video(clip, locale) if clip else None,
         "youtube_id": post.youtube_id,
-        "reading_minutes": minutes,
+        "reading_minutes": blocks.reading_minutes(text.body),
         "published_at": _iso(post.published_at),
         "is_sensitive": post.is_sensitive,
         "breaking_until": _iso(post.breaking_until),
+        "is_live": is_live(post),
     }
     name = "name_en" if locale == "en" else "name_sw"
-    body_assets = {str(i): _asset(assets[i], locale) for i in blocks.asset_ids(text.body) if i in assets}
-    previous = post.publications.filter(locale=locale).first()
-    modified = timezone.now()
     article = {
         **card,
-        "slug": text.slug,
         "body": text.body,
-        "assets": body_assets,
+        "assets": {str(i): _asset(assets[i], locale) for i in blocks.asset_ids(text.body) if i in assets},
+        "links": _links(text),
         "breadcrumbs": [
             _category(ctx["nodes"][a], locale) for a in node.category.ancestors if a in ctx["nodes"]
         ],
@@ -192,8 +206,41 @@ def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
             "description": text.seo_description or text.standfirst,
         },
         "first_published_at": _iso(post.first_published_at),
+        "live_ended_at": _iso(post.live_ended_at),
         "translations": [],
     }
+    return card, article
+
+
+def _links(text: PostText) -> dict[str, dict[str, str]]:
+    """Where related-link blocks point. A post that is not public is absent: no dead links."""
+    ids = {b["post"] for _, b in blocks.walk(text.body) if b["type"] == "related_link" and b.get("post")}
+    rows = Publication.objects.filter(post_id__in=ids, locale=text.locale) if ids else []
+    return {str(r.post_id): {"path": r.path, "headline": r.card["headline"]} for r in rows}
+
+
+def is_live(post: Post) -> bool:
+    return post.type in _LIVE and post.live_ended_at is None
+
+
+def preview(post: Post, locale: str) -> dict[str, Any]:
+    """The working copy as a reader would see it. Nothing is stored and no address is taken."""
+    text = post.texts.filter(locale=locale).first()
+    if text is None:
+        raise NotFound("Not found")
+    nodes = tree()
+    ctx = _context(post, [text], nodes, writing=False)
+    slug = text.slug or paths.slugify(text.headline) or "habari"
+    _, article = build(post, text, ctx, paths.post_path(locale, ctx["node"].slug(locale), slug))
+    return {**article, "modified_at": _iso(timezone.now())}
+
+
+def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
+    locale = text.locale
+    path = paths.post_path(locale, ctx["node"].slug(locale), text.slug)
+    card, article = build(post, text, ctx, path)
+    previous = post.publications.filter(locale=locale).first()
+    modified = timezone.now()
     if post.published_at is None:  # the database enforces this too
         raise RuntimeError("A post without a publication time cannot be published")
     digest = hashlib.sha256(canonical_json([card, article])).hexdigest()
@@ -210,10 +257,11 @@ def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
             "published_at": post.published_at,
             "modified_at": modified,
             "breaking_until": post.breaking_until,
+            "is_live": is_live(post),
             "card": card,
             "article": article,
             "etag": digest,
-            "asset_ids": sorted(assets),
+            "asset_ids": sorted(ctx["assets"]),
         },
     )
     if previous and previous.path != path:
@@ -244,7 +292,7 @@ def _relist(row: Publication, post: Post, ctx: dict[str, Any]) -> None:
     feeds = [(Feed.ALL, ""), (Feed.TYPE, post.type)]
     feeds += [(Feed.CATEGORY, str(c)) for c in sections]
     feeds += [(Feed.TAG, str(t.pk)) for t in ctx["tags"]]
-    feeds += [(Feed.AUTHOR, str(u.pk)) for u in ctx["authors"]]
+    feeds += [(Feed.AUTHOR, str(a.user_id)) for a in ctx["authors"]]
     if post.story_id:
         feeds.append((Feed.STORY, str(post.story_id)))
     Listing.objects.filter(publication=row).delete()

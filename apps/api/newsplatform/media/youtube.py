@@ -3,13 +3,17 @@
 import json
 import re
 from dataclasses import dataclass
+from typing import Any
 from urllib.parse import parse_qs, quote, urlparse
 
 import httpx
 
+from newsplatform.accounts.models import User
 from newsplatform.common.errors import DomainError, ServiceUnavailable
 from newsplatform.common.http import fetch
 from newsplatform.integrations.base import guarded_call
+from newsplatform.media import services
+from newsplatform.media.models import Asset, AssetStatus
 
 _ID = re.compile(r"[A-Za-z0-9_-]{11}")
 _HOSTS = {
@@ -119,3 +123,33 @@ def thumbnail(link: Link) -> bytes | None:
         if res.status == 200:
             return res.body
     return None
+
+
+def import_video(*, actor: User, url: str) -> dict[str, Any]:
+    """What the editor needs to place a video. One thumbnail per video, however often it is pasted."""
+    link = parse(url)
+    found = metadata(link)
+    name = f"youtube-{link.video_id}.jpg"
+    asset = (
+        Asset.objects.filter(filename=name, deleted_at=None)
+        .exclude(status__in=[AssetStatus.FAILED, AssetStatus.REJECTED])
+        .first()
+    )
+    if asset is None and (data := thumbnail(link)):
+        asset = services.ingest(
+            actor=actor,
+            kind="image",
+            filename=name,
+            data=data,
+            credit=f"YouTube / {found.author}"[:200],
+            alt_sw=found.title,
+            alt_en=found.title,
+        )
+    return {
+        "video_id": link.video_id,
+        "title": found.title,
+        "author": found.author,
+        "start": link.start,
+        "vertical": link.vertical or found.height > found.width,
+        "thumbnail": asset,
+    }

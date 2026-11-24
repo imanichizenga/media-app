@@ -50,6 +50,8 @@ class Post(BaseModel):
     is_sensitive = models.BooleanField(default=False)
     content_warning = models.CharField(max_length=200, blank=True, default="")
     breaking_until = models.DateTimeField(null=True)
+    # A live blog is live from its first publication until an editor ends it.
+    live_ended_at = models.DateTimeField(null=True)
     engagement = models.JSONField(default=dict)
     scheduled_at = models.DateTimeField(null=True)
     embargo_until = models.DateTimeField(null=True)
@@ -128,6 +130,23 @@ class PostText(BaseModel):
         return f"{self.locale}:{self.slug}"
 
 
+class AuthorProfile(BaseModel):
+    """The public face of a member of staff. Made with their first publication; their own to edit."""
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="author")
+    slug = models.SlugField(max_length=80, unique=True)
+    title_sw = models.CharField(max_length=120, blank=True, default="")
+    title_en = models.CharField(max_length=120, blank=True, default="")
+    bio_sw = models.TextField(max_length=2000, blank=True, default="")
+    bio_en = models.TextField(max_length=2000, blank=True, default="")
+    expertise = ArrayField(models.CharField(max_length=60), default=list)
+    links = ArrayField(models.URLField(max_length=300), default=list)
+    avatar = models.ForeignKey("media.Asset", null=True, on_delete=models.PROTECT, related_name="avatar_of")
+
+    def __str__(self) -> str:
+        return self.slug
+
+
 class RevisionKind(models.TextChoices):
     AUTOSAVE = "autosave"
     SAVE = "save"
@@ -175,6 +194,7 @@ class Publication(BaseModel):
     published_at = models.DateTimeField()
     modified_at = models.DateTimeField()
     breaking_until = models.DateTimeField(null=True)
+    is_live = models.BooleanField(default=False)
     card = models.JSONField()
     article = models.JSONField()
     etag = models.CharField(max_length=64)
@@ -186,7 +206,17 @@ class Publication(BaseModel):
             models.UniqueConstraint(fields=["locale", "slug"], name="publication_slug_unique"),
             models.UniqueConstraint(fields=["path"], name="publication_path_unique"),
         ]
-        indexes = [models.Index(fields=["locale", "-published_at"])]
+        indexes = [
+            models.Index(fields=["locale", "-published_at"]),
+            models.Index(
+                fields=["locale", "breaking_until"],
+                condition=Q(breaking_until__isnull=False),
+                name="publication_breaking",
+            ),
+            models.Index(
+                fields=["locale", "-published_at"], condition=Q(is_live=True), name="publication_live"
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.path

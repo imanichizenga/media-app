@@ -9,6 +9,8 @@ from django.db import transaction
 from django.utils import timezone
 
 from newsplatform.accounts.models import User
+from newsplatform.approvals import services as approvals
+from newsplatform.approvals.models import ApprovalRequest
 from newsplatform.audit.services import record
 from newsplatform.common.errors import Conflict, DomainError, Forbidden, NotFound
 from newsplatform.common.locales import Locale
@@ -118,6 +120,7 @@ def snapshot(post: Post) -> dict[str, Any]:
         "authors": [str(b.user_id) for b in post.bylines.all()],
         "breaking_until": post.breaking_until.isoformat() if post.breaking_until else None,
         "embargo_until": post.embargo_until.isoformat() if post.embargo_until else None,
+        "live_ended_at": post.live_ended_at.isoformat() if post.live_ended_at else None,
         "engagement": post.engagement,
         "texts": {t.locale: {f: getattr(t, f) for f in _TEXT_FIELDS} for t in post.texts.order_by("locale")},
     }
@@ -267,7 +270,7 @@ def _apply(actor: User, post: Post, data: dict[str, Any]) -> None:
         post.video = _asset(data["video"], "video")
     if "engagement" in data:
         post.engagement = validated_policy(data["engagement"])
-    for name in ("breaking_until", "embargo_until"):
+    for name in ("breaking_until", "embargo_until", "live_ended_at"):
         if name in data:
             setattr(post, name, data[name])
     if "tags" in data:
@@ -361,7 +364,7 @@ def restore_revision(*, actor: User, post_id: UUID, number: int, version: int) -
     # People and places are decided now, not by history: restoring must not return rights or move a post.
     for name in ("authors", "category", "type"):
         data.pop(name, None)
-    for name in ("breaking_until", "embargo_until"):
+    for name in ("breaking_until", "embargo_until", "live_ended_at"):
         data[name] = datetime.fromisoformat(data[name]) if data.get(name) else None
     _apply(actor, post, data)
     for text in post.texts.all():
@@ -507,3 +510,66 @@ def add_note(*, actor: User, post_id: UUID, text: str) -> EditorialNote:
     note = EditorialNote.objects.create(post=post, author=actor, text=text.strip()[:2000])
     record(actor=actor, action="post.note_added", target=post, label=_label(post))
     return note
+
+
+# ---- live blogs, bulk ------------------------------------------------------------
+@transaction.atomic
+def add_live_update(
+    *, actor: User, post_id: UUID, version: int, locale: str, update: dict[str, Any], publish: bool
+) -> Post:
+    """Newest first. With `publish`, readers see it in the same transaction."""
+    post = get_for(actor, post_id, lock=True)
+    if post.type != PostType.LIVE_BLOG:
+        raise DomainError("Only a live blog has updates.", code="not_live_blog")
+    text = post.texts.filter(locale=locale).first()
+    if text is None:
+        raise NotFound("Not found")
+    block = {**update, "type": "live_update", "time": timezone.now().isoformat(timespec="seconds")}
+    body = {**text.body, "blocks": [block, *text.body["blocks"]]}
+    post = save(
+        actor=actor, post_id=post_id, version=version, data={"texts": {locale: {"body": body}}}, note="live"
+    )
+    if publish and post.status == Status.PUBLISHED:
+        post = transition(actor=actor, post_id=post_id, key="republish", version=post.version)
+    return post
+
+
+BULK_LIMIT, BULK_FOUR_EYES = 100, 10
+BULK_ACTIONS = ("archive", "unpublish", "publish", "approve")
+BULK_CHOICES = [(k, k) for k in BULK_ACTIONS]
+_REMOVES = ("archive", "unpublish")
+
+
+def bulk(*, actor: User, key: str, ids: list[UUID], note: str) -> list[dict[str, str]] | ApprovalRequest:
+    """Each post on its own: one that cannot change does not stop the others, and says why."""
+    ids = list(dict.fromkeys(ids))
+    if key not in BULK_ACTIONS or not 0 < len(ids) <= BULK_LIMIT:
+        raise DomainError("Invalid bulk action", code="validation_error")
+    if key in _REMOVES and len(ids) >= BULK_FOUR_EYES and approvals.is_required("content.bulk_remove"):
+        return approvals.request_approval(
+            actor=actor,
+            action="content.bulk_remove",
+            summary=f"{key.capitalize()} {len(ids)} posts",
+            payload={"key": key, "ids": [str(i) for i in ids], "note": note},
+            dedupe_key=f"{key}:{actor.pk}",
+            reason=note,
+        )
+    return _bulk(actor, key, ids, note)
+
+
+def _bulk(actor: User, key: str, ids: list[UUID], note: str) -> list[dict[str, str]]:
+    out = []
+    for pk in ids:
+        try:
+            with transaction.atomic():
+                version = get_for(actor, pk, lock=True).version
+                transition(actor=actor, post_id=pk, key=key, version=version, note=note)
+            out.append({"id": str(pk), "result": "ok"})
+        except DomainError as exc:
+            out.append({"id": str(pk), "result": exc.code})
+    return out
+
+
+@approvals.register("content.bulk_remove", "content.delete")
+def _execute_bulk(payload: dict[str, Any], requester: User, approver: User) -> None:
+    _bulk(requester, payload["key"], [UUID(i) for i in payload["ids"]], payload["note"])
