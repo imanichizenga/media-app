@@ -81,7 +81,7 @@ Lead times marked † come from user reports or other vendors' guides, not from 
 | # | What | When | Proven by |
 |---|---|---|---|
 | G1 | Native Swahili editor reviews `support/docs/i18n/review.md` (regenerate with `node support/scripts/i18n-review.mjs`) | Before any public release | Every string marked reviewed |
-| G2 | Design sign-off. **2026-11-24: layout, structure and components approved with changes D1 to D7** (verbatim in PROGRESS.md). Still open: the three brand themes, then the app (M3). The themes sign-off does not block M3 | At each gate | Written approval, recorded in PROGRESS.md |
+| G2 | Design sign-off. **2026-11-24: layout, structure and components approved with changes D1 to D7** (verbatim in PROGRESS.md). **2026-11-24: the three themes approved.** Still open: the app (M3) | At each gate | Written approval, recorded in PROGRESS.md |
 | G3 | Mid-range Android phone and an iPhone | M3, M4, M7 | `support/docs/perf/mobile.md` filled in |
 | G4 | Physical security key or phone passkey on the admin console | With staging | Sign-in works |
 | G5 | Legal texts: privacy policy, terms, editorial and corrections policies; PDPA registration as a data controller | M2, M4 | Published pages |

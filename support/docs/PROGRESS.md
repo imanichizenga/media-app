@@ -8,21 +8,21 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M0-CLOSE** | Done, pull request 7 (merged) | Blocked: no AWS environment |
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
-| **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). **Themes gallery waits for G2**; it blocks nothing | n/a |
-| **M3 Mobile app** | **Stopped at the environment gate**: 4.1 GB free after safe cleanup, about 25 GB needed (task §4) | Needs C1, D1, G3 |
+| **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
+| **M3 Mobile app** | In progress, branch `m3-mobile` | Needs C1, D1, G3 |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
 1. **The repository moved** (client request, 2026-11-24, ADR-0036): `backend`, `admin`, `web`, `mobile`, `support`. Documents are in `support/docs`.
-2. Is the themes gallery approved (G2)? `support/docs/design/screens/m2-themes/index.html`. Record the answer here and in human-actions. M3 does not wait for it.
-3. **M3 waits for disk**: 4.1 GB free of 32 GB on 2026-11-24, after Docker build cache, dangling images, npm cache and old builds were cleared. The default Codespace image alone takes about 13 GB. `/tmp` has 102 GB free but is emptied when the Codespace stops. On a larger workspace: `.devcontainer` (Flutter 3.50.1, JDK 21, Android SDK), one version file read by CI and the container, the app-config endpoint, then the app in `mobile`, branch `m3-mobile`.
+2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in minutes. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
+3. M3 plan, decisions and state: `support/docs/mobile/plan.md`.
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
 5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
 6. Open risks:
    - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, every IAM and bucket policy, and the load balancer rule for `/theme/*`. Plan-tested only.
    - `uv` could not reach PyPI from this Codespace on 2026-11-24 (`curl` could). `UV_OFFLINE=1` works with the lockfile.
-7. Waiting for a person: **a larger workspace** for M3; G2 on the themes; an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
+7. Waiting for a person: G2 on the app; an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
 
 ## Human decisions
 
@@ -35,6 +35,8 @@ Recorded as given on **2026-11-24**.
 > **Open design questions.** Tabs: Nyumbani, Video, Gundua, Hifadhi, Wewe — approved. Comments: a sheet over the story on the app (Instagram-style); a right-hand drawer on desktop — approved. Shorts are always dark, in every theme — approved.
 
 The full text of the task these come from is summarised in [design/public-experience.md](design/public-experience.md) (rules, D1 to D7) and ADR-0029 onward.
+
+> **G2 themes, 2026-11-24:** "i also approve your theme and design, now proceed with mobile, now in mobile i need more strong ui design". Same message: galleries may be zipped to free space, and `/tmp` may be used as long as no file is lost.
 
 ## Acceptance
 
@@ -50,7 +52,7 @@ The full text of the task these come from is summarised in [design/public-experi
 | M0-CLOSE OpenTelemetry | Met: `support/scripts/verify-otel.sh`, in CI | No production collector chosen |
 | M0-CLOSE Admin browser errors | Met: E2E against a local sink | No Sentry project (A9) |
 | M0-CLOSE Compose profiles | Met: every service started healthy; storage contract 7 of 7 | n/a |
-| M0-CLOSE Screenshot gallery | Met: `support/docs/design/screens/m0/index.html` | n/a |
+| M0-CLOSE Screenshot gallery | Met: `support/docs/design/screens/m0.zip` | n/a |
 | M1 1 GB upload resumes after a cut and plays as adaptive HLS | Met: `python -m tests.live_upload` on 2026-11-24. 69 of 138 parts kept, each part sent once, four renditions decode to the last frame | Needs A8, A10 |
 | M1 EXIF removed | Met: `test_media.py` | n/a |
 | M1 Every YouTube address form normalises | Met: `test_youtube.py` | n/a |
@@ -62,7 +64,7 @@ The full text of the task these come from is summarised in [design/public-experi
 | M1 Purge and revalidation sender | Met: `test_delivery.py` | Receiver in M2 |
 | M1 Seed data | Met: `test_seed_demo.py`, 300 posts | n/a |
 | M1 Category-scoped roles | Met: `test_taxonomy.py`, E2E | n/a |
-| M1 Screenshot gallery | Met: `support/docs/design/screens/m1/index.html` | n/a |
+| M1 Screenshot gallery | Met: `support/docs/design/screens/m1.zip` | n/a |
 
 | M2-THEMES Derivation parity in Python, TypeScript and Dart | Met: shared vectors, `test_theme.py`, `theme.test.mjs`, `theme_test.dart` | n/a |
 | M2-THEMES Any valid colour passes AA in every theme | Met: property tests over random colours | n/a |

@@ -57,3 +57,19 @@ support/tests/e2e/look.*
 *.iml
 .vscode/*
 !.vscode/extensions.json
+
+# Galleries are kept zipped
+support/docs/design/screens/*/
+
+# Mobile: builds go to a disk that may be emptied
+mobile/build
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Flutter/ephemeral/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/.cxx/
+.flutter-plugins-dependencies
+*.symbols
