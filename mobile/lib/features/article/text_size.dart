@@ -46,7 +46,10 @@ class TextSizeControl extends ConsumerWidget {
         Row(
           children: [
             ExcludeSemantics(
-              child: Text('A', style: type.headlineS.copyWith(color: c.textSecondary, fontSize: 15)),
+              child: Text(
+                'A',
+                style: type.headlineS.copyWith(color: c.textSecondary, fontSize: 15),
+              ),
             ),
             Expanded(
               child: Slider(

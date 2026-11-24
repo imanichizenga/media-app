@@ -145,10 +145,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
       ref.listen(movedProvider(widget.path), (_, next) {
         if (next.value case final target?) context.replace(target);
       });
-      return _Failed(
-        error: state.error!,
-        retry: () => ref.invalidate(provider),
-      );
+      return _Failed(error: state.error!, retry: () => ref.invalidate(provider));
     }
     final c = context.colors;
     final s = Strings.of(context);
@@ -176,9 +173,8 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
           const SizedBox(height: NewsSpace.s6),
         ],
         MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: _Scaled(MediaQuery.textScalerOf(context), scale),
-          ),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: _Scaled(MediaQuery.textScalerOf(context), scale)),
           child: ArticleBody(
             document: article == null ? null : documentOf(article),
             data: article == null
@@ -209,7 +205,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
             ? const BorderRadius.vertical(top: Radius.circular(28))
             : BorderRadius.zero,
       ),
-      padding: EdgeInsets.fromLTRB(NewsSpace.s5, immersive ? NewsSpace.s6 : NewsSpace.s4, NewsSpace.s5, 0),
+      padding: EdgeInsets.fromLTRB(
+        NewsSpace.s5,
+        immersive ? NewsSpace.s6 : NewsSpace.s4,
+        NewsSpace.s5,
+        0,
+      ),
       child: wide
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -512,7 +513,10 @@ class ArticleBarDelegate extends SliverPersistentHeaderDelegate {
                     Container(height: 2.5, color: c.border),
                     FractionallySizedBox(
                       widthFactor: value,
-                      child: Container(height: 2.5, color: c.mastheadRule == c.mastheadBg ? c.brand : c.mastheadRule),
+                      child: Container(
+                        height: 2.5,
+                        color: c.mastheadRule == c.mastheadBg ? c.brand : c.mastheadRule,
+                      ),
                     ),
                   ],
                 ),
@@ -543,8 +547,7 @@ class ArticleHead extends ConsumerWidget {
     final s = Strings.of(context);
     final now = ref.watch(clockNowProvider)();
     final a = article;
-    final edited =
-        a != null && a.modifiedAt.difference(a.publishedAt) > const Duration(minutes: 5);
+    final edited = a != null && a.modifiedAt.difference(a.publishedAt) > const Duration(minutes: 5);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -594,14 +597,14 @@ class ArticleHead extends ConsumerWidget {
         const SizedBox(height: NewsSpace.s5),
         _Byline(article: a, story: story),
         if (a != null && a.updateNote.isNotEmpty)
-          _Note(title: s.updateNote, text: a.updateNote, ink: c.textPrimary, ground: c.surfaceSunken),
-        if (a != null && a.correctionNote.isNotEmpty)
           _Note(
-            title: s.correction,
-            text: a.correctionNote,
-            ink: c.warning,
-            ground: c.warningSoft,
+            title: s.updateNote,
+            text: a.updateNote,
+            ink: c.textPrimary,
+            ground: c.surfaceSunken,
           ),
+        if (a != null && a.correctionNote.isNotEmpty)
+          _Note(title: s.correction, text: a.correctionNote, ink: c.warning, ground: c.warningSoft),
         if (a != null && a.contentWarning.isNotEmpty)
           _Note(
             title: s.sensitive,
@@ -670,9 +673,7 @@ class _Byline extends ConsumerWidget {
     final s = Strings.of(context);
     final author = article?.authors.firstOrNull;
     if (article != null && author == null) return const SizedBox.shrink();
-    final who = article == null
-        ? null
-        : article!.authors.map((a) => a.name).join(', ');
+    final who = article == null ? null : article!.authors.map((a) => a.name).join(', ');
     final line = story == null
         ? null
         : [
@@ -712,11 +713,7 @@ class _Byline extends ConsumerWidget {
                   ],
                 ],
               ),
-              TextOrBone(
-                line,
-                last: 0.7,
-                style: type.caption.copyWith(color: c.textSecondary),
-              ),
+              TextOrBone(line, last: 0.7, style: type.caption.copyWith(color: c.textSecondary)),
             ],
           ),
         ),
@@ -812,10 +809,7 @@ class ActionPill extends ConsumerWidget {
               child: Container(
                 constraints: const BoxConstraints(minHeight: 48),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: c.brand,
-                  borderRadius: BorderRadius.circular(26),
-                ),
+                decoration: BoxDecoration(color: c.brand, borderRadius: BorderRadius.circular(26)),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -154,9 +154,7 @@ class BlockView extends ConsumerWidget {
         final image = data.image(asset);
         if (image == null) return const SizedBox.shrink();
         return _Figure(
-          photos: [
-            Photo(image, alt: alt, caption: plain(caption), credit: credit ?? image.credit),
-          ],
+          photos: [Photo(image, alt: alt, caption: plain(caption), credit: credit ?? image.credit)],
           sensitive: sensitive ?? false,
         );
       case GalleryBlock(:final items):
@@ -185,9 +183,7 @@ class BlockView extends ConsumerWidget {
         return _Captioned(
           caption: plain(caption),
           credit: credit ?? video.credit,
-          child: sensitive ?? false
-              ? _Reveal(ratio: ratioOf(video), child: player)
-              : player,
+          child: sensitive ?? false ? _Reveal(ratio: ratioOf(video), child: player) : player,
         );
       case YoutubeBlock(:final videoId, :final title, :final start, :final vertical):
         return YoutubeFacade(
@@ -261,11 +257,7 @@ class BlockView extends ConsumerWidget {
                 const SizedBox(height: NewsSpace.s2),
                 Text(text, style: body.copyWith(fontSize: 17)),
               ],
-              _Action(
-                s.openPost,
-                icon: NewsIcons.externalLink,
-                onTap: () => follow(context, url),
-              ),
+              _Action(s.openPost, icon: NewsIcons.externalLink, onTap: () => follow(context, url)),
             ],
           ),
         );
@@ -744,10 +736,7 @@ class _LiveUpdate extends ConsumerWidget {
                       children: [
                         NewsIcon(NewsIcons.pin, size: 13, color: c.textSecondary),
                         const SizedBox(width: 4),
-                        Text(
-                          s.pinned,
-                          style: context.type.label.copyWith(color: c.textSecondary),
-                        ),
+                        Text(s.pinned, style: context.type.label.copyWith(color: c.textSecondary)),
                       ],
                     ),
                 ],
