@@ -6,7 +6,8 @@ final class SimpleMark implements Mark {
   const SimpleMark({required this.type});
   final SimpleMarkType type;
 
-  factory SimpleMark.fromJson(Map<String, dynamic> json) => SimpleMark(type: SimpleMarkType.parse(json['type'] as String));
+  factory SimpleMark.fromJson(Map<String, dynamic> json) =>
+      SimpleMark(type: SimpleMarkType.parse(json['type'] as String));
 
   @override
   Map<String, dynamic> toJson() => {'type': type.value};
@@ -16,7 +17,8 @@ final class LinkMark implements Mark {
   const LinkMark({required this.href});
   final String href;
 
-  factory LinkMark.fromJson(Map<String, dynamic> json) => LinkMark(href: json['href'] as String);
+  factory LinkMark.fromJson(Map<String, dynamic> json) =>
+      LinkMark(href: json['href'] as String);
 
   @override
   Map<String, dynamic> toJson() => {'type': 'link', 'href': href};
@@ -29,7 +31,13 @@ sealed class Mark {
   static Mark fromJson(Map<String, dynamic> json) {
     try {
       return switch (json['type']) {
-        'bold' || 'italic' || 'underline' || 'strike' || 'code' || 'superscript' || 'subscript' => SimpleMark.fromJson(json),
+        'bold' ||
+        'italic' ||
+        'underline' ||
+        'strike' ||
+        'code' ||
+        'superscript' ||
+        'subscript' => SimpleMark.fromJson(json),
         'link' => LinkMark.fromJson(json),
         _ => UnknownMark(json),
       };
@@ -44,10 +52,23 @@ final class TextNode implements Inline {
   final String text;
   final List<Mark>? marks;
 
-  factory TextNode.fromJson(Map<String, dynamic> json) => TextNode(text: json['text'] as String, marks: json['marks'] == null ? null : List.unmodifiable((json['marks'] as List<dynamic>).map((e) => Mark.fromJson(e as Map<String, dynamic>))));
+  factory TextNode.fromJson(Map<String, dynamic> json) => TextNode(
+    text: json['text'] as String,
+    marks: json['marks'] == null
+        ? null
+        : List.unmodifiable(
+            (json['marks'] as List<dynamic>).map(
+              (e) => Mark.fromJson(e as Map<String, dynamic>),
+            ),
+          ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'text', 'text': text, if (marks case final v?) 'marks': v.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'text',
+    'text': text,
+    if (marks case final v?) 'marks': v.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class HardBreak implements Inline {
@@ -81,47 +102,108 @@ final class ParagraphBlock implements LiveBlock, Block {
   final String id;
   final List<Inline> content;
 
-  factory ParagraphBlock.fromJson(Map<String, dynamic> json) => ParagraphBlock(id: json['id'] as String, content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))));
+  factory ParagraphBlock.fromJson(Map<String, dynamic> json) => ParagraphBlock(
+    id: json['id'] as String,
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'paragraph', 'id': id, 'content': content.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'paragraph',
+    'id': id,
+    'content': content.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class HeadingBlock implements Block {
-  const HeadingBlock({required this.id, required this.level, required this.content});
+  const HeadingBlock({
+    required this.id,
+    required this.level,
+    required this.content,
+  });
   final String id;
   final int level;
   final List<Inline> content;
 
-  factory HeadingBlock.fromJson(Map<String, dynamic> json) => HeadingBlock(id: json['id'] as String, level: json['level'] as int, content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))));
+  factory HeadingBlock.fromJson(Map<String, dynamic> json) => HeadingBlock(
+    id: json['id'] as String,
+    level: json['level'] as int,
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'heading', 'id': id, 'level': level, 'content': content.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'heading',
+    'id': id,
+    'level': level,
+    'content': content.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class ListItem {
   const ListItem({required this.content});
   final List<Inline> content;
 
-  factory ListItem.fromJson(Map<String, dynamic> json) => ListItem(content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))));
+  factory ListItem.fromJson(Map<String, dynamic> json) => ListItem(
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
-  Map<String, dynamic> toJson() => {'content': content.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'content': content.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class ListBlock implements LiveBlock, Block {
-  const ListBlock({required this.id, required this.ordered, required this.items});
+  const ListBlock({
+    required this.id,
+    required this.ordered,
+    required this.items,
+  });
   final String id;
   final bool ordered;
   final List<ListItem> items;
 
-  factory ListBlock.fromJson(Map<String, dynamic> json) => ListBlock(id: json['id'] as String, ordered: json['ordered'] as bool, items: List.unmodifiable((json['items'] as List<dynamic>).map((e) => ListItem.fromJson(e as Map<String, dynamic>))));
+  factory ListBlock.fromJson(Map<String, dynamic> json) => ListBlock(
+    id: json['id'] as String,
+    ordered: json['ordered'] as bool,
+    items: List.unmodifiable(
+      (json['items'] as List<dynamic>).map(
+        (e) => ListItem.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'list', 'id': id, 'ordered': ordered, 'items': items.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'list',
+    'id': id,
+    'ordered': ordered,
+    'items': items.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class ImageBlock implements LiveBlock, Block {
-  const ImageBlock({required this.id, required this.asset, required this.alt, this.caption, this.credit, this.layout, this.sensitive});
+  const ImageBlock({
+    required this.id,
+    required this.asset,
+    required this.alt,
+    this.caption,
+    this.credit,
+    this.layout,
+    this.sensitive,
+  });
   final String id;
   final String asset;
   final String alt;
@@ -130,22 +212,68 @@ final class ImageBlock implements LiveBlock, Block {
   final ImageLayout? layout;
   final bool? sensitive;
 
-  factory ImageBlock.fromJson(Map<String, dynamic> json) => ImageBlock(id: json['id'] as String, asset: json['asset'] as String, alt: json['alt'] as String, caption: json['caption'] == null ? null : List.unmodifiable((json['caption'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))), credit: json['credit'] == null ? null : json['credit'] as String, layout: json['layout'] == null ? null : ImageLayout.parse(json['layout'] as String), sensitive: json['sensitive'] == null ? null : json['sensitive'] as bool);
+  factory ImageBlock.fromJson(Map<String, dynamic> json) => ImageBlock(
+    id: json['id'] as String,
+    asset: json['asset'] as String,
+    alt: json['alt'] as String,
+    caption: json['caption'] == null
+        ? null
+        : List.unmodifiable(
+            (json['caption'] as List<dynamic>).map(
+              (e) => Inline.fromJson(e as Map<String, dynamic>),
+            ),
+          ),
+    credit: json['credit'] == null ? null : json['credit'] as String,
+    layout: json['layout'] == null
+        ? null
+        : ImageLayout.parse(json['layout'] as String),
+    sensitive: json['sensitive'] == null ? null : json['sensitive'] as bool,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'image', 'id': id, 'asset': asset, 'alt': alt, if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(), if (credit case final v?) 'credit': v, if (layout case final v?) 'layout': v.value, if (sensitive case final v?) 'sensitive': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'image',
+    'id': id,
+    'asset': asset,
+    'alt': alt,
+    if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(),
+    if (credit case final v?) 'credit': v,
+    if (layout case final v?) 'layout': v.value,
+    if (sensitive case final v?) 'sensitive': v,
+  };
 }
 
 final class GalleryItem {
-  const GalleryItem({required this.asset, required this.alt, this.caption, this.credit});
+  const GalleryItem({
+    required this.asset,
+    required this.alt,
+    this.caption,
+    this.credit,
+  });
   final String asset;
   final String alt;
   final List<Inline>? caption;
   final String? credit;
 
-  factory GalleryItem.fromJson(Map<String, dynamic> json) => GalleryItem(asset: json['asset'] as String, alt: json['alt'] as String, caption: json['caption'] == null ? null : List.unmodifiable((json['caption'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))), credit: json['credit'] == null ? null : json['credit'] as String);
+  factory GalleryItem.fromJson(Map<String, dynamic> json) => GalleryItem(
+    asset: json['asset'] as String,
+    alt: json['alt'] as String,
+    caption: json['caption'] == null
+        ? null
+        : List.unmodifiable(
+            (json['caption'] as List<dynamic>).map(
+              (e) => Inline.fromJson(e as Map<String, dynamic>),
+            ),
+          ),
+    credit: json['credit'] == null ? null : json['credit'] as String,
+  );
 
-  Map<String, dynamic> toJson() => {'asset': asset, 'alt': alt, if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(), if (credit case final v?) 'credit': v};
+  Map<String, dynamic> toJson() => {
+    'asset': asset,
+    'alt': alt,
+    if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(),
+    if (credit case final v?) 'credit': v,
+  };
 }
 
 final class GalleryBlock implements Block {
@@ -154,38 +282,97 @@ final class GalleryBlock implements Block {
   final List<GalleryItem> items;
   final GalleryLayout? layout;
 
-  factory GalleryBlock.fromJson(Map<String, dynamic> json) => GalleryBlock(id: json['id'] as String, items: List.unmodifiable((json['items'] as List<dynamic>).map((e) => GalleryItem.fromJson(e as Map<String, dynamic>))), layout: json['layout'] == null ? null : GalleryLayout.parse(json['layout'] as String));
+  factory GalleryBlock.fromJson(Map<String, dynamic> json) => GalleryBlock(
+    id: json['id'] as String,
+    items: List.unmodifiable(
+      (json['items'] as List<dynamic>).map(
+        (e) => GalleryItem.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+    layout: json['layout'] == null
+        ? null
+        : GalleryLayout.parse(json['layout'] as String),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'gallery', 'id': id, 'items': items.map((e) => e.toJson()).toList(), if (layout case final v?) 'layout': v.value};
+  Map<String, dynamic> toJson() => {
+    'type': 'gallery',
+    'id': id,
+    'items': items.map((e) => e.toJson()).toList(),
+    if (layout case final v?) 'layout': v.value,
+  };
 }
 
 final class VideoBlock implements LiveBlock, Block {
-  const VideoBlock({required this.id, required this.asset, this.caption, this.credit, this.sensitive});
+  const VideoBlock({
+    required this.id,
+    required this.asset,
+    this.caption,
+    this.credit,
+    this.sensitive,
+  });
   final String id;
   final String asset;
   final List<Inline>? caption;
   final String? credit;
   final bool? sensitive;
 
-  factory VideoBlock.fromJson(Map<String, dynamic> json) => VideoBlock(id: json['id'] as String, asset: json['asset'] as String, caption: json['caption'] == null ? null : List.unmodifiable((json['caption'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))), credit: json['credit'] == null ? null : json['credit'] as String, sensitive: json['sensitive'] == null ? null : json['sensitive'] as bool);
+  factory VideoBlock.fromJson(Map<String, dynamic> json) => VideoBlock(
+    id: json['id'] as String,
+    asset: json['asset'] as String,
+    caption: json['caption'] == null
+        ? null
+        : List.unmodifiable(
+            (json['caption'] as List<dynamic>).map(
+              (e) => Inline.fromJson(e as Map<String, dynamic>),
+            ),
+          ),
+    credit: json['credit'] == null ? null : json['credit'] as String,
+    sensitive: json['sensitive'] == null ? null : json['sensitive'] as bool,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'video', 'id': id, 'asset': asset, if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(), if (credit case final v?) 'credit': v, if (sensitive case final v?) 'sensitive': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'video',
+    'id': id,
+    'asset': asset,
+    if (caption case final v?) 'caption': v.map((e) => e.toJson()).toList(),
+    if (credit case final v?) 'credit': v,
+    if (sensitive case final v?) 'sensitive': v,
+  };
 }
 
 final class YoutubeBlock implements LiveBlock, Block {
-  const YoutubeBlock({required this.id, required this.videoId, this.title, this.start, this.vertical});
+  const YoutubeBlock({
+    required this.id,
+    required this.videoId,
+    this.title,
+    this.start,
+    this.vertical,
+  });
   final String id;
   final String videoId;
   final String? title;
   final int? start;
   final bool? vertical;
 
-  factory YoutubeBlock.fromJson(Map<String, dynamic> json) => YoutubeBlock(id: json['id'] as String, videoId: json['videoId'] as String, title: json['title'] == null ? null : json['title'] as String, start: json['start'] == null ? null : json['start'] as int, vertical: json['vertical'] == null ? null : json['vertical'] as bool);
+  factory YoutubeBlock.fromJson(Map<String, dynamic> json) => YoutubeBlock(
+    id: json['id'] as String,
+    videoId: json['videoId'] as String,
+    title: json['title'] == null ? null : json['title'] as String,
+    start: json['start'] == null ? null : json['start'] as int,
+    vertical: json['vertical'] == null ? null : json['vertical'] as bool,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'youtube', 'id': id, 'videoId': videoId, if (title case final v?) 'title': v, if (start case final v?) 'start': v, if (vertical case final v?) 'vertical': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'youtube',
+    'id': id,
+    'videoId': videoId,
+    if (title case final v?) 'title': v,
+    if (start case final v?) 'start': v,
+    if (vertical case final v?) 'vertical': v,
+  };
 }
 
 final class QuoteBlock implements LiveBlock, Block {
@@ -194,105 +381,244 @@ final class QuoteBlock implements LiveBlock, Block {
   final List<Inline> content;
   final String? attribution;
 
-  factory QuoteBlock.fromJson(Map<String, dynamic> json) => QuoteBlock(id: json['id'] as String, content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))), attribution: json['attribution'] == null ? null : json['attribution'] as String);
+  factory QuoteBlock.fromJson(Map<String, dynamic> json) => QuoteBlock(
+    id: json['id'] as String,
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+    attribution: json['attribution'] == null
+        ? null
+        : json['attribution'] as String,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'quote', 'id': id, 'content': content.map((e) => e.toJson()).toList(), if (attribution case final v?) 'attribution': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'quote',
+    'id': id,
+    'content': content.map((e) => e.toJson()).toList(),
+    if (attribution case final v?) 'attribution': v,
+  };
 }
 
 final class PullQuoteBlock implements Block {
-  const PullQuoteBlock({required this.id, required this.text, this.attribution});
+  const PullQuoteBlock({
+    required this.id,
+    required this.text,
+    this.attribution,
+  });
   final String id;
   final String text;
   final String? attribution;
 
-  factory PullQuoteBlock.fromJson(Map<String, dynamic> json) => PullQuoteBlock(id: json['id'] as String, text: json['text'] as String, attribution: json['attribution'] == null ? null : json['attribution'] as String);
+  factory PullQuoteBlock.fromJson(Map<String, dynamic> json) => PullQuoteBlock(
+    id: json['id'] as String,
+    text: json['text'] as String,
+    attribution: json['attribution'] == null
+        ? null
+        : json['attribution'] as String,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'pull_quote', 'id': id, 'text': text, if (attribution case final v?) 'attribution': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'pull_quote',
+    'id': id,
+    'text': text,
+    if (attribution case final v?) 'attribution': v,
+  };
 }
 
 final class EmbedBlock implements LiveBlock, Block {
-  const EmbedBlock({required this.id, required this.provider, required this.url, this.author, this.text});
+  const EmbedBlock({
+    required this.id,
+    required this.provider,
+    required this.url,
+    this.author,
+    this.text,
+  });
   final String id;
   final EmbedProvider provider;
   final String url;
   final String? author;
   final String? text;
 
-  factory EmbedBlock.fromJson(Map<String, dynamic> json) => EmbedBlock(id: json['id'] as String, provider: EmbedProvider.parse(json['provider'] as String), url: json['url'] as String, author: json['author'] == null ? null : json['author'] as String, text: json['text'] == null ? null : json['text'] as String);
+  factory EmbedBlock.fromJson(Map<String, dynamic> json) => EmbedBlock(
+    id: json['id'] as String,
+    provider: EmbedProvider.parse(json['provider'] as String),
+    url: json['url'] as String,
+    author: json['author'] == null ? null : json['author'] as String,
+    text: json['text'] == null ? null : json['text'] as String,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'embed', 'id': id, 'provider': provider.value, 'url': url, if (author case final v?) 'author': v, if (text case final v?) 'text': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'embed',
+    'id': id,
+    'provider': provider.value,
+    'url': url,
+    if (author case final v?) 'author': v,
+    if (text case final v?) 'text': v,
+  };
 }
 
 final class TableCell {
   const TableCell({required this.content});
   final List<Inline> content;
 
-  factory TableCell.fromJson(Map<String, dynamic> json) => TableCell(content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))));
+  factory TableCell.fromJson(Map<String, dynamic> json) => TableCell(
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
-  Map<String, dynamic> toJson() => {'content': content.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'content': content.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class TableRow {
   const TableRow({required this.cells});
   final List<TableCell> cells;
 
-  factory TableRow.fromJson(Map<String, dynamic> json) => TableRow(cells: List.unmodifiable((json['cells'] as List<dynamic>).map((e) => TableCell.fromJson(e as Map<String, dynamic>))));
+  factory TableRow.fromJson(Map<String, dynamic> json) => TableRow(
+    cells: List.unmodifiable(
+      (json['cells'] as List<dynamic>).map(
+        (e) => TableCell.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
-  Map<String, dynamic> toJson() => {'cells': cells.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'cells': cells.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class TableBlock implements Block {
-  const TableBlock({required this.id, required this.header, required this.rows, this.caption});
+  const TableBlock({
+    required this.id,
+    required this.header,
+    required this.rows,
+    this.caption,
+  });
   final String id;
   final bool header;
   final List<TableRow> rows;
   final String? caption;
 
-  factory TableBlock.fromJson(Map<String, dynamic> json) => TableBlock(id: json['id'] as String, header: json['header'] as bool, rows: List.unmodifiable((json['rows'] as List<dynamic>).map((e) => TableRow.fromJson(e as Map<String, dynamic>))), caption: json['caption'] == null ? null : json['caption'] as String);
+  factory TableBlock.fromJson(Map<String, dynamic> json) => TableBlock(
+    id: json['id'] as String,
+    header: json['header'] as bool,
+    rows: List.unmodifiable(
+      (json['rows'] as List<dynamic>).map(
+        (e) => TableRow.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+    caption: json['caption'] == null ? null : json['caption'] as String,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'table', 'id': id, 'header': header, 'rows': rows.map((e) => e.toJson()).toList(), if (caption case final v?) 'caption': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'table',
+    'id': id,
+    'header': header,
+    'rows': rows.map((e) => e.toJson()).toList(),
+    if (caption case final v?) 'caption': v,
+  };
 }
 
 final class CalloutBlock implements Block {
-  const CalloutBlock({required this.id, required this.tone, this.title, required this.content});
+  const CalloutBlock({
+    required this.id,
+    required this.tone,
+    this.title,
+    required this.content,
+  });
   final String id;
   final CalloutTone tone;
   final String? title;
   final List<Inline> content;
 
-  factory CalloutBlock.fromJson(Map<String, dynamic> json) => CalloutBlock(id: json['id'] as String, tone: CalloutTone.parse(json['tone'] as String), title: json['title'] == null ? null : json['title'] as String, content: List.unmodifiable((json['content'] as List<dynamic>).map((e) => Inline.fromJson(e as Map<String, dynamic>))));
+  factory CalloutBlock.fromJson(Map<String, dynamic> json) => CalloutBlock(
+    id: json['id'] as String,
+    tone: CalloutTone.parse(json['tone'] as String),
+    title: json['title'] == null ? null : json['title'] as String,
+    content: List.unmodifiable(
+      (json['content'] as List<dynamic>).map(
+        (e) => Inline.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'callout', 'id': id, 'tone': tone.value, if (title case final v?) 'title': v, 'content': content.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'callout',
+    'id': id,
+    'tone': tone.value,
+    if (title case final v?) 'title': v,
+    'content': content.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class FactboxBlock implements Block {
-  const FactboxBlock({required this.id, required this.title, required this.items});
+  const FactboxBlock({
+    required this.id,
+    required this.title,
+    required this.items,
+  });
   final String id;
   final String title;
   final List<ListItem> items;
 
-  factory FactboxBlock.fromJson(Map<String, dynamic> json) => FactboxBlock(id: json['id'] as String, title: json['title'] as String, items: List.unmodifiable((json['items'] as List<dynamic>).map((e) => ListItem.fromJson(e as Map<String, dynamic>))));
+  factory FactboxBlock.fromJson(Map<String, dynamic> json) => FactboxBlock(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    items: List.unmodifiable(
+      (json['items'] as List<dynamic>).map(
+        (e) => ListItem.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'factbox', 'id': id, 'title': title, 'items': items.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'factbox',
+    'id': id,
+    'title': title,
+    'items': items.map((e) => e.toJson()).toList(),
+  };
 }
 
 final class RelatedLinkBlock implements Block {
-  const RelatedLinkBlock({required this.id, required this.title, this.post, this.url});
+  const RelatedLinkBlock({
+    required this.id,
+    required this.title,
+    this.post,
+    this.url,
+  });
   final String id;
   final String title;
   final String? post;
   final String? url;
 
-  factory RelatedLinkBlock.fromJson(Map<String, dynamic> json) => RelatedLinkBlock(id: json['id'] as String, title: json['title'] as String, post: json['post'] == null ? null : json['post'] as String, url: json['url'] == null ? null : json['url'] as String);
+  factory RelatedLinkBlock.fromJson(Map<String, dynamic> json) =>
+      RelatedLinkBlock(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        post: json['post'] == null ? null : json['post'] as String,
+        url: json['url'] == null ? null : json['url'] as String,
+      );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'related_link', 'id': id, 'title': title, if (post case final v?) 'post': v, if (url case final v?) 'url': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'related_link',
+    'id': id,
+    'title': title,
+    if (post case final v?) 'post': v,
+    if (url case final v?) 'url': v,
+  };
 }
 
 final class PollOption {
@@ -300,22 +626,43 @@ final class PollOption {
   final String id;
   final String label;
 
-  factory PollOption.fromJson(Map<String, dynamic> json) => PollOption(id: json['id'] as String, label: json['label'] as String);
+  factory PollOption.fromJson(Map<String, dynamic> json) =>
+      PollOption(id: json['id'] as String, label: json['label'] as String);
 
   Map<String, dynamic> toJson() => {'id': id, 'label': label};
 }
 
 final class PollBlock implements Block {
-  const PollBlock({required this.id, required this.question, required this.options, this.closesAt});
+  const PollBlock({
+    required this.id,
+    required this.question,
+    required this.options,
+    this.closesAt,
+  });
   final String id;
   final String question;
   final List<PollOption> options;
   final String? closesAt;
 
-  factory PollBlock.fromJson(Map<String, dynamic> json) => PollBlock(id: json['id'] as String, question: json['question'] as String, options: List.unmodifiable((json['options'] as List<dynamic>).map((e) => PollOption.fromJson(e as Map<String, dynamic>))), closesAt: json['closesAt'] == null ? null : json['closesAt'] as String);
+  factory PollBlock.fromJson(Map<String, dynamic> json) => PollBlock(
+    id: json['id'] as String,
+    question: json['question'] as String,
+    options: List.unmodifiable(
+      (json['options'] as List<dynamic>).map(
+        (e) => PollOption.fromJson(e as Map<String, dynamic>),
+      ),
+    ),
+    closesAt: json['closesAt'] == null ? null : json['closesAt'] as String,
+  );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'poll', 'id': id, 'question': question, 'options': options.map((e) => e.toJson()).toList(), if (closesAt case final v?) 'closesAt': v};
+  Map<String, dynamic> toJson() => {
+    'type': 'poll',
+    'id': id,
+    'question': question,
+    'options': options.map((e) => e.toJson()).toList(),
+    if (closesAt case final v?) 'closesAt': v,
+  };
 }
 
 sealed class LiveBlock {
@@ -341,7 +688,14 @@ sealed class LiveBlock {
 }
 
 final class LiveUpdateBlock implements Block {
-  const LiveUpdateBlock({required this.id, required this.time, this.title, this.author, this.pinned, required this.blocks});
+  const LiveUpdateBlock({
+    required this.id,
+    required this.time,
+    this.title,
+    this.author,
+    this.pinned,
+    required this.blocks,
+  });
   final String id;
   final String time;
   final String? title;
@@ -349,10 +703,30 @@ final class LiveUpdateBlock implements Block {
   final bool? pinned;
   final List<LiveBlock> blocks;
 
-  factory LiveUpdateBlock.fromJson(Map<String, dynamic> json) => LiveUpdateBlock(id: json['id'] as String, time: json['time'] as String, title: json['title'] == null ? null : json['title'] as String, author: json['author'] == null ? null : json['author'] as String, pinned: json['pinned'] == null ? null : json['pinned'] as bool, blocks: List.unmodifiable((json['blocks'] as List<dynamic>).map((e) => LiveBlock.fromJson(e as Map<String, dynamic>))));
+  factory LiveUpdateBlock.fromJson(Map<String, dynamic> json) =>
+      LiveUpdateBlock(
+        id: json['id'] as String,
+        time: json['time'] as String,
+        title: json['title'] == null ? null : json['title'] as String,
+        author: json['author'] == null ? null : json['author'] as String,
+        pinned: json['pinned'] == null ? null : json['pinned'] as bool,
+        blocks: List.unmodifiable(
+          (json['blocks'] as List<dynamic>).map(
+            (e) => LiveBlock.fromJson(e as Map<String, dynamic>),
+          ),
+        ),
+      );
 
   @override
-  Map<String, dynamic> toJson() => {'type': 'live_update', 'id': id, 'time': time, if (title case final v?) 'title': v, if (author case final v?) 'author': v, if (pinned case final v?) 'pinned': v, 'blocks': blocks.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'type': 'live_update',
+    'id': id,
+    'time': time,
+    if (title case final v?) 'title': v,
+    if (author case final v?) 'author': v,
+    if (pinned case final v?) 'pinned': v,
+    'blocks': blocks.map((e) => e.toJson()).toList(),
+  };
 }
 
 sealed class Block {
@@ -390,7 +764,14 @@ final class ContentDocument {
   const ContentDocument({required this.blocks});
   final List<Block> blocks;
 
-  factory ContentDocument.fromJson(Map<String, dynamic> json) => ContentDocument(blocks: List.unmodifiable((json['blocks'] as List<dynamic>).map((e) => Block.fromJson(e as Map<String, dynamic>))));
+  factory ContentDocument.fromJson(Map<String, dynamic> json) =>
+      ContentDocument(
+        blocks: List.unmodifiable(
+          (json['blocks'] as List<dynamic>).map(
+            (e) => Block.fromJson(e as Map<String, dynamic>),
+          ),
+        ),
+      );
 
   /// For renderers: any input gives a document, never an exception.
   static ContentDocument read(Object? input) {
@@ -398,13 +779,18 @@ final class ContentDocument {
     return ContentDocument(
       blocks: List.unmodifiable(
         (blocks is List<dynamic> ? blocks : const <dynamic>[]).map(
-          (e) => e is Map<String, dynamic> ? Block.fromJson(e) : const UnknownBlock({}),
+          (e) => e is Map<String, dynamic>
+              ? Block.fromJson(e)
+              : const UnknownBlock({}),
         ),
       ),
     );
   }
 
-  Map<String, dynamic> toJson() => {'version': 1, 'blocks': blocks.map((e) => e.toJson()).toList()};
+  Map<String, dynamic> toJson() => {
+    'version': 1,
+    'blocks': blocks.map((e) => e.toJson()).toList(),
+  };
 }
 
 /// Written by a newer server. Renderers show a calm fallback, or nothing.
@@ -447,7 +833,8 @@ enum SimpleMarkType {
   const SimpleMarkType(this.value);
   final String value;
 
-  static SimpleMarkType parse(String raw) => values.firstWhere((e) => e.value == raw, orElse: () => unknown);
+  static SimpleMarkType parse(String raw) =>
+      values.firstWhere((e) => e.value == raw, orElse: () => unknown);
 }
 
 enum ImageLayout {
@@ -459,7 +846,8 @@ enum ImageLayout {
   const ImageLayout(this.value);
   final String value;
 
-  static ImageLayout parse(String raw) => values.firstWhere((e) => e.value == raw, orElse: () => unknown);
+  static ImageLayout parse(String raw) =>
+      values.firstWhere((e) => e.value == raw, orElse: () => unknown);
 }
 
 enum GalleryLayout {
@@ -470,7 +858,8 @@ enum GalleryLayout {
   const GalleryLayout(this.value);
   final String value;
 
-  static GalleryLayout parse(String raw) => values.firstWhere((e) => e.value == raw, orElse: () => unknown);
+  static GalleryLayout parse(String raw) =>
+      values.firstWhere((e) => e.value == raw, orElse: () => unknown);
 }
 
 enum EmbedProvider {
@@ -483,7 +872,8 @@ enum EmbedProvider {
   const EmbedProvider(this.value);
   final String value;
 
-  static EmbedProvider parse(String raw) => values.firstWhere((e) => e.value == raw, orElse: () => unknown);
+  static EmbedProvider parse(String raw) =>
+      values.firstWhere((e) => e.value == raw, orElse: () => unknown);
 }
 
 enum CalloutTone {
@@ -495,5 +885,6 @@ enum CalloutTone {
   const CalloutTone(this.value);
   final String value;
 
-  static CalloutTone parse(String raw) => values.firstWhere((e) => e.value == raw, orElse: () => unknown);
+  static CalloutTone parse(String raw) =>
+      values.firstWhere((e) => e.value == raw, orElse: () => unknown);
 }

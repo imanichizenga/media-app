@@ -47,7 +47,7 @@ def branded(subject: str, text: str) -> str:
         f'<table role="presentation" width="100%" style="max-width:560px;margin:24px auto;'
         f'background:{c["surface"]};border-collapse:collapse"><tr>'
         f'<td style="padding:20px 24px;background:{c["masthead-bg"]};'
-        f'border-bottom:2px solid {c["masthead-rule"]};'
+        f"border-bottom:2px solid {c['masthead-rule']};"
         f'color:{c["wordmark"]};font:600 22px Georgia,serif">{escape(current.identity.brand_name)}</td></tr>'
         f'<tr><td style="padding:24px;font-size:15px;line-height:24px">{body}</td></tr></table></body></html>'
     )
