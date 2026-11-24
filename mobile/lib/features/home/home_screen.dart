@@ -178,7 +178,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
                   child: SizedBox(
                     height: 460,
-                    child: ClipRect(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(NewsRadius.xl),
                       child: OverflowBox(
                         alignment: Alignment.bottomCenter,
                         maxHeight: double.infinity,

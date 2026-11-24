@@ -214,7 +214,6 @@ Future<Phone> start(
       (_) async => null,
     );
   }
-  debugDisableShadows = false;
 
   FakeVideo.install();
   keeper = FakeKeeper();
@@ -258,6 +257,15 @@ Dio fakeDio(AppDatabase db, FakeApi api) => Dio(BaseOptions(baseUrl: 'https://ap
 /// What is on the screen, as PNG bytes.
 Future<Uint8List> capture(WidgetTester tester) async {
   final view = tester.binding.renderViews.first;
+  // Tests draw shadows as solid slabs; a picture of the app must not.
+  debugDisableShadows = false;
+  void repaint(RenderObject o) {
+    o.markNeedsPaint();
+    o.visitChildren(repaint);
+  }
+
+  repaint(view);
+  await tester.pump();
   final layer = view.debugLayer! as OffsetLayer;
   final bytes = await tester.runAsync(() async {
     final image = await layer.toImage(Offset.zero & tester.view.physicalSize);
@@ -265,5 +273,6 @@ Future<Uint8List> capture(WidgetTester tester) async {
     image.dispose();
     return data!.buffer.asUint8List();
   });
+  debugDisableShadows = true;
   return bytes!;
 }

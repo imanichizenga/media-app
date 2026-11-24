@@ -27,7 +27,9 @@ class NewsPicture extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final picture = image;
     if (picture == null) return const Bone.fill();
-    final color = colorOf(picture.color) ?? context.colors.surfaceSunken;
+    final color = fit == BoxFit.contain
+        ? OverMedia.clear
+        : colorOf(picture.color) ?? context.colors.surfaceSunken;
     ref.watch(picturesProvider);
     return Semantics(
       image: semantic != null,
@@ -54,7 +56,8 @@ class NewsPicture extends ConsumerWidget {
             return Stack(
               fit: StackFit.expand,
               children: [
-                if (picture.blurhash.isNotEmpty) BlurhashView(picture.blurhash),
+                if (picture.blurhash.isNotEmpty && fit == BoxFit.cover)
+                  BlurhashView(picture.blurhash),
                 Image(
                   image: ResizeImage(
                     ref.watch(pictureLoaderProvider)(url),

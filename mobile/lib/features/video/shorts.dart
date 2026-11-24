@@ -165,12 +165,8 @@ class _ShortsState extends ConsumerState<Shorts> with WidgetsBindingObserver {
     return Scaffold(
       backgroundColor: OverMedia.ground,
       body: Center(
-        child: AspectRatio(
-          // On a tablet the picture keeps its shape, on a phone it fills the screen.
-          aspectRatio: MediaQuery.sizeOf(context).width > 600
-              ? 9 / 16
-              : MediaQuery.sizeOf(context).width /
-                    (MediaQuery.sizeOf(context).height - 64 - MediaQuery.paddingOf(context).bottom),
+        // On a tablet the picture keeps its shape, on a phone it fills the screen.
+        child: _Window(
           child: Stack(
             fit: StackFit.expand,
             children: [
