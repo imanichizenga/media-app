@@ -25,10 +25,16 @@ def tag(slug: str) -> Tag:
 
 def asset(kind: str = "image", status: str = "ready", **kw: Any) -> Asset:
     n = Asset.objects.count()
-    base = {"credit": "Mfano", "alt_sw": "Picha", "alt_en": "Picture", "width": 1600, "height": 900}
-    return Asset.objects.create(
-        kind=kind, status=status, filename=f"{n}.jpg", original_key=f"o/{n}", bytes=1, **{**base, **kw}
-    )
+    base = {
+        "credit": "Mfano",
+        "alt_sw": "Picha",
+        "alt_en": "Picture",
+        "width": 1600,
+        "height": 900,
+        "original_key": f"o/{n}",
+        "filename": f"{n}.jpg",
+    }
+    return Asset.objects.create(kind=kind, status=status, bytes=1, **{**base, **kw})
 
 
 def body(text: str = "Aya ya kwanza.", *more: dict[str, Any]) -> dict[str, Any]:

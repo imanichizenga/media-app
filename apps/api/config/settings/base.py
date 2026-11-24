@@ -108,6 +108,11 @@ AWS_REGION = env_str("AWS_REGION", "af-south-1")
 # Test seam for emulators; refused in deployed environments by a system check.
 AWS_ENDPOINT_URL = env_str("AWS_ENDPOINT_URL", "")
 
+# Local stand-ins for the media pipeline (ADR-0022). Each is refused in deployed environments.
+STORAGE_ENDPOINT_URL = env_str("STORAGE_ENDPOINT_URL", "")  # SeaweedFS
+LOCAL_TRANSCODER = env_bool("LOCAL_TRANSCODER")  # FFmpeg in place of MediaConvert
+LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
+
 # Staff realm
 ADMIN_ORIGIN = env_str("ADMIN_ORIGIN", None if IS_DEPLOYED else "http://localhost:3001")
 STAFF_COOKIE_SECURE = env_bool("STAFF_COOKIE_SECURE", True)
@@ -208,6 +213,7 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
         "schedule": 60,
         "options": {"expires": 55},
     },
+    "media-prune": {"task": "newsplatform.media.tasks.prune", "schedule": 6 * 3600},
     "audit-verify": {"task": "newsplatform.audit.tasks.verify_chain_task", "schedule": 6 * 3600},
     "audit-anchor": {"task": "newsplatform.audit.tasks.anchor_chain_task", "schedule": 24 * 3600},
     "approvals-expire": {"task": "newsplatform.approvals.tasks.expire_requests", "schedule": 900},

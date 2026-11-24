@@ -77,7 +77,7 @@ strict = true
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main", "pydantic.mypy"]
 exclude = ["migrations/", "tests/"]
 [[tool.mypy.overrides]]
-module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*"]
+module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*", "pyvips.*", "blurhash.*"]
 ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # Celery ships no types, so its decorators are untyped wherever they are used.
