@@ -32,12 +32,19 @@ def ensure(user: User, *, save: bool = True) -> AuthorProfile:
     return profile
 
 
-def byline(profile: AuthorProfile, locale: str) -> dict[str, Any]:
+def named(profile: AuthorProfile, locale: str) -> dict[str, Any]:
+    """All a card shows."""
     return {
         "id": str(profile.user_id),
         "name": profile.user.display_name,
         "slug": profile.slug,
         "path": paths.author_path(locale, profile.slug),
+    }
+
+
+def byline(profile: AuthorProfile, locale: str) -> dict[str, Any]:
+    return {
+        **named(profile, locale),
         "title": profile.title_en if locale == "en" else profile.title_sw,
         "avatar": image(profile.avatar, locale) if profile.avatar else None,
     }

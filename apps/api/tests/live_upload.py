@@ -55,9 +55,6 @@ def main() -> None:
     old = setup_databases(verbosity=0, interactive=False)
     cache().flushdb()
     tasks.process.delay = lambda _: None
-    s3 = storage_module._local()
-    with contextlib.suppress(s3.exceptions.ClientError):
-        s3.create_bucket(Bucket="news-media")
     store = storage_module.storage()
     try:
         sync_system_roles()

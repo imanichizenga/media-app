@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:news_api_client/src/model/public_image.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -23,6 +24,9 @@ class SiteIdentity {
     required this.taglineEn,
     required this.accentLight,
     required this.accentDark,
+    required this.logoLight,
+    required this.logoDark,
+    required this.favicon,
   });
 
   @JsonKey(
@@ -60,6 +64,27 @@ class SiteIdentity {
   )
   final String accentDark;
 
+  @JsonKey(
+    name: r'logo_light',
+    required: true,
+    includeIfNull: true,
+  )
+  final PublicImage? logoLight;
+
+  @JsonKey(
+    name: r'logo_dark',
+    required: true,
+    includeIfNull: true,
+  )
+  final PublicImage? logoDark;
+
+  @JsonKey(
+    name: r'favicon',
+    required: true,
+    includeIfNull: true,
+  )
+  final PublicImage? favicon;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -68,7 +93,10 @@ class SiteIdentity {
           other.taglineSw == taglineSw &&
           other.taglineEn == taglineEn &&
           other.accentLight == accentLight &&
-          other.accentDark == accentDark;
+          other.accentDark == accentDark &&
+          other.logoLight == logoLight &&
+          other.logoDark == logoDark &&
+          other.favicon == favicon;
 
   @override
   int get hashCode =>
@@ -76,7 +104,10 @@ class SiteIdentity {
       taglineSw.hashCode +
       taglineEn.hashCode +
       accentLight.hashCode +
-      accentDark.hashCode;
+      accentDark.hashCode +
+      (logoLight == null ? 0 : logoLight.hashCode) +
+      (logoDark == null ? 0 : logoDark.hashCode) +
+      (favicon == null ? 0 : favicon.hashCode);
 
   factory SiteIdentity.fromJson(Map<String, dynamic> json) =>
       _$SiteIdentityFromJson(json);

@@ -116,11 +116,12 @@ def test_every_endpoint_matches_its_documented_shape(editor, cat):
 def test_site_config_names_the_logo_and_the_media_host(settings, editor):
     from newsplatform.site_config.models import SettingsSection
 
-    logo = f.asset(outputs={"variants": {"webp": {"320": "k"}}})
+    logo = f.asset(outputs={"variants": {"jpeg": {"640": "k/640.jpg", "320": "k/320.jpg"}}})
     SettingsSection.objects.create(key="identity", data={"brand_name": "Jina", "logo_light": str(logo.pk)})
     settings.STORAGE_ENDPOINT_URL = "http://127.0.0.1:1"
     body = Client().get("/api/v1/site-config").json()
-    assert body["identity"]["logo_light"]["variants"] == {"webp": {"320": "k"}}
+    logo_light = body["identity"]["logo_light"]
+    assert (logo_light["base"], logo_light["widths"]) == ("k/", [320, 640])
     assert body["identity"]["logo_dark"] is None
     assert body["media_base_url"] == ""
 
@@ -358,7 +359,13 @@ def test_a_changed_author_is_changed_everywhere(editor, cat, django_capture_on_c
     with django_capture_on_commit_callbacks(execute=True):
         authors.update(actor=editor, user_id=editor.pk, data={"title_sw": "Mhariri Mkuu"})
     assert get("articles/kichwa").json()["authors"][0]["title"] == "Mhariri Mkuu"
-    assert get("latest").json()["results"][0]["authors"][0]["title"] == "Mhariri Mkuu"
+    assert get(f"authors/{editor.author.slug}").json()["author"]["title"] == "Mhariri Mkuu"
+
+
+def test_cards_are_small(editor, cat):
+    sizes = {"jpeg": {str(w): f"media/i/{'a' * 40}/{w}.jpg" for w in (320, 640, 960, 1280, 1920)}}
+    published(editor, cat, "Kichwa", hero=f.asset(outputs={"variants": sizes, "crops": {"16x9": "c/x"}}).pk)
+    assert len(json.dumps(get("latest").json()["results"][0])) < 1500
 
 
 def test_page_size_is_the_documented_default(editor, cat):

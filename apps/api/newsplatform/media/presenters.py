@@ -17,13 +17,21 @@ def _common(asset: Asset, locale: str) -> dict[str, Any]:
     }
 
 
+def _folder(keys: dict[str, str]) -> str:
+    return next(iter(keys.values())).rpartition("/")[0] + "/" if keys else ""
+
+
 def image(asset: Asset, locale: str) -> dict[str, Any]:
+    """File names are `<base><width>.<avif|webp|jpg>` and `<crops>crop-<16x9|4x3|1x1>.jpg`. Spelling out every
+    key would make a card ten times larger, on networks where that is a second of waiting."""
+    sizes = asset.outputs.get("variants", {}).get("jpeg", {})
     return {
         "kind": "image",
         **_common(asset, locale),
         "focal": [asset.focal_x, asset.focal_y],
-        "variants": asset.outputs.get("variants", {}),
-        "crops": asset.outputs.get("crops", {}),
+        "base": _folder(sizes),
+        "widths": sorted(int(w) for w in sizes),
+        "crops": _folder(asset.outputs.get("crops", {})),
     }
 
 

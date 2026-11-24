@@ -11,7 +11,7 @@ from django.utils import timezone
 from newsplatform.common.canonical import canonical_json
 from newsplatform.common.errors import DomainError, NotFound
 from newsplatform.content import blocks
-from newsplatform.content.authors import byline
+from newsplatform.content.authors import byline, named
 from newsplatform.content.authors import ensure as author_profile
 from newsplatform.content.models import Feed, Listing, Post, PostText, PostType, Publication, RevisionKind
 from newsplatform.engagement.services import resolved
@@ -171,7 +171,7 @@ def build(
         "headline": text.headline,
         "standfirst": text.standfirst,
         "category": _category(node, locale),
-        "authors": [byline(a, locale) for a in ctx["authors"]],
+        "authors": [named(a, locale) for a in ctx["authors"]],
         "image": image(hero, locale) if hero else None,
         "video": video(clip, locale) if clip else None,
         "youtube_id": post.youtube_id,
@@ -184,6 +184,7 @@ def build(
     name = "name_en" if locale == "en" else "name_sw"
     article = {
         **card,
+        "authors": [byline(a, locale) for a in ctx["authors"]],
         "body": text.body,
         "assets": {str(i): _asset(assets[i], locale) for i in blocks.asset_ids(text.body) if i in assets},
         "links": _links(text),

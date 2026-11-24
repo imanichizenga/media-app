@@ -867,7 +867,7 @@
                     "authors": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/PublicByline"
+                            "$ref": "#/components/schemas/CardByline"
                         }
                     },
                     "image": {
@@ -937,6 +937,30 @@
                     "type",
                     "video",
                     "youtube_id"
+                ]
+            },
+            "CardByline": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "path",
+                    "slug"
                 ]
             },
             "CategoryPage": {
@@ -1338,17 +1362,8 @@
             },
             "PublicImage": {
                 "type": "object",
-                "description": "Keys are relative to `media_base_url` in site-config. `variants`: format → width → key.",
+                "description": "Relative to `media_base_url` in site-config: `<base><width>.<avif|webp|jpg>`, and for sharing\n`<crops>crop-<16x9|4x3|1x1>.jpg`.",
                 "properties": {
-                    "variants": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
                     "kind": {
                         "$ref": "#/components/schemas/PublicImageKindEnum"
                     },
@@ -1386,15 +1401,22 @@
                             "type": "integer"
                         }
                     },
-                    "crops": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
+                    "base": {
+                        "type": "string"
+                    },
+                    "widths": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
                         }
+                    },
+                    "crops": {
+                        "type": "string"
                     }
                 },
                 "required": [
                     "alt",
+                    "base",
                     "blurhash",
                     "color",
                     "credit",
@@ -1403,8 +1425,8 @@
                     "height",
                     "id",
                     "kind",
-                    "variants",
-                    "width"
+                    "width",
+                    "widths"
                 ]
             },
             "PublicImageKindEnum": {

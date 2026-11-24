@@ -294,7 +294,7 @@ export interface components {
             headline: string;
             standfirst: string;
             category: components["schemas"]["PublicCategory"];
-            authors: components["schemas"]["PublicByline"][];
+            authors: components["schemas"]["CardByline"][];
             image: components["schemas"]["PublicImage"] | null;
             video: components["schemas"]["PublicVideo"] | null;
             youtube_id: string;
@@ -307,6 +307,13 @@ export interface components {
             /** Format: date-time */
             breaking_until: string | null;
             is_live: boolean;
+        };
+        CardByline: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            slug: string;
+            path: string;
         };
         CategoryPage: {
             next_cursor: string | null;
@@ -416,13 +423,11 @@ export interface components {
             children: components["schemas"]["PublicCategory"][];
             translations: components["schemas"]["CategoryTranslation"][];
         };
-        /** @description Keys are relative to `media_base_url` in site-config. `variants`: format → width → key. */
+        /**
+         * @description Relative to `media_base_url` in site-config: `<base><width>.<avif|webp|jpg>`, and for sharing
+         *     `<crops>crop-<16x9|4x3|1x1>.jpg`.
+         */
         PublicImage: {
-            variants: {
-                [key: string]: {
-                    [key: string]: string;
-                };
-            };
             kind: components["schemas"]["PublicImageKindEnum"];
             /** Format: uuid */
             id: string;
@@ -433,9 +438,9 @@ export interface components {
             blurhash: string;
             color: string;
             focal: number[];
-            crops: {
-                [key: string]: string;
-            };
+            base: string;
+            widths: number[];
+            crops: string;
         };
         /**
          * @description * `image` - image

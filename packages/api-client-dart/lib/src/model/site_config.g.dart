@@ -9,6 +9,8 @@ part of 'site_config.dart';
 abstract class _$SiteConfigCWProxy {
   SiteConfig version(String version);
 
+  SiteConfig mediaBaseUrl(String mediaBaseUrl);
+
   SiteConfig identity(SiteIdentity identity);
 
   SiteConfig localization(SiteLocalization localization);
@@ -21,6 +23,7 @@ abstract class _$SiteConfigCWProxy {
   /// ````
   SiteConfig call({
     String version,
+    String mediaBaseUrl,
     SiteIdentity identity,
     SiteLocalization localization,
   });
@@ -34,6 +37,10 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
 
   @override
   SiteConfig version(String version) => this(version: version);
+
+  @override
+  SiteConfig mediaBaseUrl(String mediaBaseUrl) =>
+      this(mediaBaseUrl: mediaBaseUrl);
 
   @override
   SiteConfig identity(SiteIdentity identity) => this(identity: identity);
@@ -52,6 +59,7 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
   /// ````
   SiteConfig call({
     Object? version = const $CopyWithPlaceholder(),
+    Object? mediaBaseUrl = const $CopyWithPlaceholder(),
     Object? identity = const $CopyWithPlaceholder(),
     Object? localization = const $CopyWithPlaceholder(),
   }) {
@@ -60,6 +68,10 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
           ? _value.version
           // ignore: cast_nullable_to_non_nullable
           : version as String,
+      mediaBaseUrl: mediaBaseUrl == const $CopyWithPlaceholder()
+          ? _value.mediaBaseUrl
+          // ignore: cast_nullable_to_non_nullable
+          : mediaBaseUrl as String,
       identity: identity == const $CopyWithPlaceholder()
           ? _value.identity
           // ignore: cast_nullable_to_non_nullable
@@ -88,10 +100,16 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         $checkKeys(
           json,
-          requiredKeys: const ['version', 'identity', 'localization'],
+          requiredKeys: const [
+            'version',
+            'media_base_url',
+            'identity',
+            'localization'
+          ],
         );
         final val = SiteConfig(
           version: $checkedConvert('version', (v) => v as String),
+          mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
           identity: $checkedConvert('identity',
               (v) => SiteIdentity.fromJson(v as Map<String, dynamic>)),
           localization: $checkedConvert('localization',
@@ -99,11 +117,13 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
         );
         return val;
       },
+      fieldKeyMap: const {'mediaBaseUrl': 'media_base_url'},
     );
 
 Map<String, dynamic> _$SiteConfigToJson(SiteConfig instance) =>
     <String, dynamic>{
       'version': instance.version,
+      'media_base_url': instance.mediaBaseUrl,
       'identity': instance.identity.toJson(),
       'localization': instance.localization.toJson(),
     };

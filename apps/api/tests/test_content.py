@@ -286,7 +286,7 @@ def test_publish_builds_the_page_and_its_feeds(editor, cat, _quiet, django_captu
     child = f.category("mikoa", cat)
     word = f.tag("uchumi")
     other = f.category("biashara")
-    hero = f.asset(outputs={"variants": {"webp": {"640": "media/a.webp"}}})
+    hero = f.asset(outputs={"variants": {"jpeg": {"640": "media/a/640.jpg"}}})
     with django_capture_on_commit_callbacks(execute=True):
         post = f.post(
             editor, child, hero=str(hero.pk), tags=[str(word.pk)], secondary_categories=[str(other.pk)]
@@ -295,7 +295,7 @@ def test_publish_builds_the_page_and_its_feeds(editor, cat, _quiet, django_captu
     row = Publication.objects.get()
     assert row.path == "/mikoa/kichwa-cha-habari"
     assert row.article["engagement"]["likes"] is True
-    assert row.article["image"]["variants"] == {"webp": {"640": "media/a.webp"}}
+    assert (row.article["image"]["base"], row.article["image"]["widths"]) == ("media/a/", [640])
     assert row.article["breadcrumbs"][0]["slug"] == "habari"
     feeds = set(Listing.objects.values_list("feed", "key"))
     assert feeds == {

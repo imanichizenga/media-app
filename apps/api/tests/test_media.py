@@ -42,7 +42,6 @@ def store(s3_server, monkeypatch, settings):
     settings.LOCAL_TRANSCODER = True
     storage_module._local.cache_clear()
     client = storage_module._local()
-    client.create_bucket(Bucket="news-media")
     yield Storage(client, "news-media")
     for page in client.get_paginator("list_objects_v2").paginate(Bucket="news-media"):
         for o in page.get("Contents", []):

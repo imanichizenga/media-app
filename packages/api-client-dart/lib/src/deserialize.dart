@@ -1,6 +1,35 @@
+import 'package:news_api_client/src/model/article.dart';
+import 'package:news_api_client/src/model/author_page.dart';
+import 'package:news_api_client/src/model/card.dart';
+import 'package:news_api_client/src/model/card_byline.dart';
+import 'package:news_api_client/src/model/category_page.dart';
+import 'package:news_api_client/src/model/category_translation.dart';
+import 'package:news_api_client/src/model/feed_page.dart';
+import 'package:news_api_client/src/model/home.dart';
+import 'package:news_api_client/src/model/home_section.dart';
+import 'package:news_api_client/src/model/navigation_item.dart';
+import 'package:news_api_client/src/model/public_author.dart';
+import 'package:news_api_client/src/model/public_byline.dart';
+import 'package:news_api_client/src/model/public_category.dart';
+import 'package:news_api_client/src/model/public_category_detail.dart';
+import 'package:news_api_client/src/model/public_image.dart';
+import 'package:news_api_client/src/model/public_label.dart';
+import 'package:news_api_client/src/model/public_policy.dart';
+import 'package:news_api_client/src/model/public_region.dart';
+import 'package:news_api_client/src/model/public_seo.dart';
+import 'package:news_api_client/src/model/public_story.dart';
+import 'package:news_api_client/src/model/public_story_ref.dart';
+import 'package:news_api_client/src/model/public_video.dart';
+import 'package:news_api_client/src/model/related.dart';
+import 'package:news_api_client/src/model/related_target.dart';
+import 'package:news_api_client/src/model/resolve.dart';
+import 'package:news_api_client/src/model/search.dart';
 import 'package:news_api_client/src/model/site_config.dart';
 import 'package:news_api_client/src/model/site_identity.dart';
 import 'package:news_api_client/src/model/site_localization.dart';
+import 'package:news_api_client/src/model/story_page.dart';
+import 'package:news_api_client/src/model/tag_page.dart';
+import 'package:news_api_client/src/model/translation.dart';
 
 final _regList = RegExp(r'^List<(.*)>$');
 final _regSet = RegExp(r'^Set<(.*)>$');
@@ -21,7 +50,69 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
       return (valueString == 'true' || valueString == '1') as ReturnType;
     case 'double':
       return (value is double ? value : double.parse('$value')) as ReturnType;
+    case 'Article':
+      return Article.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'AuthorPage':
+      return AuthorPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Card':
+      return Card.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'CardByline':
+      return CardByline.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'CategoryPage':
+      return CategoryPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'CategoryTranslation':
+      return CategoryTranslation.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'CommentsEnum':
     case 'DefaultLocaleEnum':
+    case 'FeedPage':
+      return FeedPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Home':
+      return Home.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'HomeSection':
+      return HomeSection.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'NavigationItem':
+      return NavigationItem.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PostTypeEnum':
+    case 'PublicAuthor':
+      return PublicAuthor.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicByline':
+      return PublicByline.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicCategory':
+      return PublicCategory.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PublicCategoryDetail':
+      return PublicCategoryDetail.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PublicImage':
+      return PublicImage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicImageKindEnum':
+    case 'PublicLabel':
+      return PublicLabel.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicPolicy':
+      return PublicPolicy.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicRegion':
+      return PublicRegion.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicSeo':
+      return PublicSeo.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicStory':
+      return PublicStory.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicStoryRef':
+      return PublicStoryRef.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PublicVideo':
+      return PublicVideo.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicVideoKindEnum':
+    case 'Related':
+      return Related.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'RelatedTarget':
+      return RelatedTarget.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'Resolve':
+      return Resolve.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Search':
+      return Search.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteConfig':
       return SiteConfig.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteIdentity':
@@ -29,6 +120,12 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
     case 'SiteLocalization':
       return SiteLocalization.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'StoryPage':
+      return StoryPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'TagPage':
+      return TagPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Translation':
+      return Translation.fromJson(value as Map<String, dynamic>) as ReturnType;
     default:
       RegExpMatch? match;
 

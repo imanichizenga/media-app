@@ -17,11 +17,9 @@ def _when(**kw: Any) -> Any:
     return serializers.DateTimeField(allow_null=True, **kw)
 
 
-_Sizes = serializers.DictField(child=serializers.DictField(child=serializers.CharField()))
-
-
 class PublicImageSerializer(serializers.Serializer[Any]):
-    """Keys are relative to `media_base_url` in site-config. `variants`: format → width → key."""
+    """Relative to `media_base_url` in site-config: `<base><width>.<avif|webp|jpg>`, and for sharing
+    `<crops>crop-<16x9|4x3|1x1>.jpg`."""
 
     kind = serializers.ChoiceField(choices=["image"])
     id = serializers.UUIDField()
@@ -32,8 +30,9 @@ class PublicImageSerializer(serializers.Serializer[Any]):
     blurhash = _text()
     color = _text()
     focal = serializers.ListField(child=serializers.IntegerField())
-    variants = _Sizes
-    crops = serializers.DictField(child=serializers.CharField())
+    base = _text()
+    widths = serializers.ListField(child=serializers.IntegerField())
+    crops = _text()
 
 
 class PublicVideoSerializer(serializers.Serializer[Any]):
@@ -60,11 +59,14 @@ class PublicCategorySerializer(serializers.Serializer[Any]):
     color = _text()
 
 
-class PublicBylineSerializer(serializers.Serializer[Any]):
+class CardBylineSerializer(serializers.Serializer[Any]):
     id = serializers.UUIDField()
     name = serializers.CharField()
     slug = serializers.CharField()
     path = serializers.CharField()
+
+
+class PublicBylineSerializer(CardBylineSerializer):
     title = _text()
     avatar = PublicImageSerializer(allow_null=True)
 
@@ -78,7 +80,7 @@ class CardSerializer(serializers.Serializer[Any]):
     headline = serializers.CharField()
     standfirst = _text()
     category = PublicCategorySerializer()
-    authors = PublicBylineSerializer(many=True)
+    authors = CardBylineSerializer(many=True)
     image = PublicImageSerializer(allow_null=True)
     video = PublicVideoSerializer(allow_null=True)
     youtube_id = _text()
@@ -108,6 +110,7 @@ class PublicLabelSerializer(serializers.Serializer[Any]):
 class ArticleSerializer(CardSerializer):
     """`body` is a content document (packages/content-schema); `assets` holds the files it names, by id."""
 
+    authors = PublicBylineSerializer(many=True)
     body = serializers.DictField()
     assets = serializers.DictField(child=serializers.DictField())
     links = serializers.DictField(

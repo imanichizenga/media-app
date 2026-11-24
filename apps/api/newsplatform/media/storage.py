@@ -1,11 +1,13 @@
 """Object storage. Originals are private for ever; only media/ is ever delivered."""
 
+import contextlib
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 from django.conf import settings
 
 from newsplatform.common.errors import ServiceUnavailable
@@ -21,7 +23,7 @@ _LOCAL = "local-dev-only"
 
 @lru_cache
 def _local() -> Any:
-    return boto3.client(
+    made = boto3.client(
         "s3",
         endpoint_url=settings.STORAGE_ENDPOINT_URL,
         region_name="us-east-1",
@@ -29,6 +31,9 @@ def _local() -> Any:
         aws_secret_access_key=_LOCAL,
         config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
     )
+    with contextlib.suppress(ClientError):  # it exists already
+        made.create_bucket(Bucket="news-media")
+    return made
 
 
 class Storage:
