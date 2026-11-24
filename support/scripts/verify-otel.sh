@@ -13,7 +13,7 @@ cleanup() {
   docker rm -f "$name" > /dev/null 2>&1 || true
 }
 trap cleanup EXIT
-docker run -d --name "$name" -p 127.0.0.1:0:4318 -v "$PWD/infra/local/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro" \
+docker run -d --name "$name" -p 127.0.0.1:0:4318 -v "$PWD/support/infra/local/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro" \
   -v "$out:/traces" otel/opentelemetry-collector-contrib:0.165.0 > /dev/null
 port=$(docker port "$name" 4318/tcp | head -1 | cut -d: -f2)
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:$port" OTEL_BSP_SCHEDULE_DELAY=200
