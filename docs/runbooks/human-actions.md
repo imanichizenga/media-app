@@ -81,7 +81,7 @@ Lead times marked † come from user reports or other vendors' guides, not from 
 | # | What | When | Proven by |
 |---|---|---|---|
 | G1 | Native Swahili editor reviews `docs/i18n/review.md` (regenerate with `node scripts/i18n-review.mjs`) | Before any public release | Every string marked reviewed |
-| G2 | Design sign-off: website (M2), app (M3) | At each gate | Written approval, linked in PROGRESS.md |
+| G2 | Design sign-off: website (M2), app (M3). **Ready now**: `docs/design/screens/m2-design/index.html`, questions at the end of `docs/design/public-experience.md` | At each gate | Written approval, linked in PROGRESS.md |
 | G3 | Mid-range Android phone and an iPhone | M3, M4, M7 | `docs/perf/mobile.md` filled in |
 | G4 | Physical security key or phone passkey on the admin console | With staging | Sign-in works |
 | G5 | Legal texts: privacy policy, terms, editorial and corrections policies; PDPA registration as a data controller | M2, M4 | Published pages |

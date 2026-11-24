@@ -182,7 +182,7 @@ export function BlockView({ block, context }: { block: ReadBlock; context: Conte
       const Tag = `h${Math.min(Math.max(block.level, 2), 4)}` as "h2" | "h3" | "h4";
       const size = { h2: "text-headline-m", h3: "text-headline-s", h4: "text-title" }[Tag];
       return (
-        <Tag className={`${size} pt-4`}>
+        <Tag className={`font-serif ${size} pt-4`}>
           <InlineContent content={block.content} />
         </Tag>
       );

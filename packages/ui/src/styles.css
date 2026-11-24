@@ -32,3 +32,10 @@
     background: var(--color-skeleton);
   }
 }
+/* Rows that scroll sideways: the cut-off card says so better than a bar does. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

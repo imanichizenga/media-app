@@ -6,13 +6,14 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 |---|---|---|
 | **M0 Foundation** | Done | Blocked: no AWS environment |
 | **M0-CLOSE** | Done, pull request 7 (merged) | Blocked: no AWS environment |
-| **M1 Content core** | Done, pull request 8 | Blocked: no AWS environment |
+| **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
+| **M2-DESIGN** | Spec, prototypes and gallery done; **waits for human approval (G2)** | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. Merge pull request 8 when its checks are green: `gh pr checks 8`. Then `main` must be green: `gh run list --branch main --limit 3`.
-2. Start **M2-DESIGN** on a branch `m2-design`. First task: `docs/design/public-experience.md`, then static prototypes of Home, Article, Video/Shorts, Live, Category, Search, Onboarding, Auth sheet and Comments sheet, with real tokens and seed content, as galleries in `docs/design/screens/m2-design/`. **Stop there for human sign-off (G2).** While waiting, build what has no screens: the revalidation receiver, sitemaps, JSON-LD builders.
+1. Is the design approved? Spec: [design/public-experience.md](design/public-experience.md), gallery: `docs/design/screens/m2-design/index.html`. Record the answer, with its date, here and in human-actions G2. **Do not build website or app screens before it.**
+2. Meanwhile, on a branch `m2-website`, work that has no screens: the `apps/web` skeleton (Next.js, strict CSP, i18n, no pages yet), the signed revalidation receiver (`POST /api/revalidate`: HMAC, five-minute window, single use), JSON-LD builders with a schema validator in CI, sitemaps (index, news, image, video), RSS, robots, redirects through `/content/resolve`, the image loader, Lighthouse CI wiring, Terraform for the website. Cards and their skeletons are already in `packages/ui/src/news.tsx`.
 3. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../README.md#check). E2E needs FFmpeg and the storage profile. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them.
 4. Open risks:
    - **Disk:** about 3 GB free of 32 GB in the Codespace. OpenSearch and ClickHouse together need about 3.5 GB. Use one profile at a time, or a larger machine.

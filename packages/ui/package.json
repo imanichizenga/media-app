@@ -8,7 +8,8 @@
     "./content": "./src/content.tsx",
     "./media": "./src/media.tsx",
     "./player": "./src/player.tsx",
-    "./styles.css": "./src/styles.css"
+    "./styles.css": "./src/styles.css",
+    "./news": "./src/news.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p .",
