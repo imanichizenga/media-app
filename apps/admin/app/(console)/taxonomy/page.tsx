@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUp, GripVertical, Pencil, Plus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { type DragEvent, type FormEvent, type ReactNode, useDeferredValue, useState } from "react";
 import {
+  ActionBone,
   Badge,
   Bone,
   Button,
@@ -23,7 +24,7 @@ import {
 } from "@/components/ui";
 import { call, client } from "@/lib/api";
 import { type Category, categoryName, flatTree } from "@/lib/categories";
-import { contentKeys, useCan, useCategories, usePaged } from "@/lib/queries";
+import { contentKeys, useCan, useCategories, usePaged, useSession } from "@/lib/queries";
 
 const TABS = ["categories", "tags", "stories", "redirects"] as const;
 export default function Taxonomy() {
@@ -85,6 +86,7 @@ function Categories() {
   const t = useTranslations("taxonomy");
   const locale = useLocale();
   const can = useCan();
+  const { data: session } = useSession();
   const { data, error, refetch } = useCategories();
   const rows = flatTree(data ?? []);
   const [edit, setEdit] = useState<{ row: Category | null; parent: string | null } | null>(null);
@@ -118,10 +120,14 @@ function Categories() {
   return (
     <>
       <div className="mb-4 flex items-center gap-4">
-        {can("taxonomy.manage") && (
-          <Button onClick={() => setEdit({ row: null, parent: null })}>
-            <Plus aria-hidden size={18} /> {t("newCategory")}
-          </Button>
+        {session ? (
+          can("taxonomy.manage") && (
+            <Button onClick={() => setEdit({ row: null, parent: null })}>
+              <Plus aria-hidden size={18} /> {t("newCategory")}
+            </Button>
+          )
+        ) : (
+          <ActionBone />
         )}
       </div>
       <FormError error={problem} />
@@ -212,16 +218,19 @@ function Categories() {
             })
           : Array.from({ length: 10 }, (_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
-              <li key={i} className="flex items-center gap-2 px-3 py-2" data-skeleton="row">
+              <li key={i} className="flex flex-wrap items-center gap-2 px-3 py-2" data-skeleton="row">
                 <span className="tap hidden w-8 lg:block" />
                 <span className="bone size-3 rounded-full!" />
-                <span className="min-w-0 flex-1">
+                <span className="min-w-0 flex-1 basis-40">
                   <span className="block text-title">
                     <Bone className="w-32" />
                   </span>
                   <span className="block text-caption">
                     <Bone className="w-40" />
                   </span>
+                </span>
+                <span className="text-caption">
+                  <Bone className="w-16" />
                 </span>
                 <span className="tap bone w-44" />
               </li>

@@ -121,7 +121,7 @@ export default function Content() {
           aria-label={t("statusLabel")}
           value={filter.status}
           onChange={(e) => set({ status: e.target.value })}
-          className={control}
+          className={`${control} min-w-0 flex-1 basis-36 md:w-44 md:flex-none`}
         >
           <option value="">{t("allStatuses")}</option>
           {STATUSES.map((s) => (
@@ -134,7 +134,7 @@ export default function Content() {
           aria-label={t("type")}
           value={filter.type}
           onChange={(e) => set({ type: e.target.value })}
-          className={control}
+          className={`${control} min-w-0 flex-1 basis-36 md:w-44 md:flex-none`}
         >
           <option value="">{t("allTypes")}</option>
           {TYPES.map((k) => (
@@ -147,7 +147,7 @@ export default function Content() {
           aria-label={t("category")}
           value={filter.category}
           onChange={(e) => set({ category: e.target.value })}
-          className={control}
+          className={`${control} min-w-0 flex-1 basis-36 md:w-44 md:flex-none`}
         >
           <option value="">{t("allCategories")}</option>
           {tree.map((x) => (

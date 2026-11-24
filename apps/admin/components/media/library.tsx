@@ -40,6 +40,9 @@ const size = (bytes: number, format: (n: number, o: object) => string) =>
     ? `${format(Math.ceil(bytes / 1024), {})} KB`
     : `${format(bytes / 1024 ** 2, { maximumFractionDigits: 1 })} MB`;
 
+/** Logos and banners: cropping one to a tile would leave nothing to recognise. */
+const wide = ({ width, height }: Asset) => Boolean(width && height) && (width ?? 0) > (height ?? 0) * 2.4;
+
 /** A square that says what the file is, and how far it has come. */
 export function Thumb({ asset, className }: { asset: Asset; className?: string }) {
   const t = useTranslations("media");
@@ -58,8 +61,8 @@ export function Thumb({ asset, className }: { asset: Asset; className?: string }
           src={asset.thumb_url}
           alt=""
           loading="lazy"
-          className="absolute inset-0 size-full object-cover"
-          style={{ objectPosition: `${asset.focal_x / 10}% ${asset.focal_y / 10}%` }}
+          className={cx("absolute inset-0 size-full", wide(asset) ? "object-contain p-2" : "object-cover")}
+          style={{ objectPosition: wide(asset) ? "center" : `${asset.focal_x / 10}% ${asset.focal_y / 10}%` }}
         />
       ) : (
         <span className="absolute inset-0 grid place-items-center text-text-tertiary">

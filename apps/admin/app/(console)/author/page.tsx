@@ -7,6 +7,7 @@ import {
   Bone,
   Button,
   Card,
+  cx,
   ErrorState,
   Field,
   FormError,
@@ -41,12 +42,13 @@ export default function AuthorPage() {
               <span className="bone size-24 rounded-full!" />
               <span className="tap bone w-32" />
             </span>
-            {[0, 1, 2, 3].map((i) => (
+            {/* Two short fields, then four tall ones. */}
+            {[0, 1, 2, 3, 4, 5].map((i) => (
               <span key={i} className="flex flex-col gap-1">
                 <span className="text-label">
                   <Bone className="w-32" />
                 </span>
-                <span className="tap bone block! w-full" />
+                <span className={cx("bone block! w-full", i < 2 ? "tap" : "h-28")} />
               </span>
             ))}
           </div>

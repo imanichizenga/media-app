@@ -64,13 +64,25 @@ async function dress(v: (typeof VARIANTS)[number]) {
     { name: "locale", value: v.locale, url: "http://localhost:3001" },
   ]);
 }
-const shoot = (name: string, v: (typeof VARIANTS)[number], state: string) =>
-  page.screenshot({
+/** Every picture in view has arrived, unless its absence is the point. */
+const pictures = () =>
+  page.waitForFunction(() =>
+    [...document.images]
+      .filter((i) => i.getBoundingClientRect().top < innerHeight && i.getBoundingClientRect().bottom > 0)
+      .every((i) => i.complete),
+  );
+const shoot = async (name: string, v: (typeof VARIANTS)[number], state: string) => {
+  if (state !== "skeleton") {
+    await page.waitForLoadState("networkidle");
+    await pictures();
+  }
+  await page.screenshot({
     path: `${OUT}/${name}--${state}--${v.device}-${v.theme}-${v.locale}.jpg`,
     type: "jpeg",
     quality: 78,
     animations: "disabled",
   });
+};
 
 test.beforeAll(async ({ browser }) => {
   rmSync(OUT, { recursive: true, force: true });
@@ -215,7 +227,10 @@ for (const v of VARIANTS)
 
     await page.goto("/media");
     await still();
-    await page.locator("main ul button").nth(20).click();
+    await page
+      .getByRole("button", { name: /^Mchoro: / })
+      .first()
+      .click();
     await expect(page.getByRole("slider")).toBeVisible();
     await still();
     await shoot("media", v, "details");

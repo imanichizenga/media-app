@@ -339,7 +339,7 @@ test("skeletons match the loaded layout", async () => {
 
 test("header buttons hold their place on phones until permissions arrive", async () => {
   await page.setViewportSize({ width: 360, height: 740 });
-  for (const path of ["/staff", "/roles", "/audit"]) {
+  for (const path of ["/staff", "/roles", "/audit", "/content", "/media", "/taxonomy"]) {
     let release = () => {};
     const gate = new Promise<void>((r) => {
       release = r;
@@ -350,8 +350,8 @@ test("header buttons hold their place on phones until permissions arrive", async
     });
     await page.goto(path);
     const top = () =>
-      page.evaluate(() => document.querySelector("main table")?.getBoundingClientRect().y ?? 0);
-    await expect(page.locator("main table .bone").first()).toBeVisible();
+      page.evaluate(() => document.querySelector("main table, main ul")?.getBoundingClientRect().y ?? 0);
+    await expect(page.locator("main table .bone, main ul .bone").first()).toBeVisible();
     const before = await top();
     release();
     await expect(page.locator(".bone")).toHaveCount(0);

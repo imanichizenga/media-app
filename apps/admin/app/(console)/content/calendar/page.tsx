@@ -69,7 +69,7 @@ export default function Calendar() {
       ) : (
         <ol className="grid gap-3 lg:grid-cols-7">
           {days.map((day) => (
-            <li key={day} data-grows>
+            <li key={day} data-grows className="min-w-0">
               <Card className={cx("h-full min-h-40 p-3!", day === today && "border-accent!")}>
                 <h2 className="pb-2 font-sans text-label">
                   {name(day, { weekday: "short", day: "numeric" })}
@@ -82,9 +82,6 @@ export default function Calendar() {
                       <li key={i} className="rounded-sm bg-surface-sunken p-2" data-skeleton="slot">
                         <span className="block text-caption">
                           <Bone className="w-16" />
-                        </span>
-                        <span className="block text-caption">
-                          <Bone className="w-20" />
                         </span>
                         <span className="block text-label">
                           <Bone className="w-full" />
@@ -135,7 +132,12 @@ function Day({ posts }: { posts: Entry[] }) {
           >
             <span className="flex flex-wrap items-center gap-1 text-caption text-text-secondary">
               {format.dateTime(post.at, { timeStyle: "short" })}
-              <Badge tone={STATUS_TONE[post.status]}>{t(`status.${post.status}`)}</Badge>
+              {/* What is already out needs no label here; what is still to come does. */}
+              {post.status === "published" ? (
+                <span className="sr-only">{t("status.published")}</span>
+              ) : (
+                <Badge tone={STATUS_TONE[post.status]}>{t(`status.${post.status}`)}</Badge>
+              )}
             </span>
             <span className="line-clamp-3 text-label">{post.headline || t("untitled")}</span>
           </Link>
