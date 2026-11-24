@@ -38,7 +38,9 @@ class NotFoundScreen extends ConsumerWidget {
             ),
             Expanded(
               child: to.isLoading || to.value != null
-                  ? const Shimmer(child: Padding(padding: EdgeInsets.all(20), child: Bone.fill()))
+                  ? const Shimmer(
+                      child: Padding(padding: EdgeInsets.all(20), child: Bone.fill()),
+                    )
                   : Center(
                       child: SingleChildScrollView(
                         child: Designed.failure(

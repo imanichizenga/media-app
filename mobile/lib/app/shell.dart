@@ -77,9 +77,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final ink = dark
-        ? (on ? OverMedia.ink : OverMedia.soft)
-        : (on ? c.navActive : c.navFg);
+    final ink = dark ? (on ? OverMedia.ink : OverMedia.soft) : (on ? c.navActive : c.navFg);
     return Semantics(
       selected: on,
       child: Pressable(

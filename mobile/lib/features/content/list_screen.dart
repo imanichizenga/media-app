@@ -41,11 +41,14 @@ class ListScreen extends ConsumerWidget {
         if (next.value case final target?) context.replace(target);
       });
     }
-    final title = about?.category?.name ?? about?.tag?.name ?? about?.story?.title ?? about?.author?.name;
+    final title =
+        about?.category?.name ?? about?.tag?.name ?? about?.story?.title ?? about?.author?.name;
     final first = state.value?.stories.firstOrNull;
     final cover = feed.kind == FeedKind.category || feed.kind == FeedKind.story;
     final showCover =
-        cover && windowOf(context) == WindowClass.compact && (state.value == null ? state.isLoading : first?.image != null);
+        cover &&
+        windowOf(context) == WindowClass.compact &&
+        (state.value == null ? state.isLoading : first?.image != null);
     return Scaffold(
       body: Shimmer(
         child: RefreshIndicator(
@@ -84,7 +87,9 @@ class ListScreen extends ConsumerWidget {
                   },
                 ),
                 if (showCover) ...[
-                  SliverToBoxAdapter(child: CoverCard(first, open: open, place: 'list')),
+                  SliverToBoxAdapter(
+                    child: CoverCard(first, open: open, place: 'list'),
+                  ),
                   const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s2)),
                 ],
                 ...feedSlivers(
@@ -131,10 +136,7 @@ class _TitleBar extends SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         color: colors.mastheadBg,
         border: Border(
-          bottom: BorderSide(
-            color: overlaps ? colors.mastheadRule : colors.mastheadBg,
-            width: 2,
-          ),
+          bottom: BorderSide(color: overlaps ? colors.mastheadRule : colors.mastheadBg, width: 2),
         ),
       ),
       child: Row(
@@ -168,8 +170,7 @@ class _TitleBar extends SliverPersistentHeaderDelegate {
   );
 
   @override
-  bool shouldRebuild(_TitleBar old) =>
-      old.title != title || old.top != top || old.colors != colors;
+  bool shouldRebuild(_TitleBar old) => old.title != title || old.top != top || old.colors != colors;
 }
 
 class _Head extends StatelessWidget {
@@ -192,7 +193,12 @@ class _Head extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(NewsSpace.s5, NewsSpace.s2, NewsSpace.s5, NewsSpace.s4),
+          padding: const EdgeInsets.fromLTRB(
+            NewsSpace.s5,
+            NewsSpace.s2,
+            NewsSpace.s5,
+            NewsSpace.s4,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -206,7 +212,10 @@ class _Head extends StatelessWidget {
               ),
               if (text.isNotEmpty) ...[
                 const SizedBox(height: NewsSpace.s2),
-                Text(text, style: context.type.bodyL.copyWith(color: c.textSecondary, height: 1.45)),
+                Text(
+                  text,
+                  style: context.type.bodyL.copyWith(color: c.textSecondary, height: 1.45),
+                ),
               ],
             ],
           ),
@@ -341,4 +350,3 @@ class Initial extends StatelessWidget {
     ),
   );
 }
-

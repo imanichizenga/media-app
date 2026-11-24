@@ -137,11 +137,7 @@ Widget screenFor(String path, {StoryExtra? extra}) => switch (parsePlace(path)) 
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   final content = [
-    for (final path in const [
-      '/:a',
-      '/:a/:b',
-      '/:a/:b/:c',
-    ])
+    for (final path in const ['/:a', '/:a/:b', '/:a/:b/:c'])
       GoRoute(
         path: path,
         parentNavigatorKey: rootKey,
@@ -149,10 +145,8 @@ GoRouter router(Ref ref) {
           TabPlace(path: final tab) when tab != state.uri.path => tab,
           _ => null,
         },
-        pageBuilder: (context, state) => _content(
-          state,
-          screenFor(state.uri.path, extra: state.extra as StoryExtra?),
-        ),
+        pageBuilder: (context, state) =>
+            _content(state, screenFor(state.uri.path, extra: state.extra as StoryExtra?)),
       ),
   ];
   final router = GoRouter(
@@ -166,8 +160,7 @@ GoRouter router(Ref ref) {
       if (done && state.uri.path == '/welcome') return '/';
       return null;
     },
-    errorPageBuilder: (context, state) =>
-        MaterialPage(child: NotFoundScreen(path: state.uri.path)),
+    errorPageBuilder: (context, state) => MaterialPage(child: NotFoundScreen(path: state.uri.path)),
   );
   ref.onDispose(router.dispose);
   return router;
@@ -175,4 +168,7 @@ GoRouter router(Ref ref) {
 
 /// Opens a story over whatever is shown, with what its card already knows.
 void openStory(BuildContext context, Story story, {String? heroTag, String from = ''}) =>
-    context.push(story.path, extra: StoryExtra(story, heroTag: heroTag, from: from));
+    context.push(
+      story.path,
+      extra: StoryExtra(story, heroTag: heroTag, from: from),
+    );

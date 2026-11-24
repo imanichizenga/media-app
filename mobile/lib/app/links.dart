@@ -62,7 +62,16 @@ class OutsidePlace extends Place {
 const tabPaths = ['/', '/video', '/search', '/saved', '/profile'];
 const _lists = {'tag', 'story', 'author'};
 const _outside = {
-  'about', 'contact', 'privacy', 'terms', 'editorial-policy', 'corrections', 'rss', 'feed', 'api', 'theme',
+  'about',
+  'contact',
+  'privacy',
+  'terms',
+  'editorial-policy',
+  'corrections',
+  'rss',
+  'feed',
+  'api',
+  'theme',
   'media', 'settings', 'sitemap', 'sitemaps', 'ads', 'app-ads', 'static', '_next', 'healthz', //
 };
 

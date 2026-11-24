@@ -156,9 +156,7 @@ class _NewsPlayerState extends ConsumerState<NewsPlayer> with WidgetsBindingObse
                       children: [
                         if (widget.poster.isNotEmpty)
                           PosterPicture(poster: widget.poster, color: widget.color),
-                        const DecoratedBox(
-                          decoration: BoxDecoration(gradient: OverMedia.fade),
-                        ),
+                        const DecoratedBox(decoration: BoxDecoration(gradient: OverMedia.fade)),
                         Center(child: BigPlay(pending: controller != null)),
                         Positioned(
                           left: 14,

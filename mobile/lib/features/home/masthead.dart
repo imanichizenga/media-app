@@ -78,6 +78,5 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_Delegate old) =>
-      old.top != top || old.date != date || old.colors != colors;
+  bool shouldRebuild(_Delegate old) => old.top != top || old.date != date || old.colors != colors;
 }

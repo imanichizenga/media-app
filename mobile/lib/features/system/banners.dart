@@ -56,13 +56,7 @@ class UpdateBanner extends ConsumerWidget {
 }
 
 class _Strip extends StatelessWidget {
-  const _Strip({
-    required this.icon,
-    required this.text,
-    this.action,
-    this.onAction,
-    this.onClose,
-  });
+  const _Strip({required this.icon, required this.text, this.action, this.onAction, this.onClose});
 
   final NewsIconData icon;
   final String text;
@@ -111,11 +105,7 @@ class _Strip extends StatelessWidget {
                 ),
               ),
             if (onClose != null)
-              RoundButton(
-                NewsIcons.x,
-                label: Strings.of(context).later,
-                onTap: onClose,
-              )
+              RoundButton(NewsIcons.x, label: Strings.of(context).later, onTap: onClose)
             else
               const SizedBox(width: NewsSpace.s3),
           ],

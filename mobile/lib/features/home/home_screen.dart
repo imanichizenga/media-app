@@ -205,7 +205,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         gap(NewsSpace.s8),
         SliverToBoxAdapter(child: SectionHead(s.topStories)),
         gap(NewsSpace.s1),
-        SliverToBoxAdapter(child: TopStories(stories: top, open: open)),
+        SliverToBoxAdapter(
+          child: TopStories(stories: top, open: open),
+        ),
       ],
       gap(NewsSpace.s8),
       SliverToBoxAdapter(

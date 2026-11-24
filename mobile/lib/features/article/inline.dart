@@ -12,7 +12,8 @@ import '../../ui/tokens/theme.dart';
 Future<void> follow(BuildContext context, String href) async {
   final uri = Uri.tryParse(href);
   if (uri == null) return;
-  final ours = !uri.hasScheme && href.startsWith('/') && !href.startsWith('//') ||
+  final ours =
+      !uri.hasScheme && href.startsWith('/') && !href.startsWith('//') ||
       uri.scheme == 'https' && uri.host == Env.webHost;
   if (ours && parsePlace(uri.path) is! OutsidePlace) {
     await context.push(uri.path);
@@ -24,11 +25,15 @@ Future<void> follow(BuildContext context, String href) async {
   }
 }
 
-String plain(List<Inline>? content) => (content ?? const []).map((n) => switch (n) {
-  TextNode(:final text) => text,
-  HardBreak() => '\n',
-  UnknownInline() => '',
-}).join();
+String plain(List<Inline>? content) => (content ?? const [])
+    .map(
+      (n) => switch (n) {
+        TextNode(:final text) => text,
+        HardBreak() => '\n',
+        UnknownInline() => '',
+      },
+    )
+    .join();
 
 /// Text with its marks. What this version does not know is shown as plain text.
 class InlineText extends StatefulWidget {
