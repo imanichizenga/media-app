@@ -177,7 +177,7 @@ importers:
         specifier: 2.11.13
         version: 2.11.13
 
-  apps/admin:
+  admin:
     dependencies:
       '@fontsource-variable/inter':
         specifier: 5.3.0
@@ -187,19 +187,19 @@ importers:
         version: 5.3.0
       '@news/api-client':
         specifier: workspace:*
-        version: link:../../packages/api-client
+        version: link:../support/generated/api-client
       '@news/content-schema':
         specifier: workspace:*
-        version: link:../../packages/content-schema
+        version: link:../support/packages/content-schema
       '@news/design-tokens':
         specifier: workspace:*
-        version: link:../../packages/design-tokens
+        version: link:../support/packages/design-tokens
       '@news/screens':
         specifier: workspace:*
-        version: link:../../packages/screens
+        version: link:../support/packages/screens
       '@news/ui':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../support/packages/ui
       '@sentry/browser':
         specifier: 11.13.0
         version: 11.13.0
@@ -280,7 +280,7 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  design/prototypes:
+  support/design/prototypes:
     dependencies:
       '@fontsource-variable/inter':
         specifier: 5.3.0
@@ -329,7 +329,7 @@ importers:
         specifier: 8.3.8
         version: 8.3.8(@types/node@24.19.2)(jiti@2.7.0)
 
-  packages/api-client:
+  support/generated/api-client:
     dependencies:
       openapi-fetch:
         specifier: 0.17.0
@@ -342,7 +342,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/content-schema:
+  support/packages/content-schema:
     dependencies:
       zod:
         specifier: 4.6.6
@@ -358,7 +358,7 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  packages/design-tokens:
+  support/packages/design-tokens:
     devDependencies:
       '@types/node':
         specifier: ^24
@@ -370,7 +370,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/screens:
+  support/packages/screens:
     dependencies:
       '@news/ui':
         specifier: workspace:*
@@ -398,7 +398,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/ui:
+  support/packages/ui:
     dependencies:
       '@news/content-schema':
         specifier: workspace:*
@@ -435,7 +435,7 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  tests/e2e:
+  support/tests/e2e:
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.14.0

@@ -1,0 +1,2003 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "News Platform public API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/content/articles/{slug}": {
+            "get": {
+                "operationId": "article",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Article"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/articles/{slug}/related": {
+            "get": {
+                "operationId": "related",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Related"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/authors/{slug}": {
+            "get": {
+                "operationId": "author",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthorPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/categories/{slug}": {
+            "get": {
+                "operationId": "category",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/home": {
+            "get": {
+                "operationId": "home",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Home"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/latest": {
+            "get": {
+                "operationId": "latest",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FeedPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/navigation": {
+            "get": {
+                "operationId": "navigation",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NavigationItem"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/resolve": {
+            "get": {
+                "operationId": "resolve",
+                "description": "Where an old address lives now. The website asks before it answers 404.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resolve"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/search": {
+            "get": {
+                "operationId": "search",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Search"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/stories/{slug}": {
+            "get": {
+                "operationId": "story",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoryPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/tags/{slug}": {
+            "get": {
+                "operationId": "tag",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "slug",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TagPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/types/{kind}": {
+            "get": {
+                "operationId": "by_type",
+                "description": "Video list, shorts, galleries, opinion…",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "kind",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "gallery",
+                                "live_blog",
+                                "opinion",
+                                "short",
+                                "video",
+                                "youtube"
+                            ]
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FeedPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/site-config": {
+            "get": {
+                "operationId": "site_config",
+                "tags": [
+                    "site-config"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SiteConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Article": {
+                "type": "object",
+                "description": "`body` is a content document (support/packages/content-schema); `assets` holds the files it names, by id.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/PostTypeEnum"
+                    },
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "headline": {
+                        "type": "string"
+                    },
+                    "standfirst": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/PublicCategory"
+                    },
+                    "authors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicByline"
+                        }
+                    },
+                    "image": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicImage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "video": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicVideo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "youtube_id": {
+                        "type": "string"
+                    },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Of the video, wherever it lives"
+                    },
+                    "reading_minutes": {
+                        "type": "integer"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_sensitive": {
+                        "type": "boolean"
+                    },
+                    "breaking_until": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "is_live": {
+                        "type": "boolean"
+                    },
+                    "body": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "assets": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "links": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RelatedTarget"
+                        }
+                    },
+                    "breadcrumbs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicCategory"
+                        }
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicLabel"
+                        }
+                    },
+                    "regions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicRegion"
+                        }
+                    },
+                    "story": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicStoryRef"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "engagement": {
+                        "$ref": "#/components/schemas/PublicPolicy"
+                    },
+                    "content_warning": {
+                        "type": "string"
+                    },
+                    "source_url": {
+                        "type": "string"
+                    },
+                    "update_note": {
+                        "type": "string"
+                    },
+                    "correction_note": {
+                        "type": "string"
+                    },
+                    "seo": {
+                        "$ref": "#/components/schemas/PublicSeo"
+                    },
+                    "first_published_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "live_ended_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "translations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Translation"
+                        }
+                    }
+                },
+                "required": [
+                    "assets",
+                    "authors",
+                    "body",
+                    "breadcrumbs",
+                    "breaking_until",
+                    "category",
+                    "content_warning",
+                    "correction_note",
+                    "duration_ms",
+                    "engagement",
+                    "first_published_at",
+                    "headline",
+                    "id",
+                    "image",
+                    "is_live",
+                    "is_sensitive",
+                    "links",
+                    "live_ended_at",
+                    "locale",
+                    "modified_at",
+                    "path",
+                    "published_at",
+                    "reading_minutes",
+                    "regions",
+                    "seo",
+                    "slug",
+                    "source_url",
+                    "standfirst",
+                    "story",
+                    "tags",
+                    "translations",
+                    "type",
+                    "update_note",
+                    "video",
+                    "youtube_id"
+                ]
+            },
+            "AuthorPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/PublicAuthor"
+                    }
+                },
+                "required": [
+                    "author",
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "Card": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/PostTypeEnum"
+                    },
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "headline": {
+                        "type": "string"
+                    },
+                    "standfirst": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/PublicCategory"
+                    },
+                    "authors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CardByline"
+                        }
+                    },
+                    "image": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicImage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "video": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicVideo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "youtube_id": {
+                        "type": "string"
+                    },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Of the video, wherever it lives"
+                    },
+                    "reading_minutes": {
+                        "type": "integer"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_sensitive": {
+                        "type": "boolean"
+                    },
+                    "breaking_until": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "is_live": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "authors",
+                    "breaking_until",
+                    "category",
+                    "duration_ms",
+                    "headline",
+                    "id",
+                    "image",
+                    "is_live",
+                    "is_sensitive",
+                    "locale",
+                    "modified_at",
+                    "path",
+                    "published_at",
+                    "reading_minutes",
+                    "slug",
+                    "standfirst",
+                    "type",
+                    "video",
+                    "youtube_id"
+                ]
+            },
+            "CardByline": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "path",
+                    "slug"
+                ]
+            },
+            "CategoryPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/PublicCategoryDetail"
+                    }
+                },
+                "required": [
+                    "category",
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "CategoryTranslation": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "locale",
+                    "path"
+                ]
+            },
+            "CommentsEnum": {
+                "enum": [
+                    "open",
+                    "verified",
+                    "premoderated",
+                    "closed"
+                ],
+                "type": "string",
+                "description": "* `open` - open\n* `verified` - verified\n* `premoderated` - premoderated\n* `closed` - closed"
+            },
+            "DefaultLocaleEnum": {
+                "enum": [
+                    "sw",
+                    "en"
+                ],
+                "type": "string",
+                "description": "* `sw` - sw\n* `en` - en"
+            },
+            "FeedPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "Home": {
+                "type": "object",
+                "properties": {
+                    "breaking": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "live": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "lead": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "latest": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "videos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "shorts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HomeSection"
+                        }
+                    }
+                },
+                "required": [
+                    "breaking",
+                    "latest",
+                    "lead",
+                    "live",
+                    "sections",
+                    "shorts",
+                    "videos"
+                ]
+            },
+            "HomeSection": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "$ref": "#/components/schemas/PublicCategory"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    }
+                },
+                "required": [
+                    "category",
+                    "results"
+                ]
+            },
+            "Logo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "derived": {
+                        "type": "boolean"
+                    },
+                    "svg": {
+                        "type": "string"
+                    },
+                    "png": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "derived",
+                    "height",
+                    "id",
+                    "png",
+                    "svg",
+                    "width"
+                ]
+            },
+            "NavigationItem": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicCategory"
+                        }
+                    }
+                },
+                "required": [
+                    "children",
+                    "color",
+                    "icon",
+                    "id",
+                    "name",
+                    "path",
+                    "slug"
+                ]
+            },
+            "PostTypeEnum": {
+                "enum": [
+                    "article",
+                    "breaking",
+                    "video",
+                    "gallery",
+                    "live_blog",
+                    "live_stream",
+                    "opinion",
+                    "short",
+                    "youtube",
+                    "instagram_import"
+                ],
+                "type": "string",
+                "description": "* `article` - Article\n* `breaking` - Breaking\n* `video` - Video\n* `gallery` - Gallery\n* `live_blog` - Live Blog\n* `live_stream` - Live Stream\n* `opinion` - Opinion\n* `short` - Short\n* `youtube` - Youtube\n* `instagram_import` - Instagram"
+            },
+            "PublicAuthor": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicImage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "expertise": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "avatar",
+                    "bio",
+                    "expertise",
+                    "id",
+                    "links",
+                    "name",
+                    "path",
+                    "slug",
+                    "title"
+                ]
+            },
+            "PublicByline": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicImage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "avatar",
+                    "id",
+                    "name",
+                    "path",
+                    "slug",
+                    "title"
+                ]
+            },
+            "PublicCategory": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "color",
+                    "id",
+                    "name",
+                    "path",
+                    "slug"
+                ]
+            },
+            "PublicCategoryDetail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "icon": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "seo_title": {
+                        "type": "string"
+                    },
+                    "seo_description": {
+                        "type": "string"
+                    },
+                    "parents": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicCategory"
+                        }
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicCategory"
+                        }
+                    },
+                    "translations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CategoryTranslation"
+                        }
+                    }
+                },
+                "required": [
+                    "children",
+                    "color",
+                    "description",
+                    "icon",
+                    "id",
+                    "name",
+                    "parents",
+                    "path",
+                    "seo_description",
+                    "seo_title",
+                    "slug",
+                    "translations"
+                ]
+            },
+            "PublicImage": {
+                "type": "object",
+                "description": "Relative to `media_base_url` in site-config: `<base><width>.<avif|webp|jpg>`, and for sharing\n`<crops>crop-<16x9|4x3|1x1>.jpg`.",
+                "properties": {
+                    "kind": {
+                        "$ref": "#/components/schemas/PublicImageKindEnum"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "alt": {
+                        "type": "string"
+                    },
+                    "credit": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "height": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "blurhash": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "focal": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "base": {
+                        "type": "string"
+                    },
+                    "widths": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "crops": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "alt",
+                    "base",
+                    "blurhash",
+                    "color",
+                    "credit",
+                    "crops",
+                    "focal",
+                    "height",
+                    "id",
+                    "kind",
+                    "width",
+                    "widths"
+                ]
+            },
+            "PublicImageKindEnum": {
+                "enum": [
+                    "image"
+                ],
+                "type": "string",
+                "description": "* `image` - image"
+            },
+            "PublicLabel": {
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "path",
+                    "slug"
+                ]
+            },
+            "PublicPolicy": {
+                "type": "object",
+                "properties": {
+                    "likes": {
+                        "type": "boolean"
+                    },
+                    "comments": {
+                        "$ref": "#/components/schemas/CommentsEnum"
+                    },
+                    "bookmarks": {
+                        "type": "boolean"
+                    },
+                    "shares": {
+                        "type": "boolean"
+                    },
+                    "reposts": {
+                        "type": "boolean"
+                    },
+                    "live_chat": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "bookmarks",
+                    "comments",
+                    "likes",
+                    "live_chat",
+                    "reposts",
+                    "shares"
+                ]
+            },
+            "PublicRegion": {
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "slug"
+                ]
+            },
+            "PublicSeo": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "description",
+                    "title"
+                ]
+            },
+            "PublicStory": {
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "summary": {
+                        "type": "string"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "is_active",
+                    "path",
+                    "slug",
+                    "summary",
+                    "title"
+                ]
+            },
+            "PublicStoryRef": {
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "path",
+                    "slug",
+                    "title"
+                ]
+            },
+            "PublicVideo": {
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "$ref": "#/components/schemas/PublicVideoKindEnum"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "alt": {
+                        "type": "string"
+                    },
+                    "credit": {
+                        "type": "string"
+                    },
+                    "width": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "height": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "blurhash": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "hls": {
+                        "type": "string"
+                    },
+                    "poster": {
+                        "type": "string"
+                    },
+                    "sprite": {
+                        "type": "string"
+                    },
+                    "sprite_vtt": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "alt",
+                    "blurhash",
+                    "color",
+                    "credit",
+                    "duration_ms",
+                    "height",
+                    "hls",
+                    "id",
+                    "kind",
+                    "poster",
+                    "sprite",
+                    "sprite_vtt",
+                    "width"
+                ]
+            },
+            "PublicVideoKindEnum": {
+                "enum": [
+                    "video"
+                ],
+                "type": "string",
+                "description": "* `video` - video"
+            },
+            "Related": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
+            "RelatedTarget": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "headline": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "headline",
+                    "path"
+                ]
+            },
+            "Resolve": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "path"
+                ]
+            },
+            "Schemes": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "string"
+                    },
+                    "dark": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
+                ]
+            },
+            "Search": {
+                "type": "object",
+                "description": "Until search is connected (M8), `available` is false and nothing is found.",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "available": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "available",
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "SiteConfig": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "$ref": "#/components/schemas/SiteTheme"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/SiteIdentity"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "media_base_url": {
+                        "type": "string"
+                    },
+                    "localization": {
+                        "$ref": "#/components/schemas/SiteLocalization"
+                    }
+                },
+                "required": [
+                    "identity",
+                    "localization",
+                    "media_base_url",
+                    "theme",
+                    "version"
+                ]
+            },
+            "SiteIdentity": {
+                "type": "object",
+                "properties": {
+                    "brand_name": {
+                        "type": "string"
+                    },
+                    "tagline_sw": {
+                        "type": "string"
+                    },
+                    "tagline_en": {
+                        "type": "string"
+                    },
+                    "wordmark_light": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "wordmark_dark": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "symbol": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "brand_name",
+                    "symbol",
+                    "tagline_en",
+                    "tagline_sw",
+                    "wordmark_dark",
+                    "wordmark_light"
+                ]
+            },
+            "SiteLocalization": {
+                "type": "object",
+                "properties": {
+                    "default_locale": {
+                        "$ref": "#/components/schemas/DefaultLocaleEnum"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "default_locale",
+                    "timezone"
+                ]
+            },
+            "SiteTheme": {
+                "type": "object",
+                "properties": {
+                    "schema_version": {
+                        "type": "integer"
+                    },
+                    "hash": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "$ref": "#/components/schemas/ThemeKeyEnum"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "dark_color": {
+                        "type": "string"
+                    },
+                    "css": {
+                        "type": "string"
+                    },
+                    "theme_color": {
+                        "$ref": "#/components/schemas/Schemes"
+                    },
+                    "tokens": {
+                        "$ref": "#/components/schemas/SiteThemeTokens"
+                    }
+                },
+                "required": [
+                    "color",
+                    "css",
+                    "dark_color",
+                    "hash",
+                    "key",
+                    "schema_version",
+                    "theme_color",
+                    "tokens"
+                ]
+            },
+            "SiteThemeTokens": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "dark": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
+                ]
+            },
+            "StoryPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "story": {
+                        "$ref": "#/components/schemas/PublicStory"
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results",
+                    "story"
+                ]
+            },
+            "TagPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    },
+                    "tag": {
+                        "$ref": "#/components/schemas/PublicLabel"
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results",
+                    "tag"
+                ]
+            },
+            "ThemeKeyEnum": {
+                "enum": [
+                    "signature",
+                    "bold",
+                    "quiet"
+                ],
+                "type": "string",
+                "description": "* `signature` - signature\n* `bold` - bold\n* `quiet` - quiet"
+            },
+            "Translation": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "locale",
+                    "path"
+                ]
+            }
+        }
+    }
+}

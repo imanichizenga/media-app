@@ -25,7 +25,7 @@ jobs:
         image: redis:7-alpine
         ports: ["6379:6379"]
         options: --health-cmd "redis-cli ping" --health-interval 3s --health-retries 20
-    defaults: { run: { working-directory: apps/api } }
+    defaults: { run: { working-directory: backend } }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }
@@ -41,15 +41,15 @@ jobs:
       - name: Tests (coverage gate 85%)
         run: uv run pytest --cov --cov-report=xml --cov-fail-under=85
       - name: Tracing works end to end
-        run: ../../scripts/verify-otel.sh
+        run: ../support/scripts/verify-otel.sh
       - run: uv run bandit -q -r newsplatform config -ll
       - run: uv run pip-audit --progress-spinner off
       - name: OpenAPI is current
         run: |
           for s in admin public; do
-            API_SURFACE=$s uv run python manage.py spectacular --format openapi-json --file ../../docs/api/openapi-$s.json --validate --fail-on-warn
+            API_SURFACE=$s uv run python manage.py spectacular --format openapi-json --file ../support/docs/api/openapi-$s.json --validate --fail-on-warn
           done
-          git diff --exit-code -- ../../docs/api
+          git diff --exit-code -- ../support/docs/api
   web:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -65,8 +65,8 @@ jobs:
         run: |
           pnpm --filter @news/api-client generate
           pnpm --filter @news/content-schema generate
-          node scripts/i18n-review.mjs
-          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart packages/content-schema/src/generated apps/api/newsplatform/content/schema docs/i18n
+          node support/scripts/i18n-review.mjs
+          git diff --exit-code -- support/generated/api-client/src/generated support/packages/design-tokens/dart support/packages/content-schema/src/generated backend/newsplatform/content/schema backend/newsplatform/site_config/theme support/docs/i18n
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with: { node-version: 24, cache: pnpm }
       - run: uv sync --locked
-        working-directory: apps/api
+        working-directory: backend
       - run: pnpm install --frozen-lockfile
       - name: FFmpeg and storage (the local media pipeline)
         run: |
@@ -96,7 +96,7 @@ jobs:
       - run: pnpm --filter @news/e2e e2e
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
-        with: { name: playwright, path: "tests/e2e/playwright-report", retention-days: 7 }
+        with: { name: playwright, path: "support/tests/e2e/playwright-report", retention-days: 7 }
   dart:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -105,10 +105,10 @@ jobs:
         with: { persist-credentials: false }
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with: { flutter-version: "3.50.1", channel: stable }
-      - run: flutter pub get && dart analyze --fatal-infos
-        working-directory: packages/design-tokens/dart
+      - run: flutter pub get && dart analyze --fatal-infos && flutter test
+        working-directory: support/packages/design-tokens/dart
       - name: Content models are current and pass every fixture
-        working-directory: packages/content-schema/dart
+        working-directory: support/packages/content-schema/dart
         run: |
           node ../scripts/generate.mjs
           dart pub get
@@ -118,9 +118,9 @@ jobs:
           dart test
       - name: Dart client is current and valid
         run: |
-          scripts/generate-dart-client.sh
-          git diff --exit-code -- packages/api-client-dart/lib
-          cd packages/api-client-dart && dart analyze
+          support/scripts/generate-dart-client.sh
+          git diff --exit-code -- support/generated/api-client-dart/lib
+          cd support/generated/api-client-dart && dart analyze
   infra:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -129,22 +129,26 @@ jobs:
         with: { persist-credentials: false }
       - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with: { terraform_version: "1.17.2" }
-      - run: terraform fmt -check -recursive infra/terraform
+      - run: terraform fmt -check -recursive support/infra/terraform
       - run: |
           for d in bootstrap envs/dev envs/staging envs/prod; do
-            terraform -chdir=infra/terraform/$d init -backend=false -input=false -lockfile=readonly
-            terraform -chdir=infra/terraform/$d validate
+            terraform -chdir=support/infra/terraform/$d init -backend=false -input=false -lockfile=readonly
+            terraform -chdir=support/infra/terraform/$d validate
           done
-      - run: terraform -chdir=infra/terraform/modules/platform init -backend=false -input=false && terraform -chdir=infra/terraform/modules/platform test
+      - run: terraform -chdir=support/infra/terraform/modules/platform init -backend=false -input=false && terraform -chdir=support/infra/terraform/modules/platform test
   images:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     strategy:
       matrix:
         include:
-          - { name: api, context: apps/api, file: apps/api/Dockerfile }
-          - { name: admin, context: ., file: apps/admin/Dockerfile }
-          - { name: pgbouncer, context: infra/docker/pgbouncer, file: infra/docker/pgbouncer/Dockerfile }
+          - { name: api, context: backend, file: backend/Dockerfile }
+          - { name: admin, context: ., file: admin/Dockerfile }
+          - {
+              name: pgbouncer,
+              context: support/infra/docker/pgbouncer,
+              file: support/infra/docker/pgbouncer/Dockerfile,
+            }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }
@@ -176,9 +180,9 @@ jobs:
       - name: Static analysis (Semgrep)
         run: docker run --rm -v "$PWD:/src:ro" semgrep/semgrep@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d semgrep scan --error --severity ERROR --metrics off --config p/python --config p/django --config p/typescript --config p/react --config p/github-actions
       - name: Known vulnerabilities (OSV)
-        run: docker run --rm -v "$PWD:/src:ro" ghcr.io/google/osv-scanner@sha256:a70ffffc2bfd33482953e5d6b64c6fcdb30239717a07b0f0d3ab2859ce3e4cde scan source --lockfile /src/apps/api/uv.lock --lockfile /src/pnpm-lock.yaml
+        run: docker run --rm -v "$PWD:/src:ro" ghcr.io/google/osv-scanner@sha256:a70ffffc2bfd33482953e5d6b64c6fcdb30239717a07b0f0d3ab2859ce3e4cde scan source --lockfile /src/backend/uv.lock --lockfile /src/pnpm-lock.yaml
       - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with: { scan-type: config, scan-ref: infra, severity: "HIGH,CRITICAL", exit-code: "1" }
+        with: { scan-type: config, scan-ref: support/infra, severity: "HIGH,CRITICAL", exit-code: "1" }
   required:
     if: always()
     needs: [api, web, e2e, dart, infra, images, security]

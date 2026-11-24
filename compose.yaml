@@ -37,7 +37,7 @@ services:
         "-master.volumeSizeLimitMB=256",
       ]
     ports: ["127.0.0.1:8333:8333"]
-    volumes: ["s3:/data", "./infra/local/seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro"]
+    volumes: ["s3:/data", "./support/infra/local/seaweedfs-s3.json:/etc/seaweedfs/s3.json:ro"]
     healthcheck:
       {
         test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8333/status"],
@@ -76,6 +76,7 @@ services:
     image: otel/opentelemetry-collector-contrib:0.165.0
     profiles: [observability]
     user: "0"
-    volumes: ["./infra/local/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro", "traces:/traces"]
+    volumes:
+      ["./support/infra/local/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro", "traces:/traces"]
     ports: ["127.0.0.1:4318:4318"]
 volumes: { pg: {}, s3: {}, os: {}, ch: {}, traces: {} }
