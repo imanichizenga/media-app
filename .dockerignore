@@ -3,7 +3,9 @@
 **/dist
 **/.venv
 .git
-docs
-infra
-tests
-apps/api
+support/docs
+support/infra
+support/tests
+backend
+mobile
+aws_testing_credential

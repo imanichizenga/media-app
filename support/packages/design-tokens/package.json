@@ -1,0 +1,22 @@
+{
+  "name": "@news/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    "./theme.css": "./dist/theme.css",
+    "./theme": "./src/theme.ts"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "vectors": "node scripts/vectors.mjs",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "style-dictionary": "5.8.0",
+    "typescript": "5.9.3"
+  }
+}

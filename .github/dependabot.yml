@@ -1,8 +1,8 @@
-# Policy: docs/adr/0019-dependency-policy.md
+# Policy: support/docs/adr/0019-dependency-policy.md
 version: 2
 updates:
   - package-ecosystem: uv
-    directory: /apps/api
+    directory: /backend
     schedule: { interval: weekly }
     cooldown: { default-days: 7 }
     groups:
@@ -32,7 +32,7 @@ updates:
     groups:
       actions-minor-patch: { update-types: [minor, patch] }
   - package-ecosystem: terraform
-    directories: ["/infra/terraform/**"]
+    directories: ["/support/infra/terraform/**"]
     schedule: { interval: weekly }
     cooldown: { default-days: 7 }
     groups:
@@ -40,7 +40,7 @@ updates:
     ignore:
       - { dependency-name: "*", update-types: ["version-update:semver-major"] }
   - package-ecosystem: docker
-    directories: ["/apps/*", "/infra/docker/*"]
+    directories: ["/backend", "/admin", "/support/infra/docker/*"]
     schedule: { interval: weekly }
     cooldown: { default-days: 7 }
     groups:

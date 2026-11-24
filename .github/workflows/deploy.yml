@@ -29,17 +29,17 @@ jobs:
       TARGET: ${{ inputs.environment || 'staging' }}
     steps:
       - run: |
-          echo "::warning title=Nothing was deployed::AWS_DEPLOY_READY is not 'true', so the deploy to $TARGET was skipped. Follow docs/runbooks/first-deploy.md."
+          echo "::warning title=Nothing was deployed::AWS_DEPLOY_READY is not 'true', so the deploy to $TARGET was skipped. Follow support/docs/runbooks/first-deploy.md."
           {
             echo "## ⚠️ Nothing was deployed"
             echo
             echo "CI passed, but the deploy to **$TARGET** was **skipped**: the repository variable \`AWS_DEPLOY_READY\` is not \`true\`."
             echo
-            echo "To enable it, follow \`docs/runbooks/first-deploy.md\` (human action A1 in \`docs/runbooks/human-actions.md\`)."
+            echo "To enable it, follow \`support/docs/runbooks/first-deploy.md\` (human action A1 in \`support/docs/runbooks/human-actions.md\`)."
           } >> "$GITHUB_STEP_SUMMARY"
   deploy:
     needs: ci
-    # Nothing to deploy to until infra/terraform/bootstrap has been applied and the variables set.
+    # Nothing to deploy to until support/infra/terraform/bootstrap has been applied and the variables set.
     if: vars.AWS_DEPLOY_READY == 'true'
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 45
@@ -66,7 +66,7 @@ jobs:
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           {
-            context: apps/api,
+            context: backend,
             push: true,
             provenance: true,
             sbom: true,
@@ -76,7 +76,7 @@ jobs:
         with:
           {
             context: .,
-            file: apps/admin/Dockerfile,
+            file: admin/Dockerfile,
             push: true,
             provenance: true,
             sbom: true,
@@ -85,10 +85,10 @@ jobs:
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           {
-            context: infra/docker/pgbouncer,
+            context: support/infra/docker/pgbouncer,
             push: true,
             provenance: true,
             sbom: true,
             tags: "${{ env.REGISTRY }}/pgbouncer:${{ env.TAG }}",
           }
-      - run: ./scripts/deploy.sh
+      - run: ./support/scripts/deploy.sh

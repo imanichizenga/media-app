@@ -7,11 +7,11 @@
       "!**/.next",
       "!**/.turbo",
       "!**/generated",
-      "!apps/api",
-      "!infra",
-      "!docs",
+      "!backend",
+      "!support/infra",
+      "!support/docs",
       "!**/dart",
-      "!packages/api-client-dart",
+      "!support/generated/api-client-dart",
       "!**/test-results",
       "!**/playwright-report"
     ]

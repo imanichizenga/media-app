@@ -1,0 +1,103 @@
+[project]
+name = "newsplatform-api"
+version = "0.1.0"
+description = "News platform backend API"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+  "django~=5.2.9",
+  "djangorestframework~=3.18",
+  "drf-spectacular~=0.30",
+  "celery~=5.7",
+  "redis>=6",
+  "psycopg[binary,pool]~=3.3",
+  "argon2-cffi~=25.1",
+  "webauthn~=3.0",
+  "pyotp~=2.12",
+  "cryptography>=50",
+  "boto3~=1.44",
+  "uvicorn~=0.54",
+  "gunicorn~=27.0",
+  "pydantic[email]~=2.12",
+  "structlog~=26.1",
+  "httpx~=0.28",
+  "segno>=1.6",
+  "sentry-sdk~=3.0",
+  "opentelemetry-sdk>=1.30",
+  "opentelemetry-exporter-otlp-proto-http>=1.30",
+  "opentelemetry-instrumentation-django",
+  "opentelemetry-instrumentation-celery",
+  "opentelemetry-instrumentation-psycopg",
+  "opentelemetry-instrumentation-redis",
+  "uvicorn-worker>=0.4",
+  "channels~=4.3",
+  "channels-redis~=4.3",
+  "websockets>=16",
+  "opentelemetry-instrumentation-asgi>=0.66b2",
+  "jsonschema~=4.25",
+  "defusedxml>=0.7.1",
+  "nh3>=0.3",
+  "pyvips[binary]>=3.0",
+  "blurhash>=1.1",
+]
+
+[dependency-groups]
+dev = [
+  "ruff~=0.17",
+  "mypy~=2.4",
+  "django-stubs~=6.1",
+  "djangorestframework-stubs~=3.18",
+  "boto3-stubs[cloudwatch,s3,sesv2,kms,sts,wafv2,cloudfront]~=1.44",
+  "pytest~=9.2",
+  "pytest-django~=4.14",
+  "pytest-cov",
+  "pytest-xdist",
+  "factory-boy~=3.3",
+  "moto[cloudwatch,kms,s3,server,ses,sesv2,sts,wafv2]~=5.2",
+  "respx",
+  "freezegun",
+  "bandit",
+  "pip-audit",
+  "types-channels>=4.3.0.20261122",
+  "pytest-asyncio>=1.5.0",
+  "types-jsonschema>=4.26.0.20261006",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py314"
+[tool.ruff.lint]
+select = ["E","F","I","B","UP","S","DJ","SIM","RUF","PT","C4","DTZ","T20","PTH","ASYNC"]
+ignore = ["RUF012", "S308"]
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101","S105","S106","S107","S311","S104","S324","S608","PT018","PT012","PT011","PT019","E501","DTZ","RUF007"]
+"**/migrations/**" = ["E501","RUF012"]
+# Drawings and prose: long lines are the content.
+"newsplatform/content/demo/**" = ["E501"]
+"newsplatform/content/management/commands/seed_demo.py" = ["E501"]
+"newsplatform/integrations/hints.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main", "pydantic.mypy"]
+exclude = ["migrations/", "tests/"]
+[[tool.mypy.overrides]]
+module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*", "pyvips.*", "blurhash.*", "defusedxml.*"]
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+# Celery ships no types, so its decorators are untyped wherever they are used.
+module = ["newsplatform.*.tasks", "config.celery"]
+disallow_untyped_decorators = false
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-q --strict-markers"
+markers = ["live: needs real external credentials"]
+[tool.coverage.run]
+branch = true
+source = ["newsplatform"]
+omit = ["*/migrations/*"]

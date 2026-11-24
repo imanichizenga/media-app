@@ -1,0 +1,37 @@
+{
+  "name": "@news/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./primitives": "./src/primitives.tsx",
+    "./content": "./src/content.tsx",
+    "./media": "./src/media.tsx",
+    "./player": "./src/player.tsx",
+    "./styles.css": "./src/styles.css",
+    "./news": "./src/news.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@news/content-schema": "workspace:*",
+    "hls.js": "1.7.4",
+    "lucide-react": "1.78.0",
+    "radix-ui": "1.8.1"
+  },
+  "peerDependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typescript": "5.9.3",
+    "vitest": "5.1.1"
+  }
+}

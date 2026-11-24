@@ -177,7 +177,7 @@ importers:
         specifier: 2.11.13
         version: 2.11.13
 
-  apps/admin:
+  admin:
     dependencies:
       '@fontsource-variable/inter':
         specifier: 5.3.0
@@ -187,16 +187,19 @@ importers:
         version: 5.3.0
       '@news/api-client':
         specifier: workspace:*
-        version: link:../../packages/api-client
+        version: link:../support/generated/api-client
       '@news/content-schema':
         specifier: workspace:*
-        version: link:../../packages/content-schema
+        version: link:../support/packages/content-schema
       '@news/design-tokens':
         specifier: workspace:*
-        version: link:../../packages/design-tokens
+        version: link:../support/packages/design-tokens
+      '@news/screens':
+        specifier: workspace:*
+        version: link:../support/packages/screens
       '@news/ui':
         specifier: workspace:*
-        version: link:../../packages/ui
+        version: link:../support/packages/ui
       '@sentry/browser':
         specifier: 11.13.0
         version: 11.13.0
@@ -277,7 +280,56 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  packages/api-client:
+  support/design/prototypes:
+    dependencies:
+      '@fontsource-variable/inter':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource-variable/newsreader':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@news/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/design-tokens
+      '@news/screens':
+        specifier: workspace:*
+        version: link:../../packages/screens
+      '@news/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: 19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: 4.3.5
+        version: 4.3.5
+      '@types/node':
+        specifier: ^24
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.3.0(@types/react@19.3.0)
+      postcss:
+        specifier: 8.5.23
+        version: 8.5.23
+      tailwindcss:
+        specifier: 4.3.5
+        version: 4.3.5
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 8.3.8
+        version: 8.3.8(@types/node@24.19.2)(jiti@2.7.0)
+
+  support/generated/api-client:
     dependencies:
       openapi-fetch:
         specifier: 0.17.0
@@ -290,7 +342,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/content-schema:
+  support/packages/content-schema:
     dependencies:
       zod:
         specifier: 4.6.6
@@ -306,13 +358,47 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  packages/design-tokens:
+  support/packages/design-tokens:
     devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.19.2
       style-dictionary:
         specifier: 5.8.0
         version: 5.8.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
-  packages/ui:
+  support/packages/screens:
+    dependencies:
+      '@news/ui':
+        specifier: workspace:*
+        version: link:../ui
+      lucide-react:
+        specifier: 1.78.0
+        version: 1.78.0(@types/react@19.3.0)(react@19.3.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.19.2
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.3.0(@types/react@19.3.0)
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: 19.3.1
+        version: 19.3.1(react@19.3.1)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  support/packages/ui:
     dependencies:
       '@news/content-schema':
         specifier: workspace:*
@@ -349,7 +435,7 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(jiti@2.7.0))
 
-  tests/e2e:
+  support/tests/e2e:
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.14.0

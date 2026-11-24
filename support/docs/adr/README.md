@@ -1,0 +1,39 @@
+# Architecture decisions
+
+- [0001](0001-monorepo-tooling.md) Monorepo tooling
+- [0002](0002-version-baseline.md) Version baseline
+- [0003](0003-two-api-surfaces.md) Separate public and admin API surfaces
+- [0004](0004-one-user-table.md) One user table, isolated staff realm
+- [0005](0005-staff-sessions.md) Staff sessions
+- [0006](0006-mfa.md) Mandatory MFA and step-up
+- [0007](0007-rbac.md) Scoped RBAC
+- [0008](0008-audit-chain.md) Audit hash chain
+- [0009](0009-integration-config.md) Integration configuration
+- [0010](0010-four-eyes.md) Four-eyes approvals
+- [0011](0011-bootstrap-env.md) Bootstrap environment variables
+- [0012](0012-design-tokens.md) Design tokens
+- [0013](0013-api-contract.md) API contract and clients
+- [0014](0014-aws-topology.md) AWS topology
+- [0015](0015-database-access.md) Database access
+- [0016](0016-delivery.md) CI/CD and rollback
+- [0017](0017-rate-limits.md) Rate limits and lockout
+- [0018](0018-admin-csp.md) Admin CSP and data fetching
+- [0019](0019-dependency-policy.md) Dependency policy
+- [0020](0020-realtime.md) Realtime deployment and staff sockets
+- [0021](0021-queue-autoscaling.md) Worker autoscaling on queue depth
+- [0022](0022-local-stand-ins.md) Local stand-ins for cloud services
+- [0023](0023-working-copy-and-publications.md) Working copy and publications
+- [0024](0024-public-addresses.md) Public addresses
+- [0025](0025-media-pipeline.md) Media pipeline
+- [0026](0026-public-read-api.md) Public read API and caching
+- [0027](0027-content-schema.md) One content schema
+- [0028](0028-editorial-workflow.md) Editorial workflow and concurrent editing
+- [0029](0029-red-is-the-brand.md) Red is the brand; signals are shapes
+- [0030](0030-brand-themes.md) Three themes as data
+- [0031](0031-colour-derivation.md) One derivation, three ports, shared vectors
+- [0032](0032-brand-publishing.md) Publishing and delivering the brand
+- [0033](0033-brand-logos.md) Logos: cleaned, rasterised, kept in the database
+- [0034](0034-compact-counts.md) Compact counts in Swahili
+- [0035](0035-window-classes.md) Window classes
+- [0036](0036-repository-layout.md) Repository layout
+- [0037](0037-youtube-duration.md) Video cards always say how long

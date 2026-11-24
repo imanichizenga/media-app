@@ -1,0 +1,48 @@
+@utility tap {
+  min-height: 44px;
+}
+@utility bone {
+  display: inline-block;
+  border-radius: 8px;
+  color: transparent;
+  user-select: none;
+  max-width: 100%;
+  vertical-align: top;
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton) 25%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton) 75%
+  );
+  background-size: 400% 100%;
+  background-clip: padding-box;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+    background: var(--color-skeleton);
+  }
+}
+/* Rows that scroll sideways: the cut-off card says so better than a bar does. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+/* Two logos, one shown: the theme says which the header's ground needs. */
+.on-light {
+  display: var(--logo-on-light, block);
+}
+.on-dark {
+  display: var(--logo-on-dark, none);
+}

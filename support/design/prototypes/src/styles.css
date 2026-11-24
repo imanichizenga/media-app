@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "@news/design-tokens/tokens.css";
+@import "@news/design-tokens/theme.css";
+@import "@news/ui/styles.css";
+@source "../../../packages/ui/src";
+@source "../../../packages/screens/src";
+
+/* The app's window classes (D7). The website keeps its own. */
+@theme {
+  --breakpoint-medium: 37.5rem;
+  --breakpoint-expanded: 52.5rem;
+}
+
+@font-face {
+  font-family: "Inter Variable";
+  src: url("fonts/inter.woff2") format("woff2");
+  font-weight: 100 900;
+}
+@font-face {
+  font-family: "Newsreader Variable";
+  src: url("fonts/newsreader.woff2") format("woff2");
+  font-weight: 200 800;
+}
+@layer base {
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-m);
+    line-height: var(--text-body-m--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button {
+    cursor: pointer;
+  }
+}
