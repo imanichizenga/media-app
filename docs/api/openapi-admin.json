@@ -4106,7 +4106,16 @@
                             "type": "string"
                         }
                     },
-                    "avatar": {}
+                    "avatar": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Asset"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
                 },
                 "required": [
                     "avatar",
@@ -5470,7 +5479,10 @@
                         "$ref": "#/components/schemas/PostData"
                     },
                     "assets": {
-                        "$ref": "#/components/schemas/PostAssets"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Asset"
+                        }
                     },
                     "tags": {
                         "type": "array",
@@ -5566,18 +5578,6 @@
                     "unpublished_changes",
                     "updated_at",
                     "version"
-                ]
-            },
-            "PostAssets": {
-                "type": "object",
-                "properties": {
-                    "items": {
-                        "type": "array",
-                        "items": {}
-                    }
-                },
-                "required": [
-                    "items"
                 ]
             },
             "PostCreateRequest": {

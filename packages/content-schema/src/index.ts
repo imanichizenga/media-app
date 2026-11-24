@@ -1,7 +1,11 @@
+import { config } from "zod";
 import type { Block, ContentDocument } from "./generated/types";
 import { lenient, strict } from "./generated/validators";
 
 export * from "./generated/types";
+
+// Never compiled with eval: the admin's policy forbids it, and even asking is reported as a violation.
+config({ jitless: true });
 
 export type UnknownBlock = { type: "unknown"; id: string; originalType: string };
 export type ReadBlock = Block | UnknownBlock;

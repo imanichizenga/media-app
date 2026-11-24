@@ -23,7 +23,7 @@ from newsplatform.content.models import AuthorProfile, Post, PostText, PostType,
 from newsplatform.content.workflow import TRANSITIONS
 from newsplatform.engagement.policy import CommentMode
 from newsplatform.engagement.services import resolved
-from newsplatform.media.api import asset_body
+from newsplatform.media.api import AssetSerializer, asset_body
 from newsplatform.media.models import Asset
 from newsplatform.rbac import selectors as rbac
 from newsplatform.staff_security.authentication import session_of
@@ -143,7 +143,7 @@ class PostSerializer(serializers.Serializer[Any]):
     version = serializers.IntegerField()
     status = serializers.ChoiceField(choices=Status.choices)
     data = PostDataSerializer()  # type: ignore[assignment]
-    assets = schema("PostAssets", items=serializers.ListField(child=serializers.JSONField()))
+    assets = AssetSerializer(many=True)
     tags = NamedSerializer(many=True)
     people = PersonSerializer(many=True)
     can_edit = serializers.BooleanField()
@@ -182,7 +182,7 @@ def detail(user: User, post: Post) -> dict[str, Any]:
         "version": post.version,
         "status": post.status,
         "data": data,
-        "assets": {"items": [asset_body(a) for a in Asset.objects.filter(pk__in=used)]},
+        "assets": [asset_body(a) for a in Asset.objects.select_related("uploaded_by").filter(pk__in=used)],
         "tags": [{"id": t.pk, "name": t.name_sw} for t in post.tags.order_by("slug")],
         "people": [b.user for b in post.bylines.select_related("user")],
         "can_edit": services.can_edit(user, post, grants),
@@ -259,14 +259,19 @@ def filtered(request: Request, rows: QuerySet[Post]) -> QuerySet[Post]:
     return rows
 
 
+def _texts(post: Post) -> list[PostText]:
+    """Swahili first: the newsroom's own language names a post in lists."""
+    return sorted(post.texts.all(), key=lambda t: t.locale, reverse=True)
+
+
 def rows_body(posts: list[Post]) -> list[dict[str, Any]]:
     return [
         {
             "id": p.pk,
             "type": p.type,
             "status": p.status,
-            "headline": next((t.headline for t in p.texts.all() if t.headline), ""),
-            "locales": [t.locale for t in p.texts.all() if t.headline],
+            "headline": next((t.headline for t in _texts(p) if t.headline), ""),
+            "locales": [t.locale for t in _texts(p) if t.headline],
             "category": {"id": p.category_id, "name": p.category_name},  # type: ignore[attr-defined]
             "authors": [b.user for b in p.bylines.all()],
             "updated_at": p.updated_at,
@@ -610,7 +615,7 @@ class AuthorSerializer(serializers.Serializer[Any]):
     bio_en = serializers.CharField()
     expertise = serializers.ListField(child=serializers.CharField())
     links = serializers.ListField(child=serializers.CharField())
-    avatar = serializers.JSONField(allow_null=True)
+    avatar = AssetSerializer(allow_null=True)
 
 
 def author_body(profile: AuthorProfile) -> dict[str, Any]:

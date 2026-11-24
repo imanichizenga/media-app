@@ -31,7 +31,9 @@ const normal = (value: unknown): unknown => {
       Object.entries(value)
         .map(([k, v]) => [
           k,
-          k === "marks" ? [...(v as object[])].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))) : normal(v),
+          k === "marks"
+            ? [...(v as object[])].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+            : normal(v),
         ])
         .filter(([, v]) => !(Array.isArray(v) && v.length === 0 && v === undefined)),
     );
@@ -67,7 +69,8 @@ describe("what the editor sends", () => {
     "refuses the link %s",
     (href) => expect(isHref(href)).toBe(false),
   );
-  it.each(["https://example.org/a", "mailto:a@example.org", "/habari/kichwa"])("accepts the link %s", (href) =>
-    expect(isHref(href)).toBe(true),
+  it.each(["https://example.org/a", "mailto:a@example.org", "/habari/kichwa"])(
+    "accepts the link %s",
+    (href) => expect(isHref(href)).toBe(true),
   );
 });

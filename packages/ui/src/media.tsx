@@ -30,6 +30,10 @@ export type VideoAsset = {
 };
 export type Asset = ImageAsset | VideoAsset;
 
+/** The admin has full addresses already; readers have keys under the media host. */
+export const address = (mediaBase: string, key: string) =>
+  /^(https?:|\/)/.test(key) ? key : `${mediaBase}/${key}`;
+
 const EXTENSIONS = { avif: "avif", webp: "webp", jpeg: "jpg" } as const;
 export const imageUrl = (
   mediaBase: string,
@@ -38,10 +42,10 @@ export const imageUrl = (
   format: keyof typeof EXTENSIONS = "jpeg",
 ) => {
   const best = image.widths.find((w) => w >= width) ?? image.widths.at(-1);
-  return best ? `${mediaBase}/${image.base}${best}.${EXTENSIONS[format]}` : "";
+  return best ? address(mediaBase, `${image.base}${best}.${EXTENSIONS[format]}`) : "";
 };
 const srcSet = (mediaBase: string, image: ImageAsset, format: keyof typeof EXTENSIONS) =>
-  image.widths.map((w) => `${mediaBase}/${image.base}${w}.${EXTENSIONS[format]} ${w}w`).join(", ");
+  image.widths.map((w) => `${address(mediaBase, image.base)}${w}.${EXTENSIONS[format]} ${w}w`).join(", ");
 
 /** Space is held by width and height, and tinted with the picture's own colour until it arrives. */
 export function Picture({

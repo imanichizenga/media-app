@@ -1369,7 +1369,7 @@ export interface components {
             bio_en: string;
             expertise: string[];
             links: string[];
-            avatar: unknown;
+            avatar: components["schemas"]["Asset"] | null;
         };
         AuthorSaveRequest: {
             title_sw?: string;
@@ -1755,7 +1755,7 @@ export interface components {
             version: number;
             status: components["schemas"]["PostStatusEnum"];
             data: components["schemas"]["PostData"];
-            assets: components["schemas"]["PostAssets"];
+            assets: components["schemas"]["Asset"][];
             tags: components["schemas"]["Named"][];
             people: components["schemas"]["Person"][];
             can_edit: boolean;
@@ -1775,9 +1775,6 @@ export interface components {
             paths: {
                 [key: string]: string;
             };
-        };
-        PostAssets: {
-            items: unknown[];
         };
         PostCreateRequest: {
             type: components["schemas"]["PostTypeEnum"];

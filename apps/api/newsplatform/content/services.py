@@ -30,6 +30,7 @@ from newsplatform.engagement.services import validated as validated_policy
 from newsplatform.media.models import Asset
 from newsplatform.rbac import selectors as rbac
 from newsplatform.rbac.selectors import Grants
+from newsplatform.realtime.publish import changed
 from newsplatform.seo import paths
 from newsplatform.taxonomy.models import Category, Region, Story, Tag, Visibility
 
@@ -457,6 +458,7 @@ def _run(post: Post, step: Transition, actor: User | None, note: str, scheduled_
         before={"status": before},
         after={"status": post.status, "scheduled_at": post.scheduled_at},
     )
+    changed("post", post.pk)
     for listener in _listeners:
         transaction.on_commit(lambda listener=listener: listener(post, step, actor), robust=True)  # type: ignore[misc]
 
@@ -509,6 +511,7 @@ def add_note(*, actor: User, post_id: UUID, text: str) -> EditorialNote:
         raise DomainError("Write a note.", code="validation_error")
     note = EditorialNote.objects.create(post=post, author=actor, text=text.strip()[:2000])
     record(actor=actor, action="post.note_added", target=post, label=_label(post))
+    changed("post", post.pk)
     return note
 
 

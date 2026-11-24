@@ -610,3 +610,16 @@ def test_stand_ins_are_refused_when_deployed(settings, name):
     settings.IS_DEPLOYED = True
     setattr(settings, name, "eicar")
     assert any(name in e.msg for e in checks.run_checks())
+
+
+def test_logos_keep_their_transparency(tmp_path):
+    source = tmp_path / "logo.png"
+    pyvips.Image.black(400, 200, bands=4).copy(interpretation="srgb").write_to_file(str(source))
+    out = tmp_path / "out"
+    out.mkdir()
+    images.process(source, out)
+    for name in ("320.webp", "320.avif"):
+        assert pyvips.Image.new_from_file(str(out / name)).hasalpha()
+    jpeg = pyvips.Image.new_from_file(str(out / "320.jpg"))
+    assert not jpeg.hasalpha()
+    assert min(jpeg.getpoint(0, 0)) > 250  # on white

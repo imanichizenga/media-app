@@ -60,11 +60,13 @@ def _open(source: Path) -> tuple[Any, str]:
             )
         elif image.get_typeof("icc-profile-data"):
             image = image.icc_transform("srgb")
-        if image.hasalpha():
-            image = image.flatten(background=[255, 255, 255])
         return image.cast("uchar").copy_memory(), mime
     except pyvips.Error as exc:
         raise BadImage("unreadable") from exc
+
+
+def _flat(image: Any) -> Any:
+    return image.flatten(background=[255, 255, 255]) if image.hasalpha() else image
 
 
 def _crop(image: Any, width: int, height: int, focal: tuple[int, int]) -> Any:
@@ -80,20 +82,22 @@ def _crop(image: Any, width: int, height: int, focal: tuple[int, int]) -> Any:
 
 def process(source: Path, out: Path, focal: tuple[int, int] = (500, 500)) -> Processed:
     image, mime = _open(source)
-    result = Processed(image.width, image.height, _hash(image), _dominant(image), mime)
+    flat = _flat(image)
+    result = Processed(image.width, image.height, _hash(flat), _dominant(flat), mime)
     wanted = [w for w in WIDTHS if w <= image.width] or [image.width]
     for width in wanted:
         sized = image if width == image.width else image.thumbnail_image(width, size="down")
         for name, (ext, content_type, options) in FORMATS.items():
             suffix = f"{width}.{ext}"
             path = out / suffix
-            sized.write_to_file(str(path), keep="none", **options)
+            # Logos keep their transparency where the format has any.
+            (_flat(sized) if name == "jpeg" else sized).write_to_file(str(path), keep="none", **options)
             result.files.append((path, suffix, content_type))
             result.variants.setdefault(name, {})[str(width)] = suffix
     for name, (width, height) in CROPS.items():
         suffix = f"crop-{name}.jpg"
         path = out / suffix
-        _crop(image, width, height, focal).write_to_file(str(path), keep="none", Q=82, optimize_coding=True)
+        _crop(flat, width, height, focal).write_to_file(str(path), keep="none", Q=82, optimize_coding=True)
         result.files.append((path, suffix, "image/jpeg"))
         result.crops[name] = suffix
     return result

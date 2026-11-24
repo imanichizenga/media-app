@@ -1,7 +1,8 @@
+/// <reference path="./hls-light.d.ts" />
 "use client";
 import { Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { VideoAsset } from "./media";
+import { address, type VideoAsset } from "./media";
 
 /** Adaptive HLS. Nothing is downloaded before the reader asks: not the stream, not the player. */
 export function VideoPlayer({
@@ -21,7 +22,7 @@ export function VideoPlayer({
   useEffect(() => {
     const el = element.current;
     if (!started || !el) return;
-    const source = `${mediaBase}/${video.hls}`;
+    const source = address(mediaBase, video.hls);
     let destroy = () => {};
     let cancelled = false;
     (async () => {
@@ -51,7 +52,7 @@ export function VideoPlayer({
       {/* biome-ignore lint/a11y/useMediaCaption: captions arrive with the caption track (spec §6, M7) */}
       <video
         ref={element}
-        poster={video.poster ? `${mediaBase}/${video.poster}` : undefined}
+        poster={video.poster ? address(mediaBase, video.poster) : undefined}
         controls={started}
         playsInline
         preload="none"

@@ -74,7 +74,9 @@ export function fromEditor(doc: JSONContent): ContentDocument {
       }
       case "heading": {
         const content = inlineFromEditor(node.content);
-        return content.length ? [{ type: "heading", id, level: Number(node.attrs?.level ?? 2), content }] : [];
+        return content.length
+          ? [{ type: "heading", id, level: Number(node.attrs?.level ?? 2), content }]
+          : [];
       }
       case "bulletList":
       case "orderedList": {

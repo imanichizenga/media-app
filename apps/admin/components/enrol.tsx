@@ -98,7 +98,6 @@ export function Enrol({
       {totp ? (
         <form onSubmit={confirm} className="flex flex-col gap-4">
           <p>{t("scan")}</p>
-          {/* biome-ignore lint/performance/noImgElement: a data: QR code has nothing to optimise */}
           <img
             alt={t("qrAlt")}
             src={`data:image/svg+xml;base64,${totp.qr_svg}`}
