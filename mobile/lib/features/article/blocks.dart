@@ -724,11 +724,6 @@ class _LiveUpdate extends ConsumerWidget {
                       ago(time, s, ref.watch(clockNowProvider)()),
                       style: context.type.label.copyWith(color: c.textPrimary),
                     ),
-                  if (update.author != null && update.author!.isNotEmpty)
-                    Text(
-                      update.author!,
-                      style: context.type.label.copyWith(color: c.textSecondary),
-                    ),
                   if (update.pinned ?? false)
                     Row(
                       mainAxisSize: MainAxisSize.min,

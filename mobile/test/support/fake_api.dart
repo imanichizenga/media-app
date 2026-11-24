@@ -119,7 +119,7 @@ class FakeApi implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     asked.add(options);
-    if (silent) await Completer<void>().future;
+    if (silent && !options.uri.path.endsWith('/content/navigation')) await Completer<void>().future;
     if (offline) {
       throw DioException(requestOptions: options, type: DioExceptionType.connectionError);
     }

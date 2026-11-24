@@ -13,7 +13,7 @@ void main() {
 
   test('colours come from the theme: none is written outside lib/ui/tokens', () {
     final found = <String>[];
-    final color = RegExp(r'Color\(0x|(?<!News)Color\.from|Colors\.|CupertinoColors');
+    final color = RegExp(r'Color\(0x|Color\.from|(?<!News)Colors\.|CupertinoColors');
     for (final f in files.where((f) => !f.path.startsWith('lib/ui/tokens'))) {
       for (final (i, line) in f.readAsLinesSync().indexed) {
         if (color.hasMatch(line)) found.add('${f.path}:${i + 1} $line');

@@ -12,8 +12,7 @@ part of 'feeds.dart';
 @ProviderFor(HomeFeed)
 final homeFeedProvider = HomeFeedProvider._();
 
-final class HomeFeedProvider
-    extends $AsyncNotifierProvider<HomeFeed, Loaded<Home>> {
+final class HomeFeedProvider extends $AsyncNotifierProvider<HomeFeed, Loaded<Home>> {
   HomeFeedProvider._()
     : super(
         from: null,
@@ -79,25 +78,17 @@ final class NavigationProvider
 
 String _$navigationHash() => r'e5c98384793e28d6634ed84353bdf896f5b62fa8';
 
-abstract class _$Navigation
-    extends $AsyncNotifier<Loaded<List<NavigationItem>>> {
+abstract class _$Navigation extends $AsyncNotifier<Loaded<List<NavigationItem>>> {
   FutureOr<Loaded<List<NavigationItem>>> build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
     final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<Loaded<List<NavigationItem>>>,
-              Loaded<List<NavigationItem>>
-            >;
+        this.ref as $Ref<AsyncValue<Loaded<List<NavigationItem>>>, Loaded<List<NavigationItem>>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<Loaded<List<NavigationItem>>>,
-                Loaded<List<NavigationItem>>
-              >,
+              AnyNotifier<AsyncValue<Loaded<List<NavigationItem>>>, Loaded<List<NavigationItem>>>,
               AsyncValue<Loaded<List<NavigationItem>>>,
               Object?,
               Object?
@@ -110,16 +101,14 @@ abstract class _$Navigation
 final feedProvider = FeedFamily._();
 
 final class FeedProvider extends $AsyncNotifierProvider<Feed, FeedState> {
-  FeedProvider._({
-    required FeedFamily super.from,
-    required FeedKey super.argument,
-  }) : super(
-         retry: null,
-         name: r'feedProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  FeedProvider._({required FeedFamily super.from, required FeedKey super.argument})
+    : super(
+        retry: null,
+        name: r'feedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$feedHash();
@@ -150,13 +139,7 @@ String _$feedHash() => r'733fa0fd67ab212fbbb66b2a8decdd494f985c7d';
 
 final class FeedFamily extends $Family
     with
-        $ClassFamilyOverride<
-          Feed,
-          AsyncValue<FeedState>,
-          FeedState,
-          FutureOr<FeedState>,
-          FeedKey
-        > {
+        $ClassFamilyOverride<Feed, AsyncValue<FeedState>, FeedState, FutureOr<FeedState>, FeedKey> {
   FeedFamily._()
     : super(
         retry: null,
@@ -199,8 +182,7 @@ abstract class _$Feed extends $AsyncNotifier<FeedState> {
 final articleOfProvider = ArticleOfFamily._();
 
 /// Which article: its slug is unique within a language.
-final class ArticleOfProvider
-    extends $AsyncNotifierProvider<ArticleOf, Loaded<Article>> {
+final class ArticleOfProvider extends $AsyncNotifierProvider<ArticleOf, Loaded<Article>> {
   /// Which article: its slug is unique within a language.
   ArticleOfProvider._({
     required ArticleOfFamily super.from,
@@ -297,23 +279,16 @@ abstract class _$ArticleOf extends $AsyncNotifier<Loaded<Article>> {
 final relatedProvider = RelatedFamily._();
 
 final class RelatedProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Story>>,
-          List<Story>,
-          FutureOr<List<Story>>
-        >
+    extends $FunctionalProvider<AsyncValue<List<Story>>, List<Story>, FutureOr<List<Story>>>
     with $FutureModifier<List<Story>>, $FutureProvider<List<Story>> {
-  RelatedProvider._({
-    required RelatedFamily super.from,
-    required (String, String) super.argument,
-  }) : super(
-         retry: null,
-         name: r'relatedProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  RelatedProvider._({required RelatedFamily super.from, required (String, String) super.argument})
+    : super(
+        retry: null,
+        name: r'relatedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$relatedHash();
@@ -327,9 +302,8 @@ final class RelatedProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<Story>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<Story>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<Story>> create(Ref ref) {
@@ -379,16 +353,14 @@ final class MovedProvider
     extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
     with $FutureModifier<String?>, $FutureProvider<String?> {
   /// Where an old address lives now, or null.
-  MovedProvider._({
-    required MovedFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'movedProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  MovedProvider._({required MovedFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'movedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$movedHash();
@@ -426,8 +398,7 @@ String _$movedHash() => r'ae875ad125c1115bfa0e974416611ac527544e2e';
 
 /// Where an old address lives now, or null.
 
-final class MovedFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<String?>, String> {
+final class MovedFamily extends $Family with $FunctionalFamilyOverride<FutureOr<String?>, String> {
   MovedFamily._()
     : super(
         retry: null,
@@ -439,8 +410,7 @@ final class MovedFamily extends $Family
 
   /// Where an old address lives now, or null.
 
-  MovedProvider call(String path) =>
-      MovedProvider._(argument: path, from: this);
+  MovedProvider call(String path) => MovedProvider._(argument: path, from: this);
 
   @override
   String toString() => r'movedProvider';

@@ -44,78 +44,7 @@ ImageProvider<Object> filePicture(String url) {
       : MemoryImage(_grey);
 }
 
-final _grey = Uint8List.fromList([
-  0x89,
-  0x50,
-  0x4E,
-  0x47,
-  0x0D,
-  0x0A,
-  0x1A,
-  0x0A,
-  0,
-  0,
-  0,
-  0x0D,
-  0x49,
-  0x48,
-  0x44,
-  0x52,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  0,
-  1, //
-  8,
-  6,
-  0,
-  0,
-  0,
-  0x1F,
-  0x15,
-  0xC4,
-  0x89,
-  0,
-  0,
-  0,
-  0x0D,
-  0x49,
-  0x44,
-  0x41,
-  0x54,
-  0x78,
-  0x9C,
-  0x63,
-  0x68,
-  0x68,
-  0x68, //
-  0xF8,
-  0x0F,
-  0,
-  0x05,
-  0x84,
-  0x02,
-  0x80,
-  0x8B,
-  0xB4,
-  0x2B,
-  0x11,
-  0,
-  0,
-  0,
-  0,
-  0x49,
-  0x45,
-  0x4E,
-  0x44,
-  0xAE,
-  0x42,
-  0x60,
-  0x82, //
-]);
+final _grey = File('test/fixtures/media/grey.png').readAsBytesSync();
 
 Future<void> loadFonts() async {
   for (final family in ['Newsreader', 'Inter']) {
@@ -206,13 +135,15 @@ Future<Phone> start(
   AppDatabase? database,
   String version = '1.0.0',
   bool settle = true,
+  double dpr = 2,
+  bool photographs = true,
   Set<String> topics = const {},
   List<Override> overrides = const [],
 }) async {
-  tester.view.devicePixelRatio = 2;
-  tester.view.physicalSize = size * 2;
-  tester.view.padding = const FakeViewPadding(top: 94, bottom: 48);
-  tester.view.viewPadding = const FakeViewPadding(top: 94, bottom: 48);
+  tester.view.devicePixelRatio = dpr;
+  tester.view.physicalSize = size * dpr;
+  tester.view.padding = FakeViewPadding(top: 47 * dpr, bottom: 24 * dpr);
+  tester.view.viewPadding = FakeViewPadding(top: 47 * dpr, bottom: 24 * dpr);
   tester.platformDispatcher.textScaleFactorTestValue = textScale;
   tester.platformDispatcher.accessibilityFeaturesTestValue = FakeAccessibilityFeatures(
     disableAnimations: still,
@@ -247,7 +178,9 @@ Future<Phone> start(
         PackageInfo(appName: 'x', packageName: 'x', version: version, buildNumber: '1'),
       ),
       clockNowProvider.overrideWithValue(() => now),
-      pictureLoaderProvider.overrideWithValue(filePicture),
+      pictureLoaderProvider.overrideWithValue(
+        photographs ? filePicture : (_) => MemoryImage(_grey),
+      ),
       pictureKeeperProvider.overrideWithValue(keeper),
       makeControllerProvider.overrideWithValue(networkVideo),
       dioProvider.overrideWith((ref) => fakeDio(db, fake)),

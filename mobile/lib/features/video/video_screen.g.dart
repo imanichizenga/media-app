@@ -36,10 +36,7 @@ final class VideoTabProvider extends $NotifierProvider<VideoTab, int> {
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<int>(value));
   }
 }
 
@@ -54,13 +51,7 @@ abstract class _$VideoTab extends $Notifier<int> {
   WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
-              Object?,
-              Object?
-            >;
+        ref.element as $ClassProviderElement<AnyNotifier<int, int>, int, Object?, Object?>;
     return element.handleCreate(ref, build);
   }
 }
@@ -89,10 +80,7 @@ final class StartShortProvider extends $NotifierProvider<StartShort, String?> {
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String?>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String?>(value));
   }
 }
 
@@ -106,12 +94,7 @@ abstract class _$StartShort extends $Notifier<String?> {
     final ref = this.ref as $Ref<String?, String?>;
     final element =
         ref.element
-            as $ClassProviderElement<
-              AnyNotifier<String?, String?>,
-              String?,
-              Object?,
-              Object?
-            >;
+            as $ClassProviderElement<AnyNotifier<String?, String?>, String?, Object?, Object?>;
     return element.handleCreate(ref, build);
   }
 }

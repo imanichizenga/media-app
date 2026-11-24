@@ -101,8 +101,7 @@ String _$pictureKeeperHash() => r'e6073654a4921a53fc45a98348a2edae5a5e037f';
 final picturesProvider = PicturesProvider._();
 
 /// Where one picture lives at the width it is shown: the CDN's nearest variant, one size down to save data.
-final class PicturesProvider
-    extends $NotifierProvider<Pictures, ({String base, bool saver})> {
+final class PicturesProvider extends $NotifierProvider<Pictures, ({String base, bool saver})> {
   /// Where one picture lives at the width it is shown: the CDN's nearest variant, one size down to save data.
   PicturesProvider._()
     : super(
@@ -140,16 +139,11 @@ abstract class _$Pictures extends $Notifier<({String base, bool saver})> {
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref =
-        this.ref
-            as $Ref<({String base, bool saver}), ({String base, bool saver})>;
+    final ref = this.ref as $Ref<({String base, bool saver}), ({String base, bool saver})>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                ({String base, bool saver}),
-                ({String base, bool saver})
-              >,
+              AnyNotifier<({String base, bool saver}), ({String base, bool saver})>,
               ({String base, bool saver}),
               Object?,
               Object?

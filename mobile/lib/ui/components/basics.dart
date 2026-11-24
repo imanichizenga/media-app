@@ -306,6 +306,19 @@ class Segmented extends StatelessWidget {
     final c = context.colors;
     final ground = onDark ? OverMedia.chip : c.surfaceSunken;
     final thumb = onDark ? OverMedia.ink : c.surfaceRaised;
+    // Large text needs the whole width for each choice: one under another, nothing cut.
+    if (labels.length > 2 && MediaQuery.textScalerOf(context).scale(10) > 14) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (i, label) in labels.indexed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: NewsChip(label, on: i == at, toggles: true, onTap: () => onChanged(i)),
+            ),
+        ],
+      );
+    }
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(color: ground, borderRadius: BorderRadius.circular(30)),

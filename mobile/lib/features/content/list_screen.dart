@@ -41,8 +41,16 @@ class ListScreen extends ConsumerWidget {
         if (next.value case final target?) context.replace(target);
       });
     }
+    // The sections are known before their stories are: the title and what is under it never arrive late.
+    final known = feed.kind != FeedKind.category
+        ? null
+        : ref.watch(navigationProvider).value?.value.where((n) => n.slug == feed.slug).firstOrNull;
     final title =
-        about?.category?.name ?? about?.tag?.name ?? about?.story?.title ?? about?.author?.name;
+        known?.name ??
+        about?.category?.name ??
+        about?.tag?.name ??
+        about?.story?.title ??
+        about?.author?.name;
     final first = state.value?.stories.firstOrNull;
     final cover = feed.kind == FeedKind.category || feed.kind == FeedKind.story;
     final showCover =
@@ -81,7 +89,7 @@ class ListScreen extends ConsumerWidget {
                     _ => _Head(
                       title: title,
                       text: about?.category?.description ?? about?.story?.summary ?? '',
-                      children: about?.category?.children ?? const [],
+                      children: about?.category?.children ?? known?.children ?? const [],
                       loading: about == null,
                     ),
                   },
