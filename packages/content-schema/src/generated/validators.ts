@@ -9,7 +9,7 @@ function build(object: typeof z.strictObject) {
   });
   const linkMark = object({
     type: z.literal("link"),
-    href: z.string().refine((s) => [...s].length <= 2048, "too long").regex(new RegExp("^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\s][^\\s]*)?)$", "u")),
+    href: z.string().refine((s) => [...s].length <= 2048, "too long").regex(new RegExp("^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\\\\\s][^\\s]*)?)$", "u")),
   });
   const mark = z.discriminatedUnion("type", [simpleMark, linkMark]);
   const textNode = object({
@@ -131,7 +131,7 @@ function build(object: typeof z.strictObject) {
     id: blockId,
     title: z.string().min(1).refine((s) => [...s].length <= 300, "too long").regex(new RegExp("^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f‪-‮⁦-⁩]*$", "u")),
     post: uuid.optional(),
-    url: z.string().refine((s) => [...s].length <= 2048, "too long").regex(new RegExp("^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\s][^\\s]*)?)$", "u")).optional(),
+    url: z.string().refine((s) => [...s].length <= 2048, "too long").regex(new RegExp("^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\\\\\s][^\\s]*)?)$", "u")).optional(),
   });
   const pollOption = object({
     id: blockId,

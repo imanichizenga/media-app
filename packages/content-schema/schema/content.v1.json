@@ -64,7 +64,7 @@
         "href": {
           "type": "string",
           "maxLength": 2048,
-          "pattern": "^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\s][^\\s]*)?)$"
+          "pattern": "^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\\\\\s][^\\s]*)?)$"
         }
       },
       "required": ["type", "href"]
@@ -614,7 +614,7 @@
         "url": {
           "type": "string",
           "maxLength": 2048,
-          "pattern": "^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\s][^\\s]*)?)$"
+          "pattern": "^(https?://[^\\s]+|mailto:[^\\s]+|/([^/\\\\\\s][^\\s]*)?)$"
         }
       },
       "required": ["type", "id", "title"]
