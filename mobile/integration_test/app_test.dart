@@ -73,6 +73,20 @@ void main() {
     await t.pump();
   }
 
+  /// Brought clear of the bars first: how much of it shows depends on the phone.
+  Future<void> openCover(WidgetTester t) async {
+    final cover = find.byType(CoverCard).first;
+    for (
+      var i = 0;
+      i < 6 && t.getCenter(cover).dy > t.view.physicalSize.height / t.view.devicePixelRatio * 0.6;
+      i++
+    ) {
+      await t.drag(find.byType(CustomScrollView).first, const Offset(0, -200));
+      await t.pump(const Duration(milliseconds: 600));
+    }
+    await t.tap(cover);
+  }
+
   Future<AppDatabase> reader() async {
     final db = AppDatabase(NativeDatabase.memory());
     await saveSettings(db, const Settings(), const Settings(onboarded: true));
@@ -113,7 +127,7 @@ void main() {
     await launch(t, db);
     await until(t, find.byType(CoverCard));
     await until(t, find.textContaining('kusoma'));
-    await t.tap(find.byType(CoverCard).first, warnIfMissed: false);
+    await openCover(t);
     await until(t, find.byType(ArticleBody));
     final path = await somePath(db);
     unawaited(link('https://dev.example.com$path'));
@@ -127,7 +141,7 @@ void main() {
     final db = await reader();
     await launch(t, db);
     await until(t, find.textContaining('kusoma'));
-    await t.tap(find.byType(CoverCard).first, warnIfMissed: false);
+    await openCover(t);
     await until(t, find.byType(ArticleBody));
     await t.tap(find.bySemanticsLabel('Hifadhi').last);
     for (var i = 0; i < 100; i++) {

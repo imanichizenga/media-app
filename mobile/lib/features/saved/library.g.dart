@@ -251,7 +251,7 @@ final class LibraryProvider extends $NotifierProvider<Library, void> {
   }
 }
 
-String _$libraryHash() => r'71f4e86b7c091e5fcdca20bcd96bf6a661c05f7d';
+String _$libraryHash() => r'b2b15e53802ccd2b0a39efdeffa0862d63031407';
 
 abstract class _$Library extends $Notifier<void> {
   void build();

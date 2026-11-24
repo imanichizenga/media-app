@@ -221,7 +221,7 @@ jobs:
           working-directory: mobile
           script: flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json --timeout 8m
   mobile-ios:
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 60
     defaults: { run: { working-directory: mobile } }
     steps:

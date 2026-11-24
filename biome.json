@@ -10,6 +10,8 @@
       "!backend",
       "!support/infra",
       "!support/docs",
+      "!mobile",
+      "!support/packages/i18n/web",
       "!**/dart",
       "!support/generated/api-client-dart",
       "!**/test-results",
