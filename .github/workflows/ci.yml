@@ -187,6 +187,7 @@ jobs:
         working-directory: backend
         env:
           {
+            ALLOWED_HOSTS: "localhost,127.0.0.1,10.0.2.2",
             STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
             LOCAL_TRANSCODER: "1",
             LOCAL_SCANNER: "eicar",
@@ -204,7 +205,7 @@ jobs:
           S.objects.update_or_create(key='app', defaults={'data': {'min_android': '0.1.0', 'store_android': 'https://example.com'}})
           b = S.objects.get(key='brand'); b.data['appearance'] = {'theme': 'bold'}; b.save()"
           API_SURFACE=public nohup uv run uvicorn config.asgi:application --port 8010 --log-level warning > /tmp/api.log 2>&1 &
-          for i in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
+          for _ in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
           curl -sf http://127.0.0.1:8010/api/v1/app-config | head -c 200
       - name: Virtualisation for the emulator
         run: |

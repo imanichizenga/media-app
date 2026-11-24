@@ -14,9 +14,9 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 
 ## Next session starts here
 
-1. **The repository moved** (client request, 2026-11-24, ADR-0036): `backend`, `admin`, `web`, `mobile`, `support`. Documents are in `support/docs`.
-2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in minutes. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
-3. M3 plan, decisions and state: `support/docs/mobile/plan.md`.
+1. **M3 is in pull request 11.** Is it approved (G2, app)? Screens: the gallery made by `support/docs/mobile/plan.md`, or `support/docs/design/screens/m3.zip`. Record the answer.
+2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in a minute. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
+3. Then M2 Website on its own branch: same stylesheet, `packages/ui`, `packages/i18n`, and the cover card (ADR-0043).
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
 5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
 6. Open risks:
@@ -71,6 +71,14 @@ The full text of the task these come from is summarised in [design/public-experi
 | M2-THEMES SVG logos cleaned | Met: `test_brand.py`, 14 malicious samples | n/a |
 | M2-THEMES Publish, four eyes, rollback, hashed stylesheet, no flash | Met: `test_brand.py`, E2E | CDN behaviour of `/theme/*` unobserved |
 | M2-THEMES Gallery, axe, no sideways scroll | Met: 320 prototype screens, 0 findings | n/a |
+
+| M3 Every screen a guest needs, sw and en, light and dark, three themes | Met: 128 goldens and checks | n/a |
+| M3 Every content fixture renders | Met, except `long-article` as a picture (its blocks are covered by the others) | n/a |
+| M3 Offline, saved articles, forced update, kill switches, theme at next cold start | Met: `app_test.dart`; on an emulator and a simulator in CI | Needs a published app |
+| M3 iOS | Built without a signature; integration tests on a simulator against **recorded** answers (macOS runners cannot run the API's services) | Needs C1 |
+| M3 Cold start < 1.5 s, 60 fps | **Not measured on a phone** | G3 |
+| M3 Certificate pinning | Met against a test certificate | Needs A1 and real pins |
+| M3 App and universal links | Files served and tested; warm and cold opening tested | Needs real ids and a domain |
 
 ## Carried forward
 

@@ -80,6 +80,7 @@ void main() {
   }
 
   Future<void> link(String path) =>
+      // ignore: deprecated_member_use
       ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
         'flutter/navigation',
         const JSONMethodCodec().encodeMethodCall(
