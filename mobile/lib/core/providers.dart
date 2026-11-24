@@ -68,10 +68,11 @@ class DeviceId extends _$DeviceId {
     const storage = FlutterSecureStorage();
     try {
       final found = await storage.read(key: _key);
-      state = found ?? const Uuidish().v4();
-      if (found == null) await storage.write(key: _key, value: state);
+      final id = found ?? const Uuidish().v4();
+      if (found == null) await storage.write(key: _key, value: id);
+      if (ref.mounted) state = id;
     } on Exception {
-      state = null; // a locked keychain is not worth an error
+      // A locked keychain is not worth an error: requests go without.
     }
   }
 }
