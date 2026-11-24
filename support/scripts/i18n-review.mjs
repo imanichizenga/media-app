@@ -18,6 +18,8 @@ const rows = flat(read("admin/messages/sw.json")).map(([key, sw]) => [
   en[key] ?? "",
 ]);
 
+for (const [key, [sw, e]] of Object.entries(read("support/packages/i18n/public.json")))
+  rows.push(["App and website", key, sw, e]);
 // Themes, and the one number format that is a decision rather than a translation (ADR-0034).
 const { themes } = read("support/packages/design-tokens/src/themes.json");
 for (const [key, theme] of Object.entries(themes))
@@ -46,7 +48,7 @@ The Swahili in this product was written by a machine and is **not final**. A nat
 
 **${pending.length} of ${rows.length} strings wait for review.**
 `;
-for (const part of ["Admin console", "Themes", "API"]) {
+for (const part of ["App and website", "Admin console", "Themes", "API"]) {
   out += `\n## ${part}\n\n| Code | Key | Swahili | English |\n|---|---|---|---|\n`;
   for (const [where, key, sw, e] of pending)
     if (where === part) out += `| ${hash(key, sw)} | ${key} | ${cell(sw)} | ${cell(e)} |\n`;
