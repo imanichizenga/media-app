@@ -1,0 +1,15 @@
+{
+  "name": "News platform",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "hostRequirements": { "cpus": 4, "memory": "16gb", "storage": "64gb" },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "24", "pnpmVersion": "12.16.1" },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/va-h/devcontainers-features/uv:1": { "version": "0.13.9" }
+  },
+  "containerEnv": { "TOOLCHAIN": "/home/vscode/toolchain" },
+  "onCreateCommand": "sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg unzip xz-utils && support/scripts/mobile-toolchain.sh && echo '. /home/vscode/toolchain/env' >> ~/.bashrc",
+  "postCreateCommand": "pnpm install --frozen-lockfile && (cd backend && uv sync --locked)",
+  "forwardPorts": [3001, 8001, 8010]
+}
