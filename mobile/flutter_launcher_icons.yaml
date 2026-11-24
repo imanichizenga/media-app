@@ -1,0 +1,9 @@
+# Written by support/scripts/mobile-brand.sh from brand.yaml. Do not edit.
+flutter_launcher_icons:
+  android: ic_launcher
+  ios: true
+  remove_alpha_ios: true
+  image_path: brand/icon.png
+  adaptive_icon_background: "#b5121b"
+  adaptive_icon_foreground: brand/foreground.png
+  adaptive_icon_monochrome: brand/foreground.png

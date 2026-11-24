@@ -1,0 +1,7 @@
+// Written by support/scripts/mobile-ios-flavors.rb.
+#include "Debug.xcconfig"
+#include "Brand.xcconfig"
+PRODUCT_BUNDLE_IDENTIFIER = $(BRAND_ID).dev
+BRAND_SUFFIX = Dev
+WEB_HOST = $(HOST_DEV)
+CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements

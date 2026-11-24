@@ -1,0 +1,6 @@
+// Written by support/scripts/mobile-brand.sh from brand.yaml. Do not edit.
+BRAND_NAME = Mfano News
+BRAND_ID = tz.mfano.news
+HOST_DEV = dev.example.com
+HOST_STAGING = staging.example.com
+HOST_PROD = www.example.com
