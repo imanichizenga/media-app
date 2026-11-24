@@ -4,9 +4,14 @@ import type { Page } from "@playwright/test";
 import { expect, joinWithPasskey, test } from "./helpers";
 
 // Every screen in four combinations that cover each pair of device, theme and language.
-// SCREENS=m0 or m1 chooses the milestone.
-const M1 = process.env.SCREENS !== "m0";
-const OUT = resolve(import.meta.dirname, `../../docs/design/screens/${M1 ? "m1" : "m0"}`);
+// SCREENS=m0, m1 or m2-themes chooses the milestone. m2-themes only adds the console's Appearance page to the
+// gallery the prototypes make.
+const THEMES = process.env.SCREENS === "m2-themes";
+const M1 = !THEMES && process.env.SCREENS !== "m0";
+const OUT = resolve(
+  import.meta.dirname,
+  `../../docs/design/screens/${THEMES ? "m2-themes" : M1 ? "m1" : "m0"}`,
+);
 const VARIANTS = [
   { device: "desktop", theme: "light", locale: "en" },
   { device: "desktop", theme: "dark", locale: "sw" },
@@ -35,7 +40,7 @@ const M1_SCREENS: Record<string, string> = {
   author: "/author",
   settings: "/settings",
 };
-const SCREENS = M1 ? M1_SCREENS : M0_SCREENS;
+const SCREENS = THEMES ? { "admin-appearance": "/appearance" } : M1 ? M1_SCREENS : M0_SCREENS;
 const DATA = /\/api\/v1\/(?!auth\/session)/;
 
 test.describe.configure({ mode: "serial" });
@@ -81,17 +86,18 @@ const shoot = async (name: string, v: (typeof VARIANTS)[number], state: string) 
     type: "jpeg",
     quality: 78,
     animations: "disabled",
+    fullPage: THEMES,
   });
 };
 
 test.beforeAll(async ({ browser }) => {
-  rmSync(OUT, { recursive: true, force: true });
+  if (!THEMES) rmSync(OUT, { recursive: true, force: true });
   mkdirSync(OUT, { recursive: true });
   page = await (await browser.newContext({ locale: "en-GB", reducedMotion: "reduce" })).newPage();
 });
 
 test("before signing in", async () => {
-  test.skip(M1);
+  test.skip(M1 || THEMES);
   for (const v of VARIANTS) {
     await dress(v);
     await page.goto("/login");
@@ -102,12 +108,13 @@ test("before signing in", async () => {
 
 test("realistic data", async () => {
   await joinWithPasskey(page, "amina@example.test", "Amina Mushi");
+  if (THEMES) return;
   if (M1) {
     const found = await page.evaluate(async () => {
       const res = await fetch("/api/v1/posts?type=article&status=published");
       return (await res.json()).results.find((p: { locales: string[] }) => p.locales.length === 2).id;
     });
-    SCREENS.editor = `/content/${found}`;
+    M1_SCREENS.editor = `/content/${found}`;
     return;
   }
   for (const [email, role] of [
@@ -156,7 +163,7 @@ for (const v of VARIANTS)
 
 for (const v of VARIANTS)
   test(`empty, error and offline: ${v.device} ${v.theme} ${v.locale}`, async () => {
-    test.skip(M1);
+    test.skip(M1 || THEMES);
     await dress(v);
     await page.goto("/approvals");
     await expect(page.locator(".bone")).toHaveCount(0);
@@ -194,7 +201,7 @@ for (const v of VARIANTS)
       await expect(page.locator(".bone")).toHaveCount(0, { timeout: 20_000 });
       await page.waitForLoadState("networkidle");
     };
-    await page.goto(SCREENS.editor as string);
+    await page.goto(M1_SCREENS.editor as string);
     await still();
     for (const panel of ["details", "seo", "engagement", "history"]) {
       const tab = page.getByRole("tab", { name: t.content.panel[panel] });

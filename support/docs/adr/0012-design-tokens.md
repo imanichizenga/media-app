@@ -1,6 +1,6 @@
 # 0012. Design tokens
 
-Status: accepted, 2026-11-23
+Status: accepted, 2026-11-23; colour rules replaced by ADR-0029 and ADR-0030
 
 ## Context
 One look across web, admin and mobile.

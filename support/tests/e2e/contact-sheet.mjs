@@ -8,13 +8,15 @@ const shots = readdirSync(dir)
   .filter((f) => f.endsWith(".jpg"))
   .sort()
   .map((file) => {
-    const [screen, state, variant] = file.replace(".jpg", "").split("--");
+    const [name, state, variant] = file.replace(".jpg", "").split("--");
     const [device, theme, locale] = variant.split("-");
-    return { file, screen, state, device, theme, locale };
+    // Galleries of brand themes put the theme first; in the others there is one.
+    const [, brand = "", screen = name] = name.match(/^(signature|bold|quiet)-(.+)$/) ?? [];
+    return { file, screen, state, device, theme, locale, brand };
   });
 const values = (key) => [...new Set(shots.map((s) => s[key]))];
 const figure = (s) =>
-  `<figure data-device="${s.device}" data-theme="${s.theme}" data-locale="${s.locale}" data-state="${s.state}"><a href="${s.file}"><img loading="lazy" src="${s.file}" alt="${s.screen}, ${s.state}, ${s.device}, ${s.theme}, ${s.locale}"></a><figcaption>${s.state} · ${s.device} · ${s.theme} · ${s.locale}</figcaption></figure>`;
+  `<figure data-brand="${s.brand}" data-device="${s.device}" data-theme="${s.theme}" data-locale="${s.locale}" data-state="${s.state}"><a href="${s.file}"><img loading="lazy" src="${s.file}" alt="${s.screen}, ${s.brand} ${s.state}, ${s.device}, ${s.theme}, ${s.locale}"></a><figcaption>${s.brand && `${s.brand} · `}${s.state} · ${s.device} · ${s.theme} · ${s.locale}</figcaption></figure>`;
 const select = (key) =>
   `<label>${key} <select name="${key}"><option value="">all</option>${values(key)
     .map((v) => `<option>${v}</option>`)
@@ -24,7 +26,7 @@ writeFileSync(
   `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${milestone.toUpperCase()} screens</title>
 <style>body{font:15px system-ui;margin:24px;background:#f6f6f4;color:#1a1a1a}form{display:flex;flex-wrap:wrap;gap:16px;position:sticky;top:0;background:inherit;padding:12px 0}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}figure{margin:0}img{display:block;height:340px;border:1px solid #ccc;border-radius:8px}figcaption{font-size:12px;color:#555;padding:4px 0}[hidden]{display:none}</style>
 <h1>${milestone.toUpperCase()} screens</h1><p>${shots.length} captures with synthetic data. See support/docs/design for how to regenerate.</p>
-<form>${["device", "theme", "locale", "state"].map(select).join("")}</form>
+<form>${[...(values("brand").length > 1 ? ["brand"] : []), "device", "theme", "locale", "state"].map(select).join("")}</form>
 ${values("screen")
   .map(
     (name) =>

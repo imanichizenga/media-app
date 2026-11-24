@@ -18,6 +18,13 @@ const rows = flat(read("admin/messages/sw.json")).map(([key, sw]) => [
   en[key] ?? "",
 ]);
 
+// Themes, and the one number format that is a decision rather than a translation (ADR-0034).
+const { themes } = read("support/packages/design-tokens/src/themes.json");
+for (const [key, theme] of Object.entries(themes))
+  for (const part of ["name", "note"])
+    rows.push(["Themes", `themes.json ${key}.${part}`, theme[part].sw, theme[part].en]);
+rows.push(["Themes", "compact counts (packages/ui news.tsx)", "1.3K · 3.4M · 1.2B", "1.3K · 3.4M · 1.2B"]);
+
 // Pairs written in Python: field(…, en, sw), t.step(key, en, sw), Perm(key, en, sw), SystemRole(key, en, sw).
 const found = execFileSync(
   "python3",
@@ -39,7 +46,7 @@ The Swahili in this product was written by a machine and is **not final**. A nat
 
 **${pending.length} of ${rows.length} strings wait for review.**
 `;
-for (const part of ["Admin console", "API"]) {
+for (const part of ["Admin console", "Themes", "API"]) {
   out += `\n## ${part}\n\n| Code | Key | Swahili | English |\n|---|---|---|---|\n`;
   for (const [where, key, sw, e] of pending)
     if (where === part) out += `| ${hash(key, sw)} | ${key} | ${cell(sw)} | ${cell(e)} |\n`;

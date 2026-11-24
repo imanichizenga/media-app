@@ -1,7 +1,8 @@
 # Admin design notes
 
 - **Type:** Newsreader for headings, Inter for interface text. Sizes are in rem and follow the reader's setting.
-- **Colour:** one accent. Red is reserved for breaking and live, so errors use rust (`danger`).
+- **Colour:** the published theme, like the public product. Red marks the active place and the primary button; errors are rust, and destructive buttons are outlined (ADR-0029).
+- **Appearance:** the preview is the real screens in real windows, scaled. Nothing is published until it passes contrast in every theme.
 - **Skeletons:** `Bone` sits inside the real element and inherits its line height. Table skeletons reserve the action button's height. E2E compares positions (8px) and CLS (< 0.05) on every page.
 - **Targets:** 44px minimum (`tap`), checked at 360px width.
 - **Interruption:** step-up appears over the current page and then finishes the original action.

@@ -28,3 +28,12 @@
 - [0026](0026-public-read-api.md) Public read API and caching
 - [0027](0027-content-schema.md) One content schema
 - [0028](0028-editorial-workflow.md) Editorial workflow and concurrent editing
+- [0029](0029-red-is-the-brand.md) Red is the brand; signals are shapes
+- [0030](0030-brand-themes.md) Three themes as data
+- [0031](0031-colour-derivation.md) One derivation, three ports, shared vectors
+- [0032](0032-brand-publishing.md) Publishing and delivering the brand
+- [0033](0033-brand-logos.md) Logos: cleaned, rasterised, kept in the database
+- [0034](0034-compact-counts.md) Compact counts in Swahili
+- [0035](0035-window-classes.md) Window classes
+- [0036](0036-repository-layout.md) Repository layout
+- [0037](0037-youtube-duration.md) Video cards always say how long

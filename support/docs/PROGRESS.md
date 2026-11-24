@@ -8,19 +8,20 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M0-CLOSE** | Done, pull request 7 (merged) | Blocked: no AWS environment |
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
-| **M2-THEMES** | In progress, branch `m2-design`, pull request 9 | n/a |
+| **M2-THEMES** | Themes, Appearance page, D1 to D7, gallery: done, pull request 9. **Themes gallery waits for G2**; it blocks nothing | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. Is the design approved? Spec: [design/public-experience.md](design/public-experience.md), gallery: `support/docs/design/screens/m2-design/index.html`. Record the answer, with its date, here and in human-actions G2. **Do not build website or app screens before it.**
-2. Meanwhile, on a branch `m2-website`, work that has no screens: the `web` skeleton (Next.js, strict CSP, i18n, no pages yet), the signed revalidation receiver (`POST /api/revalidate`: HMAC, five-minute window, single use), JSON-LD builders with a schema validator in CI, sitemaps (index, news, image, video), RSS, robots, redirects through `/content/resolve`, the image loader, Lighthouse CI wiring, Terraform for the website. Cards and their skeletons are already in `support/packages/ui/src/news.tsx`.
-3. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them.
-4. Open risks:
-   - **Disk:** about 3 GB free of 32 GB in the Codespace. OpenSearch and ClickHouse together need about 3.5 GB. Use one profile at a time, or a larger machine.
-   - **Flutter and Terraform are not installed** in the container. Terraform 1.17.2 and Flutter 3.50.1 were used from a scratch directory. M3 needs Flutter permanently.
-   - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, and every IAM and bucket policy. Plan-tested only.
-5. Waiting for a person: an AWS environment (A1 to A3), a dedicated test bucket (A8), a native Swahili editor (G1, 934 strings). Brand name, logo and accent colour (G6) are needed for M2-DESIGN.
+1. **The repository moved** (client request, 2026-11-24, ADR-0036): `backend`, `admin`, `web`, `mobile`, `support`. Documents are in `support/docs`.
+2. Is the themes gallery approved (G2)? `support/docs/design/screens/m2-themes/index.html`. Record the answer here and in human-actions. M3 does not wait for it.
+3. **M3 waits for disk.** See "Waiting for a person". Then: `.devcontainer` (Flutter 3.50.1, JDK 21, Android SDK), one version file read by CI and the container, the app-config endpoint, then the app in `mobile`, branch `m3-mobile`.
+4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
+5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
+6. Open risks:
+   - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, every IAM and bucket policy, and the load balancer rule for `/theme/*`. Plan-tested only.
+   - `uv` could not reach PyPI from this Codespace on 2026-11-24 (`curl` could). `UV_OFFLINE=1` works with the lockfile.
+7. Waiting for a person: **a larger workspace** for M3; G2 on the themes; an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
 
 ## Human decisions
 
@@ -62,10 +63,19 @@ The full text of the task these come from is summarised in [design/public-experi
 | M1 Category-scoped roles | Met: `test_taxonomy.py`, E2E | n/a |
 | M1 Screenshot gallery | Met: `support/docs/design/screens/m1/index.html` | n/a |
 
+| M2-THEMES Derivation parity in Python, TypeScript and Dart | Met: shared vectors, `test_theme.py`, `theme.test.mjs`, `theme_test.dart` | n/a |
+| M2-THEMES Any valid colour passes AA in every theme | Met: property tests over random colours | n/a |
+| M2-THEMES SVG logos cleaned | Met: `test_brand.py`, 14 malicious samples | n/a |
+| M2-THEMES Publish, four eyes, rollback, hashed stylesheet, no flash | Met: `test_brand.py`, E2E | CDN behaviour of `/theme/*` unobserved |
+| M2-THEMES Gallery, axe, no sideways scroll | Met: 320 prototype screens, 0 findings | n/a |
+
 ## Carried forward
 
 | Item | Where |
 |---|---|
+| Share images use the theme and logo | M2 website |
+| Notification visuals use the theme and logo | M6 |
+| Old `identity` settings row deleted (contract) | Next release |
 | Ads approvals | M10 |
 | Swahili text needs a native editor | G1, `support/docs/i18n/review.md` |
 | Details of a failed integration test stay in the vendor's English; hints are bilingual | Decided |
