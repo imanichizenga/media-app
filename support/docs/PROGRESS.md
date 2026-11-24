@@ -9,7 +9,7 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
-| **M3 Mobile app** | In progress, branch `m3-mobile` | Needs C1, D1, G3 |
+| **M3 Mobile app** | Done, pull request 11. **Waits for G2 on the app** and for a phone (G3) | Needs C1, D1, G3 |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here

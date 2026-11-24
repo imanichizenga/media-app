@@ -237,11 +237,14 @@ jobs:
           flutter build ios --release --no-codesign --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
           du -sh build/ios/iphoneos/*.app | tee -a "$GITHUB_STEP_SUMMARY"
       - name: On a simulator, against the recorded API
+        timeout-minutes: 35
         run: |
-          node ../support/tests/replay.mjs 8010 &
+          nohup node ../support/tests/replay.mjs 8010 > /tmp/replay.log 2>&1 &
+          replay=$!
           device=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
-          xcrun simctl boot "$device" && xcrun simctl bootstatus "$device" -b
-          flutter test integration_test -d "$device" --flavor dev --dart-define-from-file=config/dev-ios.json --timeout 10m
+          xcrun simctl boot "$device" && xcrun simctl bootstatus "$device" -b > /dev/null
+          flutter test integration_test -d "$device" --flavor dev --dart-define-from-file=config/dev-ios.json --timeout 4m --reporter expanded
+          kill "$replay"
   infra:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
