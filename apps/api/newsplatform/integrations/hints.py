@@ -1,0 +1,27 @@
+"""What to do about a failed test step, in Swahili. `detail` stays as the vendor said it: it is evidence."""
+
+SW = {
+    "Grant the missing IAM action to the role or key this platform uses.": "Ipe role au ufunguo unaotumiwa na mfumo huu ruhusa ya IAM inayokosekana.",
+    "Check the bucket name and region.": "Hakiki jina la ndoo na eneo lake.",
+    "The access key does not exist. Create a new one or use the task role.": "Ufunguo huu haupo. Tengeneza mpya au tumia role ya seva.",
+    "The secret key does not match the access key. Paste it again.": "Ufunguo wa siri haulingani na kitambulisho chake. Ubandike tena.",
+    "The credentials have expired.": "Vitambulisho vimeisha muda wake.",
+    "The bucket is in another region. Correct the region field.": "Ndoo iko katika eneo lingine. Sahihisha sehemu ya eneo.",
+    "Verify the sender identity, and request SES production access if in the sandbox.": "Thibitisha utambulisho wa mtumaji, na omba ruhusa ya uzalishaji ya SES ikiwa bado uko kwenye majaribio.",
+    "Check credentials, region and network access to AWS.": "Hakiki vitambulisho, eneo na mawasiliano ya mtandao na AWS.",
+    "Resume the queue in the MediaConvert console.": "Washa tena foleni kwenye dashibodi ya MediaConvert.",
+    "Allow mediaconvert.amazonaws.com to assume it.": "Ruhusu mediaconvert.amazonaws.com kuichukua role hii.",
+    "Check the queue for waiting jobs.": "Angalia kama kuna kazi zinazosubiri kwenye foleni.",
+    "Recreate the bucket with Object Lock enabled.": "Tengeneza upya ndoo ikiwa na Object Lock.",
+    "Use Object Lock in COMPLIANCE mode.": "Tumia Object Lock katika hali ya COMPLIANCE.",
+    "Resolve it in the SES console.": "Litatue kwenye dashibodi ya SES.",
+    "Verify the domain in SES and add DKIM records.": "Thibitisha kikoa kwenye SES na uongeze rekodi za DKIM.",
+    "Check the host and that it is deployed.": "Hakiki anwani na kwamba tovuti imewekwa.",
+    "The website must refuse replays.": "Tovuti lazima ikatae maombi yanayorudiwa.",
+    "Enable all four Block Public Access settings.": "Washa mipangilio yote minne ya Block Public Access.",
+    "Add the bucket as an S3 origin.": "Ongeza ndoo kama chanzo cha S3.",
+    "Attach an OAC that always signs requests.": "Ambatisha OAC inayotia sahihi kila ombi.",
+    "Check the bucket policy allows this distribution and the domain is deployed.": "Hakiki kwamba sera ya ndoo inaruhusu usambazaji huu na kikoa kimewekwa.",
+    "The bucket may be public. Remove public policies immediately.": "Huenda ndoo iko wazi kwa umma. Ondoa sera za umma mara moja.",
+    "Run this test against real AWS.": "Endesha jaribio hili kwenye AWS halisi.",
+}

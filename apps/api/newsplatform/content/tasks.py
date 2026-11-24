@@ -11,7 +11,7 @@ def publish_due() -> int:
     return services.publish_due()
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=6, retry_backoff=5, retry_backoff_max=300)
 def announce(tags: list[str], pages: list[str]) -> None:
     from newsplatform.seo.delivery import purge
 

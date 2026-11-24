@@ -22,8 +22,13 @@ import {
   TextField,
 } from "@/components/ui";
 import { call, client } from "@/lib/api";
-import { keys, useCan, useRoles, useSession, useStaff, useTime } from "@/lib/queries";
+import { categoryName, flatTree } from "@/lib/categories";
+import { keys, useCan, useCategories, useRoles, useSession, useStaff, useTime } from "@/lib/queries";
 
+const scopeOf = (form: FormData) => {
+  const id = String(form.get("scope") ?? "");
+  return { scope_type: id ? "category" : "", scope_id: id };
+};
 type Open = { kind: "invite" } | { kind: "member"; id: string } | null;
 export default function Staff() {
   const t = useTranslations("staff");
@@ -35,6 +40,7 @@ export default function Staff() {
   const { data: session } = useSession();
   const { data, error, refetch } = useStaff();
   const roles = useRoles();
+  const tree = flatTree(useCategories(can("content.create")).data ?? []);
   const [open, setOpen] = useState<Open>(null);
   const [pending, setPending] = useState("");
   const [problem, setProblem] = useState<unknown>(null);
@@ -73,7 +79,7 @@ export default function Staff() {
           client.POST("/api/v1/staff/invites", {
             body: {
               email: String(form.get("email")),
-              grants: [{ role: String(form.get("role")), scope_type: "", scope_id: "" }],
+              grants: [{ role: String(form.get("role")), ...scopeOf(form) }],
             },
           }),
         ),
@@ -96,6 +102,27 @@ export default function Staff() {
       ))}
     </select>
   );
+  // A role held in one category covers that category and everything inside it.
+  const scopeSelect = tree.length > 0 && (
+    <Field label={t("scope")} help={t("scopeHelp")}>
+      {(control) => (
+        <select name="scope" {...control}>
+          <option value="">{t("everywhere")}</option>
+          {tree.map((x) => (
+            <option key={x.id} value={x.id}>
+              {"— ".repeat(x.depth - 1)}
+              {categoryName(x, en ? "en" : "sw")}
+            </option>
+          ))}
+        </select>
+      )}
+    </Field>
+  );
+  const where = ({ scope_id }: { scope_id?: string }) => {
+    if (!scope_id) return null;
+    const found = tree.find((x) => x.id === scope_id);
+    return ` · ${found ? categoryName(found, en ? "en" : "sw") : "…"}`;
+  };
   const outcome = result && (
     <Notice tone={result.link ? "warning" : "success"}>
       {result.approval_required ? (
@@ -149,7 +176,10 @@ export default function Staff() {
               <Td>
                 <span className="flex flex-wrap gap-1">
                   {s.roles.map((r) => (
-                    <Badge key={r.assignment}>{en ? r.name_en : r.name_sw}</Badge>
+                    <Badge key={r.assignment}>
+                      {en ? r.name_en : r.name_sw}
+                      {where(r)}
+                    </Badge>
                   ))}
                 </span>
               </Td>
@@ -189,8 +219,11 @@ export default function Staff() {
                 </Td>
                 <Td>
                   <span className="flex flex-wrap gap-1">
-                    {(i.grants as { role: string }[]).map((g) => (
-                      <Badge key={g.role}>{roleName(g.role)}</Badge>
+                    {(i.grants as { role: string; scope_id?: string }[]).map((g) => (
+                      <Badge key={g.role}>
+                        {roleName(g.role)}
+                        {where(g)}
+                      </Badge>
                     ))}
                   </span>
                 </Td>
@@ -230,6 +263,7 @@ export default function Staff() {
             <FormError error={problem} />
             <TextField label={t("email")} name="email" type="email" required />
             <Field label={t("role")}>{roleSelect}</Field>
+            {scopeSelect}
             <Button type="submit" pending={pending === "invite"}>
               {t("sendInvite")}
             </Button>
@@ -250,7 +284,10 @@ export default function Staff() {
             <ul className="divide-y divide-border">
               {member.roles.map((r) => (
                 <li key={r.assignment} className="flex items-center justify-between gap-2">
-                  {en ? r.name_en : r.name_sw}
+                  <span>
+                    {en ? r.name_en : r.name_sw}
+                    {where(r)}
+                  </span>
                   {!self && (
                     <Button
                       variant="ghost"
@@ -279,11 +316,12 @@ export default function Staff() {
                   className="flex flex-wrap items-end gap-2"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    const role = String(new FormData(e.currentTarget).get("role"));
+                    const form = new FormData(e.currentTarget);
+                    const role = String(form.get("role"));
                     act("grant", async () => {
                       const r = await call(() =>
                         client.POST("/api/v1/assignments", {
-                          body: { user: member.id, role, scope_type: "", scope_id: "" },
+                          body: { user: member.id, role, ...scopeOf(form) },
                         }),
                       );
                       if (r.approval_required) setNotice(t("sentForApproval"));
@@ -293,6 +331,7 @@ export default function Staff() {
                   <div className="min-w-40 flex-1">
                     <Field label={t("addRole")}>{roleSelect}</Field>
                   </div>
+                  <div className="min-w-40 flex-1">{scopeSelect}</div>
                   <Button type="submit" variant="secondary" pending={pending === "grant"}>
                     {c("add")}
                   </Button>

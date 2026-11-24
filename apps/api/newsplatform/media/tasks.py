@@ -78,7 +78,8 @@ def _process(asset: Asset) -> None:
                 digest = hashlib.file_digest(f, "sha256").hexdigest()
             Asset.objects.filter(pk=asset.pk).update(status=AssetStatus.PROCESSING, sha256=digest, mime=mime)
             if asset.kind == Kind.IMAGE:
-                return _image(store, asset, source, Path(tmp))
+                services.finished(asset.pk, **_image(store, asset, source, Path(tmp)))
+                return None
     if mime not in VIDEO_TYPES:
         services.failed(asset.pk, "unsupported_type", rejected=True)
         return None
@@ -93,7 +94,7 @@ def _infected(store: Storage, asset: Asset) -> None:
     store.delete([asset.original_key])
 
 
-def _image(store: Storage, asset: Asset, source: Path, tmp: Path) -> None:
+def _image(store: Storage, asset: Asset, source: Path, tmp: Path) -> dict[str, Any]:
     out = tmp / "out"
     out.mkdir()
     made = images.process(source, out, (asset.focal_x, asset.focal_y))
@@ -103,17 +104,36 @@ def _image(store: Storage, asset: Asset, source: Path, tmp: Path) -> None:
     keys = {s: (crops if s.startswith("crop-") else prefix) + s for _, s, _ in made.files}
     for path, suffix, content_type in made.files:
         store.upload(path, keys[suffix], content_type)
-    services.finished(
-        asset.pk,
-        width=made.width,
-        height=made.height,
-        blurhash=made.blurhash,
-        dominant_color=made.color,
-        outputs={
+    return {
+        "width": made.width,
+        "height": made.height,
+        "blurhash": made.blurhash,
+        "dominant_color": made.color,
+        "outputs": {
             "variants": {f: {w: keys[s] for w, s in sizes.items()} for f, sizes in made.variants.items()},
             "crops": {name: keys[s] for name, s in made.crops.items()},
         },
-    )
+    }
+
+
+@shared_task(
+    bind=True,
+    max_retries=5,
+    autoretry_for=(Exception,),
+    retry_backoff=10,
+    dont_autoretry_for=(images.BadImage,),
+)
+def recrop(self: Any, asset_id: str) -> None:
+    """New crops around a new focal point. The file stays ready: readers get the old ones meanwhile."""
+    asset = Asset.objects.filter(pk=asset_id, deleted_at__isnull=True, status=AssetStatus.READY).first()
+    if asset is None or asset.kind != Kind.IMAGE:
+        return
+    store = storage()
+    with tempfile.TemporaryDirectory() as tmp:
+        source = Path(tmp) / "source"
+        store.download(asset.original_key, source)
+        values = _image(store, asset, source, Path(tmp))
+    services.recropped(asset.pk, (asset.focal_x, asset.focal_y), values["outputs"])
 
 
 def _follow(store: Storage, asset: Asset) -> None:

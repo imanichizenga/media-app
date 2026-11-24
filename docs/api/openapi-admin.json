@@ -2582,6 +2582,52 @@
                 }
             }
         },
+        "/api/v1/posts/calendar": {
+            "get": {
+                "operationId": "posts_calendar",
+                "description": "Everything published or scheduled in a span, in one answer: a week with a gap in it would mislead.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "from",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "to",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Calendar"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/realtime/ticket": {
             "post": {
                 "operationId": "realtime_ticket",
@@ -4281,6 +4327,49 @@
                 "required": [
                     "approval_required",
                     "results"
+                ]
+            },
+            "Calendar": {
+                "type": "object",
+                "properties": {
+                    "truncated": {
+                        "type": "boolean"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CalendarEntry"
+                        }
+                    }
+                },
+                "required": [
+                    "results",
+                    "truncated"
+                ]
+            },
+            "CalendarEntry": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PostStatusEnum"
+                    },
+                    "headline": {
+                        "type": "string"
+                    },
+                    "at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "at",
+                    "headline",
+                    "id",
+                    "status"
                 ]
             },
             "Call": {
@@ -6815,6 +6904,9 @@
                         "type": "string"
                     },
                     "remediation": {
+                        "type": "string"
+                    },
+                    "remediation_sw": {
                         "type": "string"
                     }
                 },

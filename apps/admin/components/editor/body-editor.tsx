@@ -13,7 +13,7 @@ import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DropdownMenu } from "radix-ui";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Button, Dialog, Notice } from "@/components/ui";
+import { Button, Dialog, FormError, Notice } from "@/components/ui";
 import { useAssetMap } from "@/lib/editor/assets";
 import { fromEditor, newId, toEditor } from "@/lib/editor/convert";
 import { BlockIds, NewsBlock, textExtensions } from "@/lib/editor/extensions";
@@ -101,18 +101,21 @@ export function CardDialog({
   onClose,
   onSave,
   saveLabel,
+  problem = null,
 }: {
   block: Block;
   name: string;
   open: boolean;
   onClose: () => void;
-  onSave: (block: Block) => void;
+  onSave: (block: Block) => void | Promise<void>;
   saveLabel?: string;
+  problem?: unknown;
 }) {
   const t = useTranslations("editor");
   const c = useTranslations("common");
   const [draft, setDraft] = useState(block);
   const [bad, setBad] = useState(false);
+  const [pending, setPending] = useState(false);
   useEffect(() => {
     if (open) {
       setDraft(block);
@@ -123,13 +126,18 @@ export function CardDialog({
     <Dialog open={open} onClose={onClose} title={name} wide>
       <div className="flex flex-col gap-4">
         {bad && <Notice tone="danger">{t("incomplete")}</Notice>}
+        <FormError error={problem} />
         <BlockForm block={draft} onChange={setDraft} />
         <Button
           className="self-start"
-          onClick={() => {
+          pending={pending}
+          onClick={async () => {
             const next = tidy(draft);
             if (!valid(next)) return setBad(true);
-            onSave(next);
+            setBad(false);
+            setPending(true);
+            await onSave(next);
+            setPending(false);
           }}
         >
           {saveLabel ?? c("save")}

@@ -82,6 +82,7 @@ class Post(BaseModel):
             models.Index(fields=["status", "-updated_at"]),
             models.Index(fields=["category", "-updated_at"]),
             models.Index(fields=["scheduled_at"], condition=Q(status="scheduled"), name="post_due"),
+            models.Index(fields=["published_at"], condition=Q(status="published"), name="post_calendar"),
         ]
 
     def __str__(self) -> str:

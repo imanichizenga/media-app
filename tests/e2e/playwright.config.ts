@@ -12,11 +12,14 @@ const env = {
   AWS_ENDPOINT_URL: "http://127.0.0.1:5055",
   AWS_ACCESS_KEY_ID: "test",
   AWS_SECRET_ACCESS_KEY: "test",
+  STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
+  LOCAL_TRANSCODER: "1",
+  LOCAL_SCANNER: "eicar",
 };
 export default defineConfig({
   testDir: ".",
   // The gallery is made on purpose (pnpm --filter @news/e2e screens), not on every run.
-  testMatch: process.env.SCREENS ? "screens.spec.ts" : "admin.spec.ts",
+  testMatch: process.env.SCREENS ? "screens.spec.ts" : ["admin.spec.ts", "content.spec.ts"],
   workers: 1,
   timeout: 60_000,
   globalSetup: "./setup.ts",
@@ -42,13 +45,13 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
-      command: `${api} .venv/bin/celery -A config worker -Q critical,default -c 2 -l WARNING`,
+      command: `${api} .venv/bin/celery -A config worker -Q critical,default,media -c 2 -l WARNING`,
       env,
       timeout: 60_000,
     },
     {
       command:
-        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && SENTRY_DSN=http://key@127.0.0.1:5056/7 PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
+        "cp -r ../../apps/admin/.next/static ../../apps/admin/.next/standalone/apps/admin/.next/ && UPLOAD_ORIGIN=http://127.0.0.1:8333 SENTRY_DSN=http://key@127.0.0.1:5056/7 PORT=3001 HOSTNAME=localhost node ../../apps/admin/.next/standalone/apps/admin/server.js",
       url: "http://localhost:3001/healthz",
       timeout: 60_000,
     },

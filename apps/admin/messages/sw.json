@@ -275,7 +275,10 @@
     "resetPassword": "Tuma kiungo cha nenosiri jipya",
     "resetMfa": "Weka upya nenosiri na hatua ya pili",
     "deactivate": "Zima akaunti",
-    "reactivate": "Washa akaunti"
+    "reactivate": "Washa akaunti",
+    "scope": "Wapi",
+    "scopeHelp": "Ruhusa za maudhui pekee. Hujumuisha kila kilicho ndani.",
+    "everywhere": "Kote"
   },
   "roles": {
     "title": "Majukumu",
@@ -676,7 +679,9 @@
       "changed": "Imebadilishwa",
       "moved": "Imehamishwa",
       "same": "Haijabadilika"
-    }
+    },
+    "earlier": "{n, plural, one {# ya awali} other {# za awali}}",
+    "calendarTruncated": "Habari ni nyingi mno kwa mwonekano mmoja. Orodha hii haijakamilika."
   },
   "editor": {
     "body": "Maandishi ya makala",

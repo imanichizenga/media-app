@@ -142,10 +142,17 @@ export class Draft {
     this.set({ post, data, state: this.dirty ? "dirty" : "saved", error: undefined, savedAt: now() });
     if (this.dirty) this.schedule(this.deps.delay ?? 3_000);
   }
+  /** What the server works out by itself, such as a file that has become ready. Never touches the words. */
+  refresh(post: Post) {
+    const held = this.snapshot.post;
+    if (post.version !== held.version || this.inFlight) return;
+    const { problems, transitions, assets } = post;
+    this.set({ post: { ...held, problems, transitions, assets } });
+  }
   /** Takes over after a lock was taken, keeping what was typed. */
   unlock() {
-    this.set({ state: "dirty", error: undefined });
-    this.schedule(0);
+    this.set({ state: this.dirty ? "dirty" : "clean", error: undefined });
+    if (this.dirty) this.schedule(0);
   }
   destroy() {
     clearTimeout(this.timer);

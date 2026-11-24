@@ -60,16 +60,20 @@ class Command(BaseCommand):
         self.rng = random.Random(20261123)  # noqa: S311
         sync_system_roles()
         self.editor = self._person("Mhariri Demo", "editor_in_chief")
-        self._taxonomy()
-        self._media(options["images"], options["videos"])
-        self._people()
-        self._brand()
-        announce = tasks.announce.delay
-        tasks.announce.delay = lambda *_: None  # nothing is listening, and 300 purges say nothing
+        # Files are processed here, so a worker must not process them again; and 300 purges say nothing.
+        queued = (tasks.announce, process)
+        kept = [task.delay for task in queued]
+        for task in queued:
+            task.delay = lambda *_: None
         try:
+            self._taxonomy()
+            self._media(options["images"], options["videos"])
+            self._people()
+            self._brand()
             self._posts(options["posts"])
         finally:
-            tasks.announce.delay = announce
+            for task, delay in zip(queued, kept, strict=True):
+                task.delay = delay
         self.stdout.write(f"{Post.objects.count()} posts, {Asset.objects.count()} files")
 
     # ---- people ------------------------------------------------------------

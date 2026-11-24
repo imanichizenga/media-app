@@ -409,7 +409,7 @@ ArticleBody.Skeleton = function ArticleBodySkeleton() {
           {Array.from({ length: lines }, (_, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
             <span key={i} className={`bone ${i === lines - 1 ? "w-2/3" : "w-full"}`}>
-              {" "}
+              {"\u00a0"}
             </span>
           ))}
         </p>

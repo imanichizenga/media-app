@@ -187,9 +187,10 @@ def update(*, actor: User, asset_id: UUID, data: dict[str, Any]) -> Asset:
         after={k: after[k] for k in diff},
     )
     if {"focal_x", "focal_y"} & set(diff) and asset.kind == Kind.IMAGE and asset.status == AssetStatus.READY:
-        asset.status = AssetStatus.SCANNING
-        asset.save(update_fields=["status", "updated_at"])
-        _queue(asset)
+        from newsplatform.media.tasks import recrop
+
+        pk = str(asset.pk)
+        transaction.on_commit(lambda: recrop.delay(pk))
     else:
         _refresh_posts(asset)
     return asset
@@ -254,6 +255,17 @@ def finished(asset_id: UUID, **values: Any) -> None:
         setattr(asset, name, value)
     asset.status, asset.error_code, asset.error_detail = AssetStatus.READY, "", ""
     asset.save()
+    changed("asset", asset.pk)
+    _refresh_posts(asset)
+
+
+@transaction.atomic
+def recropped(asset_id: UUID, focal: tuple[int, int], outputs: dict[str, Any]) -> None:
+    asset = Asset.objects.select_for_update().get(pk=asset_id)
+    if (asset.focal_x, asset.focal_y) != focal:
+        return  # moved again meanwhile: a newer task is on its way
+    asset.outputs = outputs
+    asset.save(update_fields=["outputs", "updated_at"])
     changed("asset", asset.pk)
     _refresh_posts(asset)
 

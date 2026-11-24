@@ -899,6 +899,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/posts/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everything published or scheduled in a span, in one answer: a week with a gap in it would mislead. */
+        get: operations["posts_calendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/realtime/ticket": {
         parameters: {
             query?: never;
@@ -1418,6 +1435,18 @@ export interface components {
         BulkResult: {
             approval_required: boolean;
             results: components["schemas"]["BulkItem"][];
+        };
+        Calendar: {
+            truncated: boolean;
+            results: components["schemas"]["CalendarEntry"][];
+        };
+        CalendarEntry: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["PostStatusEnum"];
+            headline: string;
+            /** Format: date-time */
+            at: string;
         };
         Call: {
             /** Format: uuid */
@@ -2114,6 +2143,7 @@ export interface components {
             latency_ms: number;
             detail: string;
             remediation: string;
+            remediation_sw?: string;
         };
         /**
          * @description * `pending` - pending
@@ -3829,6 +3859,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BulkResult"];
+                };
+            };
+        };
+    };
+    posts_calendar: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Calendar"];
                 };
             };
         };

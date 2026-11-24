@@ -115,8 +115,9 @@ export const contentKeys = {
   redirects: (q: string) => ["redirects", q] as const,
   author: (id: string) => ["authors", id] as const,
 };
-export const useCategories = () =>
+export const useCategories = (enabled = true) =>
   useQuery({
+    enabled,
     queryKey: contentKeys.categories,
     queryFn: () => call(() => client.GET("/api/v1/categories")),
     staleTime: 60_000,

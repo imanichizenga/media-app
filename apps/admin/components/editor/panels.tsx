@@ -96,6 +96,21 @@ export function PublishPanel({ draft, snap, disabled, onDone }: Props & { onDone
     if (step.note_required || step.key === "schedule") setAsk(step);
     else void run(step.key);
   };
+  // A missing credit may be added in another tab, and a file becomes ready on its own.
+  const waiting = post.problems.includes("media");
+  useQuery({
+    queryKey: [...contentKeys.post(post.id), "problems", post.version],
+    queryFn: async () => {
+      const fresh = await call(() =>
+        client.GET("/api/v1/posts/{post_id}", { params: { path: { post_id: post.id } } }),
+      );
+      draft.refresh(fresh);
+      return fresh.problems;
+    },
+    enabled: post.problems.length > 0,
+    refetchInterval: waiting ? 3_000 : false,
+    refetchOnWindowFocus: "always",
+  });
   const main = MAIN.map((k) => post.transitions.find((s) => s.key === k)).find(Boolean);
   const blocked = post.problems.length > 0;
   return (

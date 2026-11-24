@@ -2,6 +2,7 @@
 
 import json
 from datetime import timedelta
+from urllib.parse import urlencode
 
 import pytest
 from django.utils import timezone
@@ -188,6 +189,32 @@ def test_list_queries_do_not_grow(desk, cat, django_assert_max_num_queries):
 
 
 # ---- revisions -----------------------------------------------------------------------
+def test_the_calendar_is_complete_and_in_order(desk, admin_api, cat, django_assert_max_num_queries):
+    user, api = desk
+    now = timezone.now()
+    ids = []
+    for hours in (30, -2, -3):
+        post = f.post(user, cat)
+        key = "schedule" if hours > 0 else "publish"
+        when = {"scheduled_at": now + timedelta(hours=hours)} if hours > 0 else {}
+        services.transition(actor=user, post_id=post.pk, key=key, version=post.version, **when)
+        if hours < 0:
+            Post.objects.filter(pk=post.pk).update(published_at=now + timedelta(hours=hours))
+        ids.append(str(post.pk))
+    f.post(user, cat)  # a draft has no day
+    span = {"from": (now - timedelta(days=1)).isoformat(), "to": (now + timedelta(days=6)).isoformat()}
+    with django_assert_max_num_queries(12):
+        got = api.get(f"posts/calendar?{urlencode(span)}").json()
+    assert [r["id"] for r in got["results"]] == [ids[2], ids[1], ids[0]]
+    assert [r["status"] for r in got["results"]] == ["published", "published", "scheduled"]
+    assert got["truncated"] is False
+    _, other = admin_api("journalist")
+    assert other.get(f"posts/calendar?{urlencode(span)}").json()["results"] == []
+    far = {"from": now.isoformat(), "to": (now + timedelta(days=90)).isoformat()}
+    assert api.get(f"posts/calendar?{urlencode(far)}").status_code == 400
+    assert api.get("posts/calendar").status_code == 400
+
+
 def test_diff_shows_words_and_blocks(desk, cat):
     user, api = desk
     post = f.post(user, cat, "Mvua kubwa yanyesha")

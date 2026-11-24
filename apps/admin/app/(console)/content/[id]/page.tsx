@@ -219,7 +219,7 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
         )}
         {state === "invalid" && <Notice tone="danger">{text(snap.error)}</Notice>}
       </div>
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_23rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_23rem]">
         <div className="flex min-w-0 flex-col gap-4">
           <div role="tablist" aria-label={t("languages")} className="flex gap-2">
             {(["sw", "en"] as const).map((l) => (
@@ -290,7 +290,7 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
                 aria-selected={panel === p}
                 onClick={() => setPanel(p)}
                 className={cx(
-                  "tap shrink-0 px-3 text-label",
+                  "tap shrink-0 px-2.5 text-label",
                   panel === p
                     ? "border-accent border-b-2 text-accent"
                     : "text-text-secondary hover:text-text-primary",
@@ -304,14 +304,24 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
             {panel === "publish" && (
               <PublishPanel
                 {...props}
-                onDone={() => queries.invalidateQueries({ queryKey: contentKeys.posts })}
+                onDone={(done) => {
+                  // A decision ends the editing session; whoever stays on the page starts a new one.
+                  if (done.can_edit) void lock();
+                  void queries.invalidateQueries({ queryKey: contentKeys.posts });
+                }}
               />
             )}
             {panel === "details" && <DetailsPanel {...props} />}
             {panel === "seo" && <SeoPanel {...props} />}
             {panel === "engagement" && <EngagementPanel {...props} />}
             {panel === "history" && (
-              <HistoryPanel {...props} onRestored={() => setGeneration((n) => n + 1)} />
+              <HistoryPanel
+                {...props}
+                onRestored={() => {
+                  void lock();
+                  setGeneration((n) => n + 1);
+                }}
+              />
             )}
           </div>
         </aside>
@@ -328,7 +338,7 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
         open={live}
         onClose={() => setLive(false)}
         send={async (block) => {
-          if (!(await draft.flush(false))) return;
+          if (!(await draft.flush(false))) throw draft.get().error ?? new Error("unsaved");
           const { type: _type, time: _time, ...rest } = block as Record<string, unknown>;
           const saved = await call(() =>
             client.POST("/api/v1/posts/{post_id}/live-updates", {
@@ -355,7 +365,6 @@ function LiveComposer({
   send: (block: object) => Promise<void>;
 }) {
   const t = useTranslations("content");
-  const text = useErrorText();
   const [block, setBlock] = useState(() => blank("live_update"));
   const [problem, setProblem] = useState<unknown>(null);
   useEffect(() => {
@@ -364,17 +373,18 @@ function LiveComposer({
     setProblem(null);
   }, [open]);
   return (
-    <>
-      {problem !== null && <Notice tone="danger">{text(problem)}</Notice>}
-      <CardDialog
-        block={block}
-        name={t("liveUpdate")}
-        open={open}
-        onClose={onClose}
-        saveLabel={t("publishUpdate")}
-        onSave={(next) => void send(next).catch(setProblem)}
-      />
-    </>
+    <CardDialog
+      block={block}
+      name={t("liveUpdate")}
+      open={open}
+      onClose={onClose}
+      saveLabel={t("publishUpdate")}
+      problem={problem}
+      onSave={async (next) => {
+        setProblem(null);
+        await send(next).catch(setProblem);
+      }}
+    />
   );
 }
 
@@ -388,13 +398,13 @@ function Skeleton() {
         </span>
         <span className="tap bone w-32" />
       </div>
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_23rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_23rem]">
         <div className="flex min-w-0 flex-col gap-4">
           <div className="flex gap-2">
             <span className="tap bone w-28" />
             <span className="tap bone w-28" />
           </div>
-          <p className="font-serif text-headline-l">
+          <p className="font-serif text-headline-l" data-skeleton="headline">
             <Bone className="w-3/4" />
           </p>
           <p className="text-body-l">

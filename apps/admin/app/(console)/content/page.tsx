@@ -9,6 +9,7 @@ import { type FormEvent, useDeferredValue, useState } from "react";
 import { STATUS_TONE } from "@/components/editor/panels";
 import {
   Badge,
+  Bone,
   Button,
   Card,
   Dialog,
@@ -51,7 +52,7 @@ const TYPES = [
 ] as const;
 const CREATE = TYPES.filter((k) => k !== "live_stream" && k !== "instagram_import");
 const BULK = ["approve", "publish", "unpublish", "archive"] as const;
-const WIDTHS = ["w-5", "w-72", "w-24", "w-24", "w-28", "w-32"];
+const WIDTHS = ["w-5 min-w-5", "w-72", "w-24", "w-24", "w-28", "w-32"];
 
 export default function Content() {
   const t = useTranslations("content");
@@ -294,16 +295,12 @@ const BoneRowsTall = () =>
       {WIDTHS.map((w, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
         <Td key={i} className={i === 1 ? "md:w-1/2" : undefined}>
-          <span className="tap flex items-center">
-            <span aria-hidden className={`bone ${w}`}>
-              {" "}
-            </span>
+          <span className={`tap flex items-center ${i === 0 ? "w-11" : ""}`}>
+            <Bone className={w} />
           </span>
           {i === 1 && (
             <span className="block text-caption">
-              <span aria-hidden className="bone w-40">
-                {" "}
-              </span>
+              <Bone className="w-40" />
             </span>
           )}
         </Td>

@@ -128,3 +128,24 @@ def test_breaker_survives_redis_outage(monkeypatch):
 def test_aws_config_validation(bad):
     with pytest.raises(ValueError, match="validation error"):
         audit_anchor.AnchorConfig(**{"region": "af-south-1", "bucket": "abc", **bad})
+
+
+def test_every_hint_is_also_in_swahili():
+    """Found in the source, so a new hint cannot be forgotten."""
+    import ast
+    from pathlib import Path
+
+    from newsplatform.integrations import base, hints
+
+    root = Path(base.__file__).parents[1]
+    wanted = set(base._HINTS.values()) | {"Check credentials, region and network access to AWS."}
+    for path in root.rglob("*.py"):
+        for node in ast.walk(ast.parse(path.read_text())):
+            if (
+                isinstance(node, ast.Call)
+                and getattr(node.func, "id", "") == "StepFailed"
+                and len(node.args) > 1
+            ):
+                assert isinstance(node.args[1], ast.Constant), f"{path}: a hint must be a plain sentence"
+                wanted.add(node.args[1].value)
+    assert wanted - set(hints.SW) == set()

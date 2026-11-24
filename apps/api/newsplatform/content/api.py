@@ -1,11 +1,12 @@
 """Editing endpoints. Permissions are decided by the services, post by post."""
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, ClassVar
 from uuid import UUID
 
-from django.db.models import OuterRef, Q, QuerySet, Subquery
+from django.db.models import Case, OuterRef, Q, QuerySet, Subquery, When
+from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import serializers
 from rest_framework.request import Request
@@ -14,7 +15,7 @@ from rest_framework.response import Response
 from newsplatform.accounts.models import User
 from newsplatform.approvals.models import ApprovalRequest
 from newsplatform.common.api import PersonSerializer, StaffView, schema
-from newsplatform.common.errors import NotFound
+from newsplatform.common.errors import DomainError, NotFound
 from newsplatform.common.locales import Locale
 from newsplatform.common.pagination import TimeCursorPagination, page_of
 from newsplatform.common.ratelimit import Limit
@@ -294,6 +295,57 @@ def for_rows(rows: QuerySet[Post]) -> QuerySet[Post]:
         .prefetch_related("texts", "bylines__user")
         .defer("engagement")
     )
+
+
+_CALENDAR_DAYS, _CALENDAR_MAX = 45, 2000
+
+
+class CalendarView(StaffView):
+    """Everything published or scheduled in a span, in one answer: a week with a gap in it would mislead."""
+
+    perms: ClassVar[dict[str, str | None]] = {"GET": _ANY}
+
+    @extend_schema(
+        operation_id="posts_calendar",
+        parameters=[OpenApiParameter(n, OpenApiTypes.DATETIME, required=True) for n in ("from", "to")],
+        responses=schema(
+            "Calendar",
+            truncated=serializers.BooleanField(),
+            results=serializers.ListField(
+                child=schema(
+                    "CalendarEntry",
+                    id=serializers.UUIDField(),
+                    status=serializers.ChoiceField(choices=Status.choices),
+                    headline=serializers.CharField(),
+                    at=serializers.DateTimeField(),
+                )
+            ),
+        ),
+    )
+    def get(self, request: Request) -> Response:
+        start, end = (_when(request.query_params.get(n, "")) for n in ("from", "to"))
+        if not timedelta(0) < end - start <= timedelta(days=_CALENDAR_DAYS):
+            raise DomainError("Choose a shorter span.", code="validation_error")
+        rows = list(
+            selectors.visible_posts(session_of(request).user)
+            .filter(
+                Q(status=Status.SCHEDULED, scheduled_at__gte=start, scheduled_at__lt=end)
+                | Q(status=Status.PUBLISHED, published_at__gte=start, published_at__lt=end)
+            )
+            .annotate(
+                at=Case(When(status=Status.SCHEDULED, then="scheduled_at"), default="published_at"),
+                headline=Subquery(
+                    PostText.objects.filter(post=OuterRef("pk"))
+                    .exclude(headline="")
+                    .order_by("-locale")
+                    .values("headline")[:1]
+                ),
+            )
+            .order_by("at", "pk")
+            .values("id", "status", "headline", "at")[: _CALENDAR_MAX + 1]
+        )
+        results = [{**r, "headline": r["headline"] or ""} for r in rows[:_CALENDAR_MAX]]
+        return Response({"truncated": len(rows) > _CALENDAR_MAX, "results": results})
 
 
 class PostListView(StaffView):

@@ -7,4 +7,8 @@
 - **Interruption:** step-up appears over the current page and then finishes the original action.
 - **Language:** Swahili by default. A test keeps both catalogues in step, variables included.
 
-Reviewed by eye on 2026-11-23: dashboard, integration detail, audit log (light, desktop), settings (dark, Swahili, phone).
+- **Editor:** the same renderer as the website, so a card in the text looks as readers will see it. Cards open in a dialog; moving works with buttons as well as dragging. A picture without a description cannot be placed, and without a credit cannot be published.
+- **Overlays:** black and white come from the tokens; dialogs dim the page in both themes.
+- **Time:** always the newsroom's clock (`lib/time.ts`).
+
+Reviewed by eye on 2026-11-23: dashboard, integration detail, audit log (light, desktop), settings (dark, Swahili, phone). On 2026-11-24: content list, editor with every panel, preview, media library, file details, calendar, categories, author page.

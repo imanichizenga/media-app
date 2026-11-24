@@ -55,7 +55,11 @@ function Steps({ run }: { run: Schemas["TestRun"] }) {
                 )}
               </p>
               {s.detail && <p className="text-caption break-words text-text-secondary">{s.detail}</p>}
-              {s.remediation && <p className="text-caption break-words text-danger">{s.remediation}</p>}
+              {s.remediation && (
+                <p className="text-caption break-words text-danger">
+                  {en ? s.remediation : s.remediation_sw || s.remediation}
+                </p>
+              )}
             </div>
           </li>
         );

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "e2e": "playwright test",
-    "screens": "SCREENS=1 playwright test && node contact-sheet.mjs"
+    "screens": "SCREENS=${SCREENS:-m1} playwright test && node contact-sheet.mjs ${SCREENS:-m1}"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

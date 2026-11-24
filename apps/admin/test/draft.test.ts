@@ -128,4 +128,20 @@ describe("Draft", () => {
     expect(calls).toHaveLength(2);
     expect(draft.get().state).toBe("saved");
   });
+
+  it("says nothing is unsaved after taking over with nothing typed", () => {
+    const { draft } = setup();
+    draft.unlock();
+    expect(draft.get().state).toBe("clean");
+  });
+
+  it("takes news about files without touching the words, and only about this version", () => {
+    const { draft } = setup();
+    draft.changeText("sw", { headline: "mine" });
+    draft.refresh({ ...post(1, { texts: { sw: { headline: "theirs" } } }), problems: ["body"] } as Post);
+    expect(draft.get().post.problems).toEqual(["body"]);
+    expect(draft.get().data.texts?.sw?.headline).toBe("mine");
+    draft.refresh({ ...post(9), problems: [] } as unknown as Post);
+    expect(draft.get().post.problems).toEqual(["body"]);
+  });
 });

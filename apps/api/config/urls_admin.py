@@ -69,6 +69,7 @@ urlpatterns = [
         integrations.IntegrationActivateView.as_view(),
     ),
     path(API + "posts", content.PostListView.as_view()),
+    path(API + "posts/calendar", content.CalendarView.as_view()),
     path(API + "posts/bulk", content.BulkView.as_view()),
     path(API + "posts/<uuid:post_id>", content.PostView.as_view()),
     path(API + "posts/<uuid:post_id>/lock", content.PostLockView.as_view()),

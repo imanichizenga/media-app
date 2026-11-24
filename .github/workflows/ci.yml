@@ -65,7 +65,8 @@ jobs:
         run: |
           pnpm --filter @news/api-client generate
           pnpm --filter @news/content-schema generate
-          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart packages/content-schema/src/generated apps/api/newsplatform/content/schema
+          node scripts/i18n-review.mjs
+          git diff --exit-code -- packages/api-client/src/generated packages/design-tokens/dart packages/content-schema/src/generated apps/api/newsplatform/content/schema docs/i18n
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
@@ -85,6 +86,10 @@ jobs:
       - run: uv sync --locked
         working-directory: apps/api
       - run: pnpm install --frozen-lockfile
+      - name: FFmpeg and storage (the local media pipeline)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          docker compose --profile storage up -d --wait seaweedfs
       - run: pnpm --filter @news/admin... build
         env: { API_PROXY_TARGET: "http://127.0.0.1:8001", REALTIME_PROXY_TARGET: "http://127.0.0.1:8002" }
       - run: pnpm --filter @news/e2e exec playwright install --with-deps chromium

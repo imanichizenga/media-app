@@ -32,10 +32,14 @@ def purge(tags: list[str], pages: list[str]) -> None:
     if config is None:
         log.info("purge_skipped", reason="not_configured", tags=len(tags))
         return
-    for i in range(0, max(len(pages), 1), CHUNK):
-        notify(config, tags if i == 0 else [], pages[i : i + CHUNK])
-    with guarded_call("web", "cdn.purge"):
-        invalidate(config, tags, pages)
+    # The website first, or the CDN would fetch the old page again. But a broken webhook must not also keep
+    # the CDN stale; the caller retries, and doing either twice is harmless.
+    try:
+        for i in range(0, max(len(pages), 1), CHUNK):
+            notify(config, tags if i == 0 else [], pages[i : i + CHUNK])
+    finally:
+        with guarded_call("web", "cdn.purge"):
+            invalidate(config, tags, pages)
 
 
 def post_signed(config: Any, message: dict[str, Any], now: int) -> SafeResponse:

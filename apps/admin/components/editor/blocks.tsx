@@ -96,7 +96,13 @@ export function blank(type: CardKind): Block {
         ],
       };
     case "live_update":
-      return { type, id, time: new Date().toISOString(), blocks: [] };
+      // Ready to type: in a live blog seconds count.
+      return {
+        type,
+        id,
+        time: new Date().toISOString(),
+        blocks: [{ type: "paragraph", id: newId(), content: [] }],
+      };
   }
 }
 

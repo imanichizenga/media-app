@@ -73,6 +73,7 @@ ignore = ["RUF012", "S308"]
 # Drawings and prose: long lines are the content.
 "newsplatform/content/demo/**" = ["E501"]
 "newsplatform/content/management/commands/seed_demo.py" = ["E501"]
+"newsplatform/integrations/hints.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.14"

@@ -29,6 +29,7 @@ Lead times marked † come from user reports or other vendors' guides, not from 
 | A6 | Quotas before load tests: Fargate vCPU, CloudFront, MediaConvert, IVS | Service Quotas | M11 targets | `docs/perf/` |
 | A7 | Two people enrolled as Super Admin with passkeys | Admin console | Four-eyes approvals need two | An approval completes |
 | A8 | A **dedicated empty test bucket** with all four Block Public Access settings on, an OAC CloudFront distribution, and an IAM user limited to them | AWS | Real-AWS S3 test without touching live media | Admin → Integrations → **S3** → Test |
+| A10 | GuardDuty Malware Protection for S3 and MediaConvert available in the region (both are in af-south-1); MediaConvert service quota for concurrent jobs | AWS | Uploads are refused unscanned | Admin → Integrations → **AWS MediaConvert** → Test; one upload becomes Ready |
 | A9 | Vendor accounts for Sentry, OpenSearch and ClickHouse Cloud, or agreement to self-manage | Vendors | Errors, M8, M9 | Each provider's Test button |
 
 ## B. SMS (M4)
@@ -79,7 +80,7 @@ Lead times marked † come from user reports or other vendors' guides, not from 
 
 | # | What | When | Proven by |
 |---|---|---|---|
-| G1 | Native Swahili editor reviews `docs/i18n/review.md` (written in M1) | Before any public release | Every string marked reviewed |
+| G1 | Native Swahili editor reviews `docs/i18n/review.md` (regenerate with `node scripts/i18n-review.mjs`) | Before any public release | Every string marked reviewed |
 | G2 | Design sign-off: website (M2), app (M3) | At each gate | Written approval, linked in PROGRESS.md |
 | G3 | Mid-range Android phone and an iPhone | M3, M4, M7 | `docs/perf/mobile.md` filled in |
 | G4 | Physical security key or phone passkey on the admin console | With staging | Sign-in works |

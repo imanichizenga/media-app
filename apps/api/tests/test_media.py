@@ -681,3 +681,28 @@ def test_logos_keep_their_transparency(tmp_path):
     jpeg = pyvips.Image.new_from_file(str(out / "320.jpg"))
     assert not jpeg.hasalpha()
     assert min(jpeg.getpoint(0, 0)) > 250  # on white
+
+
+def test_moving_the_focal_point_never_takes_a_picture_away(
+    journalist, store, tmp_path, monkeypatch, django_capture_on_commit_callbacks
+):
+    with django_capture_on_commit_callbacks(execute=True):
+        asset = upload(journalist, photo(tmp_path).read_bytes())
+        services.complete_upload(actor=journalist, asset_id=asset.pk)
+    asset.refresh_from_db()
+    old = asset.outputs["crops"]["1x1"]
+    queued = []
+    monkeypatch.setattr(tasks.recrop, "delay", queued.append)
+    with django_capture_on_commit_callbacks(execute=True):
+        services.update(actor=journalist, asset_id=asset.pk, data={"focal_x": 100})
+    asset.refresh_from_db()
+    assert (asset.status, asset.outputs["crops"]["1x1"]) == (AssetStatus.READY, old)
+    assert queued == [str(asset.pk)]
+    tasks.recrop.apply(args=queued)
+    asset.refresh_from_db()
+    assert "/100-500/" in asset.outputs["crops"]["1x1"]
+    assert store.keys(asset.outputs["crops"]["1x1"])
+    # A slow task for an older point must not undo a newer one.
+    services.recropped(asset.pk, (500, 500), {"crops": {}, "variants": {}})
+    asset.refresh_from_db()
+    assert "/100-500/" in asset.outputs["crops"]["1x1"]
