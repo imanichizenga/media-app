@@ -265,6 +265,7 @@ function Editor({
                 logo={logos[slot]}
                 fallback={slot === "wordmark_dark" ? white : null}
                 name={d.identity.brand_name}
+                color={color}
                 disabled={disabled}
                 onChange={(logo, inWhite) => {
                   setLogos((l) => ({ ...l, [slot]: logo }));
@@ -604,6 +605,7 @@ function LogoSlot({
   logo,
   fallback,
   name,
+  color,
   disabled,
   onChange,
 }: {
@@ -612,6 +614,7 @@ function LogoSlot({
   logo: Logo | null;
   fallback: Logo | null;
   name: string;
+  color: string;
   disabled: boolean;
   onChange: (logo: (Logo & { id: string }) | null, white: Logo | null) => void;
 }) {
