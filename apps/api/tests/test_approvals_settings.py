@@ -140,7 +140,7 @@ def test_identity_update_is_public_and_audited(admin_api, client):
 def test_public_config_exposes_no_security_settings(db):
     from newsplatform.site_config.services import public_config
 
-    assert set(public_config()) == {"version", "identity", "localization"}
+    assert set(public_config()) == {"version", "media_base_url", "identity", "localization"}
 
 
 def test_inaccessible_accent_is_refused(admin_api):

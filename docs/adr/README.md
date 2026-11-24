@@ -22,3 +22,9 @@
 - [0020](0020-realtime.md) Realtime deployment and staff sockets
 - [0021](0021-queue-autoscaling.md) Worker autoscaling on queue depth
 - [0022](0022-local-stand-ins.md) Local stand-ins for cloud services
+- [0023](0023-working-copy-and-publications.md) Working copy and publications
+- [0024](0024-public-addresses.md) Public addresses
+- [0025](0025-media-pipeline.md) Media pipeline
+- [0026](0026-public-read-api.md) Public read API and caching
+- [0027](0027-content-schema.md) One content schema
+- [0028](0028-editorial-workflow.md) Editorial workflow and concurrent editing

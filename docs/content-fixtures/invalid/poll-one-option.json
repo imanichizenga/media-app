@@ -1,0 +1,16 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "poll",
+   "id": "block-1",
+   "question": "q",
+   "options": [
+    {
+     "id": "option-1",
+     "label": "a"
+    }
+   ]
+  }
+ ]
+}

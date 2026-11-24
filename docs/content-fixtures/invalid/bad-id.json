@@ -1,0 +1,15 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "a b<c>",
+   "content": [
+    {
+     "type": "text",
+     "text": "a"
+    }
+   ]
+  }
+ ]
+}

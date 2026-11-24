@@ -21,6 +21,7 @@ class SiteConfig {
   /// Returns a new [SiteConfig] instance.
   SiteConfig({
     required this.version,
+    required this.mediaBaseUrl,
     required this.identity,
     required this.localization,
   });
@@ -31,6 +32,13 @@ class SiteConfig {
     includeIfNull: false,
   )
   final String version;
+
+  @JsonKey(
+    name: r'media_base_url',
+    required: true,
+    includeIfNull: false,
+  )
+  final String mediaBaseUrl;
 
   @JsonKey(
     name: r'identity',
@@ -51,12 +59,16 @@ class SiteConfig {
       identical(this, other) ||
       other is SiteConfig &&
           other.version == version &&
+          other.mediaBaseUrl == mediaBaseUrl &&
           other.identity == identity &&
           other.localization == localization;
 
   @override
   int get hashCode =>
-      version.hashCode + identity.hashCode + localization.hashCode;
+      version.hashCode +
+      mediaBaseUrl.hashCode +
+      identity.hashCode +
+      localization.hashCode;
 
   factory SiteConfig.fromJson(Map<String, dynamic> json) =>
       _$SiteConfigFromJson(json);

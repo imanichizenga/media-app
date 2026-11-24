@@ -51,7 +51,7 @@ class AnonymousStaffView(_Scoped):
         )
 
 
-def schema(name: str, **fields: serializers.Field[Any, Any, Any, Any]) -> Any:
+def schema(name: str, /, **fields: serializers.Field[Any, Any, Any, Any]) -> Any:
     return inline_serializer(name=name, fields=fields)
 
 

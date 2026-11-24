@@ -8,7 +8,7 @@ from newsplatform.audit.services import record
 from newsplatform.common.errors import Conflict, DomainError, Forbidden
 from newsplatform.rbac import selectors
 from newsplatform.rbac.models import Role, RoleAssignment
-from newsplatform.rbac.registry import PERMISSIONS, SYSTEM_ROLES, scope_types
+from newsplatform.rbac.registry import PERMISSIONS, SYSTEM_ROLES, scope_exists, scope_types
 
 
 def sync_system_roles() -> None:
@@ -95,12 +95,16 @@ def delete_role(*, actor: User, role: Role) -> None:
     role.delete()
 
 
-def check_can_grant(*, actor: User, target: User | None, role: Role, scope_type: str = "") -> None:
+def check_can_grant(
+    *, actor: User, target: User | None, role: Role, scope_type: str = "", scope_id: str = ""
+) -> None:
     selectors.require(actor, "staff.manage" if target else "staff.invite")
     if target and target.pk == actor.pk:
         raise Forbidden("You cannot change your own roles.", code="self_modification")
     if scope_type and scope_type not in scope_types():
         raise DomainError("Unknown scope", code="unknown_scope")
+    if scope_type and not scope_exists(scope_type, scope_id):
+        raise DomainError("This scope does not exist.", code="unknown_scope")
     _check_permissions(actor, set(role.permissions))
 
 
@@ -117,7 +121,7 @@ def assign_role(
 ) -> RoleAssignment:
     """`actor=None` is reserved for bootstrap. Approval policy is enforced by the caller (approvals app)."""
     if actor:
-        check_can_grant(actor=actor, target=user, role=role, scope_type=scope_type)
+        check_can_grant(actor=actor, target=user, role=role, scope_type=scope_type, scope_id=scope_id)
     if expires_at and expires_at <= timezone.now():
         raise DomainError("Expiry must be in the future", code="invalid_expiry")
     assignment, _ = RoleAssignment.objects.update_or_create(

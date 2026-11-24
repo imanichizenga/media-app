@@ -1,0 +1,51 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000081",
+   "content": [
+    {
+     "type": "text",
+     "text": "a",
+     "marks": [
+      {
+       "type": "link",
+       "href": "https://example.org/a?b=c&d=e#f"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": "b",
+     "marks": [
+      {
+       "type": "link",
+       "href": "/habari"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": "c",
+     "marks": [
+      {
+       "type": "link",
+       "href": "mailto:habari@example.org"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": "d",
+     "marks": [
+      {
+       "type": "link",
+       "href": "/"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

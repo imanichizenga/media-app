@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000006",
+   "content": [
+    {
+     "type": "text",
+     "text": "Fishing crews along Lake Victoria returned to a smaller catch this season."
+    }
+   ]
+  },
+  {
+   "type": "heading",
+   "id": "b000007",
+   "level": 3,
+   "content": [
+    {
+     "type": "text",
+     "text": "What the crews say"
+    }
+   ]
+  },
+  {
+   "type": "paragraph",
+   "id": "b000008",
+   "content": [
+    {
+     "type": "text",
+     "text": "“The water is lower,"
+    },
+    {
+     "type": "text",
+     "text": " and warmer",
+     "marks": [
+      {
+       "type": "italic"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": ",” said one skipper."
+    }
+   ]
+  },
+  {
+   "type": "pull_quote",
+   "id": "b000009",
+   "text": "The water is lower, and warmer.",
+   "attribution": "A skipper in Mwanza"
+  },
+  {
+   "type": "related_link",
+   "id": "b000010",
+   "title": "How the lake is measured",
+   "post": "0197a000-0000-7000-8000-000000000007"
+  }
+ ]
+}

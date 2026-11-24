@@ -11,11 +11,15 @@
       "!infra",
       "!docs",
       "!**/dart",
+      "!packages/api-client-dart",
       "!**/test-results",
       "!**/playwright-report"
     ]
   },
   "formatter": { "indentStyle": "space", "lineWidth": 110 },
-  "linter": { "enabled": true },
+  "linter": {
+    "enabled": true,
+    "rules": { "preset": "recommended", "performance": { "preset": "recommended", "noImgElement": "off" } }
+  },
   "css": { "parser": { "tailwindDirectives": true } }
 }

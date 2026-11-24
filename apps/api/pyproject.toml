@@ -33,6 +33,10 @@ dependencies = [
   "channels-redis~=4.3",
   "websockets>=16",
   "opentelemetry-instrumentation-asgi>=0.66b2",
+  "jsonschema~=4.25",
+  "nh3>=0.3",
+  "pyvips[binary]>=3.0",
+  "blurhash>=1.1",
 ]
 
 [dependency-groups]
@@ -54,6 +58,7 @@ dev = [
   "pip-audit",
   "types-channels>=4.3.0.20261122",
   "pytest-asyncio>=1.5.0",
+  "types-jsonschema>=4.26.0.20261006",
 ]
 
 [tool.ruff]
@@ -65,6 +70,10 @@ ignore = ["RUF012", "S308"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101","S105","S106","S107","S311","S104","S324","S608","PT018","PT012","PT011","PT019","E501","DTZ","RUF007"]
 "**/migrations/**" = ["E501","RUF012"]
+# Drawings and prose: long lines are the content.
+"newsplatform/content/demo/**" = ["E501"]
+"newsplatform/content/management/commands/seed_demo.py" = ["E501"]
+"newsplatform/integrations/hints.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.14"
@@ -72,7 +81,7 @@ strict = true
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main", "pydantic.mypy"]
 exclude = ["migrations/", "tests/"]
 [[tool.mypy.overrides]]
-module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*"]
+module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*", "pyvips.*", "blurhash.*"]
 ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # Celery ships no types, so its decorators are untyped wherever they are used.

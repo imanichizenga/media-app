@@ -321,6 +321,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/authors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Who can be named on a post. */
+        get: operations["authors_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/authors/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["authors_get"];
+        put: operations["authors_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["categories_list"];
+        put?: never;
+        post: operations["categories_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories/{category_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["categories_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories/{category_id}/merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["categories_merge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories/{category_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["categories_move"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/integrations": {
         parameters: {
             query?: never;
@@ -513,6 +610,312 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["media_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["media_get"];
+        put?: never;
+        post?: never;
+        delete: operations["media_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["media_save"];
+        trace?: never;
+    };
+    "/api/v1/media/{asset_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["media_retry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["media_begin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/uploads/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["media_complete"];
+        delete: operations["media_cancel"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/uploads/{asset_id}/parts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["media_parts"];
+        put?: never;
+        post: operations["media_sign"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/youtube": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["media_youtube"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["posts_list"];
+        put?: never;
+        post: operations["posts_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["posts_get"];
+        put: operations["posts_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/live-updates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["posts_live_update"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/lock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["posts_lock"];
+        delete: operations["posts_unlock"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notes_list"];
+        put?: never;
+        post: operations["notes_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["posts_preview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["revisions_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/revisions/{number}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description `to` against `from`; without `from`, against the revision before it. */
+        get: operations["revisions_diff"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/revisions/{number}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["revisions_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/{post_id}/transition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["posts_transition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["posts_bulk"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/posts/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everything published or scheduled in a span, in one answer: a week with a gap in it would mislead. */
+        get: operations["posts_calendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/realtime/ticket": {
         parameters: {
             query?: never;
@@ -523,6 +926,54 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["realtime_ticket"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/redirects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["redirects_list"];
+        put?: never;
+        post: operations["redirects_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/redirects/{redirect_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["redirects_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["regions_list"];
+        put?: never;
+        post: operations["regions_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -673,16 +1124,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["stories_list"];
+        put?: never;
+        post: operations["stories_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/stories/{story_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["stories_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["tags_list"];
+        put?: never;
+        post: operations["tags_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tags/{tag_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["tags_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tags/{tag_id}/merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["tags_merge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * @description * `sw` - sw
+         *     * `en` - en
+         * @enum {string}
+         */
+        AcceptLocaleEnum: "sw" | "en";
         AcceptRequest: {
             token: string;
             display_name: string;
             password: string;
             /** @default sw */
-            locale: components["schemas"]["LocaleEnum"];
+            locale: components["schemas"]["AcceptLocaleEnum"];
         };
         ActivateRequestRequest: {
             override_reason: string;
@@ -721,6 +1258,64 @@ export interface components {
          * @enum {string}
          */
         ApprovalStatusEnum: "pending" | "executed" | "rejected" | "cancelled" | "expired";
+        Asset: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["AssetKindEnum"];
+            status: components["schemas"]["AssetStatusEnum"];
+            filename: string;
+            bytes: number;
+            mime: string;
+            width: number | null;
+            height: number | null;
+            duration_ms: number | null;
+            alt_sw: string;
+            alt_en: string;
+            credit: string;
+            license: string;
+            focal_x: number;
+            focal_y: number;
+            blurhash: string;
+            dominant_color: string;
+            error_code: string;
+            /** Format: date-time */
+            created_at: string;
+            uploaded_by: components["schemas"]["Person"] | null;
+            thumb_url: string;
+            large_url: string;
+            hls_url: string;
+        };
+        AssetDetail: {
+            asset: components["schemas"]["Asset"];
+            posts: components["schemas"]["AssetUse"][];
+            elsewhere: string[];
+            error_detail: string;
+        };
+        /**
+         * @description * `image` - Image
+         *     * `video` - Video
+         * @enum {string}
+         */
+        AssetKindEnum: "image" | "video";
+        AssetPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Asset"][];
+        };
+        /**
+         * @description * `uploading` - Uploading
+         *     * `scanning` - Scanning
+         *     * `processing` - Processing
+         *     * `ready` - Ready
+         *     * `failed` - Failed
+         *     * `rejected` - Rejected
+         * @enum {string}
+         */
+        AssetStatusEnum: "uploading" | "scanning" | "processing" | "ready" | "failed" | "rejected";
+        AssetUse: {
+            /** Format: uuid */
+            id: string;
+            headline: string;
+        };
         AssignmentCreateRequest: {
             /** Format: uuid */
             user: string;
@@ -780,6 +1375,79 @@ export interface components {
             next_cursor: string | null;
             results: components["schemas"]["AuthEvent"][];
         };
+        Author: {
+            /** Format: uuid */
+            id: string;
+            display_name: string;
+            slug: string;
+            title_sw: string;
+            title_en: string;
+            bio_sw: string;
+            bio_en: string;
+            expertise: string[];
+            links: string[];
+            avatar: components["schemas"]["Asset"] | null;
+        };
+        AuthorSaveRequest: {
+            title_sw?: string;
+            title_en?: string;
+            bio_sw?: string;
+            bio_en?: string;
+            expertise?: string[];
+            links?: string[];
+            /** Format: uuid */
+            avatar?: string | null;
+        };
+        BlockDiff: {
+            words: components["schemas"]["DiffRun"][];
+            op: components["schemas"]["BlockDiffOpEnum"];
+            id: string;
+            type: string;
+        };
+        /**
+         * @description * `same` - same
+         *     * `added` - added
+         *     * `removed` - removed
+         *     * `changed` - changed
+         *     * `moved` - moved
+         * @enum {string}
+         */
+        BlockDiffOpEnum: "same" | "added" | "removed" | "changed" | "moved";
+        /**
+         * @description * `archive` - archive
+         *     * `unpublish` - unpublish
+         *     * `publish` - publish
+         *     * `approve` - approve
+         * @enum {string}
+         */
+        BulkActionEnum: "archive" | "unpublish" | "publish" | "approve";
+        BulkItem: {
+            /** Format: uuid */
+            id: string;
+            result: string;
+        };
+        BulkRequestRequest: {
+            key: components["schemas"]["BulkActionEnum"];
+            ids: string[];
+            /** @default  */
+            note: string;
+        };
+        BulkResult: {
+            approval_required: boolean;
+            results: components["schemas"]["BulkItem"][];
+        };
+        Calendar: {
+            truncated: boolean;
+            results: components["schemas"]["CalendarEntry"][];
+        };
+        CalendarEntry: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["PostStatusEnum"];
+            headline: string;
+            /** Format: date-time */
+            at: string;
+        };
         Call: {
             /** Format: uuid */
             readonly id: string;
@@ -796,6 +1464,84 @@ export interface components {
             next_cursor: string | null;
             results: components["schemas"]["Call"][];
         };
+        Category: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            parent: string | null;
+            depth: number;
+            position: number;
+            icon: string;
+            color: string;
+            visibility: components["schemas"]["VisibilityEnum"];
+            engagement: {
+                [key: string]: unknown;
+            };
+            version: number;
+            texts: components["schemas"]["CategoryTexts"];
+            posts: number;
+            editors: components["schemas"]["Person"][];
+            can_manage: boolean;
+            can_create: boolean;
+        };
+        CategoryMergeRequest: {
+            /** Format: uuid */
+            target: string;
+        };
+        CategoryMoveRequest: {
+            /** Format: uuid */
+            parent: string | null;
+            position: number;
+        };
+        CategoryRef: {
+            /** Format: uuid */
+            id: string;
+        };
+        CategorySaveRequest: {
+            /** Format: uuid */
+            parent?: string | null;
+            /** @default 0 */
+            version: number;
+            icon?: string;
+            color?: string;
+            /** @default public */
+            visibility: components["schemas"]["VisibilityEnum"];
+            engagement?: {
+                [key: string]: unknown;
+            };
+            texts: components["schemas"]["CategoryTextsRequest"];
+        };
+        CategoryText: {
+            name: string;
+            slug?: string;
+            /** @default  */
+            description: string;
+            /** @default  */
+            seo_title: string;
+            /** @default  */
+            seo_description: string;
+        };
+        CategoryTextRequest: {
+            name: string;
+            slug?: string;
+            /** @default  */
+            description: string;
+            /** @default  */
+            seo_title: string;
+            /** @default  */
+            seo_description: string;
+        };
+        CategoryTexts: {
+            sw?: components["schemas"]["CategoryText"];
+            en?: components["schemas"]["CategoryText"];
+        };
+        CategoryTextsRequest: {
+            sw?: components["schemas"]["CategoryTextRequest"];
+            en?: components["schemas"]["CategoryTextRequest"];
+        };
+        CategoryVersion: {
+            version: number;
+        };
         ChainReport: {
             ok: boolean;
             checked: number;
@@ -808,6 +1554,14 @@ export interface components {
         CodeRequest: {
             code: string;
         };
+        /**
+         * @description * `open` - open
+         *     * `verified` - verified
+         *     * `premoderated` - premoderated
+         *     * `closed` - closed
+         * @enum {string}
+         */
+        CommentsEnum: "open" | "verified" | "premoderated" | "closed";
         CredentialRequest: {
             credential: {
                 [key: string]: unknown;
@@ -832,13 +1586,24 @@ export interface components {
             latest_test: components["schemas"]["TestRun"] | null;
             history: components["schemas"]["TestRun"][];
         };
+        DiffRun: {
+            op: components["schemas"]["DiffRunOpEnum"];
+            text: string;
+        };
+        /**
+         * @description * `same` - same
+         *     * `add` - add
+         *     * `del` - del
+         * @enum {string}
+         */
+        DiffRunOpEnum: "same" | "add" | "del";
         EnrolResult: {
             session: components["schemas"]["SessionInfo"];
             recovery_codes: string[];
         };
         Field: {
             name: string;
-            kind: components["schemas"]["KindEnum"];
+            kind: components["schemas"]["FieldKindEnum"];
             label_en: string;
             label_sw: string;
             help_en: string;
@@ -846,6 +1611,18 @@ export interface components {
             is_required: boolean;
             default: unknown;
         };
+        FieldDiff: {
+            words: components["schemas"]["DiffRun"][];
+            field: string;
+        };
+        /**
+         * @description * `text` - text
+         *     * `integer` - integer
+         *     * `boolean` - boolean
+         *     * `secret` - secret
+         * @enum {string}
+         */
+        FieldKindEnum: "text" | "integer" | "boolean" | "secret";
         GrantRequest: {
             role: string;
             /** @default  */
@@ -887,33 +1664,77 @@ export interface components {
             /** Format: date-time */
             readonly created_at: string;
         };
-        /**
-         * @description * `text` - text
-         *     * `integer` - integer
-         *     * `boolean` - boolean
-         *     * `secret` - secret
-         * @enum {string}
-         */
-        KindEnum: "text" | "integer" | "boolean" | "secret";
         LinkResult: {
             approval_required: boolean;
             emailed: boolean;
             link: string | null;
         };
+        LiveUpdateRequestRequest: {
+            version: number;
+            locale: components["schemas"]["LocaleEnum"];
+            block: {
+                [key: string]: unknown;
+            };
+            /** @default true */
+            publish: boolean;
+        };
         /**
-         * @description * `sw` - sw
-         *     * `en` - en
+         * @description * `sw` - Sw
+         *     * `en` - En
          * @enum {string}
          */
         LocaleEnum: "sw" | "en";
+        Lock: {
+            version: number;
+        };
         LoginRequest: {
             /** Format: email */
             email: string;
             password: string;
         };
+        Named: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
+        Note: {
+            /** Format: uuid */
+            readonly id: string;
+            author: components["schemas"]["Person"];
+            text: string;
+            transition?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        NoteCreateRequest: {
+            text: string;
+        };
+        NotePage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Note"][];
+        };
         NoteRequest: {
             /** @default  */
             note: string;
+        };
+        NullEnum: null;
+        /** @description Absent or null inherits. */
+        Override: {
+            likes?: boolean | null;
+            comments?: components["schemas"]["CommentsEnum"] | components["schemas"]["NullEnum"];
+            bookmarks?: boolean | null;
+            shares?: boolean | null;
+            reposts?: boolean | null;
+            live_chat?: boolean | null;
+        };
+        /** @description Absent or null inherits. */
+        OverrideRequest: {
+            likes?: boolean | null;
+            comments?: components["schemas"]["CommentsEnum"] | components["schemas"]["NullEnum"];
+            bookmarks?: boolean | null;
+            shares?: boolean | null;
+            reposts?: boolean | null;
+            live_chat?: boolean | null;
         };
         Passkey: {
             /** Format: uuid */
@@ -929,6 +1750,14 @@ export interface components {
             current: string;
             new: string;
         };
+        PatchedAssetSaveRequest: {
+            alt_sw?: string;
+            alt_en?: string;
+            credit?: string;
+            license?: string;
+            focal_x?: number;
+            focal_y?: number;
+        };
         Permission: {
             code: string;
             en: string;
@@ -941,15 +1770,247 @@ export interface components {
             id: string;
             display_name: string;
         };
+        Policy: {
+            likes: boolean;
+            comments: components["schemas"]["CommentsEnum"];
+            bookmarks: boolean;
+            shares: boolean;
+            reposts: boolean;
+            live_chat: boolean;
+        };
+        Post: {
+            /** Format: uuid */
+            id: string;
+            version: number;
+            status: components["schemas"]["PostStatusEnum"];
+            data: components["schemas"]["PostData"];
+            assets: components["schemas"]["Asset"][];
+            tags: components["schemas"]["Named"][];
+            people: components["schemas"]["Person"][];
+            can_edit: boolean;
+            can_change_authors: boolean;
+            transitions: components["schemas"]["PostTransition"][];
+            problems: string[];
+            policy: components["schemas"]["Policy"];
+            inherited_policy: components["schemas"]["Policy"];
+            editing: components["schemas"]["Person"] | null;
+            unpublished_changes: boolean;
+            /** Format: date-time */
+            scheduled_at: string | null;
+            /** Format: date-time */
+            published_at: string | null;
+            /** Format: date-time */
+            updated_at: string;
+            paths: {
+                [key: string]: string;
+            };
+        };
+        PostCreateRequest: {
+            type: components["schemas"]["PostTypeEnum"];
+            /** Format: uuid */
+            category: string;
+            locale: components["schemas"]["LocaleEnum"];
+            /** @default  */
+            headline: string;
+        };
+        PostData: {
+            type?: components["schemas"]["PostTypeEnum"];
+            /** Format: uuid */
+            category?: string;
+            secondary_categories?: string[];
+            tags?: string[];
+            regions?: string[];
+            authors?: string[];
+            /** Format: uuid */
+            story?: string | null;
+            /** Format: uuid */
+            hero?: string | null;
+            /** Format: uuid */
+            video?: string | null;
+            youtube_id?: string;
+            source_url?: string;
+            is_evergreen?: boolean;
+            is_sensitive?: boolean;
+            content_warning?: string;
+            /** Format: date-time */
+            breaking_until?: string | null;
+            /** Format: date-time */
+            embargo_until?: string | null;
+            /** Format: date-time */
+            live_ended_at?: string | null;
+            engagement?: components["schemas"]["Override"];
+            texts?: components["schemas"]["Texts"];
+        };
+        PostDataRequest: {
+            type?: components["schemas"]["PostTypeEnum"];
+            /** Format: uuid */
+            category?: string;
+            secondary_categories?: string[];
+            tags?: string[];
+            regions?: string[];
+            authors?: string[];
+            /** Format: uuid */
+            story?: string | null;
+            /** Format: uuid */
+            hero?: string | null;
+            /** Format: uuid */
+            video?: string | null;
+            youtube_id?: string;
+            source_url?: string;
+            is_evergreen?: boolean;
+            is_sensitive?: boolean;
+            content_warning?: string;
+            /** Format: date-time */
+            breaking_until?: string | null;
+            /** Format: date-time */
+            embargo_until?: string | null;
+            /** Format: date-time */
+            live_ended_at?: string | null;
+            engagement?: components["schemas"]["OverrideRequest"];
+            texts?: components["schemas"]["TextsRequest"];
+        };
+        PostLockRequest: {
+            /** @default false */
+            force: boolean;
+        };
+        PostPreview: {
+            article: unknown;
+            media_base_url: string;
+        };
+        PostRow: {
+            /** Format: uuid */
+            id: string;
+            type: components["schemas"]["PostTypeEnum"];
+            status: components["schemas"]["PostStatusEnum"];
+            headline: string;
+            locales: string[];
+            category: components["schemas"]["Named"];
+            authors: components["schemas"]["Person"][];
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            scheduled_at: string | null;
+            /** Format: date-time */
+            published_at: string | null;
+            editing: string;
+            version: number;
+        };
+        PostRowPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["PostRow"][];
+        };
+        PostSaveRequest: {
+            version: number;
+            /** @default false */
+            autosave: boolean;
+            /** @default  */
+            note: string;
+            data: components["schemas"]["PostDataRequest"];
+        };
+        /**
+         * @description * `draft` - Draft
+         *     * `submitted` - Submitted
+         *     * `in_review` - In Review
+         *     * `approved` - Approved
+         *     * `scheduled` - Scheduled
+         *     * `published` - Published
+         *     * `unpublished` - Unpublished
+         *     * `archived` - Archived
+         * @enum {string}
+         */
+        PostStatusEnum: "draft" | "submitted" | "in_review" | "approved" | "scheduled" | "published" | "unpublished" | "archived";
+        PostTransition: {
+            key: components["schemas"]["TransitionEnum"];
+            note_required: boolean;
+        };
+        PostTransitionRequestRequest: {
+            key: components["schemas"]["TransitionEnum"];
+            version: number;
+            /** @default  */
+            note: string;
+            /** Format: date-time */
+            scheduled_at?: string | null;
+        };
+        /**
+         * @description * `article` - Article
+         *     * `breaking` - Breaking
+         *     * `video` - Video
+         *     * `gallery` - Gallery
+         *     * `live_blog` - Live Blog
+         *     * `live_stream` - Live Stream
+         *     * `opinion` - Opinion
+         *     * `short` - Short
+         *     * `youtube` - Youtube
+         *     * `instagram_import` - Instagram
+         * @enum {string}
+         */
+        PostTypeEnum: "article" | "breaking" | "video" | "gallery" | "live_blog" | "live_stream" | "opinion" | "short" | "youtube" | "instagram_import";
         RealtimeTicket: {
             ticket: string;
         };
         RecoveryCodes: {
             recovery_codes: string[];
         };
+        Redirect: {
+            /** Format: uuid */
+            readonly id: string;
+            from_path: string;
+            to_path: string;
+            is_automatic?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        RedirectCreateRequest: {
+            from_path: string;
+            to_path: string;
+        };
+        RedirectPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Redirect"][];
+        };
+        Region: {
+            /** Format: uuid */
+            readonly id: string;
+            slug: string;
+            name_sw: string;
+            name_en: string;
+        };
+        RegionSaveRequest: {
+            name_sw: string;
+            name_en: string;
+        };
         ResetRequest: {
             token: string;
             password: string;
+        };
+        RestoreRequestRequest: {
+            version: number;
+        };
+        Revision: {
+            number: number;
+            kind: components["schemas"]["RevisionKindEnum"];
+            author: components["schemas"]["Person"];
+            note?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        RevisionDiff: {
+            fields: string[];
+            texts: components["schemas"]["TextDiff"][];
+        };
+        /**
+         * @description * `autosave` - Autosave
+         *     * `save` - Save
+         *     * `restore` - Restore
+         *     * `publish` - Publish
+         * @enum {string}
+         */
+        RevisionKindEnum: "autosave" | "save" | "restore" | "publish";
+        RevisionPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Revision"][];
         };
         Role: {
             /** Format: uuid */
@@ -1030,6 +2091,14 @@ export interface components {
             };
             can_edit: boolean;
         };
+        SignPartsRequest: {
+            numbers: number[];
+        };
+        SignedParts: {
+            urls: {
+                [key: string]: string;
+            };
+        };
         StaffList: {
             staff: components["schemas"]["StaffMember"][];
             invites: components["schemas"]["InviteRow"][];
@@ -1074,6 +2143,7 @@ export interface components {
             latency_ms: number;
             detail: string;
             remediation: string;
+            remediation_sw?: string;
         };
         /**
          * @description * `pending` - pending
@@ -1084,6 +2154,33 @@ export interface components {
          * @enum {string}
          */
         StepStatusEnum: "pending" | "running" | "passed" | "failed" | "skipped";
+        Story: {
+            /** Format: uuid */
+            readonly id: string;
+            slug: string;
+            title_sw: string;
+            title_en: string;
+            summary_sw?: string;
+            summary_en?: string;
+            is_active?: boolean;
+            /** @default 0 */
+            readonly posts: number;
+        };
+        StoryPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Story"][];
+        };
+        StorySaveRequest: {
+            title_sw: string;
+            title_en: string;
+            slug?: string;
+            /** @default  */
+            summary_sw: string;
+            /** @default  */
+            summary_en: string;
+            /** @default true */
+            is_active: boolean;
+        };
         Summary: {
             provider: string;
             name: string;
@@ -1094,6 +2191,30 @@ export interface components {
             /** Format: date-time */
             last_tested_at: string | null;
             last_test_passed: boolean | null;
+        };
+        Tag: {
+            /** Format: uuid */
+            readonly id: string;
+            slug: string;
+            name_sw: string;
+            name_en: string;
+            synonyms: string[];
+            /** @default 0 */
+            readonly posts: number;
+        };
+        TagMergeRequest: {
+            /** Format: uuid */
+            target: string;
+        };
+        TagPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["Tag"][];
+        };
+        TagSaveRequest: {
+            name_sw: string;
+            name_en: string;
+            slug?: string;
+            synonyms?: string[];
         };
         TestRequestRequest: {
             params: {
@@ -1120,9 +2241,77 @@ export interface components {
          * @enum {string}
          */
         TestRunStatusEnum: "queued" | "running" | "passed" | "failed";
+        Text: {
+            headline?: string;
+            standfirst?: string;
+            slug?: string;
+            body?: {
+                [key: string]: unknown;
+            };
+            seo_title?: string;
+            seo_description?: string;
+            focus_keyword?: string;
+            update_note?: string;
+            correction_note?: string;
+        };
+        TextDiff: {
+            locale: string;
+            fields: components["schemas"]["FieldDiff"][];
+            blocks: components["schemas"]["BlockDiff"][];
+        };
+        TextRequest: {
+            headline?: string;
+            standfirst?: string;
+            slug?: string;
+            body?: {
+                [key: string]: unknown;
+            };
+            seo_title?: string;
+            seo_description?: string;
+            focus_keyword?: string;
+            update_note?: string;
+            correction_note?: string;
+        };
+        Texts: {
+            sw?: components["schemas"]["Text"];
+            en?: components["schemas"]["Text"];
+        };
+        TextsRequest: {
+            sw?: components["schemas"]["TextRequest"];
+            en?: components["schemas"]["TextRequest"];
+        };
         TotpBegin: {
             secret: string;
             qr_svg: string;
+        };
+        /**
+         * @description * `approve` - approve
+         *     * `archive` - archive
+         *     * `publish` - publish
+         *     * `republish` - republish
+         *     * `request_changes` - request_changes
+         *     * `restore` - restore
+         *     * `schedule` - schedule
+         *     * `start_review` - start_review
+         *     * `submit` - submit
+         *     * `unpublish` - unpublish
+         *     * `unschedule` - unschedule
+         *     * `withdraw` - withdraw
+         * @enum {string}
+         */
+        TransitionEnum: "approve" | "archive" | "publish" | "republish" | "request_changes" | "restore" | "schedule" | "start_review" | "submit" | "unpublish" | "unschedule" | "withdraw";
+        Upload: {
+            asset: components["schemas"]["Asset"];
+            part_size: number;
+            part_count: number;
+        };
+        UploadBeginRequest: {
+            kind: components["schemas"]["AssetKindEnum"];
+            filename: string;
+            size: number;
+        };
+        UploadedParts: {
+            parts: number[];
         };
         Version: {
             /** Format: uuid */
@@ -1136,6 +2325,24 @@ export interface components {
             created_by: components["schemas"]["Person"];
             /** Format: date-time */
             readonly created_at: string;
+        };
+        /**
+         * @description * `public` - Public
+         *     * `hidden` - Hidden
+         *     * `archived` - Archived
+         * @enum {string}
+         */
+        VisibilityEnum: "public" | "hidden" | "archived";
+        YouTubeRequestRequest: {
+            url: string;
+        };
+        YouTubeVideo: {
+            video_id: string;
+            title: string;
+            author: string;
+            start: number;
+            vertical: boolean;
+            thumbnail: components["schemas"]["Asset"] | null;
         };
     };
     responses: never;
@@ -1588,6 +2795,188 @@ export interface operations {
             };
         };
     };
+    authors_list: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Person"][];
+                };
+            };
+        };
+    };
+    authors_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    authors_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AuthorSaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    categories_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Category"][];
+                };
+            };
+        };
+    };
+    categories_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategorySaveRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryRef"];
+                };
+            };
+        };
+    };
+    categories_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategorySaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryVersion"];
+                };
+            };
+        };
+    };
+    categories_merge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryMergeRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    categories_move: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CategoryMoveRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     integrations_list: {
         parameters: {
             query?: never;
@@ -1873,6 +3262,629 @@ export interface operations {
             };
         };
     };
+    media_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                kind?: string;
+                mine?: boolean;
+                q?: string;
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetPage"];
+                };
+            };
+        };
+    };
+    media_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetDetail"];
+                };
+            };
+        };
+    };
+    media_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    media_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAssetSaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Asset"];
+                };
+            };
+        };
+    };
+    media_retry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Asset"];
+                };
+            };
+        };
+    };
+    media_begin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadBeginRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Upload"];
+                };
+            };
+        };
+    };
+    media_complete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Asset"];
+                };
+            };
+        };
+    };
+    media_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    media_parts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadedParts"];
+                };
+            };
+        };
+    };
+    media_sign: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignPartsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedParts"];
+                };
+            };
+        };
+    };
+    media_youtube: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["YouTubeRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["YouTubeVideo"];
+                };
+            };
+        };
+    };
+    posts_list: {
+        parameters: {
+            query?: {
+                author?: string;
+                category?: string;
+                cursor?: string;
+                from?: string;
+                mine?: boolean;
+                q?: string;
+                status?: string[];
+                to?: string;
+                type?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostRowPage"];
+                };
+            };
+        };
+    };
+    posts_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostSaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_live_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LiveUpdateRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_lock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PostLockRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Lock"];
+                };
+            };
+        };
+    };
+    posts_unlock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    notes_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotePage"];
+                };
+            };
+        };
+    };
+    notes_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NoteCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Note"];
+                };
+            };
+        };
+    };
+    posts_preview: {
+        parameters: {
+            query: {
+                locale: string;
+            };
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostPreview"];
+                };
+            };
+        };
+    };
+    revisions_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionPage"];
+                };
+            };
+        };
+    };
+    revisions_diff: {
+        parameters: {
+            query?: {
+                from?: number;
+            };
+            header?: never;
+            path: {
+                number: number;
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionDiff"];
+                };
+            };
+        };
+    };
+    revisions_restore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: number;
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestoreRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_transition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostTransitionRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Post"];
+                };
+            };
+        };
+    };
+    posts_bulk: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BulkRequestRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BulkResult"];
+                };
+            };
+        };
+    };
+    posts_calendar: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Calendar"];
+                };
+            };
+        };
+    };
     realtime_ticket: {
         parameters: {
             query?: never;
@@ -1888,6 +3900,113 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RealtimeTicket"];
+                };
+            };
+        };
+    };
+    redirects_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RedirectPage"];
+                };
+            };
+        };
+    };
+    redirects_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedirectCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Redirect"];
+                };
+            };
+        };
+    };
+    redirects_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                redirect_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    regions_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Region"][];
+                };
+            };
+        };
+    };
+    regions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegionSaveRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Region"];
                 };
             };
         };
@@ -2162,6 +4281,170 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    stories_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoryPage"];
+                };
+            };
+        };
+    };
+    stories_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StorySaveRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Story"];
+                };
+            };
+        };
+    };
+    stories_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                story_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StorySaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Story"];
+                };
+            };
+        };
+    };
+    tags_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TagPage"];
+                };
+            };
+        };
+    };
+    tags_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagSaveRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tag"];
+                };
+            };
+        };
+    };
+    tags_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tag_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagSaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tag"];
+                };
+            };
+        };
+    };
+    tags_merge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tag_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagMergeRequest"];
+            };
+        };
         responses: {
             /** @description No response body */
             204: {

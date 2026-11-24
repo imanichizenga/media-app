@@ -77,6 +77,19 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
       }
     }
   }
+  dynamic "rule" {
+    for_each = each.key == "media" ? toset(["probe/", "media/_probe/"]) : []
+    content {
+      id     = "expire-${replace(rule.value, "/", "-")}"
+      status = "Enabled"
+      filter {
+        prefix = rule.value
+      }
+      expiration {
+        days = 1
+      }
+    }
+  }
 }
 resource "aws_s3_bucket_object_lock_configuration" "audit" {
   bucket     = aws_s3_bucket.this["audit"].id
@@ -119,6 +132,48 @@ data "aws_iam_policy_document" "bucket" {
         test     = "StringEquals"
         variable = "AWS:SourceArn"
         values   = [aws_cloudfront_distribution.media.arn]
+      }
+    }
+  }
+  # Not even our own code can open an original before its scan came back clean.
+  dynamic "statement" {
+    for_each = each.key == "media" ? [1] : []
+    content {
+      sid       = "NoReadUnlessClean"
+      effect    = "Deny"
+      actions   = ["s3:GetObject", "s3:GetObjectVersion"]
+      resources = ["${each.value.arn}/originals/*"]
+      principals {
+        type        = "*"
+        identifiers = ["*"]
+      }
+      condition {
+        test     = "StringNotEquals"
+        variable = "s3:ExistingObjectTag/GuardDutyMalwareScanStatus"
+        values   = ["NO_THREATS_FOUND"]
+      }
+      condition {
+        test     = "ArnNotEquals"
+        variable = "aws:PrincipalArn"
+        values   = [aws_iam_role.malware_scan.arn]
+      }
+    }
+  }
+  dynamic "statement" {
+    for_each = each.key == "media" ? [1] : []
+    content {
+      sid       = "OnlyTheScannerGivesVerdicts"
+      effect    = "Deny"
+      actions   = ["s3:PutObjectTagging", "s3:PutObjectVersionTagging", "s3:DeleteObjectTagging", "s3:DeleteObjectVersionTagging"]
+      resources = ["${each.value.arn}/*"]
+      principals {
+        type        = "*"
+        identifiers = ["*"]
+      }
+      condition {
+        test     = "ArnNotEquals"
+        variable = "aws:PrincipalArn"
+        values   = [aws_iam_role.malware_scan.arn]
       }
     }
   }

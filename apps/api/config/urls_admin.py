@@ -1,13 +1,19 @@
+from django.conf import settings
 from django.urls import path, re_path
 
 from newsplatform.approvals import api as approvals
 from newsplatform.audit import api as audit
 from newsplatform.common import health
+from newsplatform.content import api as content
 from newsplatform.integrations import api as integrations
+from newsplatform.media import api as media
+from newsplatform.media import dev
 from newsplatform.rbac import api as rbac
 from newsplatform.realtime import api as realtime
+from newsplatform.seo import api as seo
 from newsplatform.site_config import api as site
 from newsplatform.staff_security import api as staff
+from newsplatform.taxonomy import api as taxonomy
 
 API = "api/v1/"
 urlpatterns = [
@@ -62,4 +68,39 @@ urlpatterns = [
         API + "integrations/<slug:key>/versions/<int:number>/activate",
         integrations.IntegrationActivateView.as_view(),
     ),
+    path(API + "posts", content.PostListView.as_view()),
+    path(API + "posts/calendar", content.CalendarView.as_view()),
+    path(API + "posts/bulk", content.BulkView.as_view()),
+    path(API + "posts/<uuid:post_id>", content.PostView.as_view()),
+    path(API + "posts/<uuid:post_id>/lock", content.PostLockView.as_view()),
+    path(API + "posts/<uuid:post_id>/transition", content.PostTransitionView.as_view()),
+    path(API + "posts/<uuid:post_id>/live-updates", content.PostLiveUpdateView.as_view()),
+    path(API + "posts/<uuid:post_id>/preview", content.PostPreviewView.as_view()),
+    path(API + "posts/<uuid:post_id>/notes", content.NoteListView.as_view()),
+    path(API + "posts/<uuid:post_id>/revisions", content.RevisionListView.as_view()),
+    path(API + "posts/<uuid:post_id>/revisions/<int:number>/diff", content.RevisionDiffView.as_view()),
+    path(API + "posts/<uuid:post_id>/revisions/<int:number>/restore", content.RevisionRestoreView.as_view()),
+    path(API + "authors", content.AuthorListView.as_view()),
+    path(API + "authors/<uuid:user_id>", content.AuthorView.as_view()),
+    path(API + "media", media.AssetListView.as_view()),
+    path(API + "media/uploads", media.UploadListView.as_view()),
+    path(API + "media/uploads/<uuid:asset_id>", media.UploadCompleteView.as_view()),
+    path(API + "media/uploads/<uuid:asset_id>/parts", media.UploadPartsView.as_view()),
+    path(API + "media/youtube", media.YouTubeView.as_view()),
+    path(API + "media/<uuid:asset_id>", media.AssetView.as_view()),
+    path(API + "media/<uuid:asset_id>/retry", media.AssetRetryView.as_view()),
+    path(API + "categories", taxonomy.CategoryListView.as_view()),
+    path(API + "categories/<uuid:category_id>", taxonomy.CategoryView.as_view()),
+    path(API + "categories/<uuid:category_id>/move", taxonomy.CategoryMoveView.as_view()),
+    path(API + "categories/<uuid:category_id>/merge", taxonomy.CategoryMergeView.as_view()),
+    path(API + "tags", taxonomy.TagListView.as_view()),
+    path(API + "tags/<uuid:tag_id>", taxonomy.TagView.as_view()),
+    path(API + "tags/<uuid:tag_id>/merge", taxonomy.TagMergeView.as_view()),
+    path(API + "stories", taxonomy.StoryListView.as_view()),
+    path(API + "stories/<uuid:story_id>", taxonomy.StoryView.as_view()),
+    path(API + "regions", taxonomy.RegionListView.as_view()),
+    path(API + "redirects", seo.RedirectListView.as_view()),
+    path(API + "redirects/<uuid:redirect_id>", seo.RedirectView.as_view()),
 ]
+if settings.STORAGE_ENDPOINT_URL:
+    urlpatterns.append(path("media/<path:path>", dev.serve))

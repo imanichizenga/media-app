@@ -35,6 +35,11 @@ INSTALLED_APPS = [
     "newsplatform.staff_security",
     "newsplatform.realtime",
     "newsplatform.ops",
+    "newsplatform.taxonomy",
+    "newsplatform.media",
+    "newsplatform.content",
+    "newsplatform.seo",
+    "newsplatform.engagement",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -103,6 +108,11 @@ AWS_REGION = env_str("AWS_REGION", "af-south-1")
 # Test seam for emulators; refused in deployed environments by a system check.
 AWS_ENDPOINT_URL = env_str("AWS_ENDPOINT_URL", "")
 
+# Local stand-ins for the media pipeline (ADR-0022). Each is refused in deployed environments.
+STORAGE_ENDPOINT_URL = env_str("STORAGE_ENDPOINT_URL", "")  # SeaweedFS
+LOCAL_TRANSCODER = env_bool("LOCAL_TRANSCODER")  # FFmpeg in place of MediaConvert
+LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
+
 # Staff realm
 ADMIN_ORIGIN = env_str("ADMIN_ORIGIN", None if IS_DEPLOYED else "http://localhost:3001")
 STAFF_COOKIE_SECURE = env_bool("STAFF_COOKIE_SECURE", True)
@@ -160,6 +170,15 @@ SPECTACULAR_SETTINGS = {
         "ApprovalStatusEnum": "newsplatform.approvals.models.ApprovalStatus",
         "StepStatusEnum": "newsplatform.integrations.base.STEP_STATUSES",
         "IntegrationSummaryStatusEnum": "newsplatform.integrations.models.SUMMARY_STATUSES",
+        "PostStatusEnum": "newsplatform.content.models.Status",
+        "PostTypeEnum": "newsplatform.content.models.PostType",
+        "AssetStatusEnum": "newsplatform.media.models.AssetStatus",
+        "AssetKindEnum": "newsplatform.media.models.Kind",
+        "TransitionEnum": "newsplatform.content.workflow.KEYS",
+        "BulkActionEnum": "newsplatform.content.services.BULK_CHOICES",
+        "VisibilityEnum": "newsplatform.taxonomy.models.Visibility",
+        "LocaleEnum": "newsplatform.common.locales.Locale",
+        "CommentModeEnum": "newsplatform.engagement.policy.COMMENT_MODES",
         "SessionStageEnum": "newsplatform.staff_security.models.SessionStage",
     },
 }
@@ -174,6 +193,10 @@ CELERY_TASK_ROUTES = {
     "newsplatform.ops.tasks.*": {"queue": "ops"},
     "newsplatform.integrations.tasks.*": {"queue": "default"},
     "newsplatform.staff_security.tasks.*": {"queue": "critical"},
+    "newsplatform.content.tasks.publish_due": {"queue": "critical"},
+    "newsplatform.content.tasks.announce": {"queue": "critical"},
+    "newsplatform.content.tasks.*": {"queue": "default"},
+    "newsplatform.media.tasks.*": {"queue": "media"},
 }
 CELERY_TASK_IGNORE_RESULT = True
 CELERY_TASK_ACKS_LATE = True
@@ -194,6 +217,12 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
         "schedule": 60,
         "options": {"expires": 50},  # a late measurement is worse than none
     },
+    "publish-due": {
+        "task": "newsplatform.content.tasks.publish_due",
+        "schedule": 60,
+        "options": {"expires": 55},
+    },
+    "media-prune": {"task": "newsplatform.media.tasks.prune", "schedule": 6 * 3600},
     "audit-verify": {"task": "newsplatform.audit.tasks.verify_chain_task", "schedule": 6 * 3600},
     "audit-anchor": {"task": "newsplatform.audit.tasks.anchor_chain_task", "schedule": 24 * 3600},
     "approvals-expire": {"task": "newsplatform.approvals.tasks.expire_requests", "schedule": 900},

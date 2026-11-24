@@ -1,0 +1,39 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "image",
+   "id": "b000034",
+   "asset": "0197a000-0000-7000-8000-000000000001",
+   "alt": "Bila maelezo",
+   "caption": []
+  },
+  {
+   "type": "image",
+   "id": "b000035",
+   "asset": "0197a000-0000-7000-8000-000000000002",
+   "alt": "Hakuna kabisa"
+  },
+  {
+   "type": "video",
+   "id": "b000036",
+   "asset": "0197a000-0000-7000-8000-000000000003",
+   "caption": [],
+   "credit": ""
+  },
+  {
+   "type": "table",
+   "id": "b000037",
+   "header": false,
+   "rows": [
+    {
+     "cells": [
+      {
+       "content": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

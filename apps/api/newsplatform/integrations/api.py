@@ -32,6 +32,7 @@ class StepSerializer(serializers.Serializer[Any]):
     latency_ms = serializers.IntegerField()
     detail = serializers.CharField()
     remediation = serializers.CharField()
+    remediation_sw = serializers.CharField(required=False)
 
 
 class TestRunSerializer(serializers.ModelSerializer[IntegrationTestRun]):

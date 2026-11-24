@@ -5,17 +5,21 @@ import {
   Activity,
   BadgeCheck,
   Fingerprint,
+  FolderTree,
+  Images,
   LayoutDashboard,
   LogOut,
   type LucideIcon,
   Menu,
   Moon,
+  Newspaper,
   Plug,
   ScrollText,
   Search,
   Settings,
   ShieldCheck,
   Sun,
+  UserPen,
   Users,
   X,
 } from "lucide-react";
@@ -32,6 +36,9 @@ import { Bone, Button, cx, Dialog, ErrorState } from "./ui";
 type Item = { href: string; key: string; icon: LucideIcon; perm?: string };
 export const NAV: Item[] = [
   { href: "/", key: "dashboard", icon: LayoutDashboard },
+  { href: "/content", key: "content", icon: Newspaper, perm: "content.create" },
+  { href: "/media", key: "media", icon: Images, perm: "media.upload" },
+  { href: "/taxonomy", key: "taxonomy", icon: FolderTree, perm: "content.create" },
   { href: "/integrations", key: "integrations", icon: Plug, perm: "integrations.view" },
   { href: "/approvals", key: "approvals", icon: BadgeCheck, perm: "approvals.decide" },
   { href: "/staff", key: "staff", icon: Users, perm: "staff.view" },
@@ -39,6 +46,7 @@ export const NAV: Item[] = [
   { href: "/audit", key: "audit", icon: ScrollText, perm: "audit.view" },
   { href: "/logs", key: "logs", icon: Activity, perm: "audit.view" },
   { href: "/settings", key: "settings", icon: Settings, perm: "settings.view" },
+  { href: "/author", key: "author", icon: UserPen, perm: "content.create" },
   { href: "/security", key: "security", icon: Fingerprint },
 ];
 
@@ -253,7 +261,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </Button>
           </div>
         </header>
-        <main id="main" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8">
+        <main id="main" className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8">
           {error && !session ? <ErrorState error={error} retry={() => refetch()} /> : children}
         </main>
       </div>

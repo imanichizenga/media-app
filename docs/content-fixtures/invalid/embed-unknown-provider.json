@@ -1,0 +1,11 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "embed",
+   "id": "block-1",
+   "provider": "evil",
+   "url": "https://evil.example"
+  }
+ ]
+}

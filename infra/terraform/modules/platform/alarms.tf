@@ -10,7 +10,7 @@ resource "aws_sns_topic_subscription" "email" {
 }
 resource "aws_cloudwatch_log_metric_filter" "events" {
   for_each = {
-    for pair in setproduct(["worker-default", "api-admin"], ["audit_chain_broken", "session_hijack_suspected", "password_breach_check_unavailable", "unhandled_error"]) :
+    for pair in setproduct(["worker-default", "worker-media", "api-admin"], ["audit_chain_broken", "session_hijack_suspected", "password_breach_check_unavailable", "unhandled_error"]) :
     "${pair[0]}-${pair[1]}" => { group = pair[0], event = pair[1] }
   }
   name           = each.value.event
@@ -33,7 +33,7 @@ locals {
     { for k, lb in aws_lb.this : "${k}-5xx" => { ns = "AWS/ApplicationELB", metric = "HTTPCode_Target_5XX_Count", dims = { LoadBalancer = lb.arn_suffix }, stat = "Sum", op = ">=", threshold = 25, period = 60, runs = 3 } },
     { for k, lb in aws_lb.this : "${k}-latency" => { ns = "AWS/ApplicationELB", metric = "TargetResponseTime", dims = { LoadBalancer = lb.arn_suffix }, stat = "p95", op = ">=", threshold = 0.5, period = 60, runs = 5 } },
     {
-      for queue, threshold in { critical = 200, default = 5000, sync = 1000 } :
+      for queue, threshold in { critical = 200, default = 5000, sync = 1000, media = 200 } :
       "queue-${queue}" => { ns = local.prefix, metric = "QueueDepth", dims = { Queue = queue }, stat = "Maximum", op = ">=", threshold = threshold, period = 60, runs = 5, runbook = "queue-backlog" }
     },
     # Without the measurement nothing scales: silence is the alarm.

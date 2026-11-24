@@ -83,6 +83,9 @@ ${type
 }
 @theme inline {
   --color-*: initial;
+  /* Over pictures, video and the page behind a dialog: the same in both themes. */
+  --color-black: #000;
+  --color-white: #fff;
 ${light.map((t) => `  --${t.name}: var(--${t.name});`).join("\n")}
 }
 `,

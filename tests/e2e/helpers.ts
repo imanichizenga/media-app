@@ -12,6 +12,11 @@ const env = {
     process.env.E2E_DATABASE_URL ?? "postgresql://news_owner:local-dev-only@127.0.0.1:5432/news_e2e",
   REDIS_URL: "redis://127.0.0.1:6379/5",
   BROKER_URL: "redis://127.0.0.1:6379/6",
+  STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
+  AWS_ACCESS_KEY_ID: "test",
+  AWS_SECRET_ACCESS_KEY: "test",
+  LOCAL_TRANSCODER: "1",
+  LOCAL_SCANNER: "eicar",
 };
 export const manage = (...args: string[]) =>
   execFileSync(".venv/bin/python", ["manage.py", ...args], { cwd: apiDir, env, encoding: "utf8" }).trim();
@@ -64,10 +69,44 @@ export async function english(page: Page) {
   await page.context().addCookies([{ name: "locale", value: "en", url: "http://localhost:3001" }]);
 }
 
-export async function joinWithPasskey(page: Page, email: string, name: string) {
+/** An invitation link, without the console: the invitation screen has its own tests. */
+export const invitation = (email: string, role: string) =>
+  manage(
+    "shell",
+    "-v0",
+    "-c",
+    [
+      "from django.db import transaction",
+      "from newsplatform.staff_security.staff import _create_invite",
+      "with transaction.atomic():",
+      `    print(_create_invite(None, "${email}", [{"role": "${role}"}])[1])`,
+    ].join("\n"),
+  );
+
+/** Everything the browser complained about, including policy violations with their place. */
+export function watch(page: Page, problems: string[]) {
+  page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
+  page.on("console", (m) => {
+    if (m.type() === "error" && !/Failed to load resource/.test(m.text())) problems.push(m.text());
+  });
+  return page.addInitScript(() =>
+    document.addEventListener("securitypolicyviolation", (e) =>
+      console.error(
+        `CSP ${location.pathname} ${e.violatedDirective} ${e.sourceFile}:${e.lineNumber}:${e.columnNumber} ${e.sample}`,
+      ),
+    ),
+  );
+}
+
+export async function joinWithPasskey(
+  page: Page,
+  email: string,
+  name: string,
+  link = manage("bootstrap_super_admin", email),
+) {
   await english(page);
   await virtualPasskey(page);
-  await page.goto(manage("bootstrap_super_admin", email));
+  await page.goto(link);
   await page.getByLabel("Full name").fill(name);
   await page.getByLabel("Password").fill(PASSWORD);
   await page.getByRole("button", { name: "Create account" }).click();

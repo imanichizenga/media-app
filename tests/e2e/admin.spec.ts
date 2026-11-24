@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { english, expect, joinWithPasskey, manage, PASSWORD, sql, test } from "./helpers";
+import { english, expect, joinWithPasskey, manage, PASSWORD, sql, test, watch } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 let page: Page;
@@ -17,14 +17,16 @@ const PAGES = [
   "/logs",
   "/settings",
   "/security",
+  "/content",
+  "/content/calendar",
+  "/media",
+  "/taxonomy",
+  "/author",
 ];
 
 test.beforeAll(async ({ browser }) => {
   page = await (await browser.newContext({ locale: "en-GB" })).newPage();
-  page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
-  page.on("console", (m) => {
-    if (m.type() === "error" && !/Failed to load resource/.test(m.text())) problems.push(m.text());
-  });
+  await watch(page, problems);
 });
 test.afterEach(() => expect(problems.splice(0)).toEqual([]));
 
@@ -159,9 +161,35 @@ test("an invited journalist enrols with an authenticator app and sees only their
   await other.getByRole("button", { name: "I have saved them" }).click();
   await expect(other.getByRole("heading", { name: "Hello, Juma" })).toBeVisible();
   const nav = other.getByRole("navigation", { name: "Main" });
-  await expect(nav.getByRole("link")).toHaveText(["Dashboard", "My security"]);
+  await expect(nav.getByRole("link")).toHaveText([
+    "Dashboard",
+    "Content",
+    "Media library",
+    "Categories and tags",
+    "My author page",
+    "My security",
+  ]);
   await other.goto("/audit");
   await expect(other.getByText("You do not have permission to do this.")).toBeVisible();
+  await other.close();
+});
+
+test("a role in one category reaches that category and nothing else", async ({ browser }) => {
+  await page.goto("/staff");
+  await page.getByRole("button", { name: "Invite" }).click();
+  await page.getByLabel("Email").fill("rehema@example.test");
+  await page.getByLabel("Role").selectOption("section_editor");
+  await page.getByLabel("Where").selectOption({ label: "Sport" });
+  await page.getByRole("button", { name: "Send invitation" }).click();
+  const link = (await page.getByTestId("one-time-link").textContent()) ?? "";
+  await page.keyboard.press("Escape");
+  await expect(page.getByText("Section Editor · Sport")).toBeVisible();
+  const other = await (await browser.newContext()).newPage();
+  await joinWithPasskey(other, "rehema@example.test", "Rehema", link);
+  await other.goto("/content");
+  await other.getByRole("button", { name: "New post" }).first().click();
+  const offered = await other.getByRole("dialog").getByLabel("Category").locator("option").allTextContents();
+  expect(offered.map((o) => o.replace(/^(— )+/, ""))).toEqual(["Sport", "Football", "Athletics"]);
   await other.close();
 });
 
@@ -263,7 +291,7 @@ test("skeletons match the loaded layout", async () => {
       await route.continue();
     });
     await page.goto(path);
-    await expect(page.locator("main .bone").first()).toBeVisible();
+    await expect.soft(page.locator("main .bone").first(), path).toBeVisible();
     await expect(
       page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Dashboard" }),
     ).toBeVisible();
@@ -283,7 +311,11 @@ test("skeletons match the loaded layout", async () => {
         };
         return {
           title: box("main h1", [0, 1]),
-          row: box("main tbody tr, main li", [0, 1, 3]),
+          // A day in the calendar is as tall as its news; nothing below it moves.
+          row: box(
+            "main tbody tr, main li",
+            document.querySelector("main [data-grows]") ? [0, 1] : [0, 1, 3],
+          ),
           field: box("main form input, main form .tap, main [data-skeleton=form] .tap", [0, 1, 3]),
         };
       });
@@ -307,7 +339,7 @@ test("skeletons match the loaded layout", async () => {
 
 test("header buttons hold their place on phones until permissions arrive", async () => {
   await page.setViewportSize({ width: 360, height: 740 });
-  for (const path of ["/staff", "/roles", "/audit"]) {
+  for (const path of ["/staff", "/roles", "/audit", "/content", "/media", "/taxonomy"]) {
     let release = () => {};
     const gate = new Promise<void>((r) => {
       release = r;
@@ -318,8 +350,8 @@ test("header buttons hold their place on phones until permissions arrive", async
     });
     await page.goto(path);
     const top = () =>
-      page.evaluate(() => document.querySelector("main table")?.getBoundingClientRect().y ?? 0);
-    await expect(page.locator("main table .bone").first()).toBeVisible();
+      page.evaluate(() => document.querySelector("main table, main ul")?.getBoundingClientRect().y ?? 0);
+    await expect(page.locator("main table .bone, main ul .bone").first()).toBeVisible();
     const before = await top();
     release();
     await expect(page.locator(".bone")).toHaveCount(0);

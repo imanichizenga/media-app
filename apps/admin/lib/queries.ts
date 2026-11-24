@@ -44,7 +44,7 @@ const useConnected = () =>
   );
 
 /** Refetches `queryKey` whenever the server signals `topic`. A null topic watches nothing. */
-function useSignal(topic: string | null, queryKey: readonly string[]) {
+export function useSignal(topic: string | null, queryKey: readonly string[]) {
   const queries = useQueryClient();
   const id = queryKey.join("/");
   useEffect(() => {
@@ -100,4 +100,57 @@ export function useTime() {
   const format = useFormatter();
   return (value: string | null | undefined) =>
     value ? format.dateTime(new Date(value), { dateStyle: "medium", timeStyle: "short" }) : "—";
+}
+
+// ---- content ----
+export const contentKeys = {
+  posts: ["posts"] as const,
+  post: (id: string) => ["posts", id] as const,
+  media: ["media"] as const,
+  asset: (id: string) => ["media", id] as const,
+  categories: ["categories"] as const,
+  tags: (q: string) => ["tags", q] as const,
+  stories: (q: string) => ["stories", q] as const,
+  regions: ["regions"] as const,
+  redirects: (q: string) => ["redirects", q] as const,
+  author: (id: string) => ["authors", id] as const,
+};
+export const useCategories = (enabled = true) =>
+  useQuery({
+    enabled,
+    queryKey: contentKeys.categories,
+    queryFn: () => call(() => client.GET("/api/v1/categories")),
+    staleTime: 60_000,
+  });
+export const useRegions = () =>
+  useQuery({
+    queryKey: contentKeys.regions,
+    queryFn: () => call(() => client.GET("/api/v1/regions")),
+    staleTime: 300_000,
+  });
+export const useAuthors = () =>
+  useQuery({
+    queryKey: ["authors"],
+    queryFn: () => call(() => client.GET("/api/v1/authors")),
+    staleTime: 60_000,
+  });
+
+const BUSY = new Set(["uploading", "scanning", "processing"]);
+export const isBusy = (status?: string) => BUSY.has(status ?? "");
+/** One file, kept fresh by signals while it is being processed. */
+export function useAsset(id: string | null) {
+  const connected = useConnected();
+  const query = useQuery({
+    queryKey: contentKeys.asset(id ?? ""),
+    queryFn: () =>
+      call(() => client.GET("/api/v1/media/{asset_id}", { params: { path: { asset_id: id ?? "" } } })),
+    enabled: Boolean(id),
+    refetchInterval: (q) => (isBusy(q.state.data?.asset.status) ? (connected ? 10_000 : 2_000) : false),
+  });
+  useSignal(id && isBusy(query.data?.asset.status) ? `asset:${id}` : null, contentKeys.asset(id ?? ""));
+  return query;
+}
+/** Refetches the library when a listed file changes state. */
+export function useAssetSignal(id: string, status: string) {
+  useSignal(isBusy(status) && status !== "uploading" ? `asset:${id}` : null, contentKeys.media);
 }

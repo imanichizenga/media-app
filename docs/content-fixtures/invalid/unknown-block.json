@@ -1,0 +1,10 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "hologram",
+   "id": "block-1",
+   "data": {}
+  }
+ ]
+}

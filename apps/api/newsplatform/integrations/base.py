@@ -17,6 +17,7 @@ from newsplatform.common import context
 from newsplatform.common.errors import ServiceUnavailable
 from newsplatform.common.logging import redact_text
 from newsplatform.common.redis import cache
+from newsplatform.integrations import hints
 
 log = structlog.get_logger(__name__)
 
@@ -49,7 +50,7 @@ class Step:
     remediation: str = ""
 
     def as_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return {**asdict(self), "remediation_sw": hints.SW.get(self.remediation, self.remediation)}
 
 
 class StepFailed(Exception):

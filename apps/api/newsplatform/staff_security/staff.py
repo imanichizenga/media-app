@@ -1,4 +1,5 @@
 import secrets
+from collections.abc import Mapping
 from datetime import timedelta
 from typing import Any
 
@@ -76,6 +77,10 @@ def _create_invite(
     return token, link("invite", raw)
 
 
+def _scope(grant: Mapping[str, Any]) -> dict[str, str]:
+    return {"scope_type": grant.get("scope_type", ""), "scope_id": grant.get("scope_id", "")}
+
+
 @transaction.atomic
 def invite(*, actor: User, email: str, grants: list[Grant]) -> dict[str, Any]:
     rbac.require(actor, "staff.invite")
@@ -83,9 +88,7 @@ def invite(*, actor: User, email: str, grants: list[Grant]) -> dict[str, Any]:
     if not pairs:
         raise DomainError("Choose at least one role", code="validation_error")
     for role, grant in pairs:
-        rbac_services.check_can_grant(
-            actor=actor, target=None, role=role, scope_type=grant.get("scope_type", "")
-        )
+        rbac_services.check_can_grant(actor=actor, target=None, role=role, **_scope(grant))
     if any(r.is_privileged for r, _ in pairs) and approvals.is_required("staff.invite_privileged"):
         req = approvals.request_approval(
             actor=actor,
@@ -106,9 +109,7 @@ def _execute_invite(payload: dict[str, Any], requester: User, approver: User) ->
     pairs = _roles(payload["grants"])
     for role, grant in pairs:
         for person in (requester, approver):  # neither can lend authority they lack
-            rbac_services.check_can_grant(
-                actor=person, target=None, role=role, scope_type=grant.get("scope_type", "")
-            )
+            rbac_services.check_can_grant(actor=person, target=None, role=role, **_scope(grant))
     _, url = _create_invite(requester, payload["email"], payload["grants"], approver)
     if not _send(
         payload["email"], url, "You are invited to the newsroom / Umealikwa kwenye chumba cha habari"
@@ -147,9 +148,7 @@ def accept_invite(*, raw: str, display_name: str, password: str, locale: str) ->
     for role, grant in _roles(token.grants):
         # If the inviter has lost their authority since, the grant must not go through.
         if token.created_by:
-            rbac_services.check_can_grant(
-                actor=token.created_by, target=None, role=role, scope_type=grant.get("scope_type", "")
-            )
+            rbac_services.check_can_grant(actor=token.created_by, target=None, role=role, **_scope(grant))
         rbac_services.assign_role(
             actor=None,
             user=user,
@@ -298,14 +297,22 @@ def set_status(*, actor: User, user: User, active: bool, reason: str) -> None:
 def grant_role(
     *, actor: User, user: User, role: Role, scope_type: str, scope_id: str
 ) -> RoleAssignment | ApprovalRequest:
-    rbac_services.check_can_grant(actor=actor, target=user, role=role, scope_type=scope_type)
+    rbac_services.check_can_grant(
+        actor=actor, target=user, role=role, scope_type=scope_type, scope_id=scope_id
+    )
     if role.is_privileged and approvals.is_required("role.grant_privileged"):
         return approvals.request_approval(
             actor=actor,
             action="role.grant_privileged",
-            dedupe_key=f"{user.pk}:{role.key}",
+            dedupe_key=f"{user.pk}:{role.key}:{scope_type}:{scope_id}",
             summary=f"Grant {role.name_en} to {user.display_name}",
-            payload={"user": str(user.pk), "role": role.key},
+            payload={
+                "user": str(user.pk),
+                "role": role.key,
+                # Without it, approving one category would grant the whole site.
+                "scope_type": scope_type,
+                "scope_id": scope_id,
+            },
         )
     return rbac_services.assign_role(
         actor=actor, user=user, role=role, scope_type=scope_type, scope_id=scope_id
@@ -317,5 +324,13 @@ def _execute_grant(payload: dict[str, Any], requester: User, approver: User) -> 
     user, role = User.objects.get(pk=payload["user"]), Role.objects.get(key=payload["role"])
     if approver.pk == user.pk:
         raise DomainError("You cannot approve a role for yourself.", code="four_eyes", status=403)
-    rbac_services.check_can_grant(actor=approver, target=user, role=role)
-    rbac_services.assign_role(actor=requester, user=user, role=role, approved_by=approver)
+    scope = _scope(payload)
+    rbac_services.check_can_grant(actor=approver, target=user, role=role, **scope)
+    rbac_services.assign_role(
+        actor=requester,
+        user=user,
+        role=role,
+        approved_by=approver,
+        scope_type=scope["scope_type"],
+        scope_id=scope["scope_id"],
+    )

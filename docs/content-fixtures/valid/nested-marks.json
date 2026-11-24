@@ -1,0 +1,76 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "paragraph",
+   "id": "b000039",
+   "content": [
+    {
+     "type": "text",
+     "text": "Zote",
+     "marks": [
+      {
+       "type": "bold"
+      },
+      {
+       "type": "italic"
+      },
+      {
+       "type": "underline"
+      },
+      {
+       "type": "strike"
+      },
+      {
+       "type": "link",
+       "href": "https://example.org"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": " H"
+    },
+    {
+     "type": "text",
+     "text": "2",
+     "marks": [
+      {
+       "type": "subscript"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": "O na x"
+    },
+    {
+     "type": "text",
+     "text": "2",
+     "marks": [
+      {
+       "type": "superscript"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": " na "
+    },
+    {
+     "type": "text",
+     "text": "msimbo <b>si html</b>",
+     "marks": [
+      {
+       "type": "code"
+      }
+     ]
+    },
+    {
+     "type": "text",
+     "text": " mwisho"
+    }
+   ]
+  }
+ ]
+}

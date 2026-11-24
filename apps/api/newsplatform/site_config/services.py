@@ -14,6 +14,8 @@ from newsplatform.rbac import selectors as rbac
 from newsplatform.site_config.models import SettingsSection
 from newsplatform.site_config.schemas import SECTIONS, Identity, Localization, Section, Security
 
+_FILES = ("logo_light", "logo_dark", "favicon")
+
 
 def get_section(key: str) -> tuple[Section, int]:
     if key not in SECTIONS:
@@ -28,17 +30,50 @@ def get_security() -> Security:
     return section
 
 
-def brand_name() -> str:
+def identity() -> Identity:
     section = get_section("identity")[0]
     assert isinstance(section, Identity)  # noqa: S101 (type narrowing)
-    return section.brand_name
+    return section
+
+
+def brand_name() -> str:
+    return identity().brand_name
 
 
 def public_config() -> dict[str, Any]:
-    identity, v1 = get_section("identity")
+    from newsplatform.media.models import Asset
+    from newsplatform.media.presenters import image
+    from newsplatform.media.storage import base_url
+
+    brand, v1 = get_section("identity")
     local, v2 = get_section("localization")
-    assert isinstance(identity, Identity) and isinstance(local, Localization)  # noqa: S101, PT018
-    return {"version": f"{v1}.{v2}", "identity": identity.model_dump(), "localization": local.model_dump()}
+    assert isinstance(brand, Identity) and isinstance(local, Localization)  # noqa: S101, PT018
+    ids = {n: getattr(brand, n) for n in _FILES}
+    found = {str(a.pk): image(a, "en") for a in Asset.objects.filter(pk__in=[i for i in ids.values() if i])}
+    return {
+        "version": f"{v1}.{v2}",
+        "media_base_url": base_url(),
+        "identity": {**brand.model_dump(), **{n: found.get(i) for n, i in ids.items()}},
+        "localization": local.model_dump(),
+    }
+
+
+def _check_files(brand: Identity) -> None:
+    from newsplatform.media.models import Asset, AssetStatus
+
+    for name in _FILES:
+        wanted = getattr(brand, name)
+        if (
+            wanted
+            and not Asset.objects.filter(
+                pk=wanted, kind="image", status=AssetStatus.READY, deleted_at__isnull=True
+            ).exists()
+        ):
+            raise DomainError(
+                "The settings are invalid.",
+                code="validation_error",
+                errors=[{"field": name, "message": "Choose a finished image from the library"}],
+            )
 
 
 def ip_allowed(ip: str | None, security: Security) -> bool:
@@ -51,7 +86,9 @@ def ip_allowed(ip: str | None, security: Security) -> bool:
 
 
 def permission_for(key: str) -> str:
-    return "settings.security" if key == "security" else "settings.manage"
+    return {"security": "settings.security", "engagement": "engagement.manage_policy"}.get(
+        key, "settings.manage"
+    )
 
 
 def _validate(key: str, data: dict[str, Any]) -> Section:
@@ -103,6 +140,8 @@ def update_section(
     rbac.require(actor, permission_for(key))
     section = _validate(key, data)
     clean = section.model_dump()
+    if isinstance(section, Identity):
+        _check_files(section)
     if isinstance(section, Security):
         if not ip_allowed(context.current().ip, section):
             raise DomainError(

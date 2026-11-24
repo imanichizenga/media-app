@@ -1,8 +1,9 @@
-// Writes docs/design/screens/m0/index.html: every screenshot, filterable, no dependencies.
+// node contact-sheet.mjs <milestone> writes docs/design/screens/<milestone>/index.html: every screenshot, filterable, no dependencies.
 import { readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const dir = resolve(import.meta.dirname, "../../docs/design/screens/m0");
+const milestone = process.argv[2] ?? "m1";
+const dir = resolve(import.meta.dirname, `../../docs/design/screens/${milestone}`);
 const shots = readdirSync(dir)
   .filter((f) => f.endsWith(".jpg"))
   .sort()
@@ -20,9 +21,9 @@ const select = (key) =>
     .join("")}</select></label>`;
 writeFileSync(
   `${dir}/index.html`,
-  `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>M0 admin screens</title>
+  `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${milestone.toUpperCase()} admin screens</title>
 <style>body{font:15px system-ui;margin:24px;background:#f6f6f4;color:#1a1a1a}form{display:flex;flex-wrap:wrap;gap:16px;position:sticky;top:0;background:inherit;padding:12px 0}.row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}figure{margin:0}img{display:block;height:340px;border:1px solid #ccc;border-radius:8px}figcaption{font-size:12px;color:#555;padding:4px 0}[hidden]{display:none}</style>
-<h1>M0 admin screens</h1><p>${shots.length} captures from the running console with synthetic data. Regenerate: <code>pnpm --filter @news/e2e screens</code>.</p>
+<h1>${milestone.toUpperCase()} admin screens</h1><p>${shots.length} captures from the running console with synthetic data. Regenerate: <code>SCREENS=${milestone} pnpm --filter @news/e2e screens</code>.</p>
 <form>${["device", "theme", "locale", "state"].map(select).join("")}</form>
 ${values("screen")
   .map(

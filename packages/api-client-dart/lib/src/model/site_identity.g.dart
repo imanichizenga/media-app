@@ -17,6 +17,12 @@ abstract class _$SiteIdentityCWProxy {
 
   SiteIdentity accentDark(String accentDark);
 
+  SiteIdentity logoLight(PublicImage? logoLight);
+
+  SiteIdentity logoDark(PublicImage? logoDark);
+
+  SiteIdentity favicon(PublicImage? favicon);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteIdentity(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +35,9 @@ abstract class _$SiteIdentityCWProxy {
     String taglineEn,
     String accentLight,
     String accentDark,
+    PublicImage? logoLight,
+    PublicImage? logoDark,
+    PublicImage? favicon,
   });
 }
 
@@ -55,6 +64,15 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
   SiteIdentity accentDark(String accentDark) => this(accentDark: accentDark);
 
   @override
+  SiteIdentity logoLight(PublicImage? logoLight) => this(logoLight: logoLight);
+
+  @override
+  SiteIdentity logoDark(PublicImage? logoDark) => this(logoDark: logoDark);
+
+  @override
+  SiteIdentity favicon(PublicImage? favicon) => this(favicon: favicon);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteIdentity(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -68,6 +86,9 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
     Object? taglineEn = const $CopyWithPlaceholder(),
     Object? accentLight = const $CopyWithPlaceholder(),
     Object? accentDark = const $CopyWithPlaceholder(),
+    Object? logoLight = const $CopyWithPlaceholder(),
+    Object? logoDark = const $CopyWithPlaceholder(),
+    Object? favicon = const $CopyWithPlaceholder(),
   }) {
     return SiteIdentity(
       brandName: brandName == const $CopyWithPlaceholder()
@@ -90,6 +111,18 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
           ? _value.accentDark
           // ignore: cast_nullable_to_non_nullable
           : accentDark as String,
+      logoLight: logoLight == const $CopyWithPlaceholder()
+          ? _value.logoLight
+          // ignore: cast_nullable_to_non_nullable
+          : logoLight as PublicImage?,
+      logoDark: logoDark == const $CopyWithPlaceholder()
+          ? _value.logoDark
+          // ignore: cast_nullable_to_non_nullable
+          : logoDark as PublicImage?,
+      favicon: favicon == const $CopyWithPlaceholder()
+          ? _value.favicon
+          // ignore: cast_nullable_to_non_nullable
+          : favicon as PublicImage?,
     );
   }
 }
@@ -116,7 +149,10 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
             'tagline_sw',
             'tagline_en',
             'accent_light',
-            'accent_dark'
+            'accent_dark',
+            'logo_light',
+            'logo_dark',
+            'favicon'
           ],
         );
         final val = SiteIdentity(
@@ -125,6 +161,21 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
           taglineEn: $checkedConvert('tagline_en', (v) => v as String),
           accentLight: $checkedConvert('accent_light', (v) => v as String),
           accentDark: $checkedConvert('accent_dark', (v) => v as String),
+          logoLight: $checkedConvert(
+              'logo_light',
+              (v) => v == null
+                  ? null
+                  : PublicImage.fromJson(v as Map<String, dynamic>)),
+          logoDark: $checkedConvert(
+              'logo_dark',
+              (v) => v == null
+                  ? null
+                  : PublicImage.fromJson(v as Map<String, dynamic>)),
+          favicon: $checkedConvert(
+              'favicon',
+              (v) => v == null
+                  ? null
+                  : PublicImage.fromJson(v as Map<String, dynamic>)),
         );
         return val;
       },
@@ -133,7 +184,9 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
         'taglineSw': 'tagline_sw',
         'taglineEn': 'tagline_en',
         'accentLight': 'accent_light',
-        'accentDark': 'accent_dark'
+        'accentDark': 'accent_dark',
+        'logoLight': 'logo_light',
+        'logoDark': 'logo_dark'
       },
     );
 
@@ -144,4 +197,7 @@ Map<String, dynamic> _$SiteIdentityToJson(SiteIdentity instance) =>
       'tagline_en': instance.taglineEn,
       'accent_light': instance.accentLight,
       'accent_dark': instance.accentDark,
+      'logo_light': instance.logoLight?.toJson(),
+      'logo_dark': instance.logoDark?.toJson(),
+      'favicon': instance.favicon?.toJson(),
     };

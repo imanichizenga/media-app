@@ -263,6 +263,24 @@ resource "aws_cloudfront_origin_access_control" "media" {
 }
 resource "aws_cloudfront_response_headers_policy" "media" {
   name = "${local.prefix}-media"
+  # The streaming player fetches playlists and segments from the website's and the console's origins.
+  cors_config {
+    access_control_allow_credentials = false
+    origin_override                  = true
+    access_control_max_age_sec       = 86400
+    access_control_allow_headers {
+      items = ["Range"]
+    }
+    access_control_allow_methods {
+      items = ["GET", "HEAD", "OPTIONS"]
+    }
+    access_control_allow_origins {
+      items = ["*"]
+    }
+    access_control_expose_headers {
+      items = ["Content-Length", "Content-Range"]
+    }
+  }
   security_headers_config {
     content_type_options {
       override = true

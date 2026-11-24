@@ -67,6 +67,7 @@ module "platform" {
     ws-admin        = { cpu = 256, memory = 1024, min = 2, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 3, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 3, max = 10 }
+    worker-media    = { cpu = 2048, memory = 4096, min = 2, max = 20 }
     beat            = { cpu = 256, memory = 512, min = 1, max = 1 }
   }
 }

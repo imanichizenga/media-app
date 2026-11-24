@@ -1,0 +1,299 @@
+{
+ "version": 1,
+ "blocks": [
+  {
+   "type": "live_update",
+   "id": "b000047",
+   "time": "2026-11-23T15:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000046",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 15:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000050",
+   "time": "2026-11-23T15:00:00+03:00",
+   "title": "Saa 15:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000048",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 15:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000049",
+     "asset": "0197a000-0000-7000-8000-000000000015",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000052",
+   "time": "2026-11-23T14:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000051",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 14:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000055",
+   "time": "2026-11-23T14:00:00+03:00",
+   "title": "Saa 14:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000053",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 14:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000054",
+     "asset": "0197a000-0000-7000-8000-000000000014",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000057",
+   "time": "2026-11-23T13:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000056",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 13:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000060",
+   "time": "2026-11-23T13:00:00+03:00",
+   "title": "Saa 13:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000058",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 13:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000059",
+     "asset": "0197a000-0000-7000-8000-000000000013",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000062",
+   "time": "2026-11-23T12:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000061",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 12:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000065",
+   "time": "2026-11-23T12:00:00+03:00",
+   "title": "Saa 12:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000063",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 12:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000064",
+     "asset": "0197a000-0000-7000-8000-000000000012",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000067",
+   "time": "2026-11-23T11:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000066",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 11:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000070",
+   "time": "2026-11-23T11:00:00+03:00",
+   "title": "Saa 11:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000068",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 11:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000069",
+     "asset": "0197a000-0000-7000-8000-000000000011",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000072",
+   "time": "2026-11-23T10:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000071",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 10:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000075",
+   "time": "2026-11-23T10:00:00+03:00",
+   "title": "Saa 10:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000073",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 10:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000074",
+     "asset": "0197a000-0000-7000-8000-000000000010",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000077",
+   "time": "2026-11-23T09:30:00+03:00",
+   "title": "",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000076",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 9:30. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "live_update",
+   "id": "b000080",
+   "time": "2026-11-23T09:00:00+03:00",
+   "title": "Saa 9:00",
+   "blocks": [
+    {
+     "type": "paragraph",
+     "id": "b000078",
+     "content": [
+      {
+       "type": "text",
+       "text": "Taarifa ya saa 9:00. Hali inaendelea kufuatiliwa na waandishi wetu."
+      }
+     ]
+    },
+    {
+     "type": "image",
+     "id": "b000079",
+     "asset": "0197a000-0000-7000-8000-000000000009",
+     "alt": "Eneo la tukio"
+    }
+   ]
+  }
+ ]
+}

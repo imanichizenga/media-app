@@ -1,4 +1,4 @@
-# Threat model (M0 scope)
+# Threat model (M1 scope)
 
 STRIDE per component. Each milestone extends this document. "Test" names the automated proof.
 
@@ -29,6 +29,21 @@ STRIDE per component. Each milestone extends this document. "Test" names the aut
 | Integrations | **I** Secret disclosure | Write-only, envelope encryption bound to the record, redacted logs and errors | `test_secret_never_leaves_the_server`, `test_ciphertext_is_bound_to_its_record` |
 | Outbound HTTP | **I** SSRF, DNS rebinding | Validate and dial the same address; https 443; no redirects | `test_ssrf_*` |
 | Edge | **S** Spoofed client IP or country | Right-most trusted hop; origin secret | `test_client_ip_cannot_be_spoofed`, `test_geo_header_without...` |
+| Uploads | **E** Malware, polyglots, parser exploits | Scanned before anything opens them; bucket refuses unscanned originals; type from the bytes; confined worker role | `test_an_original_is_never_opened_before_a_clean_remote_verdict`, `uploads_are_scanned_before_anything_opens_them` (Terraform), E2E |
+| | **T** Forged scan verdict | Bucket policy lets only the scanner's role write tags | Terraform test |
+| | **D** Decompression bomb, endless upload | Pixel limit read from the header; signed part lengths; size limits; pruning | `test_media.py` |
+| | **I** Location of a source in a photograph | All metadata removed from every derivative; originals never served | `test_media.py` |
+| Article bodies | **E** Stored XSS | Structured blocks, no HTML; one strict schema in three languages; embeds built from parsed addresses | `test_blocks.py`, content fixtures |
+| | **T** Link that leaves the site unseen | Protocol-relative, backslash and control-character links refused | `invalid/` fixtures |
+| Editing | **E** Publishing without the right | State machine with permission per transition and category scope | Permission matrix in `test_content.py` |
+| | **T** Lost updates | Version on every save; soft lock | `test_stale_and_locked_saves_say_so`, E2E |
+| | **I** Drafts of other people | Visibility filter in one selector; 404, not 403 | `test_a_journalist_sees_their_own_posts_only`, E2E |
+| | **I** Unpublished words through a rebuild | Rebuilds start from the published revision | `test_content.py` |
+| | **E** Mass removal by one account | Four-eyes from ten posts | `test_removing_many_needs_a_second_person` |
+| Public read API | **I** Personal data in a shared cache | No cookies, no user, explicit public allowlist of routes | `test_platform.py`, `test_public_api.py` |
+| | **D** Cache-busting floods | Bounded queries per page, WAF rate limit | Query-count tests |
+| Revalidation webhook | **S** Forged or replayed purge | HMAC over time and body, five-minute window (receiver in M2) | Provider Test replays an old request |
+| YouTube import | **I** SSRF | Address parsed to an identifier; fixed hosts through the safe client | `test_youtube.py` |
 | Exports | **T** CSV injection | Formula neutralising; export is audited first | `test_audit_export...` |
 | Supply chain | **T** Malicious dependency | Lockfiles with hashes, denied install scripts, SHA-pinned actions, scanners | CI |
 

@@ -4,6 +4,9 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from newsplatform.engagement.policy import KillSwitches, Policy
+
+AssetId = Annotated[str, Field(pattern=r"^([0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12})?$")]
 Hex = Annotated[str, Field(pattern=r"^#[0-9a-fA-F]{6}$")]
 
 
@@ -31,6 +34,10 @@ class Identity(Section):
     tagline_en: str = _field("", "Tagline (English)", "Kaulimbiu (Kiingereza)", max_length=140)
     accent_light: Hex = _field("#0b5cad", "Accent, light theme", "Rangi kuu, mwanga")
     accent_dark: Hex = _field("#7db8f5", "Accent, dark theme", "Rangi kuu, giza")
+    # Media library files. Empty shows the brand name as text.
+    logo_light: AssetId = _field("", "Logo, light theme", "Nembo, mwanga")
+    logo_dark: AssetId = _field("", "Logo, dark theme", "Nembo, giza")
+    favicon: AssetId = _field("", "App icon (square)", "Ikoni (mraba)")
 
     @model_validator(mode="after")
     def _accessible(self) -> Identity:
@@ -90,8 +97,16 @@ class Security(Section):
         return self
 
 
+class Engagement(Section):
+    """Global defaults and kill switches (engagement.policy)."""
+
+    defaults: Policy = Policy()
+    kill: KillSwitches = KillSwitches()
+
+
 SECTIONS: dict[str, type[Section]] = {
     "identity": Identity,
     "localization": Localization,
     "security": Security,
+    "engagement": Engagement,
 }
