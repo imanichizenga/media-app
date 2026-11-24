@@ -39,8 +39,7 @@ final class AppConfigControllerProvider
   AppConfigController create() => AppConfigController();
 }
 
-String _$appConfigControllerHash() =>
-    r'a7d269e77f284e3f1fdff4dd7405ea02daae03de';
+String _$appConfigControllerHash() => r'a7d269e77f284e3f1fdff4dd7405ea02daae03de';
 
 /// What the server says about this version of the app. The last answer is on the phone, so a start without a
 /// connection still knows the brand, the flags and whether this version is allowed.
@@ -66,8 +65,7 @@ abstract class _$AppConfigController extends $AsyncNotifier<AppConfig?> {
 @ProviderFor(appStatus)
 final appStatusProvider = AppStatusProvider._();
 
-final class AppStatusProvider
-    extends $FunctionalProvider<AppStatus, AppStatus, AppStatus>
+final class AppStatusProvider extends $FunctionalProvider<AppStatus, AppStatus, AppStatus>
     with $Provider<AppStatus> {
   AppStatusProvider._()
     : super(
@@ -85,8 +83,7 @@ final class AppStatusProvider
 
   @$internal
   @override
-  $ProviderElement<AppStatus> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<AppStatus> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   AppStatus create(Ref ref) {
@@ -95,10 +92,7 @@ final class AppStatusProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AppStatus value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AppStatus>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AppStatus>(value));
   }
 }
 
@@ -107,8 +101,7 @@ String _$appStatusHash() => r'990ab50f3dbaa97e38b93d6ce404bc626e73a563';
 @ProviderFor(mediaBase)
 final mediaBaseProvider = MediaBaseProvider._();
 
-final class MediaBaseProvider
-    extends $FunctionalProvider<String, String, String>
+final class MediaBaseProvider extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
   MediaBaseProvider._()
     : super(
@@ -126,8 +119,7 @@ final class MediaBaseProvider
 
   @$internal
   @override
-  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<String> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   String create(Ref ref) {
@@ -136,10 +128,7 @@ final class MediaBaseProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String>(value));
   }
 }
 
@@ -166,8 +155,7 @@ final class ApiBaseProvider extends $FunctionalProvider<String, String, String>
 
   @$internal
   @override
-  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<String> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   String create(Ref ref) {
@@ -176,10 +164,7 @@ final class ApiBaseProvider extends $FunctionalProvider<String, String, String>
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String>(value));
   }
 }
 
@@ -188,8 +173,7 @@ String _$apiBaseHash() => r'8ec76753604cdefaa33cd3f556bcb08eb1814e52';
 @ProviderFor(brand)
 final brandProvider = BrandProvider._();
 
-final class BrandProvider extends $FunctionalProvider<Brand, Brand, Brand>
-    with $Provider<Brand> {
+final class BrandProvider extends $FunctionalProvider<Brand, Brand, Brand> with $Provider<Brand> {
   BrandProvider._()
     : super(
         from: null,
@@ -206,8 +190,7 @@ final class BrandProvider extends $FunctionalProvider<Brand, Brand, Brand>
 
   @$internal
   @override
-  $ProviderElement<Brand> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<Brand> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   Brand create(Ref ref) {
@@ -216,10 +199,7 @@ final class BrandProvider extends $FunctionalProvider<Brand, Brand, Brand>
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Brand value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Brand>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Brand>(value));
   }
 }
 
@@ -228,8 +208,7 @@ String _$brandHash() => r'8f408796885be13bda689fdf2c7e9e07022aad1e';
 @ProviderFor(flags)
 final flagsProvider = FlagsProvider._();
 
-final class FlagsProvider
-    extends $FunctionalProvider<AppFlags, AppFlags, AppFlags>
+final class FlagsProvider extends $FunctionalProvider<AppFlags, AppFlags, AppFlags>
     with $Provider<AppFlags> {
   FlagsProvider._()
     : super(
@@ -247,8 +226,7 @@ final class FlagsProvider
 
   @$internal
   @override
-  $ProviderElement<AppFlags> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<AppFlags> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   AppFlags create(Ref ref) {
@@ -257,10 +235,7 @@ final class FlagsProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AppFlags value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AppFlags>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AppFlags>(value));
   }
 }
 

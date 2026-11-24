@@ -141,3 +141,39 @@ class _BlurhashViewState extends State<BlurhashView> {
       ? const SizedBox.expand()
       : RawImage(image: _image, fit: BoxFit.fill, filterQuality: FilterQuality.medium);
 }
+
+/// Strong enough that nothing can be made out.
+final blurHeavy = ui.ImageFilter.blur(sigmaX: 28, sigmaY: 28, tileMode: TileMode.clamp);
+
+/// The still of a video: one address, no variants.
+class PosterPicture extends ConsumerWidget {
+  const PosterPicture({super.key, required this.poster, this.color = '', this.fit = BoxFit.cover});
+
+  final String poster;
+  final String color;
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(picturesProvider);
+    final url = ref.read(picturesProvider.notifier).address(poster);
+    return ColoredBox(
+      color: colorOf(color) ?? OverMedia.ground,
+      child: LayoutBuilder(
+        builder: (context, box) => Image(
+          image: ResizeImage(
+            ref.watch(pictureLoaderProvider)(url),
+            width: (box.maxWidth * MediaQuery.devicePixelRatioOf(context)).ceil(),
+            policy: ResizeImagePolicy.fit,
+          ),
+          fit: fit,
+          width: double.infinity,
+          height: double.infinity,
+          excludeFromSemantics: true,
+          gaplessPlayback: true,
+          errorBuilder: (_, _, _) => const SizedBox.expand(),
+        ),
+      ),
+    );
+  }
+}

@@ -15,8 +15,7 @@ final databaseProvider = DatabaseProvider._();
 
 /// Opened by the bootstrap, before the first frame.
 
-final class DatabaseProvider
-    extends $FunctionalProvider<AppDatabase, AppDatabase, AppDatabase>
+final class DatabaseProvider extends $FunctionalProvider<AppDatabase, AppDatabase, AppDatabase>
     with $Provider<AppDatabase> {
   /// Opened by the bootstrap, before the first frame.
   DatabaseProvider._()
@@ -57,8 +56,7 @@ String _$databaseHash() => r'772a62c92559877a10ff5cf035fbfdd25bcc317a';
 @ProviderFor(initialSettings)
 final initialSettingsProvider = InitialSettingsProvider._();
 
-final class InitialSettingsProvider
-    extends $FunctionalProvider<Settings, Settings, Settings>
+final class InitialSettingsProvider extends $FunctionalProvider<Settings, Settings, Settings>
     with $Provider<Settings> {
   InitialSettingsProvider._()
     : super(
@@ -76,8 +74,7 @@ final class InitialSettingsProvider
 
   @$internal
   @override
-  $ProviderElement<Settings> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<Settings> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   Settings create(Ref ref) {
@@ -86,10 +83,7 @@ final class InitialSettingsProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Settings value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Settings>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Settings>(value));
   }
 }
 
@@ -102,8 +96,7 @@ final themeChoiceProvider = ThemeChoiceProvider._();
 
 /// Applied for the whole session: a theme published meanwhile waits for the next cold start.
 
-final class ThemeChoiceProvider
-    extends $FunctionalProvider<ThemeChoice, ThemeChoice, ThemeChoice>
+final class ThemeChoiceProvider extends $FunctionalProvider<ThemeChoice, ThemeChoice, ThemeChoice>
     with $Provider<ThemeChoice> {
   /// Applied for the whole session: a theme published meanwhile waits for the next cold start.
   ThemeChoiceProvider._()
@@ -144,8 +137,7 @@ String _$themeChoiceHash() => r'a71f9ca459c228dd73ea5404b018dfd160bfe56a';
 @ProviderFor(packageInfo)
 final packageInfoProvider = PackageInfoProvider._();
 
-final class PackageInfoProvider
-    extends $FunctionalProvider<PackageInfo, PackageInfo, PackageInfo>
+final class PackageInfoProvider extends $FunctionalProvider<PackageInfo, PackageInfo, PackageInfo>
     with $Provider<PackageInfo> {
   PackageInfoProvider._()
     : super(
@@ -185,8 +177,7 @@ String _$packageInfoHash() => r'2fe8a1dad072c03ba27399ac01c4cc38f0337013';
 @ProviderFor(analytics)
 final analyticsProvider = AnalyticsProvider._();
 
-final class AnalyticsProvider
-    extends $FunctionalProvider<Analytics, Analytics, Analytics>
+final class AnalyticsProvider extends $FunctionalProvider<Analytics, Analytics, Analytics>
     with $Provider<Analytics> {
   AnalyticsProvider._()
     : super(
@@ -204,8 +195,7 @@ final class AnalyticsProvider
 
   @$internal
   @override
-  $ProviderElement<Analytics> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<Analytics> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   Analytics create(Ref ref) {
@@ -214,10 +204,7 @@ final class AnalyticsProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Analytics value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Analytics>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Analytics>(value));
   }
 }
 
@@ -231,12 +218,7 @@ final clockNowProvider = ClockNowProvider._();
 /// Replaced in tests, so every "five minutes ago" is fixed.
 
 final class ClockNowProvider
-    extends
-        $FunctionalProvider<
-          DateTime Function(),
-          DateTime Function(),
-          DateTime Function()
-        >
+    extends $FunctionalProvider<DateTime Function(), DateTime Function(), DateTime Function()>
     with $Provider<DateTime Function()> {
   /// Replaced in tests, so every "five minutes ago" is fixed.
   ClockNowProvider._()
@@ -255,9 +237,8 @@ final class ClockNowProvider
 
   @$internal
   @override
-  $ProviderElement<DateTime Function()> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<DateTime Function()> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   DateTime Function() create(Ref ref) {
@@ -278,8 +259,7 @@ String _$clockNowHash() => r'17a53e4b045603c6f1046a0432640a9fc1506c41';
 @ProviderFor(SettingsController)
 final settingsControllerProvider = SettingsControllerProvider._();
 
-final class SettingsControllerProvider
-    extends $NotifierProvider<SettingsController, Settings> {
+final class SettingsControllerProvider extends $NotifierProvider<SettingsController, Settings> {
   SettingsControllerProvider._()
     : super(
         from: null,
@@ -300,15 +280,11 @@ final class SettingsControllerProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Settings value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Settings>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Settings>(value));
   }
 }
 
-String _$settingsControllerHash() =>
-    r'9f7c6c7c87a35903f062b0965e1d126588a1e087';
+String _$settingsControllerHash() => r'9f7c6c7c87a35903f062b0965e1d126588a1e087';
 
 abstract class _$SettingsController extends $Notifier<Settings> {
   Settings build();
@@ -318,12 +294,7 @@ abstract class _$SettingsController extends $Notifier<Settings> {
     final ref = this.ref as $Ref<Settings, Settings>;
     final element =
         ref.element
-            as $ClassProviderElement<
-              AnyNotifier<Settings, Settings>,
-              Settings,
-              Object?,
-              Object?
-            >;
+            as $ClassProviderElement<AnyNotifier<Settings, Settings>, Settings, Object?, Object?>;
     return element.handleCreate(ref, build);
   }
 }
@@ -331,8 +302,7 @@ abstract class _$SettingsController extends $Notifier<Settings> {
 @ProviderFor(localeName)
 final localeNameProvider = LocaleNameProvider._();
 
-final class LocaleNameProvider
-    extends $FunctionalProvider<String, String, String>
+final class LocaleNameProvider extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
   LocaleNameProvider._()
     : super(
@@ -350,8 +320,7 @@ final class LocaleNameProvider
 
   @$internal
   @override
-  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<String> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   String create(Ref ref) {
@@ -360,10 +329,7 @@ final class LocaleNameProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String>(value));
   }
 }
 
@@ -397,10 +363,7 @@ final class DeviceIdProvider extends $NotifierProvider<DeviceId, String?> {
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String?>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String?>(value));
   }
 }
 
@@ -416,12 +379,7 @@ abstract class _$DeviceId extends $Notifier<String?> {
     final ref = this.ref as $Ref<String?, String?>;
     final element =
         ref.element
-            as $ClassProviderElement<
-              AnyNotifier<String?, String?>,
-              String?,
-              Object?,
-              Object?
-            >;
+            as $ClassProviderElement<AnyNotifier<String?, String?>, String?, Object?, Object?>;
     return element.handleCreate(ref, build);
   }
 }
@@ -429,8 +387,7 @@ abstract class _$DeviceId extends $Notifier<String?> {
 @ProviderFor(pinning)
 final pinningProvider = PinningProvider._();
 
-final class PinningProvider
-    extends $FunctionalProvider<Pinning, Pinning, Pinning>
+final class PinningProvider extends $FunctionalProvider<Pinning, Pinning, Pinning>
     with $Provider<Pinning> {
   PinningProvider._()
     : super(
@@ -448,8 +405,7 @@ final class PinningProvider
 
   @$internal
   @override
-  $ProviderElement<Pinning> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<Pinning> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   Pinning create(Ref ref) {
@@ -458,10 +414,7 @@ final class PinningProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Pinning value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Pinning>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Pinning>(value));
   }
 }
 
@@ -470,8 +423,7 @@ String _$pinningHash() => r'47362011290f761338fb63e9d50fe4ad786a495b';
 @ProviderFor(dio)
 final dioProvider = DioProvider._();
 
-final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
-    with $Provider<Dio> {
+final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio> with $Provider<Dio> {
   DioProvider._()
     : super(
         from: null,
@@ -488,8 +440,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
 
   @$internal
   @override
-  $ProviderElement<Dio> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<Dio> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   Dio create(Ref ref) {
@@ -498,10 +449,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Dio value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Dio>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Dio>(value));
   }
 }
 
@@ -510,8 +458,7 @@ String _$dioHash() => r'e1686f9769be52d2219765826d92a2af18b0b08f';
 @ProviderFor(contentApi)
 final contentApiProvider = ContentApiProvider._();
 
-final class ContentApiProvider
-    extends $FunctionalProvider<ContentApi, ContentApi, ContentApi>
+final class ContentApiProvider extends $FunctionalProvider<ContentApi, ContentApi, ContentApi>
     with $Provider<ContentApi> {
   ContentApiProvider._()
     : super(
@@ -539,10 +486,7 @@ final class ContentApiProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(ContentApi value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ContentApi>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<ContentApi>(value));
   }
 }
 
@@ -601,8 +545,7 @@ final onlineProvider = OnlineProvider._();
 
 /// Whether the phone believes it has a connection. The truth is in each request; this only says when to try again.
 
-final class OnlineProvider
-    extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
+final class OnlineProvider extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
     with $FutureModifier<bool>, $StreamProvider<bool> {
   /// Whether the phone believes it has a connection. The truth is in each request; this only says when to try again.
   OnlineProvider._()
@@ -639,8 +582,7 @@ final autoplayProvider = AutoplayProvider._();
 
 /// On mobile data, with the saver on, videos wait for a tap.
 
-final class AutoplayProvider extends $FunctionalProvider<bool, bool, bool>
-    with $Provider<bool> {
+final class AutoplayProvider extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// On mobile data, with the saver on, videos wait for a tap.
   AutoplayProvider._()
     : super(
@@ -658,8 +600,7 @@ final class AutoplayProvider extends $FunctionalProvider<bool, bool, bool>
 
   @$internal
   @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   bool create(Ref ref) {
@@ -668,10 +609,7 @@ final class AutoplayProvider extends $FunctionalProvider<bool, bool, bool>
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<bool>(value));
   }
 }
 
