@@ -202,7 +202,9 @@ for (const v of VARIANTS)
       await still();
       await tab.scrollIntoViewIfNeeded();
       if (v.device === "phone")
-        await page.locator("aside").evaluate((e) => e.scrollIntoView({ block: "start" }));
+        await page
+          .getByRole("tablist", { name: t.content.panels })
+          .evaluate((e) => e.scrollIntoView({ block: "start" }));
       await shoot("editor-panels", v, panel);
     }
     await page.getByRole("tab", { name: t.content.panel.publish }).click();

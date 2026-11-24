@@ -5,18 +5,20 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | Milestone | LOCAL | STAGING |
 |---|---|---|
 | **M0 Foundation** | Done | Blocked: no AWS environment |
-| **M0-CLOSE** | Done, pull request 7 | Blocked: no AWS environment |
-| M1 to M11 | Not started | Not started |
+| **M0-CLOSE** | Done, pull request 7 (merged) | Blocked: no AWS environment |
+| **M1 Content core** | Done, pull request 8 | Blocked: no AWS environment |
+| M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. Confirm pull request 7 is merged and `main` is green: `gh run list --branch main --limit 3`.
-2. Start **M1** on a branch `m1-content-core`. First task: `packages/content-schema` (mission item A), because the API, the editor and both renderers depend on it: one JSON Schema, generated TypeScript + Zod and Dart, fixtures in `docs/content-fixtures/`. Then taxonomy and content models, workflow state machine, media pipeline, editor, public read API, seed data.
-3. Commands: `docker compose up -d --wait`, then the checks in [README](../README.md#check). Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them.
+1. Merge pull request 8 when its checks are green: `gh pr checks 8`. Then `main` must be green: `gh run list --branch main --limit 3`.
+2. Start **M2-DESIGN** on a branch `m2-design`. First task: `docs/design/public-experience.md`, then static prototypes of Home, Article, Video/Shorts, Live, Category, Search, Onboarding, Auth sheet and Comments sheet, with real tokens and seed content, as galleries in `docs/design/screens/m2-design/`. **Stop there for human sign-off (G2).** While waiting, build what has no screens: the revalidation receiver, sitemaps, JSON-LD builders.
+3. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../README.md#check). E2E needs FFmpeg and the storage profile. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them.
 4. Open risks:
-   - **Disk:** about 5 GB free of 32 GB in the Codespace; OpenSearch and ClickHouse together need about 3.5 GB. Use one profile at a time, or a larger machine.
-   - **FFmpeg, Flutter and Terraform are not installed** in the container. Terraform 1.17.2 and Flutter 3.50.1 were used from a scratch directory.
-5. Waiting for a person: an AWS environment (A1 to A3) and a dedicated test bucket (A8).
+   - **Disk:** about 3 GB free of 32 GB in the Codespace. OpenSearch and ClickHouse together need about 3.5 GB. Use one profile at a time, or a larger machine.
+   - **Flutter and Terraform are not installed** in the container. Terraform 1.17.2 and Flutter 3.50.1 were used from a scratch directory. M3 needs Flutter permanently.
+   - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, and every IAM and bucket policy. Plan-tested only.
+5. Waiting for a person: an AWS environment (A1 to A3), a dedicated test bucket (A8), a native Swahili editor (G1, 934 strings). Brand name, logo and accent colour (G6) are needed for M2-DESIGN.
 
 ## Acceptance
 
@@ -33,15 +35,41 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | M0-CLOSE Admin browser errors | Met: E2E against a local sink | No Sentry project (A9) |
 | M0-CLOSE Compose profiles | Met: every service started healthy; storage contract 7 of 7 | n/a |
 | M0-CLOSE Screenshot gallery | Met: `docs/design/screens/m0/index.html` | n/a |
+| M1 1 GB upload resumes after a cut and plays as adaptive HLS | Met: `python -m tests.live_upload` on 2026-11-24. 69 of 138 parts kept, each part sent once, four renditions decode to the last frame | Needs A8, A10 |
+| M1 EXIF removed | Met: `test_media.py` | n/a |
+| M1 Every YouTube address form normalises | Met: `test_youtube.py` | n/a |
+| M1 Workflow permission matrix | Met: `test_content.py` | n/a |
+| M1 Block fixtures validate on the API | Met: `test_blocks.py`; also TypeScript, Dart, editor round trip, web renderer | n/a |
+| M1 Public read: query counts and cache headers | Met: `test_public_api.py` | CDN hit rate and purge delay unobserved |
+| M1 Transcoding provider | FFmpeg end to end; MediaConvert against stubs | Needs A10: **AWS MediaConvert** → Test |
+| M1 Malware scan | ClamAV protocol and GuardDuty verdicts against stubs; bucket policy plan-tested | Needs A10 |
+| M1 Purge and revalidation sender | Met: `test_delivery.py` | Receiver in M2 |
+| M1 Seed data | Met: `test_seed_demo.py`, 300 posts | n/a |
+| M1 Category-scoped roles | Met: `test_taxonomy.py`, E2E | n/a |
+| M1 Screenshot gallery | Met: `docs/design/screens/m1/index.html` | n/a |
 
-## M0 items carried forward
+## Carried forward
 
 | Item | Where |
 |---|---|
-| `category` RBAC scope, logo and favicon | M1 |
-| Bulk-delete and ads approvals | M1, M10 |
-| Integration test details and hints are English only | M1, with item G (`docs/i18n/review.md`) |
-| Swahili text needs a native editor | G1 |
+| Ads approvals | M10 |
+| Swahili text needs a native editor | G1, `docs/i18n/review.md` |
+| Details of a failed integration test stay in the vendor's English; hints are bilingual | Decided |
+| Content renderer in Flutter over all fixtures | M3 |
+| Notifications on workflow transitions (the signal exists) | M6 |
+| Search endpoint answers `available: false` | M8 |
+
+## Defects found in M1 and fixed
+
+- **The console could never have uploaded in AWS**: its role had no S3 access, its image missed two workspace packages, and the bucket had no CORS rule.
+- **A waiting scan downloaded the whole file every 20 seconds**, up to 8 GB a time.
+- **A failed purge was never retried**, and a broken website kept the CDN stale too.
+- The shared schema accepted links such as `/\evil.example`, which browsers read as another site.
+- Retrying a failed MediaConvert job reused its token, so AWS would have returned the failed job.
+- Moving a picture's focal point put it back into scanning and blocked publishing; the editor did not notice when a file became ready.
+- The calendar asked for 100 posts in editing order and silently dropped the rest of a busy week.
+- Skeletons in the content list and the article were invisible: a plain space has no height.
+- Dialog backdrops had not drawn since M0; logos lost their transparency; scheduling used the laptop's clock; an error in the live-update dialog appeared behind it; the editor scrolled sideways on phones; Zod asked for `eval`.
 
 ## Defects found in M0-CLOSE and fixed
 
@@ -55,6 +83,8 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 Baseline before any change: 206 API tests (90.88%), 18 E2E, 97 contrast checks, 7 admin unit tests, 4 Terraform plan tests, all green. CI runs on GitHub and passes on `main`.
 
 After: 258 API tests (91.44%), 20 E2E, 97 contrast checks, 31 admin unit tests, 6 Terraform plan tests, 7 storage contract checks, all green.
+
+M1, 2026-11-24: 726 API tests, 37 E2E, 218 web unit tests, 8 Terraform plan tests, all green.
 
 Not run in this environment, only in CI: Dart client regeneration, Semgrep, OSV, Trivy.
 
