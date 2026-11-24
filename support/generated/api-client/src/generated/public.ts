@@ -228,7 +228,7 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @description `body` is a content document (support/packages/content-schema); `assets` holds the files it names, by id. */
+        /** @description `body` is a content document (support/packages/content-schema). `assets` holds its files, by id. */
         Article: {
             /** Format: uuid */
             id: string;

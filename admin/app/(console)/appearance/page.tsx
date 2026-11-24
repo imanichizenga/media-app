@@ -663,7 +663,7 @@ function LogoSlot({
             ) : (
               <span
                 className={cx("font-serif", square ? "text-headline-m" : "text-headline-s")}
-                style={{ color: ground === "#ffffff" ? "#111213" : "#ffffff" }}
+                style={{ color: ground === "#ffffff" ? color : "#ffffff" }}
               >
                 {square ? name.slice(0, 1) : name}
               </span>

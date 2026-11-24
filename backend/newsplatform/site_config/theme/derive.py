@@ -1,5 +1,5 @@
-"""Brand colour → every token of every theme. Port of support/packages/design-tokens/src/theme.ts, judged by the
-shared vectors: the rules are support/packages/design-tokens/spec/derivation.md."""
+"""Brand colour → every token of every theme. Port of support/packages/design-tokens/src/theme.ts, judged by
+the shared vectors: the rules are support/packages/design-tokens/spec/derivation.md."""
 
 import json
 from collections.abc import Iterable

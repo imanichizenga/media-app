@@ -78,7 +78,9 @@ const pictures = () =>
   );
 const shoot = async (name: string, v: (typeof VARIANTS)[number], state: string) => {
   if (state !== "skeleton") {
-    await page.waitForLoadState("networkidle");
+    // Framed previews keep the network busy a little longer than a page does.
+    if (THEMES) await page.waitForTimeout(3000);
+    else await page.waitForLoadState("networkidle");
     await pictures();
   }
   await page.screenshot({

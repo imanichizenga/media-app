@@ -610,7 +610,7 @@
         "schemas": {
             "Article": {
                 "type": "object",
-                "description": "`body` is a content document (support/packages/content-schema); `assets` holds the files it names, by id.",
+                "description": "`body` is a content document (support/packages/content-schema). `assets` holds its files, by id.",
                 "properties": {
                     "id": {
                         "type": "string",

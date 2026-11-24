@@ -109,7 +109,7 @@ class PublicLabelSerializer(serializers.Serializer[Any]):
 
 
 class ArticleSerializer(CardSerializer):
-    """`body` is a content document (support/packages/content-schema); `assets` holds the files it names, by id."""
+    """`body` is a content document (support/packages/content-schema). `assets` holds its files, by id."""
 
     authors = PublicBylineSerializer(many=True)
     body = serializers.DictField()
