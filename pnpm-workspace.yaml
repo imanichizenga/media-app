@@ -3,6 +3,7 @@ packages:
   - packages/design-tokens
   - packages/api-client
   - packages/content-schema
+  - packages/ui
   - tests/e2e
 minimumReleaseAgeExclude:
   - "@tanstack/query-core@5.108.3"

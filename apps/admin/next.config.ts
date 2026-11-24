@@ -22,7 +22,7 @@ const config: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
-  transpilePackages: ["@news/api-client"],
+  transpilePackages: ["@news/api-client", "@news/content-schema", "@news/ui"],
   headers: async () => [{ source: "/(.*)", headers: security }],
   // Local and E2E only. In AWS the load balancer routes /api and /ws on the same origin.
   rewrites: async () => [
