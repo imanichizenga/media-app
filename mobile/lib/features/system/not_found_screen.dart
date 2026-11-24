@@ -3,11 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../app/router.dart';
-import '../../ui/components/skeleton.dart';
-import '../../ui/states/designed.dart';
 import '../../core/network/failures.dart';
 import '../../l10n/gen/strings.dart';
 import '../../ui/components/basics.dart';
+import '../../ui/components/skeleton.dart';
+import '../../ui/states/designed.dart';
 import '../../ui/tokens/news_icons.g.dart';
 import '../content/feeds.dart';
 

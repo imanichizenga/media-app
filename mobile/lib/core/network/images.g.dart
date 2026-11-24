@@ -54,6 +54,47 @@ final class PictureLoaderProvider
 
 String _$pictureLoaderHash() => r'aa46025439fdb1acc4dcbccfada89a932e393dd8';
 
+@ProviderFor(pictureKeeper)
+final pictureKeeperProvider = PictureKeeperProvider._();
+
+final class PictureKeeperProvider
+    extends $FunctionalProvider<PictureKeeper, PictureKeeper, PictureKeeper>
+    with $Provider<PictureKeeper> {
+  PictureKeeperProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pictureKeeperProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$pictureKeeperHash();
+
+  @$internal
+  @override
+  $ProviderElement<PictureKeeper> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  PictureKeeper create(Ref ref) {
+    return pictureKeeper(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PictureKeeper value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PictureKeeper>(value),
+    );
+  }
+}
+
+String _$pictureKeeperHash() => r'e6073654a4921a53fc45a98348a2edae5a5e037f';
+
 /// Where one picture lives at the width it is shown: the CDN's nearest variant, one size down to save data.
 
 @ProviderFor(Pictures)

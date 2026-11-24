@@ -24,15 +24,14 @@ import 'photo_viewer.dart';
 
 /// What the blocks of a body refer to: files by id, and where related links point.
 class BodyContext {
-  BodyContext({required Map<String, Map<String, dynamic>> assets, required this.links})
-    : _assets = assets;
+  BodyContext({required this.assets, required this.links});
 
-  final Map<String, Map<String, dynamic>> _assets;
+  final Map<String, Map<String, dynamic>> assets;
   final Map<String, RelatedTarget> links;
   final _read = <String, Object?>{};
 
   Object? _asset(String id) => _read.putIfAbsent(id, () {
-    final raw = _assets[id];
+    final raw = assets[id];
     try {
       return switch (raw?['kind']) {
         'image' => PublicImage.fromJson(raw!),

@@ -75,10 +75,27 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final c = context.colors;
     final items = nav.value?.value;
     // A section shows its own newest picture.
-    final faces = {
-      for (final HomeSection x in home?.sections ?? const [])
-        x.category.id: x.results.where((r) => r.image != null && !r.isSensitive).firstOrNull?.image,
-    };
+    PublicImage? face(NavigationItem? n) {
+      if (n == null || home == null) return null;
+      final ids = {n.id, for (final k in n.children) k.id};
+      return [
+            for (final x in home.sections)
+              if (x.category.id == n.id) ...x.results,
+            ...home.latest,
+            ...home.videos,
+            ...home.lead,
+          ]
+          .where(
+            (r) =>
+                r.image != null &&
+                !r.isSensitive &&
+                (ids.contains(r.category.id) ||
+                    home.sections.any((s) => s.category.id == n.id && s.results.contains(r))),
+          )
+          .firstOrNull
+          ?.image;
+    }
+
     final people = <String, CardByline>{
       for (final Story x in [...?home?.lead, ...?home?.latest])
         for (final a in x.authors) a.id: a,
@@ -125,8 +142,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       mainAxisExtent: 112 + 24 * scale,
                     ),
                     itemCount: items?.length ?? 8,
-                    itemBuilder: (context, i) =>
-                        CategoryTile(items?[i], image: faces[items?[i].id]),
+                    itemBuilder: (context, i) => CategoryTile(items?[i], image: face(items?[i])),
                   ),
                 ),
                 if (people.isNotEmpty) ...[
@@ -262,19 +278,14 @@ class _Person extends StatelessWidget {
       width: 92,
       child: Column(
         children: [
-          ClipOval(
-            child: SizedBox.square(dimension: 84, child: Initial(author.name, size: 84)),
-          ),
+          ClipOval(child: SizedBox.square(dimension: 84, child: Initial(author.name, size: 84))),
           const SizedBox(height: NewsSpace.s2),
           Text(
             author.name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: context.type.caption.copyWith(
-              color: context.colors.textPrimary,
-              height: 1.25,
-            ),
+            style: context.type.caption.copyWith(color: context.colors.textPrimary, height: 1.25),
           ),
         ],
       ),

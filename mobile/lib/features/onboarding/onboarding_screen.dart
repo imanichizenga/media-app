@@ -7,7 +7,6 @@ import 'package:news_api_client/news_api_client.dart' hide Card;
 import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../app/router.dart';
-import '../../core/config/app_config.dart';
 import '../../core/models.dart';
 import '../../core/providers.dart';
 import '../../core/telemetry/analytics.dart';
@@ -129,12 +128,7 @@ class _Welcome extends ConsumerWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0, 0.3, 0.56, 1],
-              colors: [
-                Color(0x66000000),
-                Color(0x1A000000),
-                Color(0xD9000000),
-                Color(0xFF000000),
-              ],
+              colors: [Color(0x66000000), Color(0x1A000000), Color(0xD9000000), Color(0xFF000000)],
             ),
           ),
         ),
@@ -249,9 +243,7 @@ class _WallState extends State<_Wall> with SingleTickerProviderStateMixin {
         angle: -4 * math.pi / 180,
         child: Transform.scale(
           scale: 1.16,
-          child: Row(
-            children: [column(0, -40, -1), column(1, -130, 1)],
-          ),
+          child: Row(children: [column(0, -40, -1), column(1, -130, 1)]),
         ),
       ),
     );
@@ -319,19 +311,13 @@ class _Step extends StatelessWidget {
                           header: true,
                           child: Text(
                             title,
-                            style: context.type.display.copyWith(
-                              color: c.textPrimary,
-                              height: 1.1,
-                            ),
+                            style: context.type.display.copyWith(color: c.textPrimary, height: 1.1),
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           body,
-                          style: context.type.bodyL.copyWith(
-                            color: c.textSecondary,
-                            height: 1.45,
-                          ),
+                          style: context.type.bodyL.copyWith(color: c.textSecondary, height: 1.45),
                         ),
                         const SizedBox(height: 28),
                         child,
@@ -397,9 +383,7 @@ class _Language extends ConsumerWidget {
                       children: [
                         Text(
                           name,
-                          style: context.type.headlineM.copyWith(
-                            color: on ? c.bg : c.textPrimary,
-                          ),
+                          style: context.type.headlineM.copyWith(color: on ? c.bg : c.textPrimary),
                         ),
                         Text(
                           hello,
@@ -426,10 +410,7 @@ class _Language extends ConsumerWidget {
       action: s.next,
       onNext: onNext,
       child: Column(
-        children: [
-          choice('sw', 'Kiswahili', 'Karibu'),
-          choice('en', 'English', 'Welcome'),
-        ],
+        children: [choice('sw', 'Kiswahili', 'Karibu'), choice('en', 'English', 'Welcome')],
       ),
     );
   }

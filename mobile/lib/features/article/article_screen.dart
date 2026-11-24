@@ -157,7 +157,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     final scale = ref.watch(settingsControllerProvider.select((x) => x.textScale));
     final top = MediaQuery.paddingOf(context).top;
     final width = MediaQuery.sizeOf(context).width;
-    final open = (Story next, {String? heroTag}) =>
+    void open(Story next, {String? heroTag}) =>
         openStory(context, next, heroTag: heroTag, from: 'article');
 
     final reading = Column(
@@ -205,12 +205,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
             ? const BorderRadius.vertical(top: Radius.circular(28))
             : BorderRadius.zero,
       ),
-      padding: EdgeInsets.fromLTRB(
-        NewsSpace.s5,
-        immersive ? NewsSpace.s6 : NewsSpace.s4,
-        NewsSpace.s5,
-        0,
-      ),
+      padding: EdgeInsets.fromLTRB(NewsSpace.s5, immersive ? 0 : NewsSpace.s4, NewsSpace.s5, 0),
       child: wide
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -673,7 +668,7 @@ class _Byline extends ConsumerWidget {
     final s = Strings.of(context);
     final author = article?.authors.firstOrNull;
     if (article != null && author == null) return const SizedBox.shrink();
-    final who = article == null ? null : article!.authors.map((a) => a.name).join(', ');
+    final who = article?.authors.map((a) => a.name).join(', ');
     final line = story == null
         ? null
         : [

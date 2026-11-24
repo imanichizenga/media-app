@@ -2,11 +2,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../core/models.dart';
+import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
 import '../../ui/components/picture.dart';
 import '../../ui/components/skeleton.dart';
 import '../../ui/tokens/theme.dart';
-import '../../ui/components/basics.dart';
 
 /// Top stories side by side. The picture drifts a little slower than its card; the next one always peeks in.
 class TopStories extends StatefulWidget {

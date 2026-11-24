@@ -81,7 +81,7 @@ class _YoutubeFacadeState extends State<YoutubeFacade> {
         child: _web != null
             ? WebViewWidget(
                 controller: _web!,
-                gestureRecognizers: {
+                gestureRecognizers: const {
                   Factory<OneSequenceGestureRecognizer>(EagerGestureRecognizer.new),
                 },
               )

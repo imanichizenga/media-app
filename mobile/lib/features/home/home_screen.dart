@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +21,7 @@ import '../../ui/components/cards.dart';
 import '../../ui/components/signals.dart';
 import '../../ui/components/skeleton.dart';
 import '../../ui/states/designed.dart';
+import '../../ui/tokens/theme.dart';
 import '../content/feed_slivers.dart';
 import '../content/feeds.dart';
 import '../system/banners.dart';
@@ -101,7 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: CustomScrollView(
               controller: _scroll,
               physics: const AlwaysScrollableScrollPhysics(),
-              cacheExtent: 900,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(900),
               slivers: [
                 const HomeMasthead(),
                 if (breaking != null)
@@ -110,30 +110,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 SliverToBoxAdapter(child: StaleBanner(loaded: loaded)),
                 const SliverToBoxAdapter(child: UpdateBanner()),
-                if (loaded == null || loaded.value.live.isNotEmpty)
+                if (loaded == null ? !home.hasError : loaded.value.live.isNotEmpty)
                   SliverToBoxAdapter(
                     child: LiveRail(stories: loaded?.value.live, onTap: open),
                   ),
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      NewsSpace.s5,
-                      NewsSpace.s4,
-                      NewsSpace.s5,
-                      NewsSpace.s3,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 480),
-                      child: Segmented(
-                        labels: [s.forYou, s.latest],
-                        at: _tab,
-                        onChanged: (i) => setState(() => _tab = i),
-                      ),
-                    ),
+                  child: FeedBar(
+                    labels: [s.forYou, s.latest],
+                    at: _tab,
+                    onChanged: (i) => setState(() => _tab = i),
                   ),
                 ),
-                const SliverToBoxAdapter(child: CategoryChips()),
-                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s4)),
                 if (_tab == 1)
                   ...feedSlivers(
                     context,
@@ -180,7 +167,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final List<Story?> river = latest ?? List.filled(8, null);
     final window = windowOf(context);
     final compact = window == WindowClass.compact;
-    final cover = lead == null ? null : lead.firstOrNull;
+    final cover = lead?.firstOrNull;
     Widget gap(double h) => SliverToBoxAdapter(child: SizedBox(height: h));
     return [
       if (h == null || cover != null)
@@ -255,31 +242,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-/// The sections, one tap away.
-class CategoryChips extends ConsumerWidget {
-  const CategoryChips({super.key});
+/// The two feeds, then the sections: one row, so the story comes sooner.
+class FeedBar extends ConsumerWidget {
+  const FeedBar({super.key, required this.labels, required this.at, required this.onChanged});
+
+  final List<String> labels;
+  final int at;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nav = ref.watch(navigationProvider);
     final items = nav.value?.value;
-    if (items == null && nav.hasError) return const SizedBox.shrink();
+    final c = context.colors;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
+      padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5, vertical: NewsSpace.s3),
       child: Row(
         children: [
-          if (items == null)
-            for (final w in const [84.0, 76.0, 104.0, 92.0])
+          for (final (i, label) in labels.indexed)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: NewsChip(label, on: i == at, toggles: true, onTap: () => onChanged(i)),
+            ),
+          Container(
+            width: 1,
+            height: 24,
+            margin: const EdgeInsets.only(left: 2, right: 6),
+            color: c.border,
+          ),
+          if (items == null && !nav.hasError)
+            for (final w in const [64.0, 58.0, 84.0])
               Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Bone(width: w, height: 48, radius: 28),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Bone(width: w, height: 14),
               )
           else
-            for (final n in items)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: NewsChip(n.name, onTap: () => context.push(n.path)),
+            for (final n in items ?? const <NavigationItem>[])
+              Pressable(
+                link: true,
+                onTap: () => context.push(n.path),
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(n.name, style: context.type.label.copyWith(color: c.textSecondary)),
+                ),
               ),
         ],
       ),

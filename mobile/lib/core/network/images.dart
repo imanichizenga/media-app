@@ -25,6 +25,24 @@ typedef PictureLoader = ImageProvider<Object> Function(String url);
 @Riverpod(keepAlive: true)
 PictureLoader pictureLoader(Ref ref) => KeptPicture.new;
 
+/// Pictures of saved articles, put away and taken out again. Replaced in tests.
+abstract interface class PictureKeeper {
+  Future<void> keep(String url);
+  Future<void> drop(String url);
+}
+
+class _DiskKeeper implements PictureKeeper {
+  const _DiskKeeper();
+
+  @override
+  Future<void> keep(String url) => savedPictures.downloadFile(url);
+  @override
+  Future<void> drop(String url) => savedPictures.removeFile(url);
+}
+
+@Riverpod(keepAlive: true)
+PictureKeeper pictureKeeper(Ref ref) => const _DiskKeeper();
+
 /// From the saved store, then the seen one, then the network.
 @immutable
 class KeptPicture extends ImageProvider<KeptPicture> {

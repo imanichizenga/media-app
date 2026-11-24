@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_design_tokens/news_design_tokens.dart';
@@ -65,11 +64,7 @@ class _NewsAppState extends ConsumerState<NewsApp> {
       },
       locale: Locale(settings.locale),
       supportedLocales: Strings.supportedLocales,
-      localizationsDelegates: const [
-        Strings.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
+      localizationsDelegates: const [Strings.delegate, ...GlobalMaterialLocalizations.delegates],
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: overlayFor(context.colors.bg),
         child: Gatekeeper(child: child!),

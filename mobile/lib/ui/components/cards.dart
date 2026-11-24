@@ -39,28 +39,25 @@ class Kicker extends ConsumerWidget {
     if (story == null) return TextOrBone(null, style: strong, last: 0.35);
     final s = Strings.of(context);
     final now = ref.watch(clockNowProvider)();
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 7,
-      runSpacing: 4,
-      children: [
-        if (story.isLive && !quiet)
-          const LivePill()
-        else
-          Text(story.isBreaking(now) ? s.breaking : story.category.name, style: strong),
-        Container(
-          width: 3,
-          height: 3,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: onMedia ? OverMedia.soft : c.textTertiary,
-          ),
-        ),
-        Text(
-          ago(story.publishedAt, s, now),
-          style: context.type.caption.copyWith(color: onMedia ? OverMedia.soft : c.textSecondary),
-        ),
-      ],
+    final soft = context.type.caption.copyWith(color: onMedia ? OverMedia.soft : c.textSecondary);
+    final when = ago(story.publishedAt, s, now);
+    if (story.isLive && !quiet) {
+      return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          const LivePill(),
+          Text(when, style: soft),
+        ],
+      );
+    }
+    return Text.rich(
+      TextSpan(
+        text: story.isBreaking(now) ? s.breaking : story.category.name,
+        style: strong,
+        children: [TextSpan(text: '  ·  $when', style: soft)],
+      ),
     );
   }
 }
@@ -285,7 +282,7 @@ class CoverCard extends StatelessWidget {
                       NewsSpace.s6,
                     ),
                     child: story == null
-                        ? const SizedBox.shrink()
+                        ? const _CoverBones()
                         : Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -330,6 +327,28 @@ class CoverCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CoverBones extends StatelessWidget {
+  const _CoverBones();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.colors.bg.withValues(alpha: 0.55);
+    Widget bar(double part, double height) => FractionallySizedBox(
+      widthFactor: part,
+      child: Container(
+        height: height,
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(6)),
+      ),
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [bar(0.4, 12), bar(0.92, 28), bar(0.7, 28), bar(0.85, 14), bar(0.45, 12)],
     );
   }
 }

@@ -92,8 +92,7 @@ class _YouScreenState extends ConsumerState<YouScreen> {
                         child: Segmented(
                           labels: const ['Kiswahili', 'English'],
                           at: settings.locale == 'sw' ? 0 : 1,
-                          onChanged: (i) =>
-                              change((x) => x.copyWith(locale: i == 0 ? 'sw' : 'en')),
+                          onChanged: (i) => change((x) => x.copyWith(locale: i == 0 ? 'sw' : 'en')),
                         ),
                       ),
                       _Group(
@@ -280,10 +279,7 @@ class _Links extends StatelessWidget {
                     NewsIcon(icon, size: 20, color: c.textSecondary),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        name,
-                        style: context.type.bodyM.copyWith(color: c.textPrimary),
-                      ),
+                      child: Text(name, style: context.type.bodyM.copyWith(color: c.textPrimary)),
                     ),
                     NewsIcon(NewsIcons.chevronRight, size: 18, color: c.textTertiary),
                   ],

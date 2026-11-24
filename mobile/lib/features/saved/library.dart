@@ -117,7 +117,7 @@ class Library extends _$Library {
           )).value;
       if (await _db.saved(path) == null) return; // removed meanwhile
       await _db.completeSaved(path, article: jsonEncode(article.toJson()));
-      await Future.wait(picturesOf(article).map(savedPictures.downloadFile));
+      await Future.wait(picturesOf(article).map(ref.read(pictureKeeperProvider).keep));
       await _db.completeSaved(path, imagesReady: true);
     } on Exception catch (e) {
       if (e is! Failure) debugPrint('$e');
@@ -152,7 +152,7 @@ class Library extends _$Library {
     await _db.unsave(story.path);
     if (copy != null) {
       for (final url in picturesOf(copy)) {
-        unawaited(savedPictures.removeFile(url));
+        unawaited(ref.read(pictureKeeperProvider).drop(url));
       }
     }
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart' show MaterialPage;
 import 'package:news_design_tokens/news_design_tokens.dart';
@@ -38,8 +37,11 @@ class ShellRoute extends StatefulShellRouteData {
   const ShellRoute();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, StatefulNavigationShell shell) =>
-      AppShell(shell: shell);
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) => AppShell(shell: navigationShell);
 }
 
 class HomeBranch extends StatefulShellBranchData {

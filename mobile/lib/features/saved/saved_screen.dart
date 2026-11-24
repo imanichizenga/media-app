@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -176,9 +177,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               ),
               onDismissed: (_) => _remove(x),
               child: Semantics(
-                customSemanticsActions: {
-                  CustomSemanticsAction(label: s.unsave): () => _remove(x),
-                },
+                customSemanticsActions: {CustomSemanticsAction(label: s.unsave): () => _remove(x)},
                 child: RowCard(
                   x.story,
                   open: open,
@@ -268,10 +267,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                           ColoredBox(color: c.border, child: const SizedBox.expand()),
                           FractionallySizedBox(
                             widthFactor: x.percent / 100,
-                            child: ColoredBox(
-                              color: c.textPrimary,
-                              child: const SizedBox.expand(),
-                            ),
+                            child: ColoredBox(color: c.textPrimary, child: const SizedBox.expand()),
                           ),
                         ],
                       ),

@@ -10,7 +10,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../app/router.dart';
-import '../../app/shell.dart';
 import '../../core/config/app_config.dart';
 import '../../core/config/env.dart';
 import '../../core/format/format.dart';
@@ -22,7 +21,6 @@ import '../../core/telemetry/analytics.dart';
 import '../../l10n/gen/strings.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
-import '../../ui/components/skeleton.dart';
 import '../../ui/states/designed.dart';
 import '../../ui/tokens/news_icon.dart';
 import '../../ui/tokens/news_icons.g.dart';
@@ -129,10 +127,7 @@ class _ShortsState extends ConsumerState<Shorts> with WidgetsBindingObserver {
     if (state case AsyncError(:final error) when state.value == null) {
       body = Theme(
         data: Theme.of(context).copyWith(
-          extensions: [
-            ref.read(themeChoiceProvider).colors(ThemeScheme.dark),
-            const AppType(),
-          ],
+          extensions: [ref.read(themeChoiceProvider).colors(ThemeScheme.dark), const AppType()],
         ),
         child: Builder(
           builder: (context) => Center(
@@ -175,9 +170,7 @@ class _ShortsState extends ConsumerState<Shorts> with WidgetsBindingObserver {
           aspectRatio: MediaQuery.sizeOf(context).width > 600
               ? 9 / 16
               : MediaQuery.sizeOf(context).width /
-                    (MediaQuery.sizeOf(context).height -
-                        64 -
-                        MediaQuery.paddingOf(context).bottom),
+                    (MediaQuery.sizeOf(context).height - 64 - MediaQuery.paddingOf(context).bottom),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -246,7 +239,9 @@ class ShortPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-              const IgnorePointer(child: DecoratedBox(decoration: BoxDecoration(gradient: _shade))),
+              const IgnorePointer(
+                child: DecoratedBox(decoration: BoxDecoration(gradient: _shade)),
+              ),
               Semantics(
                 button: true,
                 label: pool.held ? s.play : s.pause,
@@ -305,10 +300,8 @@ class ShortPage extends ConsumerWidget {
                           const SizedBox(height: 10),
                           Pressable(
                             link: true,
-                            onTap: () => context.push(
-                              story.path,
-                              extra: StoryExtra(story, from: 'shorts'),
-                            ),
+                            onTap: () =>
+                                context.push(story.path, extra: StoryExtra(story, from: 'shorts')),
                             child: Container(
                               constraints: const BoxConstraints(minHeight: 48),
                               padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -495,6 +488,17 @@ class _Progress extends StatelessWidget {
       );
     },
   );
+}
+
+class _Window extends StatelessWidget {
+  const _Window({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => MediaQuery.sizeOf(context).width < 600
+      ? SizedBox.expand(child: child)
+      : AspectRatio(aspectRatio: 9 / 16, child: child);
 }
 
 /// The same places as a short, in bones of light.

@@ -72,9 +72,7 @@ class _VideoScreenState extends ConsumerState<VideoScreen> {
 
   void _top() {
     if (_scroll.hasClients) {
-      unawaited(
-        _scroll.animateTo(0, duration: NewsMotion.slow * 2, curve: NewsMotion.standard),
-      );
+      unawaited(_scroll.animateTo(0, duration: NewsMotion.slow * 2, curve: NewsMotion.standard));
     }
   }
 

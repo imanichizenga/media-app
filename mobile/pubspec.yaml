@@ -48,8 +48,8 @@ dev_dependencies:
   riverpod_generator: 4.0.10
   go_router_builder: 4.5.3
   drift_dev: 2.35.3
-  alchemist: 0.15.0
   mocktail: 1.0.5
+  video_player_platform_interface: any
   flutter_lints: ^6.0.0
   flutter_native_splash: 2.4.8
   flutter_launcher_icons: 0.14.4

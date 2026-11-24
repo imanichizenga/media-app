@@ -132,6 +132,7 @@ class _TitleBar extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrink, bool overlaps) => AnnotatedRegion(
     value: overlayFor(colors.mastheadBg),
     child: Container(
+      height: maxExtent,
       padding: EdgeInsets.only(top: top, left: NewsSpace.s2, right: NewsSpace.s5),
       decoration: BoxDecoration(
         color: colors.mastheadBg,
