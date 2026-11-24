@@ -28,6 +28,7 @@ mixin CachedFirst<T> {
   }
 
   Future<void> refresh() async {
+    if (!ref.mounted) return;
     try {
       final fresh = await fromNetwork(call);
       if (ref.mounted) state = AsyncData(fresh);
@@ -162,6 +163,7 @@ class Feed extends _$Feed {
       FeedState(stories: l.value.stories, next: l.value.next, at: l.at, about: l.value.about);
 
   Future<void> refresh() async {
+    if (!ref.mounted) return;
     try {
       final fresh = await fromNetwork((x) => _ask(x, null));
       if (ref.mounted) state = AsyncData(_first(fresh));

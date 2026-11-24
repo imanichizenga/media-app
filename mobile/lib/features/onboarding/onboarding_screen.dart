@@ -90,10 +90,7 @@ class SkipPill extends StatelessWidget {
     child: Container(
       constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: const Color(0xCC000000),
-        borderRadius: BorderRadius.circular(26),
-      ),
+      decoration: BoxDecoration(color: OverMedia.pill, borderRadius: BorderRadius.circular(26)),
       child: Center(
         widthFactor: 1,
         child: Text(
@@ -122,16 +119,7 @@ class _Welcome extends ConsumerWidget {
       fit: StackFit.expand,
       children: [
         ExcludeSemantics(child: _Wall(pictures)),
-        const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0, 0.3, 0.56, 1],
-              colors: [Color(0x66000000), Color(0x1A000000), Color(0xD9000000), Color(0xFF000000)],
-            ),
-          ),
-        ),
+        const DecoratedBox(decoration: BoxDecoration(gradient: OverMedia.wall)),
         SafeArea(
           child: Align(
             alignment: Alignment.bottomCenter,
@@ -228,7 +216,7 @@ class _WallState extends State<_Wall> with SingleTickerProviderStateMixin {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18),
                       child: p.isEmpty
-                          ? const ColoredBox(color: Color(0xFF1C1C1C))
+                          ? const ColoredBox(color: OverMedia.night)
                           : NewsPicture(p[(from + i * 2) % p.length]),
                     ),
                   ),

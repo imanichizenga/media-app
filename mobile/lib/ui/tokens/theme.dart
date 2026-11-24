@@ -46,6 +46,11 @@ extension Themed on BuildContext {
   bool get still => MediaQuery.disableAnimationsOf(this);
 }
 
+/// "#rrggbb" as the API writes it, or nothing.
+Color? colorOf(String hex) => RegExp(r'^#[0-9a-fA-F]{6}$').hasMatch(hex)
+    ? Color(0xFF000000 | int.parse(hex.substring(1), radix: 16))
+    : null;
+
 /// What sits over pictures and video is the same in every theme.
 abstract final class OverMedia {
   static const ink = Color(0xFFFFFFFF);
@@ -68,6 +73,32 @@ abstract final class OverMedia {
     end: Alignment.bottomCenter,
     colors: [Color(0xA6000000), Color(0x00000000)],
   );
+  static const pill = Color(0xCC000000);
+  static const bone = Color(0x33FFFFFF);
+  static const night = Color(0xFF161616);
+
+  /// The wall of pictures behind the welcome.
+  static const wall = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0, 0.3, 0.56, 1],
+    colors: [Color(0x66000000), Color(0x1A000000), Color(0xD9000000), Color(0xFF000000)],
+  );
+
+  /// Over a vertical video: the header above, the words below.
+  static const short = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0, 0.18, 0.5, 0.78, 1],
+    colors: [
+      Color(0x80000000),
+      Color(0x00000000),
+      Color(0x26000000),
+      Color(0xB8000000),
+      Color(0xE6000000),
+    ],
+  );
+  static const lift = [BoxShadow(color: Color(0x1A000000), blurRadius: 8, offset: Offset(0, 2))];
   static const shadow = [BoxShadow(color: Color(0x1F000000), blurRadius: 24, offset: Offset(0, 8))];
   static const textShadow = [Shadow(color: Color(0x99000000), blurRadius: 8, offset: Offset(0, 1))];
 }

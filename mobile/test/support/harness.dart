@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:news_api_client/news_api_client.dart' show AppConfigApi;
 import 'package:news_app/app/app.dart';
 import 'package:news_app/app/router.dart';
 import 'package:news_app/core/config/theme_choice.dart';
@@ -18,7 +20,6 @@ import 'package:news_app/core/providers.dart';
 import 'package:news_app/core/storage/database.dart';
 import 'package:news_app/core/storage/prefs.dart';
 import 'package:news_app/features/video/shorts.dart';
-import 'package:news_api_client/news_api_client.dart' show AppConfigApi;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'fake_api.dart';
@@ -156,11 +157,25 @@ class Phone {
     await tester.runAsync(() async {
       for (final element in find.byType(Image).evaluate()) {
         final image = element.widget as Image;
-        await precacheImage(image.image, element, onError: (_, _) {});
+        await precacheImage(
+          image.image,
+          element,
+          onError: (_, _) {},
+        ).timeout(const Duration(milliseconds: 800), onTimeout: () {});
       }
     });
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
+  }
+
+  /// As if the app were closed. The database stays, as a phone's would.
+  Future<void> stop() async {
+    await tester.pumpWidget(const SizedBox());
+    container.dispose();
+    for (var i = 0; i < 4; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump(const Duration(seconds: 1));
+    }
   }
 
   Future<void> go(String path) async {
@@ -215,6 +230,7 @@ Future<Phone> start(
     );
   }
 
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   FakeVideo.install();
   keeper = FakeKeeper();
   final fake = api ?? FakeApi();
@@ -240,10 +256,7 @@ Future<Phone> start(
       ...overrides,
     ],
   );
-  addTearDown(() async {
-    container.dispose();
-    if (database == null) await tester.runAsync(db.close);
-  });
+  addTearDown(container.dispose); // the database lives in memory and goes with the test
   await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NewsApp()));
   final p = Phone(tester, fake, db, container);
   if (settle) await p.settle(10);

@@ -29,6 +29,7 @@ class AppConfigController extends _$AppConfigController {
   }
 
   Future<void> refresh() async {
+    if (!ref.mounted) return;
     try {
       final fresh = await fromNetwork((x) => ref.read(appConfigApiProvider).appConfig(extra: x));
       if (!ref.mounted) return;

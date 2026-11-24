@@ -307,7 +307,7 @@ class Segmented extends StatelessWidget {
     final ground = onDark ? OverMedia.chip : c.surfaceSunken;
     final thumb = onDark ? OverMedia.ink : c.surfaceRaised;
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(color: ground, borderRadius: BorderRadius.circular(30)),
       child: Stack(
         children: [
@@ -323,7 +323,7 @@ class Segmented extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: thumb,
                     borderRadius: BorderRadius.circular(26),
-                    boxShadow: context.isDark || onDark ? null : _lift,
+                    boxShadow: context.isDark || onDark ? null : OverMedia.lift,
                   ),
                 ),
               ),
@@ -341,7 +341,7 @@ class Segmented extends StatelessWidget {
                       haptic: true,
                       scale: 1,
                       child: Container(
-                        constraints: const BoxConstraints(minHeight: 44),
+                        constraints: const BoxConstraints(minHeight: 48),
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
@@ -366,8 +366,6 @@ class Segmented extends StatelessWidget {
     );
   }
 }
-
-const _lift = [BoxShadow(color: Color(0x1A000000), blurRadius: 8, offset: Offset(0, 2))];
 
 /// A word one can choose or follow.
 class NewsChip extends StatelessWidget {

@@ -236,7 +236,7 @@ class ShortPage extends ConsumerWidget {
                   ),
                 ),
               const IgnorePointer(
-                child: DecoratedBox(decoration: BoxDecoration(gradient: _shade)),
+                child: DecoratedBox(decoration: BoxDecoration(gradient: OverMedia.short)),
               ),
               Semantics(
                 button: true,
@@ -378,19 +378,6 @@ class ShortPage extends ConsumerWidget {
       ),
     );
   }
-
-  static const _shade = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    stops: [0, 0.18, 0.5, 0.78, 1],
-    colors: [
-      Color(0x80000000),
-      Color(0x00000000),
-      Color(0x26000000),
-      Color(0xB8000000),
-      Color(0xE6000000),
-    ],
-  );
 }
 
 class BigPlayGlyph extends StatelessWidget {
@@ -507,13 +494,10 @@ class ShortSkeleton extends StatelessWidget {
       width: w,
       height: h,
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: const Color(0x33FFFFFF),
-        borderRadius: BorderRadius.circular(6),
-      ),
+      decoration: BoxDecoration(color: OverMedia.bone, borderRadius: BorderRadius.circular(6)),
     );
     return ColoredBox(
-      color: const Color(0xFF141414),
+      color: OverMedia.night,
       child: Stack(
         children: [
           Positioned(

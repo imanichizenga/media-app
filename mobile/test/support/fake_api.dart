@@ -32,7 +32,7 @@ class FakeApi implements HttpClientAdapter {
     return d;
   }
 
-  static Map<String, dynamic> config([Map<String, dynamic> over = const {}]) => {
+  static Map<String, dynamic> config([Map<String, dynamic> over = const {}]) => <String, dynamic>{
     'version': '1.0.0',
     'media_base_url': 'https://media.test',
     'versions': {
@@ -58,7 +58,7 @@ class FakeApi implements HttpClientAdapter {
       'wordmark_dark': null,
       'symbol': null,
     },
-    'theme': {
+    'theme': <String, dynamic>{
       'schema_version': 1,
       'hash': 'abc',
       'key': 'signature',

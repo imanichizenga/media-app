@@ -91,10 +91,6 @@ class NewsPicture extends ConsumerWidget {
       : Alignment.center;
 }
 
-Color? colorOf(String hex) => RegExp(r'^#[0-9a-fA-F]{6}$').hasMatch(hex)
-    ? Color(0xFF000000 | int.parse(hex.substring(1), radix: 16))
-    : null;
-
 class BlurhashView extends StatefulWidget {
   const BlurhashView(this.hash, {super.key});
 

@@ -78,12 +78,14 @@ bool isSaved(Ref ref, String path) =>
 /// The saved copy, for reading without a connection.
 @riverpod
 Future<Article?> savedArticle(Ref ref, String path) async {
-  final row = await ref.watch(databaseProvider).saved(path);
-  if (row?.article == null) return null;
+  return articleOf(await ref.watch(databaseProvider).saved(path));
+}
+
+Article? articleOf(SavedRow? row) {
   try {
     return Article.fromJson(jsonDecode(row!.article!) as Map<String, dynamic>);
   } on Object {
-    return null;
+    return null; // not downloaded yet, or in a shape this version does not know
   }
 }
 
@@ -115,7 +117,7 @@ class Library extends _$Library {
           (await fromNetwork(
             (x) => ref.read(contentApiProvider).article(slug: slug, locale: locale, extra: x),
           )).value;
-      if (await _db.saved(path) == null) return; // removed meanwhile
+      if (!ref.mounted || await _db.saved(path) == null) return; // closed, or removed meanwhile
       await _db.completeSaved(path, article: jsonEncode(article.toJson()));
       await Future.wait(picturesOf(article).map(ref.read(pictureKeeperProvider).keep));
       await _db.completeSaved(path, imagesReady: true);
@@ -125,8 +127,11 @@ class Library extends _$Library {
   }
 
   Future<void> resumeDownloads() async {
-    for (final s in await ref.read(savedStoriesProvider.future)) {
-      if (!s.ready) await download(s.story.path, s.story.slug, s.story.locale, null);
+    for (final row in await _db.select(_db.savedArticles).get()) {
+      if (!ref.mounted) return;
+      final story = _story(row.card);
+      if (story == null || row.article != null && row.imagesReady) continue;
+      await download(story.path, story.slug, story.locale, articleOf(row));
     }
   }
 
@@ -148,9 +153,9 @@ class Library extends _$Library {
 
   Future<void> unsave(Story story) async {
     ref.read(analyticsProvider).track(StorySaved(story.id, saved: false));
-    final copy = await ref.read(savedArticleProvider(story.path).future);
+    final copy = articleOf(await _db.saved(story.path));
     await _db.unsave(story.path);
-    if (copy != null) {
+    if (copy != null && ref.mounted) {
       for (final url in picturesOf(copy)) {
         unawaited(ref.read(pictureKeeperProvider).drop(url));
       }
