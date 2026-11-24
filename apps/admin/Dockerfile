@@ -10,6 +10,7 @@ COPY packages/design-tokens/package.json packages/design-tokens/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/content-schema/package.json packages/content-schema/
 COPY packages/ui/package.json packages/ui/
+COPY packages/screens/package.json packages/screens/
 RUN pnpm install --frozen-lockfile --filter @news/admin...
 COPY packages packages
 COPY apps/admin apps/admin
@@ -20,5 +21,6 @@ WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3001 HOSTNAME=0.0.0.0
 COPY --from=build /repo/apps/admin/.next/standalone ./
 COPY --from=build /repo/apps/admin/.next/static ./apps/admin/.next/static
+COPY --from=build /repo/apps/admin/public ./apps/admin/public
 EXPOSE 3001
 CMD ["apps/admin/server.js"]

@@ -13,6 +13,7 @@ import {
   Menu,
   Moon,
   Newspaper,
+  Palette as PaletteIcon,
   Plug,
   ScrollText,
   Search,
@@ -45,6 +46,7 @@ export const NAV: Item[] = [
   { href: "/roles", key: "roles", icon: ShieldCheck, perm: "staff.view" },
   { href: "/audit", key: "audit", icon: ScrollText, perm: "audit.view" },
   { href: "/logs", key: "logs", icon: Activity, perm: "audit.view" },
+  { href: "/appearance", key: "appearance", icon: PaletteIcon, perm: "settings.view" },
   { href: "/settings", key: "settings", icon: Settings, perm: "settings.view" },
   { href: "/author", key: "author", icon: UserPen, perm: "content.create" },
   { href: "/security", key: "security", icon: Fingerprint },
@@ -83,7 +85,7 @@ function Palette({ items, open, setOpen }: { items: Item[]; open: boolean; setOp
                     setOpen(false);
                     router.push(href);
                   }}
-                  className="tap flex cursor-pointer items-center gap-3 rounded-sm px-3 data-[selected=true]:bg-accent-soft data-[selected=true]:text-accent"
+                  className="tap flex cursor-pointer items-center gap-3 rounded-sm px-3 data-[selected=true]:bg-brand-soft data-[selected=true]:text-brand-text"
                 >
                   <Icon aria-hidden size={18} />
                   {t(key as never)}
@@ -204,7 +206,7 @@ export function Shell({ children }: { children: ReactNode }) {
                     className={cx(
                       "tap flex items-center gap-3 rounded-sm px-3 text-label",
                       active
-                        ? "bg-accent-soft text-accent"
+                        ? "bg-brand-soft text-brand-text"
                         : "text-text-secondary hover:bg-surface-sunken hover:text-text-primary",
                     )}
                   >

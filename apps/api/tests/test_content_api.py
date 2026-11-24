@@ -441,17 +441,3 @@ def test_youtube_import_mirrors_the_thumbnail_once(admin_api, monkeypatch):
     assert first["thumbnail"]["id"] == again["thumbnail"]["id"]
     assert len(stored) == 1
     assert api.post("media/youtube", {"url": "https://vimeo.com/1"}).json()["code"] == "not_youtube"
-
-
-def test_a_logo_is_a_finished_picture_and_cannot_be_deleted(admin_api):
-    _, api = admin_api("super_admin")
-    good, bad = f.asset(), f.asset(status="failed")
-    identity = api.get("settings/identity").json()
-    values = {**identity["values"], "logo_light": str(bad.pk)}
-    assert api.put("settings/identity", {"version": 0, "values": values}).status_code == 400
-    values["logo_light"] = "../etc"
-    assert api.put("settings/identity", {"version": 0, "values": values}).status_code == 400
-    values["logo_light"] = str(good.pk)
-    assert api.put("settings/identity", {"version": 0, "values": values}).status_code == 200
-    assert api.get(f"media/{good.pk}").json()["elsewhere"] == ["logo_light"]
-    assert api.delete(f"media/{good.pk}").json()["code"] == "asset_in_use"

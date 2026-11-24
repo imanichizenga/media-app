@@ -28,7 +28,8 @@ export function proxy(request: NextRequest) {
     `connect-src ${allow("'self'", MEDIA, UPLOAD)}`,
     "base-uri 'none'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-src 'self'",
+    `frame-ancestors ${request.nextUrl.pathname === "/preview" ? "'self'" : "'none'"}`,
     "require-trusted-types-for 'script'",
     "trusted-types nextjs nextjs#bundler default ProseMirrorClipboard",
   ]
@@ -44,5 +45,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|ws/|media/|monitoring|_next/static|_next/image|favicon.ico|healthz).*)"],
+  matcher: [
+    "/((?!api|ws/|media/|theme/|preview-media/|monitoring|_next/static|_next/image|favicon.ico|healthz).*)",
+  ],
 };

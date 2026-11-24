@@ -2,7 +2,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
-import { MediaPicker, Thumb } from "@/components/media/library";
 import {
   Bone,
   Button,
@@ -15,24 +14,14 @@ import {
   TextField,
 } from "@/components/ui";
 import { ApiError, call, client } from "@/lib/api";
-import { keys, useAsset, useSettings } from "@/lib/queries";
+import { keys, useSettings } from "@/lib/queries";
 
 type Spec = {
   name: string;
-  kind: "text" | "number" | "color" | "check" | "list" | "select" | "image";
+  kind: "text" | "number" | "check" | "list" | "select";
   options?: string[];
 };
 const SECTIONS: Record<string, Spec[]> = {
-  identity: [
-    { name: "brand_name", kind: "text" },
-    { name: "tagline_sw", kind: "text" },
-    { name: "tagline_en", kind: "text" },
-    { name: "accent_light", kind: "color" },
-    { name: "accent_dark", kind: "color" },
-    { name: "logo_light", kind: "image" },
-    { name: "logo_dark", kind: "image" },
-    { name: "favicon", kind: "image" },
-  ],
   localization: [
     { name: "default_locale", kind: "select", options: ["sw", "en"] },
     { name: "timezone", kind: "text" },
@@ -120,16 +109,6 @@ function Section({ name, specs }: { name: string; specs: Spec[] }) {
             const label = t(`field.${s.name}` as never);
             const value = values[s.name];
             const disabled = !data?.can_edit || pending;
-            if (s.kind === "image")
-              return (
-                <ImageSetting
-                  key={s.name}
-                  name={s.name}
-                  label={label}
-                  initial={String(value ?? "")}
-                  disabled={disabled}
-                />
-              );
             if (s.kind === "check")
               return (
                 <label key={s.name} className="tap flex items-center gap-3 text-label">
@@ -193,49 +172,6 @@ function Section({ name, specs }: { name: string; specs: Spec[] }) {
     </Card>
   );
 }
-function ImageSetting({
-  name,
-  label,
-  initial,
-  disabled,
-}: {
-  name: string;
-  label: string;
-  initial: string;
-  disabled: boolean;
-}) {
-  const t = useTranslations("editor");
-  const [id, setId] = useState(initial);
-  const [open, setOpen] = useState(false);
-  const { data } = useAsset(id || null);
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-label">{label}</span>
-      <input type="hidden" name={name} value={id} />
-      <div className="flex items-center gap-3">
-        {data && <Thumb asset={data.asset} className="aspect-4/3 w-24" />}
-        {!disabled && (
-          <>
-            <Button
-              variant="secondary"
-              onClick={() => setOpen(true)}
-              aria-label={`${t(id ? "change" : "choose.image")}: ${label}`}
-            >
-              {t(id ? "change" : "choose.image")}
-            </Button>
-            {id && (
-              <Button variant="ghost" onClick={() => setId("")} aria-label={t("remove", { label })}>
-                {t("removeIt")}
-              </Button>
-            )}
-          </>
-        )}
-      </div>
-      <MediaPicker kind="image" open={open} onClose={() => setOpen(false)} onPick={(a) => setId(a.id)} />
-    </div>
-  );
-}
-
 export default function SettingsPage() {
   const t = useTranslations("settings");
   return (

@@ -692,7 +692,7 @@ function RelatedForm({ block, onChange }: FormProps<"related_link">) {
                 type="button"
                 className={cx(
                   "tap w-full px-3 text-left hover:bg-surface-sunken",
-                  block.post === post.id && "bg-accent-soft text-accent",
+                  block.post === post.id && "bg-brand-soft text-brand-text",
                 )}
                 onClick={() =>
                   onChange({ ...block, post: post.id, url: undefined, title: block.title || post.headline })

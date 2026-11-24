@@ -33,13 +33,15 @@ def assert_matches(path, method, status, body):
         "integrations",
         "integrations/{key}",
         "settings/{key}",
+        "brand",
+        "brand/versions",
     ],
 )
 def test_get(admin_api, path):
     _, a = admin_api()
     save(a)
     a.post("staff/invites", {"email": "j@example.test", "grants": [{"role": "journalist"}]})
-    key = "identity" if path.startswith("settings") else "aws_s3"
+    key = "localization" if path.startswith("settings") else "aws_s3"
     res = a.get(path.replace("{key}", key))
     assert res.status_code == 200
     assert_matches(path, "get", 200, res.json())

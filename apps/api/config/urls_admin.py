@@ -12,6 +12,7 @@ from newsplatform.rbac import api as rbac
 from newsplatform.realtime import api as realtime
 from newsplatform.seo import api as seo
 from newsplatform.site_config import api as site
+from newsplatform.site_config import brand_api as brand
 from newsplatform.staff_security import api as staff
 from newsplatform.taxonomy import api as taxonomy
 
@@ -57,6 +58,17 @@ urlpatterns = [
     path(API + "audit/export", audit.AuditExportView.as_view()),
     path(API + "logs/auth", staff.AuthEventListView.as_view()),
     path(API + "logs/integrations", integrations.IntegrationCallListView.as_view()),
+    path(API + "brand", brand.BrandView.as_view()),
+    path(API + "brand/logos", brand.BrandLogoView.as_view()),
+    path(API + "brand/versions", brand.BrandVersionListView.as_view()),
+    path(API + "brand/versions/<int:number>/restore", brand.BrandRestoreView.as_view()),
+    path("theme/current.css", brand.current_css),
+    re_path(r"^theme/(?P<digest>[0-9a-f]{16})\.css$", brand.theme_css),
+    re_path(
+        r"^theme/logo/(?P<kind>wordmark|symbol)-(?P<digest>[0-9a-f]{32})/(?P<name>[a-z0-9-]{1,18}\.(?:svg|png))$",
+        brand.logo_file,
+    ),
+    re_path(r"^theme/manifest-(?P<locale>sw|en)\.webmanifest$", brand.manifest),
     path(API + "settings/<slug:key>", site.SettingsView.as_view()),
     path(API + "integrations", integrations.IntegrationListView.as_view()),
     path(API + "integrations/runs/<uuid:run_id>", integrations.IntegrationTestRunView.as_view()),

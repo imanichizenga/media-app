@@ -84,6 +84,7 @@ class CardSerializer(serializers.Serializer[Any]):
     image = PublicImageSerializer(allow_null=True)
     video = PublicVideoSerializer(allow_null=True)
     youtube_id = _text()
+    duration_ms = serializers.IntegerField(allow_null=True, help_text="Of the video, wherever it lives")
     reading_minutes = serializers.IntegerField()
     published_at = serializers.DateTimeField()
     modified_at = serializers.DateTimeField()

@@ -34,6 +34,7 @@ dependencies = [
   "websockets>=16",
   "opentelemetry-instrumentation-asgi>=0.66b2",
   "jsonschema~=4.25",
+  "defusedxml>=0.7.1",
   "nh3>=0.3",
   "pyvips[binary]>=3.0",
   "blurhash>=1.1",
@@ -81,7 +82,7 @@ strict = true
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main", "pydantic.mypy"]
 exclude = ["migrations/", "tests/"]
 [[tool.mypy.overrides]]
-module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*", "pyvips.*", "blurhash.*"]
+module = ["celery.*", "kombu.*", "segno.*", "opentelemetry.*", "pyvips.*", "blurhash.*", "defusedxml.*"]
 ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # Celery ships no types, so its decorators are untyped wherever they are used.

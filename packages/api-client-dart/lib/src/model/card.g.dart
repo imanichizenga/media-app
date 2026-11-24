@@ -31,6 +31,8 @@ abstract class _$CardCWProxy {
 
   Card youtubeId(String youtubeId);
 
+  Card durationMs(int? durationMs);
+
   Card readingMinutes(int readingMinutes);
 
   Card publishedAt(DateTime publishedAt);
@@ -62,6 +64,7 @@ abstract class _$CardCWProxy {
     PublicImage? image,
     PublicVideo? video,
     String youtubeId,
+    int? durationMs,
     int readingMinutes,
     DateTime publishedAt,
     DateTime modifiedAt,
@@ -114,6 +117,9 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
   Card youtubeId(String youtubeId) => this(youtubeId: youtubeId);
 
   @override
+  Card durationMs(int? durationMs) => this(durationMs: durationMs);
+
+  @override
   Card readingMinutes(int readingMinutes) =>
       this(readingMinutes: readingMinutes);
 
@@ -154,6 +160,7 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
     Object? image = const $CopyWithPlaceholder(),
     Object? video = const $CopyWithPlaceholder(),
     Object? youtubeId = const $CopyWithPlaceholder(),
+    Object? durationMs = const $CopyWithPlaceholder(),
     Object? readingMinutes = const $CopyWithPlaceholder(),
     Object? publishedAt = const $CopyWithPlaceholder(),
     Object? modifiedAt = const $CopyWithPlaceholder(),
@@ -210,6 +217,10 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
           ? _value.youtubeId
           // ignore: cast_nullable_to_non_nullable
           : youtubeId as String,
+      durationMs: durationMs == const $CopyWithPlaceholder()
+          ? _value.durationMs
+          // ignore: cast_nullable_to_non_nullable
+          : durationMs as int?,
       readingMinutes: readingMinutes == const $CopyWithPlaceholder()
           ? _value.readingMinutes
           // ignore: cast_nullable_to_non_nullable
@@ -267,6 +278,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
             'image',
             'video',
             'youtube_id',
+            'duration_ms',
             'reading_minutes',
             'published_at',
             'modified_at',
@@ -302,6 +314,8 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
                   ? null
                   : PublicVideo.fromJson(v as Map<String, dynamic>)),
           youtubeId: $checkedConvert('youtube_id', (v) => v as String),
+          durationMs:
+              $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
           readingMinutes:
               $checkedConvert('reading_minutes', (v) => (v as num).toInt()),
           publishedAt: $checkedConvert(
@@ -317,6 +331,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
       },
       fieldKeyMap: const {
         'youtubeId': 'youtube_id',
+        'durationMs': 'duration_ms',
         'readingMinutes': 'reading_minutes',
         'publishedAt': 'published_at',
         'modifiedAt': 'modified_at',
@@ -339,6 +354,7 @@ Map<String, dynamic> _$CardToJson(Card instance) => <String, dynamic>{
       'image': instance.image?.toJson(),
       'video': instance.video?.toJson(),
       'youtube_id': instance.youtubeId,
+      'duration_ms': instance.durationMs,
       'reading_minutes': instance.readingMinutes,
       'published_at': instance.publishedAt.toIso8601String(),
       'modified_at': instance.modifiedAt.toIso8601String(),

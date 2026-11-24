@@ -1,5 +1,6 @@
 "use client";
 import type { Schemas } from "@news/api-client/admin";
+import { clock, seconds } from "@news/ui/news";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, CircleAlert, CircleCheck, TriangleAlert, X } from "lucide-react";
 import { useTimeZone, useTranslations } from "next-intl";
@@ -545,6 +546,15 @@ export function DetailsPanel({ draft, snap, locale, disabled }: Props) {
           >
             {e("youtubeRead")}
           </Button>
+          <TextField
+            key={data.youtube_seconds}
+            label={e("youtubeLength")}
+            help={e("youtubeLengthHelp")}
+            inputMode="numeric"
+            defaultValue={data.youtube_seconds ? clock(data.youtube_seconds * 1000) : ""}
+            disabled={disabled}
+            onBlur={(x) => draft.change({ youtube_seconds: seconds(x.target.value) })}
+          />
         </div>
       )}
       <Field label={t("type")}>
@@ -708,7 +718,7 @@ export function SeoPanel({ draft, snap, locale, disabled }: Props) {
     <div className="flex flex-col gap-5">
       <section aria-label={t("google")} className="rounded-md border border-border bg-bg p-4">
         <p className="text-caption text-text-secondary">{t("google")}</p>
-        <p className="truncate text-accent text-title">{title || "…"}</p>
+        <p className="truncate text-brand-text text-title">{title || "…"}</p>
         <p className="truncate text-caption text-success">{path}</p>
         <p className="line-clamp-2 text-caption text-text-secondary">{description || "…"}</p>
       </section>

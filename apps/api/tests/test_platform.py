@@ -60,7 +60,10 @@ def test_public_surface_has_no_admin_routes():
     content = {
         str(p.pattern).removeprefix("api/v1/content/") for p in patterns if "/content/" in str(p.pattern)
     }
-    other = {str(p.pattern) for p in patterns if "/content/" not in str(p.pattern)}
+    rest = {str(p.pattern) for p in patterns if "/content/" not in str(p.pattern)}
+    theme = {p.strip("^").split("theme/")[1].split("(")[0] for p in rest if "theme/" in p}
+    assert theme == {"", "current.css", "logo/", "manifest-"}
+    other = {p for p in rest if "theme/" not in p}
     assert other == {"health/live", "health/ready", "api/v1/site-config"}
     assert content == {
         "home",

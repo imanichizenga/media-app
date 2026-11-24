@@ -93,6 +93,7 @@ class PostDataSerializer(serializers.Serializer[Any]):
     hero = serializers.UUIDField(allow_null=True, required=False)
     video = serializers.UUIDField(allow_null=True, required=False)
     youtube_id = serializers.RegexField(r"^([A-Za-z0-9_-]{11})?\Z", allow_blank=True, required=False)
+    youtube_seconds = serializers.IntegerField(min_value=0, max_value=86_400, required=False)
     source_url = serializers.URLField(max_length=500, allow_blank=True, required=False)
     is_evergreen = serializers.BooleanField(required=False)
     is_sensitive = serializers.BooleanField(required=False)

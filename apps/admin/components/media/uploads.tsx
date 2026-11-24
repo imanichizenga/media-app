@@ -138,7 +138,7 @@ function Tray({
                   value={percent}
                   max={100}
                   aria-label={t("progressOf", { name: job.name })}
-                  className={cx("h-1 w-full", failed ? "accent-danger" : "accent-accent")}
+                  className={cx("h-1 w-full", failed ? "accent-danger" : "accent-brand")}
                 />
                 <p className={cx("text-caption", failed ? "text-danger" : "text-text-secondary")}>
                   {failed

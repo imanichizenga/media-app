@@ -284,18 +284,6 @@ def portrait(seed: int) -> bytes:
     return _finish(pyvips.Image.svgload_buffer(_svg(inner, p, "", 1200, 1200)), seed)
 
 
-def logo(dark: bool) -> bytes:
-    ink = "#f2f2f2" if dark else "#16181c"
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="960" height="240"><rect x="20" y="40" width="160" height="160" rx="36" '
-        f'fill="{"#7db8f5" if dark else "#0b5cad"}"/><path d="M62 152 V88 l76 64 V88" stroke="{"#101114" if dark else "#fff"}" '
-        f'stroke-width="22" fill="none" stroke-linejoin="round" stroke-linecap="round"/>'
-        f'<g fill="{ink}"><rect x="226" y="76" width="420" height="34" rx="10"/><rect x="226" y="134" width="290" height="34" rx="10"/></g></svg>'
-    ).encode()
-    data: bytes = pyvips.Image.svgload_buffer(svg).pngsave_buffer()
-    return data
-
-
 def _finish(image: pyvips.Image, seed: int) -> bytes:
     image = image.flatten().colourspace("srgb")
     grain = pyvips.Image.gaussnoise(image.width, image.height, sigma=5, mean=0, seed=seed)

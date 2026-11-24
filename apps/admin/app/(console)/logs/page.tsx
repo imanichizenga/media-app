@@ -129,7 +129,7 @@ export default function Logs() {
               aria-selected={tab === k}
               aria-controls="log-panel"
               onClick={() => setTab(k)}
-              className={`tap rounded-sm px-4 text-label ${tab === k ? "bg-accent-soft text-accent" : "text-text-secondary hover:bg-surface-sunken"}`}
+              className={`tap rounded-sm px-4 text-label ${tab === k ? "bg-brand-soft text-brand-text" : "text-text-secondary hover:bg-surface-sunken"}`}
             >
               {t(k)}
             </button>

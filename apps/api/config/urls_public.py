@@ -1,14 +1,22 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import path, re_path
 
 from newsplatform.common import health
 from newsplatform.content import public_api as content
 from newsplatform.media import dev
+from newsplatform.site_config import brand_api as brand
 from newsplatform.site_config.api import PublicConfigView
 
 API = "api/v1/"
 CONTENT = API + "content/"  # one prefix, so one CDN purge covers it
 urlpatterns = [
+    path("theme/current.css", brand.current_css),
+    re_path(r"^theme/(?P<digest>[0-9a-f]{16})\.css$", brand.theme_css),
+    re_path(
+        r"^theme/logo/(?P<kind>wordmark|symbol)-(?P<digest>[0-9a-f]{32})/(?P<name>[a-z0-9-]{1,18}\.(?:svg|png))$",
+        brand.logo_file,
+    ),
+    re_path(r"^theme/manifest-(?P<locale>sw|en)\.webmanifest$", brand.manifest),
     path("health/live", health.live),
     path("health/ready", health.ready),
     path(API + "site-config", PublicConfigView.as_view()),

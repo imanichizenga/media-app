@@ -27,3 +27,4 @@ playwright-report/
 .claude/settings.local.json
 .packages
 pubspec_overrides.yaml
+apps/admin/public/preview-media/

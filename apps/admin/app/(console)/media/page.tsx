@@ -27,7 +27,7 @@ export default function Media() {
       onDrop={drop}
       className={cx(
         "rounded-md outline-2 outline-offset-8",
-        over ? "outline-accent outline-dashed" : "outline-transparent",
+        over ? "outline-brand outline-dashed" : "outline-transparent",
       )}
     >
       <PageHeader title={t("title")} lead={t("lead")} actions={<UploadButton>{t("upload")}</UploadButton>} />

@@ -58,7 +58,7 @@ export function Tool({
       onClick={onClick}
       className={cx(
         "tap grid w-11 shrink-0 place-items-center rounded-sm disabled:opacity-40",
-        active ? "bg-accent-soft text-accent" : "text-text-secondary hover:bg-surface-sunken",
+        active ? "bg-brand-soft text-brand-text" : "text-text-secondary hover:bg-surface-sunken",
       )}
     >
       <Icon aria-hidden size={18} />

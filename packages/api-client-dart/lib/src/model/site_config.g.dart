@@ -7,11 +7,13 @@ part of 'site_config.dart';
 // **************************************************************************
 
 abstract class _$SiteConfigCWProxy {
+  SiteConfig theme(SiteTheme theme);
+
+  SiteConfig identity(SiteIdentity identity);
+
   SiteConfig version(String version);
 
   SiteConfig mediaBaseUrl(String mediaBaseUrl);
-
-  SiteConfig identity(SiteIdentity identity);
 
   SiteConfig localization(SiteLocalization localization);
 
@@ -22,9 +24,10 @@ abstract class _$SiteConfigCWProxy {
   /// SiteConfig(...).copyWith(id: 12, name: "My name")
   /// ````
   SiteConfig call({
+    SiteTheme theme,
+    SiteIdentity identity,
     String version,
     String mediaBaseUrl,
-    SiteIdentity identity,
     SiteLocalization localization,
   });
 }
@@ -36,14 +39,17 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
   final SiteConfig _value;
 
   @override
+  SiteConfig theme(SiteTheme theme) => this(theme: theme);
+
+  @override
+  SiteConfig identity(SiteIdentity identity) => this(identity: identity);
+
+  @override
   SiteConfig version(String version) => this(version: version);
 
   @override
   SiteConfig mediaBaseUrl(String mediaBaseUrl) =>
       this(mediaBaseUrl: mediaBaseUrl);
-
-  @override
-  SiteConfig identity(SiteIdentity identity) => this(identity: identity);
 
   @override
   SiteConfig localization(SiteLocalization localization) =>
@@ -58,12 +64,21 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
   /// SiteConfig(...).copyWith(id: 12, name: "My name")
   /// ````
   SiteConfig call({
+    Object? theme = const $CopyWithPlaceholder(),
+    Object? identity = const $CopyWithPlaceholder(),
     Object? version = const $CopyWithPlaceholder(),
     Object? mediaBaseUrl = const $CopyWithPlaceholder(),
-    Object? identity = const $CopyWithPlaceholder(),
     Object? localization = const $CopyWithPlaceholder(),
   }) {
     return SiteConfig(
+      theme: theme == const $CopyWithPlaceholder()
+          ? _value.theme
+          // ignore: cast_nullable_to_non_nullable
+          : theme as SiteTheme,
+      identity: identity == const $CopyWithPlaceholder()
+          ? _value.identity
+          // ignore: cast_nullable_to_non_nullable
+          : identity as SiteIdentity,
       version: version == const $CopyWithPlaceholder()
           ? _value.version
           // ignore: cast_nullable_to_non_nullable
@@ -72,10 +87,6 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
           ? _value.mediaBaseUrl
           // ignore: cast_nullable_to_non_nullable
           : mediaBaseUrl as String,
-      identity: identity == const $CopyWithPlaceholder()
-          ? _value.identity
-          // ignore: cast_nullable_to_non_nullable
-          : identity as SiteIdentity,
       localization: localization == const $CopyWithPlaceholder()
           ? _value.localization
           // ignore: cast_nullable_to_non_nullable
@@ -101,17 +112,20 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
         $checkKeys(
           json,
           requiredKeys: const [
+            'theme',
+            'identity',
             'version',
             'media_base_url',
-            'identity',
             'localization'
           ],
         );
         final val = SiteConfig(
-          version: $checkedConvert('version', (v) => v as String),
-          mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
+          theme: $checkedConvert(
+              'theme', (v) => SiteTheme.fromJson(v as Map<String, dynamic>)),
           identity: $checkedConvert('identity',
               (v) => SiteIdentity.fromJson(v as Map<String, dynamic>)),
+          version: $checkedConvert('version', (v) => v as String),
+          mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
           localization: $checkedConvert('localization',
               (v) => SiteLocalization.fromJson(v as Map<String, dynamic>)),
         );
@@ -122,8 +136,9 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
 
 Map<String, dynamic> _$SiteConfigToJson(SiteConfig instance) =>
     <String, dynamic>{
+      'theme': instance.theme.toJson(),
+      'identity': instance.identity.toJson(),
       'version': instance.version,
       'media_base_url': instance.mediaBaseUrl,
-      'identity': instance.identity.toJson(),
       'localization': instance.localization.toJson(),
     };

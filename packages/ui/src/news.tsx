@@ -6,8 +6,8 @@ import {
   type LucideIcon,
   MessageCircle,
   Play,
-  Radio,
   Share2,
+  Zap,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { type ImageAsset, Picture, type VideoAsset } from "./media";
@@ -24,6 +24,7 @@ export type CardData = {
   authors: { name: string }[];
   image: ImageAsset | null;
   video: VideoAsset | null;
+  duration_ms: number | null;
   reading_minutes: number;
   published_at: string;
   breaking_until: string | null;
@@ -33,7 +34,6 @@ export type CardData = {
 export type NewsLabels = {
   live: string;
   breaking: string;
-  video: string;
   gallery: string;
   sensitive: string;
   minutes: (n: number) => string;
@@ -60,17 +60,71 @@ export function ago(iso: string, { now, locale }: Pick<NewsEnv, "now" | "locale"
     timeZone: "Africa/Dar_es_Salaam",
   }).format(Date.parse(iso));
 }
-/** 1.2K, 3.4M, in the reader's language. */
-export const compact = (n: number, locale: NewsEnv["locale"]) =>
-  new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(n);
-export const clock = (ms: number) =>
-  `${Math.floor(ms / 60_000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+/**
+ * 1.3K, 3.4M. The same letters in both languages: CLDR's Swahili short form ("elfu 1.3") is too wide for an action
+ * bar, and readers know K and M from every other app (ADR-0034).
+ */
+export const compact = (n: number, _locale: NewsEnv["locale"]) =>
+  new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+/** The whole number, for those who listen. */
+export const exact = (n: number, locale: NewsEnv["locale"]) => new Intl.NumberFormat(locale).format(n);
+/** 0:08, 12:30, 1:02:05. */
+export function clock(ms: number): string {
+  const s = Math.round(ms / 1000);
+  const two = (n: number) => String(n).padStart(2, "0");
+  const h = Math.floor(s / 3600);
+  const m = Math.floor(s / 60) % 60;
+  return h > 0 ? `${h}:${two(m)}:${two(s % 60)}` : `${m}:${two(s % 60)}`;
+}
+
+/** The other way: "12:30" → 750. What cannot be read is zero. */
+export function seconds(text: string): number {
+  const parts = text.trim().split(":");
+  if (parts.length > 3 || !parts.every((p) => /^\d{1,3}$/.test(p))) return 0;
+  return Math.min(
+    86_400,
+    parts.reduce((total, p) => total * 60 + Number(p), 0),
+  );
+}
 
 // ---- small pieces ----
+export type Logo = { width: number; height: number; svg: string; png: Record<string, string> };
+/** The logo when there is one, or the name set in the serif. An <img>, always: an uploaded SVG is never inlined. */
+export function Wordmark({
+  name,
+  light,
+  dark,
+  base = "",
+  className,
+}: {
+  name: string;
+  light?: Logo | null;
+  dark?: Logo | null;
+  base?: string;
+  className?: string;
+}) {
+  if (!light) return <span className={cx("font-serif text-wordmark", className)}>{name}</span>;
+  const image = (logo: Logo, show: string) => (
+    <img
+      src={base + (logo.svg || logo.png["1x"])}
+      srcSet={logo.svg ? undefined : ["1x", "2x", "3x"].map((d) => `${base}${logo.png[d]} ${d}`).join(", ")}
+      alt={name}
+      width={Math.round((32 * logo.width) / logo.height)}
+      height={32}
+      className={cx("h-8 w-auto", show, className)}
+    />
+  );
+  return (
+    <>
+      {image(light, "on-light")}
+      {dark && image(dark, "on-dark")}
+    </>
+  );
+}
 export const LivePill = ({ label, className }: { label: string; className?: string }) => (
   <span
     className={cx(
-      "inline-flex items-center gap-1 rounded-sm bg-live px-2 py-0.5 text-caption font-semibold text-on-live",
+      "inline-flex items-center gap-1 rounded-full bg-signal-live px-2 py-0.5 text-caption font-semibold text-on-signal-live",
       className,
     )}
   >
@@ -79,7 +133,7 @@ export const LivePill = ({ label, className }: { label: string; className?: stri
   </span>
 );
 /** What a card is about and how fresh it is: always the first line, always in this order. */
-function Kicker({ card, env }: { card?: CardData; env: NewsEnv }) {
+function Kicker({ card, env, quiet = false }: { card?: CardData; env: NewsEnv; quiet?: boolean }) {
   if (!card)
     return (
       <p className="text-caption">
@@ -89,12 +143,12 @@ function Kicker({ card, env }: { card?: CardData; env: NewsEnv }) {
   const breaking = card.breaking_until !== null && Date.parse(card.breaking_until) > env.now;
   return (
     <p className="flex flex-wrap items-center gap-x-2 text-caption text-text-secondary">
-      {card.is_live ? (
+      {card.is_live && !quiet ? (
         <LivePill label={env.t.live} />
       ) : breaking ? (
-        <span className="font-semibold text-live">{env.t.breaking}</span>
+        <span className="font-semibold text-text-primary">{env.t.breaking}</span>
       ) : (
-        <span className="font-semibold text-accent">{card.category.name}</span>
+        <span className="font-semibold text-text-primary">{card.category.name}</span>
       )}
       <span aria-hidden>·</span>
       <time dateTime={card.published_at}>{ago(card.published_at, env)}</time>
@@ -104,11 +158,13 @@ function Kicker({ card, env }: { card?: CardData; env: NewsEnv }) {
 const VIDEO = new Set(["video", "short", "youtube"]);
 /** Says what opens, in a corner of the picture. */
 function Mark({ card, env }: { card: CardData; env: NewsEnv }) {
-  const [Icon, label]: [LucideIcon | null, string] = VIDEO.has(card.type)
-    ? [Play, card.video?.duration_ms ? clock(card.video.duration_ms) : env.t.video]
-    : card.type === "gallery"
-      ? [Images, env.t.gallery]
-      : [null, ""];
+  if (card.is_live) return null; // the LIVE pill says it
+  const [Icon, label]: [LucideIcon | null, string] =
+    VIDEO.has(card.type) && card.duration_ms
+      ? [Play, clock(card.duration_ms)]
+      : card.type === "gallery"
+        ? [Images, env.t.gallery]
+        : [null, ""];
   if (!Icon) return null;
   return (
     <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-sm bg-black/75 px-2 py-0.5 text-caption text-white">
@@ -154,6 +210,7 @@ function Frame({
             </span>
           )}
           {!plain && <Mark card={card} env={env} />}
+          {!plain && card.is_live && <LivePill label={env.t.live} className="absolute bottom-2 left-2" />}
         </>
       ) : (
         <span aria-hidden className="bone block! size-full rounded-none!" />
@@ -205,7 +262,7 @@ export function LeadCard({ card, env, priority, className }: CardProps) {
         priority={priority}
         className="max-sm:-mx-4 max-sm:rounded-none"
       />
-      <Kicker card={card} env={env} />
+      <Kicker card={card} env={env} quiet />
       <Headline
         card={card}
         level={2}
@@ -230,7 +287,7 @@ export function StoryCard({ card, env, className }: CardProps) {
   return (
     <article className={cx("group relative flex flex-col gap-2", className)} data-card="story">
       <Frame card={card} env={env} ratio="aspect-3/2" sizes="(min-width: 1024px) 300px, 50vw" />
-      <Kicker card={card} env={env} />
+      <Kicker card={card} env={env} quiet />
       <Headline card={card} className="text-headline-s" bones={["w-full", "w-3/4"]} />
     </article>
   );
@@ -261,7 +318,7 @@ export function VideoCard({ card, env, className }: CardProps) {
     <article className={cx("group relative flex flex-col gap-2", className)} data-card="video">
       <Frame card={card} env={env} ratio="aspect-video" sizes="(min-width: 1024px) 300px, 75vw" />
       <Headline card={card} className="text-title" bones={["w-full", "w-2/3"]} />
-      <Kicker card={card} env={env} />
+      <Kicker card={card} env={env} quiet />
     </article>
   );
 }
@@ -276,7 +333,7 @@ export function ShortCard({ card, env, className }: CardProps) {
               {card.headline}
             </a>
           </h3>
-          {card.video?.duration_ms && <p className="text-caption">{clock(card.video.duration_ms)}</p>}
+          {card.duration_ms && <p className="text-caption">{clock(card.duration_ms)}</p>}
         </div>
       )}
     </article>
@@ -284,27 +341,14 @@ export function ShortCard({ card, env, className }: CardProps) {
 }
 
 // ---- groups ----
-export function SectionHeading({
-  title,
-  href,
-  env,
-  icon: Icon,
-}: {
-  title?: string;
-  href?: string;
-  env: NewsEnv;
-  icon?: LucideIcon;
-}) {
+export function SectionHeading({ title, href, env }: { title?: string; href?: string; env: NewsEnv }) {
   return (
     <div className="mb-5 flex items-center justify-between border-text-primary border-t-2 pt-3">
-      <h2 className="flex items-center gap-2 font-serif text-headline-m">
-        {Icon && <Icon aria-hidden size={22} className="text-live" />}
-        {title ?? <Bone className="w-32" />}
-      </h2>
+      <h2 className="font-serif text-headline-m">{title ?? <Bone className="w-32" />}</h2>
       {href && (
         <a
           href={href}
-          className="tap -my-2 inline-flex items-center gap-1 text-label text-accent hover:underline"
+          className="tap -my-2 inline-flex items-center gap-1 text-label text-text-secondary hover:text-text-primary"
         >
           {env.t.more} <ChevronRight aria-hidden size={16} />
         </a>
@@ -312,18 +356,18 @@ export function SectionHeading({
     </div>
   );
 }
-/** Circles with a red ring: something is happening now. Absent when nothing is. */
+/** Circles with a ring, a shape nothing else has: something is happening now. Absent when nothing is. */
 export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsEnv; title: string }) {
   if (cards?.length === 0) return null;
   return (
     <section aria-label={title} className="-mx-4 overflow-x-auto px-4 scrollbar-none">
-      <ul className="flex gap-4">
+      <ul className="flex gap-3">
         {(cards ?? Array.from({ length: 4 }, () => undefined)).map((card, i) => (
-          <li key={card?.id ?? i} className="group relative w-28 shrink-0 text-center">
+          <li key={card?.id ?? i} className="group relative w-24 shrink-0 text-center">
             <span
               className={cx(
                 "relative mx-auto block size-20 rounded-full border-2 p-1",
-                card ? "border-live" : "border-border",
+                card ? "border-signal-live" : "border-border",
               )}
             >
               <span className="block size-full overflow-hidden rounded-full bg-surface-sunken">
@@ -339,16 +383,11 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
                   <span aria-hidden className="bone block! size-full" />
                 )}
               </span>
-              {card && (
-                <LivePill
-                  label={env.t.live}
-                  className="-bottom-2 -translate-x-1/2 absolute left-1/2 whitespace-nowrap px-1.5! leading-4! [&>span]:hidden"
-                />
-              )}
             </span>
-            <span className="mt-3 line-clamp-2 text-caption">
+            <span className="mt-2 line-clamp-2 break-words text-caption leading-4!">
               {card ? (
                 <a href={card.path} className="after:absolute after:inset-0">
+                  <span className="sr-only">{env.t.live}: </span>
                   {card.headline}
                 </a>
               ) : (
@@ -365,11 +404,14 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
 export function BreakingBanner({ card, env }: { card?: CardData; env: NewsEnv }) {
   if (!card) return null;
   return (
-    <a href={card.path} className="block bg-live text-on-live">
+    <a
+      href={card.path}
+      className="block border-border border-b bg-signal-breaking-bg text-signal-breaking-fg"
+    >
       <span className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-        <Radio aria-hidden size={20} className="shrink-0 motion-safe:animate-pulse" />
+        <Zap aria-hidden size={20} fill="currentColor" className="shrink-0 text-signal-breaking-label" />
         <span className="min-w-0 flex-1">
-          <strong className="mr-2 font-semibold text-caption tracking-wide uppercase">
+          <strong className="mr-2 font-semibold text-caption text-signal-breaking-label tracking-wide uppercase">
             {env.t.breaking}
           </strong>
           <span className="text-label">{card.headline}</span>
@@ -400,12 +442,12 @@ export function ActionBar({
         <li key={key}>
           <button
             type="button"
-            aria-label={count === undefined ? label : `${label}, ${count}`}
+            aria-label={count === undefined ? label : `${label}, ${exact(count, locale)}`}
             aria-pressed={active}
             className={cx(
               "tap inline-flex items-center justify-center gap-1.5 rounded-sm px-3 text-label hover:bg-surface-sunken",
               vertical && "flex-col gap-0.5! py-1.5",
-              active ? "text-accent" : "text-text-secondary",
+              active ? (key === "like" ? "text-liked" : "text-text-primary") : "text-text-secondary",
             )}
           >
             <Icon aria-hidden size={22} fill={active ? "currentColor" : "none"} />
@@ -451,8 +493,8 @@ export function Designed({
 }) {
   return (
     <div className="mx-auto flex max-w-sm flex-col items-center gap-3 px-4 py-16 text-center">
-      <svg aria-hidden="true" viewBox="0 0 120 120" className="size-32 text-accent">
-        <circle cx="60" cy="60" r="56" fill="var(--color-accent-soft)" />
+      <svg aria-hidden="true" viewBox="0 0 120 120" className="size-32 text-text-secondary">
+        <circle cx="60" cy="60" r="56" fill="var(--color-surface-sunken)" />
         <g fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
           {DRAWINGS[kind]}
         </g>

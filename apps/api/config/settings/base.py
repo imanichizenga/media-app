@@ -165,6 +165,8 @@ SPECTACULAR_SETTINGS = {
         "newsplatform.common.schema.relax_nullable_json",
     ],
     "ENUM_NAME_OVERRIDES": {
+        "ThemeKeyEnum": "newsplatform.site_config.theme.derive.CHOICES",
+        "LogoKindEnum": "newsplatform.site_config.models.BrandLogo.Kind",
         "IntegrationStatusEnum": "newsplatform.integrations.models.ConfigStatus",
         "TestRunStatusEnum": "newsplatform.integrations.models.RunStatus",
         "ApprovalStatusEnum": "newsplatform.approvals.models.ApprovalStatus",

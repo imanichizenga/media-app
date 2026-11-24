@@ -33,7 +33,7 @@ const COLOR = {
   passed: "text-success",
   failed: "text-danger",
   skipped: "text-text-tertiary",
-  running: "text-accent motion-safe:animate-pulse",
+  running: "text-brand-text motion-safe:animate-pulse",
   pending: "text-text-tertiary",
 };
 

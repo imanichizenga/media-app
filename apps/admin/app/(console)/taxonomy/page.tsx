@@ -45,7 +45,7 @@ export default function Taxonomy() {
             onClick={() => setTab(k)}
             className={cx(
               "tap shrink-0 rounded-sm px-4 text-label",
-              tab === k ? "bg-accent-soft text-accent" : "text-text-secondary hover:bg-surface-sunken",
+              tab === k ? "bg-brand-soft text-brand-text" : "text-text-secondary hover:bg-surface-sunken",
             )}
           >
             {t(`tab.${k}`)}

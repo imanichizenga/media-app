@@ -15,7 +15,11 @@ function Panel({ title, href, className, children }: PanelProps) {
   return (
     <Card className={className}>
       <h2 className="text-headline-s">
-        <Link href={href} prefetch={false} className="tap inline-flex items-center gap-1 hover:text-accent">
+        <Link
+          href={href}
+          prefetch={false}
+          className="tap inline-flex items-center gap-1 hover:text-brand-text"
+        >
           {title}
           <ChevronRight aria-hidden size={18} />
         </Link>

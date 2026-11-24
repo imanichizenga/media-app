@@ -175,7 +175,7 @@ export default function Content() {
       {picked.size > 0 && (
         <section
           aria-label={t("bulkActions")}
-          className="mb-4 flex flex-wrap items-center gap-2 rounded-md bg-accent-soft p-3"
+          className="mb-4 flex flex-wrap items-center gap-2 rounded-md bg-brand-soft p-3"
         >
           <span className="text-label">{t("selected", { n: picked.size })}</span>
           {BULK.map((key) => (
@@ -223,7 +223,7 @@ export default function Content() {
                   <Link
                     href={`/content/${post.id}`}
                     prefetch={false}
-                    className="tap flex items-center text-text-primary text-title hover:text-accent"
+                    className="tap flex items-center text-text-primary text-title hover:text-brand-text"
                   >
                     {post.headline || t("untitled")}
                   </Link>

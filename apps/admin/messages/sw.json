@@ -31,7 +31,8 @@
     "content": "Maudhui",
     "media": "Maktaba ya media",
     "taxonomy": "Makundi na lebo",
-    "author": "Ukurasa wangu wa mwandishi"
+    "author": "Ukurasa wangu wa mwandishi",
+    "appearance": "Mwonekano"
   },
   "errors": {
     "unavailable": "Hitilafu imetokea. Tafadhali jaribu tena.",
@@ -104,7 +105,21 @@
     "synonym_taken": "Lebo nyingine tayari inatumia moja ya maneno haya.",
     "invalid_path": "Tumia anwani ya tovuti hii, mfano /habari/kichwa.",
     "path_in_use": "Kuna ukurasa uliochapishwa kwenye anwani hii.",
-    "redirect_loop": "Hii ingezunguka bila mwisho."
+    "redirect_loop": "Hii ingezunguka bila mwisho.",
+    "contrast": "Rangi hii haisomeki vizuri kila inapotumika.",
+    "use_appearance": "Badilisha hili kwenye ukurasa wa Mwonekano.",
+    "logo_unsafe": "Faili inarejelea kitu nje yake.",
+    "logo_unreadable": "Faili haikusomeka. Tumia SVG au PNG.",
+    "logo_style": "SVG inatumia laha ya mitindo. Ihamishe yenye sifa za kawaida.",
+    "logo_text": "SVG ina maandishi hai. Yageuze kuwa michoro.",
+    "logo_filter": "SVG inatumia vichujio. Viondoe kwanza.",
+    "logo_too_complex": "Mchoro ni mgumu mno kwa nembo.",
+    "logo_no_viewbox": "SVG haina ukubwa. Ihamishe yenye viewBox.",
+    "logo_shape": "Umbo halifai: nembo ya jina ni pana, alama ni mraba.",
+    "logo_small": "Picha ni ndogo mno. Nembo ya jina iwe na kimo cha pikseli 160 au zaidi, alama upana wa 512.",
+    "logo_opaque": "Mandhari lazima yawe wazi.",
+    "logo_empty": "Faili ni tupu.",
+    "logo_too_large": "Faili inazidi MB 1."
   },
   "login": {
     "title": "Ingia",
@@ -339,21 +354,15 @@
   },
   "settings": {
     "title": "Mipangilio",
-    "lead": "Chapa, lugha na usalama.",
+    "lead": "Lugha na usalama.",
     "saved": "Imehifadhiwa.",
     "sentForApproval": "Imetumwa kwa mtu wa pili kuidhinisha.",
     "cidrHelp": "Mtandao mmoja kwa kila mstari, mfano 203.0.113.0/24.",
     "section": {
-      "identity": "Utambulisho",
       "localization": "Lugha na saa",
       "security": "Usalama"
     },
     "field": {
-      "brand_name": "Jina la chapa",
-      "tagline_sw": "Kaulimbiu (Kiswahili)",
-      "tagline_en": "Kaulimbiu (Kiingereza)",
-      "accent_light": "Rangi kuu, mandhari ya mwanga",
-      "accent_dark": "Rangi kuu, mandhari ya giza",
       "default_locale": "Lugha chaguo-msingi",
       "timezone": "Ukanda wa saa",
       "idle_timeout_minutes": "Muda wa kutotumika (dakika)",
@@ -364,10 +373,7 @@
       "four_eyes": "Idhini ya watu wawili",
       "geo_anomaly_action": "Kuingia kutoka nchi isiyo ya kawaida",
       "ip_allowlist_enabled": "Ruhusu mitandao iliyoorodheshwa tu",
-      "ip_allowlist": "Mitandao inayoruhusiwa",
-      "logo_light": "Nembo, mandhari ya mwanga",
-      "logo_dark": "Nembo, mandhari ya giza",
-      "favicon": "Ikoni (mraba)"
+      "ip_allowlist": "Mitandao inayoruhusiwa"
     },
     "option": {
       "sw": "Kiswahili",
@@ -453,10 +459,7 @@
     "play": "Cheza",
     "playError": "Video hii haiwezi kuchezwa sasa.",
     "elsewhere": {
-      "author": "Picha ya mwandishi",
-      "logo_light": "Nembo, mwanga",
-      "logo_dark": "Nembo, giza",
-      "favicon": "Ikoni"
+      "author": "Picha ya mwandishi"
     },
     "status": {
       "uploading": "Inapakiwa",
@@ -569,7 +572,8 @@
       "body": "Andika makala",
       "media": "Subiri mafaili yamalizike, au ondoa yaliyoshindikana",
       "credit": "Weka chanzo kwa kila picha",
-      "alt": "Eleza picha kuu kwa kila lugha"
+      "alt": "Eleza picha kuu kwa kila lugha",
+      "duration": "Weka muda wa video"
     },
     "embargo": "Zuio hadi",
     "embargoHelp": "Haiwezi kuchapishwa kabla ya wakati huu.",
@@ -793,7 +797,9 @@
       "unsupported": "Hii haiwezi kuonyeshwa hapa.",
       "pinned": "Imebandikwa",
       "gallery": "Picha"
-    }
+    },
+    "youtubeLength": "Muda",
+    "youtubeLengthHelp": "Dakika na sekunde, kwa mfano 12:30."
   },
   "seo": {
     "google": "Matokeo ya utafutaji",
@@ -949,5 +955,77 @@
     "made": "Imetengenezwa",
     "automatic": "Yenyewe",
     "byHand": "Kwa mkono"
+  },
+  "appearance": {
+    "title": "Mwonekano",
+    "lead": "Jina, nembo na rangi za tovuti na programu.",
+    "theme": "Muundo",
+    "color": "Rangi",
+    "brandColor": "Rangi ya chapa",
+    "brandColorHelp": "Rangi moja tu. Vivuli vyote kwenye kila skrini, mwanga na giza, vinatokana nayo.",
+    "pick": "chagua",
+    "hex": "Andika tarakimu sita, kwa mfano #b5121b.",
+    "passes": "Inasomeka kila mahali, katika miundo yote mitatu.",
+    "fails": "{count, plural, one {Haisomeki vizuri mahali #.} other {Haisomeki vizuri mahali #.}}",
+    "needs": "inahitaji",
+    "useNearest": "Tumia rangi ya karibu inayofaa, {color}",
+    "ownDark": "Nichague mwenyewe rangi ya mandhari ya giza",
+    "ownDarkHelp": "Vinginevyo hukokotolewa: nyepesi na laini zaidi, isiumize macho kwenye nyeusi.",
+    "darkColor": "Rangi ya chapa kwenye giza",
+    "sample": {
+      "button": "Kitufe",
+      "text": "Kiungo",
+      "logo": "Jina",
+      "nav": "Mahali ulipo",
+      "breaking": "Dharura"
+    },
+    "light": "Mwanga",
+    "dark": "Giza",
+    "identity": "Jina",
+    "brand_name": "Jina la chapa",
+    "tagline_sw": "Kaulimbiu (Kiswahili)",
+    "tagline_en": "Kaulimbiu (Kiingereza)",
+    "logos": "Nembo",
+    "logosHelp": "SVG au PNG, hadi MB 1, yenye mandhari wazi. Faili za SVG husafishwa kabla ya kuhifadhiwa.",
+    "slot": {
+      "wordmark_light": "Nembo ya jina kwenye mwanga",
+      "wordmark_dark": "Nembo ya jina kwenye giza",
+      "symbol": "Alama"
+    },
+    "help": {
+      "wordmark_light": "Huonekana juu ya kila ukurasa.",
+      "wordmark_dark": "Huonekana kwenye vichwa vyeusi.",
+      "symbol": "Kichupo cha kivinjari, arifa na nafasi ndogo."
+    },
+    "absent": {
+      "wordmark_light": "Bila nembo, jina huandikwa kwa herufi za vichwa vya habari.",
+      "wordmark_dark": "Bila hiyo, nembo ya mwanga huchorwa kwa rangi nyeupe.",
+      "symbol": "Mraba wenye upana wa pikseli 512 au zaidi. Hutumika kwenye kichupo, arifa na nafasi ndogo."
+    },
+    "upload": "Pakia",
+    "replace": "Badilisha",
+    "remove": "Ondoa",
+    "buildTime": "Ikoni ya programu, jina lililo chini yake na skrini ya kufungulia ni sehemu ya programu yenyewe. Maduka ya programu yanahitaji toleo jipya ili kuvibadilisha.",
+    "note": "Kilichobadilika (hiari)",
+    "noteHelp": "Huhifadhiwa kwenye historia.",
+    "publish": "Chapisha",
+    "discard": "Acha mabadiliko",
+    "published": "Imechapishwa. Kurasa zilizo wazi zitabadilika zikifunguliwa upya; programu, itakapoanza tena.",
+    "sentForApproval": "Imetumwa kwa mtu wa pili aidhinishe.",
+    "waiting": "Kuna badiliko linalosubiri mtu wa pili kwenye Idhini.",
+    "preview": "Onyesho",
+    "previewNote": "Skrini halisi, zenye habari za mfano.",
+    "phone": "Simu",
+    "desktop": "Kompyuta",
+    "screen": {
+      "home": "Nyumbani",
+      "article": "Habari",
+      "shorts": "Fupi",
+      "auth": "Kuingia",
+      "breaking": "Dharura"
+    },
+    "history": "Matoleo",
+    "current": "La sasa",
+    "restore": "Rejesha"
   }
 }

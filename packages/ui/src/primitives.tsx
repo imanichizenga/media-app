@@ -30,10 +30,11 @@ export function Email({ value }: { value: string }) {
 }
 
 const VARIANTS = {
-  primary: "bg-accent text-on-accent hover:opacity-90",
+  primary: "bg-brand text-on-brand hover:bg-brand-strong",
   secondary: "bg-surface text-text-primary border border-border-strong hover:bg-surface-sunken",
   ghost: "text-text-secondary hover:bg-surface-sunken hover:text-text-primary",
-  danger: "bg-danger text-on-danger hover:opacity-90",
+  // Outlined: beside a red primary button, colour alone would not tell them apart.
+  danger: "border border-danger bg-surface text-danger hover:bg-danger-soft",
 };
 export function Button({
   variant = "primary",
@@ -121,7 +122,7 @@ const TONES = {
   success: "bg-success-soft text-success",
   warning: "bg-warning-soft text-warning",
   danger: "bg-danger-soft text-danger",
-  accent: "bg-accent-soft text-accent",
+  accent: "bg-brand-soft text-brand-text",
 };
 export type Tone = keyof typeof TONES;
 export const Badge = ({ tone = "neutral", children }: { tone?: Tone; children: ReactNode }) => (
@@ -170,7 +171,7 @@ export function Message({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
-      <span className="grid size-16 place-items-center rounded-full bg-accent-soft text-accent">
+      <span className="grid size-16 place-items-center rounded-full bg-surface-sunken text-text-secondary">
         <Icon aria-hidden size={28} />
       </span>
       <p className="text-title">{title}</p>

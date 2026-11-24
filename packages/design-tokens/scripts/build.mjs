@@ -1,8 +1,9 @@
-// One source (DTCG JSON) → CSS variables, a Tailwind v4 theme, JS constants and Dart.
-import { mkdirSync, writeFileSync } from "node:fs";
+// Core tokens (DTCG JSON) and themes → CSS variables, a Tailwind v4 theme, Dart, and the API's copy of the themes.
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import StyleDictionary from "style-dictionary";
+import { DEFAULT, derive, stylesheet } from "../src/theme.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const out = resolve(root, "dist");
@@ -20,8 +21,8 @@ async function load(file) {
 }
 
 const core = await load("core.json");
-const light = await load("light.json");
-const dark = await load("dark.json");
+const light = derive(DEFAULT.theme, "light", DEFAULT.color);
+const dark = derive(DEFAULT.theme, "dark", DEFAULT.color);
 const family = (v) =>
   [v]
     .flat()
@@ -39,23 +40,11 @@ const rem = (px) => `${Number.parseFloat(px) / 16}rem`; // text scales with the 
 
 writeFileSync(
   resolve(out, "tokens.css"),
-  `/* ${BANNER} */
+  `/* ${BANNER} The colours are the bundled default; the published theme outranks them. */
 :root {
-  color-scheme: light;
 ${vars(simple.filter((t) => t.path[0] !== "font" && t.path[0] !== "radius" && t.path[0] !== "ease"))}
-${vars(light)}
 }
-:root[data-theme="dark"] {
-  color-scheme: dark;
-${vars(dark)}
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-${vars(dark, "    ")}
-  }
-}
-@media (prefers-reduced-motion: reduce) {
+${stylesheet(light, dark, ":root")}@media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;
     --duration-base: 0ms;
@@ -86,28 +75,27 @@ ${type
   /* Over pictures, video and the page behind a dialog: the same in both themes. */
   --color-black: #000;
   --color-white: #fff;
-${light.map((t) => `  --${t.name}: var(--${t.name});`).join("\n")}
+${Object.keys(light)
+  .map((k) => `  --color-${k}: var(--color-${k});`)
+  .join("\n")}
 }
 `,
 );
 
-const obj = (tokens) => Object.fromEntries(tokens.map((t) => [t.path.slice(1).join("-"), t.$value]));
-writeFileSync(
-  resolve(out, "tokens.js"),
-  `// ${BANNER}\nexport const light = ${JSON.stringify(obj(light), null, 2)};\nexport const dark = ${JSON.stringify(obj(dark), null, 2)};\n`,
-);
-
 const camel = (s) => s.replace(/-(\w)/g, (_, c) => c.toUpperCase());
-const names = light.map((t) => camel(t.path.slice(1).join("-")));
+const names = Object.keys(light).map(camel);
 const px = (v) => Number.parseFloat(v).toFixed(1);
 const lines = (items, fn) => items.map(fn).join("\n");
 const palette = (label, tokens) =>
-  `  static const ${label} = NewsColors(\n${lines(tokens, (t) => `    ${camel(t.path.slice(1).join("-"))}: Color(0xFF${t.$value.slice(1).toUpperCase()}),`)}\n  );`;
+  `  static const ${label} = NewsColors(\n${lines(Object.entries(tokens), ([k, v]) => `    ${camel(k)}: Color(0xFF${v.slice(1).toUpperCase()}),`)}\n  );`;
 writeFileSync(
   resolve(dart, "news_design_tokens.dart"),
   `// ${BANNER}
 import 'package:material_ui/material_ui.dart';
 
+export 'theme_derivation.dart';
+
+/// Every colour a widget may use. Built from the published theme; [light] and [dark] are the bundled default.
 @immutable
 class NewsColors extends ThemeExtension<NewsColors> {
   const NewsColors({
@@ -119,6 +107,14 @@ ${lines(names, (n) => `  final Color ${n};`)}
 ${palette("light", light)}
 
 ${palette("dark", dark)}
+
+  /// From derived tokens, by their shared names. A missing name is a bug, so it throws.
+  factory NewsColors.fromTokens(Map<String, String> tokens) {
+    Color c(String name) => Color(0xFF000000 | int.parse(tokens[name]!.substring(1), radix: 16));
+    return NewsColors(
+${lines(Object.keys(light), (k) => `      ${camel(k)}: c('${k}'),`)}
+    );
+  }
 
   @override
   NewsColors copyWith({
@@ -156,7 +152,16 @@ ${lines(type, ({ path, $value: v }) => `  static const TextStyle ${camel(path[1]
 }
 `,
 );
+const themes = readFileSync(resolve(root, "src/themes.json"), "utf8");
+writeFileSync(
+  resolve(dart, "theme_spec.g.dart"),
+  `// ${BANNER}\n/// src/themes.json, as it is.\nconst themeSpecJson = r'''\n${themes}''';\n`,
+);
+copyFileSync(
+  resolve(root, "src/themes.json"),
+  resolve(root, "../../apps/api/newsplatform/site_config/theme/themes.json"),
+);
 writeFileSync(
   resolve(root, "dart/pubspec.yaml"),
-  `# ${BANNER}\nname: news_design_tokens\npublish_to: none\nversion: 0.1.0\nenvironment:\n  sdk: ^3.14.0\n  flutter: ">=3.50.0"\ndependencies:\n  flutter:\n    sdk: flutter\n  material_ui: ^1.11.1\n`,
+  `# ${BANNER}\nname: news_design_tokens\npublish_to: none\nversion: 0.1.0\nenvironment:\n  sdk: ^3.14.0\n  flutter: ">=3.50.0"\ndependencies:\n  flutter:\n    sdk: flutter\n  material_ui: ^1.11.1\ndev_dependencies:\n  flutter_test:\n    sdk: flutter\n`,
 );

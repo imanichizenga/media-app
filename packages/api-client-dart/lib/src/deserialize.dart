@@ -7,6 +7,7 @@ import 'package:news_api_client/src/model/category_translation.dart';
 import 'package:news_api_client/src/model/feed_page.dart';
 import 'package:news_api_client/src/model/home.dart';
 import 'package:news_api_client/src/model/home_section.dart';
+import 'package:news_api_client/src/model/logo.dart';
 import 'package:news_api_client/src/model/navigation_item.dart';
 import 'package:news_api_client/src/model/public_author.dart';
 import 'package:news_api_client/src/model/public_byline.dart';
@@ -23,10 +24,13 @@ import 'package:news_api_client/src/model/public_video.dart';
 import 'package:news_api_client/src/model/related.dart';
 import 'package:news_api_client/src/model/related_target.dart';
 import 'package:news_api_client/src/model/resolve.dart';
+import 'package:news_api_client/src/model/schemes.dart';
 import 'package:news_api_client/src/model/search.dart';
 import 'package:news_api_client/src/model/site_config.dart';
 import 'package:news_api_client/src/model/site_identity.dart';
 import 'package:news_api_client/src/model/site_localization.dart';
+import 'package:news_api_client/src/model/site_theme.dart';
+import 'package:news_api_client/src/model/site_theme_tokens.dart';
 import 'package:news_api_client/src/model/story_page.dart';
 import 'package:news_api_client/src/model/tag_page.dart';
 import 'package:news_api_client/src/model/translation.dart';
@@ -71,6 +75,8 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
       return Home.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'HomeSection':
       return HomeSection.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Logo':
+      return Logo.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'NavigationItem':
       return NavigationItem.fromJson(value as Map<String, dynamic>)
           as ReturnType;
@@ -111,6 +117,8 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
           as ReturnType;
     case 'Resolve':
       return Resolve.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'Schemes':
+      return Schemes.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'Search':
       return Search.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteConfig':
@@ -120,10 +128,16 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
     case 'SiteLocalization':
       return SiteLocalization.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'SiteTheme':
+      return SiteTheme.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'SiteThemeTokens':
+      return SiteThemeTokens.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'StoryPage':
       return StoryPage.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'TagPage':
       return TagPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'ThemeKeyEnum':
     case 'Translation':
       return Translation.fromJson(value as Map<String, dynamic>) as ReturnType;
     default:

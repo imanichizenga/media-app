@@ -4,7 +4,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 const API = process.env.API ?? "http://127.0.0.1:8010";
-const root = new URL(".", import.meta.url).pathname;
+const root = new URL("../../packages/screens/", import.meta.url).pathname;
 const get = async (path, locale) => {
   const res = await fetch(`${API}/api/v1/content/${path}${path.includes("?") ? "&" : "?"}locale=${locale}`);
   if (!res.ok) throw new Error(`${path}: ${res.status}`);
@@ -47,11 +47,11 @@ for (const locale of ["sw", "en"]) {
   mkdirSync(`${root}data`, { recursive: true });
   writeFileSync(`${root}data/${locale}.json`, `${JSON.stringify(data)}\n`);
 }
-rmSync(`${root}public/media`, { recursive: true, force: true });
+rmSync(`${root}media`, { recursive: true, force: true });
 for (const key of files) {
   const res = await fetch(`${API}/${key}`);
   if (!res.ok) throw new Error(`${key}: ${res.status}`);
-  mkdirSync(dirname(`${root}public/${key}`), { recursive: true });
-  writeFileSync(`${root}public/${key}`, Buffer.from(await res.arrayBuffer()));
+  mkdirSync(dirname(`${root}${key}`), { recursive: true });
+  writeFileSync(`${root}${key}`, Buffer.from(await res.arrayBuffer()));
 }
 console.log(`${files.size} pictures`);

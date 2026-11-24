@@ -213,13 +213,7 @@ def usage(asset: Asset) -> list[UUID]:
 
 def elsewhere(asset: Asset) -> list[str]:
     """Uses outside articles, by name."""
-    from newsplatform.site_config.services import identity
-
-    current, used = identity(), []
-    if asset.avatar_of.exists():
-        used.append("author")
-    used += [n for n in ("logo_light", "logo_dark", "favicon") if getattr(current, n) == str(asset.pk)]
-    return used
+    return ["author"] if asset.avatar_of.exists() else []
 
 
 def _refresh_posts(asset: Asset) -> None:

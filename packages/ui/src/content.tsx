@@ -62,7 +62,7 @@ export function InlineContent({ content }: { content: Inline[] }) {
             // biome-ignore lint/suspicious/noArrayIndexKey: text never reorders
             key={i}
             href={mark.href}
-            className="text-accent underline underline-offset-2"
+            className="text-link underline decoration-1 underline-offset-2"
             {...(external(mark.href) ? { rel: "noopener" } : {})}
           >
             {inner}
@@ -163,7 +163,7 @@ const Items = ({ items, ordered }: { items: ListItem[]; ordered: boolean }) => {
 
 const PROVIDERS = { x: "X", instagram: "Instagram", facebook: "Facebook", tiktok: "TikTok" };
 const TONES = {
-  info: "border-accent bg-accent-soft",
+  info: "border-border-strong bg-surface-sunken",
   warning: "border-warning bg-warning-soft",
   success: "border-success bg-success-soft",
 };
@@ -263,7 +263,7 @@ export function BlockView({ block, context }: { block: ReadBlock; context: Conte
       );
     case "pull_quote":
       return (
-        <blockquote className="border-accent border-y py-6 text-center font-serif text-headline-m">
+        <blockquote className="border-text-primary border-y py-6 text-center font-serif text-headline-m">
           <p>{block.text}</p>
           {block.attribution && (
             <footer className="pt-2 font-sans text-label text-text-secondary">{block.attribution}</footer>
@@ -280,7 +280,7 @@ export function BlockView({ block, context }: { block: ReadBlock; context: Conte
               href={block.url}
               rel="noopener noreferrer nofollow"
               target="_blank"
-              className="tap inline-flex items-center text-accent"
+              className="tap inline-flex items-center text-link"
             >
               {labels.openPost}
             </a>
@@ -373,10 +373,10 @@ export function BlockView({ block, context }: { block: ReadBlock; context: Conte
     case "live_update":
       return (
         <article id={block.id} className="relative border-border border-l-2 pb-2 pl-5">
-          <span aria-hidden className="absolute top-1.5 -left-1.25 size-2 rounded-full bg-live" />
+          <span aria-hidden className="absolute top-1.5 -left-1.25 size-2 rounded-full bg-text-primary" />
           <p className="flex flex-wrap gap-2 text-label text-text-secondary">
             <time dateTime={block.time}>{context.formatTime(block.time)}</time>
-            {block.pinned && <span className="text-accent">{labels.pinned}</span>}
+            {block.pinned && <span className="text-text-primary">{labels.pinned}</span>}
           </p>
           {block.title && <h3 className="text-title">{block.title}</h3>}
           <div className="flex flex-col gap-4 pt-2">

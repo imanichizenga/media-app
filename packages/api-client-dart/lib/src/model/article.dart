@@ -42,6 +42,7 @@ class Article {
     required this.image,
     required this.video,
     required this.youtubeId,
+    required this.durationMs,
     required this.readingMinutes,
     required this.publishedAt,
     required this.modifiedAt,
@@ -149,6 +150,14 @@ class Article {
     includeIfNull: false,
   )
   final String youtubeId;
+
+  /// Of the video, wherever it lives
+  @JsonKey(
+    name: r'duration_ms',
+    required: true,
+    includeIfNull: true,
+  )
+  final int? durationMs;
 
   @JsonKey(
     name: r'reading_minutes',
@@ -320,6 +329,7 @@ class Article {
           other.image == image &&
           other.video == video &&
           other.youtubeId == youtubeId &&
+          other.durationMs == durationMs &&
           other.readingMinutes == readingMinutes &&
           other.publishedAt == publishedAt &&
           other.modifiedAt == modifiedAt &&
@@ -357,6 +367,7 @@ class Article {
       (image == null ? 0 : image.hashCode) +
       (video == null ? 0 : video.hashCode) +
       youtubeId.hashCode +
+      (durationMs == null ? 0 : durationMs.hashCode) +
       readingMinutes.hashCode +
       publishedAt.hashCode +
       modifiedAt.hashCode +

@@ -84,7 +84,7 @@ def test_every_endpoint_matches_its_documented_shape(editor, cat):
     full(editor, child)
     live = published(editor, cat, "Mubashara", type="live_blog")
     published(editor, cat, "Haraka", breaking_until=timezone.now() + timedelta(hours=1))
-    published(editor, cat, "YouTube", type="youtube", youtube_id="aqz-KE-bpKQ")
+    published(editor, cat, "YouTube", type="youtube", youtube_id="aqz-KE-bpKQ", youtube_seconds=635)
     author = editor.author.slug
     for locale in ("sw", "en"):
         suffix = "" if locale == "sw" else "-en"
@@ -113,16 +113,12 @@ def test_every_endpoint_matches_its_documented_shape(editor, cat):
     assert live.pk
 
 
-def test_site_config_names_the_logo_and_the_media_host(settings, editor):
-    from newsplatform.site_config.models import SettingsSection
-
-    logo = f.asset(outputs={"variants": {"jpeg": {"640": "k/640.jpg", "320": "k/320.jpg"}}})
-    SettingsSection.objects.create(key="identity", data={"brand_name": "Jina", "logo_light": str(logo.pk)})
+def test_site_config_names_the_theme_and_the_media_host(settings, db):
     settings.STORAGE_ENDPOINT_URL = "http://127.0.0.1:1"
     body = Client().get("/api/v1/site-config").json()
-    logo_light = body["identity"]["logo_light"]
-    assert (logo_light["base"], logo_light["widths"]) == ("k/", [320, 640])
-    assert body["identity"]["logo_dark"] is None
+    assert body["identity"]["wordmark_light"] is None
+    assert body["theme"]["css"] == f"/theme/{body['theme']['hash']}.css"
+    assert set(body["theme"]["tokens"]["light"]) == set(body["theme"]["tokens"]["dark"])
     assert body["media_base_url"] == ""
 
 

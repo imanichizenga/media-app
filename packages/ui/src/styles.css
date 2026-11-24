@@ -39,3 +39,10 @@
     display: none;
   }
 }
+/* Two logos, one shown: the theme says which the header's ground needs. */
+.on-light {
+  display: var(--logo-on-light, block);
+}
+.on-dark {
+  display: var(--logo-on-dark, none);
+}

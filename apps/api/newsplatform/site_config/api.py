@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from newsplatform.common.api import StaffView, schema
-from newsplatform.content.public_shapes import PublicImageSerializer
 from newsplatform.rbac.permissions import PublicEndpoint
 from newsplatform.site_config import services
+from newsplatform.site_config.brand_api import IdentitySerializer, ThemeSerializer
 from newsplatform.staff_security.authentication import session_of
 
 
@@ -24,17 +24,8 @@ class PublicConfigView(APIView):
             "SiteConfig",
             version=serializers.CharField(),
             media_base_url=serializers.CharField(allow_blank=True),
-            identity=schema(
-                "SiteIdentity",
-                brand_name=serializers.CharField(),
-                tagline_sw=serializers.CharField(),
-                tagline_en=serializers.CharField(),
-                accent_light=serializers.CharField(),
-                accent_dark=serializers.CharField(),
-                logo_light=PublicImageSerializer(allow_null=True),
-                logo_dark=PublicImageSerializer(allow_null=True),
-                favicon=PublicImageSerializer(allow_null=True),
-            ),
+            identity=IdentitySerializer,
+            theme=ThemeSerializer,
             localization=schema(
                 "SiteLocalization",
                 default_locale=serializers.ChoiceField(choices=["sw", "en"]),

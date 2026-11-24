@@ -231,7 +231,9 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
                 onClick={() => setLocale(l)}
                 className={cx(
                   "tap rounded-sm px-4 text-label",
-                  locale === l ? "bg-accent-soft text-accent" : "text-text-secondary hover:bg-surface-sunken",
+                  locale === l
+                    ? "bg-brand-soft text-brand-text"
+                    : "text-text-secondary hover:bg-surface-sunken",
                 )}
               >
                 {t(`language.${l}`)}
@@ -292,7 +294,7 @@ function Editor({ post: initial, reload }: { post: Post; reload: () => Promise<v
                 className={cx(
                   "tap shrink-0 px-2.5 text-label",
                   panel === p
-                    ? "border-accent border-b-2 text-accent"
+                    ? "border-brand border-b-2 text-brand-text"
                     : "text-text-secondary hover:text-text-primary",
                 )}
               >

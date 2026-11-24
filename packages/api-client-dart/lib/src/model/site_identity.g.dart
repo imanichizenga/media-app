@@ -13,15 +13,11 @@ abstract class _$SiteIdentityCWProxy {
 
   SiteIdentity taglineEn(String taglineEn);
 
-  SiteIdentity accentLight(String accentLight);
+  SiteIdentity wordmarkLight(Logo? wordmarkLight);
 
-  SiteIdentity accentDark(String accentDark);
+  SiteIdentity wordmarkDark(Logo? wordmarkDark);
 
-  SiteIdentity logoLight(PublicImage? logoLight);
-
-  SiteIdentity logoDark(PublicImage? logoDark);
-
-  SiteIdentity favicon(PublicImage? favicon);
+  SiteIdentity symbol(Logo? symbol);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteIdentity(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -33,11 +29,9 @@ abstract class _$SiteIdentityCWProxy {
     String brandName,
     String taglineSw,
     String taglineEn,
-    String accentLight,
-    String accentDark,
-    PublicImage? logoLight,
-    PublicImage? logoDark,
-    PublicImage? favicon,
+    Logo? wordmarkLight,
+    Logo? wordmarkDark,
+    Logo? symbol,
   });
 }
 
@@ -57,20 +51,15 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
   SiteIdentity taglineEn(String taglineEn) => this(taglineEn: taglineEn);
 
   @override
-  SiteIdentity accentLight(String accentLight) =>
-      this(accentLight: accentLight);
+  SiteIdentity wordmarkLight(Logo? wordmarkLight) =>
+      this(wordmarkLight: wordmarkLight);
 
   @override
-  SiteIdentity accentDark(String accentDark) => this(accentDark: accentDark);
+  SiteIdentity wordmarkDark(Logo? wordmarkDark) =>
+      this(wordmarkDark: wordmarkDark);
 
   @override
-  SiteIdentity logoLight(PublicImage? logoLight) => this(logoLight: logoLight);
-
-  @override
-  SiteIdentity logoDark(PublicImage? logoDark) => this(logoDark: logoDark);
-
-  @override
-  SiteIdentity favicon(PublicImage? favicon) => this(favicon: favicon);
+  SiteIdentity symbol(Logo? symbol) => this(symbol: symbol);
 
   @override
 
@@ -84,11 +73,9 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
     Object? brandName = const $CopyWithPlaceholder(),
     Object? taglineSw = const $CopyWithPlaceholder(),
     Object? taglineEn = const $CopyWithPlaceholder(),
-    Object? accentLight = const $CopyWithPlaceholder(),
-    Object? accentDark = const $CopyWithPlaceholder(),
-    Object? logoLight = const $CopyWithPlaceholder(),
-    Object? logoDark = const $CopyWithPlaceholder(),
-    Object? favicon = const $CopyWithPlaceholder(),
+    Object? wordmarkLight = const $CopyWithPlaceholder(),
+    Object? wordmarkDark = const $CopyWithPlaceholder(),
+    Object? symbol = const $CopyWithPlaceholder(),
   }) {
     return SiteIdentity(
       brandName: brandName == const $CopyWithPlaceholder()
@@ -103,26 +90,18 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
           ? _value.taglineEn
           // ignore: cast_nullable_to_non_nullable
           : taglineEn as String,
-      accentLight: accentLight == const $CopyWithPlaceholder()
-          ? _value.accentLight
+      wordmarkLight: wordmarkLight == const $CopyWithPlaceholder()
+          ? _value.wordmarkLight
           // ignore: cast_nullable_to_non_nullable
-          : accentLight as String,
-      accentDark: accentDark == const $CopyWithPlaceholder()
-          ? _value.accentDark
+          : wordmarkLight as Logo?,
+      wordmarkDark: wordmarkDark == const $CopyWithPlaceholder()
+          ? _value.wordmarkDark
           // ignore: cast_nullable_to_non_nullable
-          : accentDark as String,
-      logoLight: logoLight == const $CopyWithPlaceholder()
-          ? _value.logoLight
+          : wordmarkDark as Logo?,
+      symbol: symbol == const $CopyWithPlaceholder()
+          ? _value.symbol
           // ignore: cast_nullable_to_non_nullable
-          : logoLight as PublicImage?,
-      logoDark: logoDark == const $CopyWithPlaceholder()
-          ? _value.logoDark
-          // ignore: cast_nullable_to_non_nullable
-          : logoDark as PublicImage?,
-      favicon: favicon == const $CopyWithPlaceholder()
-          ? _value.favicon
-          // ignore: cast_nullable_to_non_nullable
-          : favicon as PublicImage?,
+          : symbol as Logo?,
     );
   }
 }
@@ -148,34 +127,27 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
             'brand_name',
             'tagline_sw',
             'tagline_en',
-            'accent_light',
-            'accent_dark',
-            'logo_light',
-            'logo_dark',
-            'favicon'
+            'wordmark_light',
+            'wordmark_dark',
+            'symbol'
           ],
         );
         final val = SiteIdentity(
           brandName: $checkedConvert('brand_name', (v) => v as String),
           taglineSw: $checkedConvert('tagline_sw', (v) => v as String),
           taglineEn: $checkedConvert('tagline_en', (v) => v as String),
-          accentLight: $checkedConvert('accent_light', (v) => v as String),
-          accentDark: $checkedConvert('accent_dark', (v) => v as String),
-          logoLight: $checkedConvert(
-              'logo_light',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          logoDark: $checkedConvert(
-              'logo_dark',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          favicon: $checkedConvert(
-              'favicon',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
+          wordmarkLight: $checkedConvert(
+              'wordmark_light',
+              (v) =>
+                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
+          wordmarkDark: $checkedConvert(
+              'wordmark_dark',
+              (v) =>
+                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
+          symbol: $checkedConvert(
+              'symbol',
+              (v) =>
+                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
         );
         return val;
       },
@@ -183,10 +155,8 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
         'brandName': 'brand_name',
         'taglineSw': 'tagline_sw',
         'taglineEn': 'tagline_en',
-        'accentLight': 'accent_light',
-        'accentDark': 'accent_dark',
-        'logoLight': 'logo_light',
-        'logoDark': 'logo_dark'
+        'wordmarkLight': 'wordmark_light',
+        'wordmarkDark': 'wordmark_dark'
       },
     );
 
@@ -195,9 +165,7 @@ Map<String, dynamic> _$SiteIdentityToJson(SiteIdentity instance) =>
       'brand_name': instance.brandName,
       'tagline_sw': instance.taglineSw,
       'tagline_en': instance.taglineEn,
-      'accent_light': instance.accentLight,
-      'accent_dark': instance.accentDark,
-      'logo_light': instance.logoLight?.toJson(),
-      'logo_dark': instance.logoDark?.toJson(),
-      'favicon': instance.favicon?.toJson(),
+      'wordmark_light': instance.wordmarkLight?.toJson(),
+      'wordmark_dark': instance.wordmarkDark?.toJson(),
+      'symbol': instance.symbol?.toJson(),
     };

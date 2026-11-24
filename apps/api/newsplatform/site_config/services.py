@@ -12,9 +12,7 @@ from newsplatform.common import context
 from newsplatform.common.errors import Conflict, DomainError, NotFound
 from newsplatform.rbac import selectors as rbac
 from newsplatform.site_config.models import SettingsSection
-from newsplatform.site_config.schemas import SECTIONS, Identity, Localization, Section, Security
-
-_FILES = ("logo_light", "logo_dark", "favicon")
+from newsplatform.site_config.schemas import SECTIONS, Brand, Identity, Localization, Section, Security
 
 
 def get_section(key: str) -> tuple[Section, int]:
@@ -30,10 +28,14 @@ def get_security() -> Security:
     return section
 
 
+def get_brand() -> tuple[Brand, int]:
+    section, version = get_section("brand")
+    assert isinstance(section, Brand)  # noqa: S101 (type narrowing)
+    return section, version
+
+
 def identity() -> Identity:
-    section = get_section("identity")[0]
-    assert isinstance(section, Identity)  # noqa: S101 (type narrowing)
-    return section
+    return get_brand()[0].identity
 
 
 def brand_name() -> str:
@@ -41,39 +43,19 @@ def brand_name() -> str:
 
 
 def public_config() -> dict[str, Any]:
-    from newsplatform.media.models import Asset
-    from newsplatform.media.presenters import image
     from newsplatform.media.storage import base_url
+    from newsplatform.site_config import brand
 
-    brand, v1 = get_section("identity")
+    config, v1 = get_brand()
     local, v2 = get_section("localization")
-    assert isinstance(brand, Identity) and isinstance(local, Localization)  # noqa: S101, PT018
-    ids = {n: getattr(brand, n) for n in _FILES}
-    found = {str(a.pk): image(a, "en") for a in Asset.objects.filter(pk__in=[i for i in ids.values() if i])}
+    assert isinstance(local, Localization)  # noqa: S101
     return {
         "version": f"{v1}.{v2}",
         "media_base_url": base_url(),
-        "identity": {**brand.model_dump(), **{n: found.get(i) for n, i in ids.items()}},
+        "identity": brand.identity_body(config.identity),
+        "theme": brand.theme_body(config.appearance),
         "localization": local.model_dump(),
     }
-
-
-def _check_files(brand: Identity) -> None:
-    from newsplatform.media.models import Asset, AssetStatus
-
-    for name in _FILES:
-        wanted = getattr(brand, name)
-        if (
-            wanted
-            and not Asset.objects.filter(
-                pk=wanted, kind="image", status=AssetStatus.READY, deleted_at__isnull=True
-            ).exists()
-        ):
-            raise DomainError(
-                "The settings are invalid.",
-                code="validation_error",
-                errors=[{"field": name, "message": "Choose a finished image from the library"}],
-            )
 
 
 def ip_allowed(ip: str | None, security: Security) -> bool:
@@ -137,11 +119,11 @@ def update_section(
 ) -> int | ApprovalRequest:
     if key not in SECTIONS:
         raise NotFound("Unknown settings section")
+    if key == "brand":
+        raise DomainError("The brand is published on its own page.", code="use_appearance")
     rbac.require(actor, permission_for(key))
     section = _validate(key, data)
     clean = section.model_dump()
-    if isinstance(section, Identity):
-        _check_files(section)
     if isinstance(section, Security):
         if not ip_allowed(context.current().ip, section):
             raise DomainError(

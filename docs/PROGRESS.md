@@ -7,7 +7,8 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M0 Foundation** | Done | Blocked: no AWS environment |
 | **M0-CLOSE** | Done, pull request 7 (merged) | Blocked: no AWS environment |
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
-| **M2-DESIGN** | Spec, prototypes and gallery done; **waits for human approval (G2)** | n/a |
+| **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
+| **M2-THEMES** | In progress, branch `m2-design`, pull request 9 | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
@@ -20,6 +21,18 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
    - **Flutter and Terraform are not installed** in the container. Terraform 1.17.2 and Flutter 3.50.1 were used from a scratch directory. M3 needs Flutter permanently.
    - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, and every IAM and bucket policy. Plan-tested only.
 5. Waiting for a person: an AWS environment (A1 to A3), a dedicated test bucket (A8), a native Swahili editor (G1, 934 strings). Brand name, logo and accent colour (G6) are needed for M2-DESIGN.
+
+## Human decisions
+
+Recorded as given on **2026-11-24**.
+
+> **G6 Brand.** Brand name, logos and the brand colour are DATABASE-DRIVEN (admin), never hardcoded. The brand direction is WHITE, RED and BLACK, with RED as the dominant brand colour. Provide THREE design themes selectable in admin. Default: "Red Signature" with a deep red. The placeholder name stays "Mfano News" until the client sets the real one in admin.
+
+> **G2 Design.** The layout, structure and components in PR 9 are APPROVED WITH CHANGES D1–D7. Colour direction CHANGES per §2 (the theme system). The three themes need a fresh G2 sign-off on their gallery, but that sign-off does NOT block M3: the app is built against the theme contract, so themes are data.
+
+> **Open design questions.** Tabs: Nyumbani, Video, Gundua, Hifadhi, Wewe — approved. Comments: a sheet over the story on the app (Instagram-style); a right-hand drawer on desktop — approved. Shorts are always dark, in every theme — approved.
+
+The full text of the task these come from is summarised in [design/public-experience.md](design/public-experience.md) (rules, D1 to D7) and ADR-0029 onward.
 
 ## Acceptance
 

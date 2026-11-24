@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/preview-media.mjs",
+    "predev": "node scripts/preview-media.mjs",
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start --port 3001",
@@ -16,6 +18,7 @@
     "@news/api-client": "workspace:*",
     "@news/content-schema": "workspace:*",
     "@news/design-tokens": "workspace:*",
+    "@news/screens": "workspace:*",
     "@news/ui": "workspace:*",
     "@sentry/browser": "11.13.0",
     "@simplewebauthn/browser": "14.0.0",

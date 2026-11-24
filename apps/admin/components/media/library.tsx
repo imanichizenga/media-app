@@ -140,10 +140,10 @@ export function LibraryGrid({
                 >
                   <Thumb
                     asset={asset}
-                    className="aspect-4/3 w-full outline-2 outline-transparent -outline-offset-2 transition-[outline-color] group-hover:outline-accent group-aria-pressed:outline-accent"
+                    className="aspect-4/3 w-full outline-2 outline-transparent -outline-offset-2 transition-[outline-color] group-hover:outline-brand group-aria-pressed:outline-brand"
                   />
                   {picked?.has(asset.id) && (
-                    <span className="absolute top-2 right-2 grid size-6 place-items-center rounded-full bg-accent text-on-accent">
+                    <span className="absolute top-2 right-2 grid size-6 place-items-center rounded-full bg-brand text-on-brand">
                       <Check aria-hidden size={16} />
                     </span>
                   )}
@@ -515,7 +515,7 @@ function AssetDetails({ id, onClose }: { id: string; onClose: () => void }) {
           <ul className="flex flex-col">
             {data.posts.map((post) => (
               <li key={post.id}>
-                <Link href={`/content/${post.id}`} className="tap flex items-center text-accent">
+                <Link href={`/content/${post.id}`} className="tap flex items-center text-brand-text">
                   {post.headline || t("untitled")}
                 </Link>
               </li>

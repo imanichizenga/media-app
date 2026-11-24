@@ -829,6 +829,169 @@
                 }
             }
         },
+        "/api/v1/brand": {
+            "get": {
+                "operationId": "brand_get",
+                "tags": [
+                    "brand"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Brand"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "brand_publish",
+                "tags": [
+                    "brand"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BrandPublishRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandPublished"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/brand/logos": {
+            "post": {
+                "operationId": "brand_logo_upload",
+                "tags": [
+                    "brand"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BrandLogoUploadRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandLogoUploaded"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/brand/versions": {
+            "get": {
+                "operationId": "brand_versions",
+                "tags": [
+                    "brand"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandVersions"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/brand/versions/{number}/restore": {
+            "post": {
+                "operationId": "brand_restore",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "number",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "brand"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BrandRestoreRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandPublished"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/categories": {
             "get": {
                 "operationId": "categories_list",
@@ -4259,6 +4422,348 @@
                 "type": "string",
                 "description": "* `same` - same\n* `added` - added\n* `removed` - removed\n* `changed` - changed\n* `moved` - moved"
             },
+            "Brand": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "$ref": "#/components/schemas/SiteTheme"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/SiteIdentity"
+                    },
+                    "version": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/BrandData"
+                    },
+                    "can_edit": {
+                        "type": "boolean"
+                    },
+                    "approval_pending": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "approval_pending",
+                    "can_edit",
+                    "data",
+                    "identity",
+                    "theme",
+                    "version"
+                ]
+            },
+            "BrandAppearanceInput": {
+                "type": "object",
+                "properties": {
+                    "schema_version": {
+                        "type": "integer",
+                        "default": 1
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/ThemeKeyEnum"
+                    },
+                    "color": {
+                        "type": "string",
+                        "maxLength": 7
+                    },
+                    "dark_color": {
+                        "type": "string",
+                        "maxLength": 7
+                    }
+                },
+                "required": [
+                    "color",
+                    "dark_color",
+                    "theme"
+                ]
+            },
+            "BrandAppearanceInputRequest": {
+                "type": "object",
+                "properties": {
+                    "schema_version": {
+                        "type": "integer",
+                        "default": 1
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/ThemeKeyEnum"
+                    },
+                    "color": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 7
+                    },
+                    "dark_color": {
+                        "type": "string",
+                        "maxLength": 7
+                    }
+                },
+                "required": [
+                    "color",
+                    "dark_color",
+                    "theme"
+                ]
+            },
+            "BrandData": {
+                "type": "object",
+                "properties": {
+                    "identity": {
+                        "$ref": "#/components/schemas/BrandIdentityInput"
+                    },
+                    "appearance": {
+                        "$ref": "#/components/schemas/BrandAppearanceInput"
+                    }
+                },
+                "required": [
+                    "appearance",
+                    "identity"
+                ]
+            },
+            "BrandDataRequest": {
+                "type": "object",
+                "properties": {
+                    "identity": {
+                        "$ref": "#/components/schemas/BrandIdentityInputRequest"
+                    },
+                    "appearance": {
+                        "$ref": "#/components/schemas/BrandAppearanceInputRequest"
+                    }
+                },
+                "required": [
+                    "appearance",
+                    "identity"
+                ]
+            },
+            "BrandIdentityInput": {
+                "type": "object",
+                "properties": {
+                    "brand_name": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "tagline_sw": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "tagline_en": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "wordmark_light": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "wordmark_dark": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "maxLength": 36
+                    }
+                },
+                "required": [
+                    "brand_name",
+                    "symbol",
+                    "tagline_en",
+                    "tagline_sw",
+                    "wordmark_dark",
+                    "wordmark_light"
+                ]
+            },
+            "BrandIdentityInputRequest": {
+                "type": "object",
+                "properties": {
+                    "brand_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                    },
+                    "tagline_sw": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "tagline_en": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "wordmark_light": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "wordmark_dark": {
+                        "type": "string",
+                        "maxLength": 36
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "maxLength": 36
+                    }
+                },
+                "required": [
+                    "brand_name",
+                    "symbol",
+                    "tagline_en",
+                    "tagline_sw",
+                    "wordmark_dark",
+                    "wordmark_light"
+                ]
+            },
+            "BrandLogoUploadRequest": {
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "$ref": "#/components/schemas/LogoKindEnum"
+                    },
+                    "content": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Base64",
+                        "maxLength": 1333341
+                    }
+                },
+                "required": [
+                    "content",
+                    "kind"
+                ]
+            },
+            "BrandLogoUploaded": {
+                "type": "object",
+                "properties": {
+                    "logo": {
+                        "$ref": "#/components/schemas/Logo"
+                    },
+                    "white": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "logo",
+                    "white"
+                ]
+            },
+            "BrandPublishRequest": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/BrandDataRequest"
+                    },
+                    "note": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 500
+                    }
+                },
+                "required": [
+                    "data",
+                    "version"
+                ]
+            },
+            "BrandPublished": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer"
+                    },
+                    "approval_required": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "approval_required",
+                    "version"
+                ]
+            },
+            "BrandRestoreRequest": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                },
+                "required": [
+                    "version"
+                ]
+            },
+            "BrandVersion": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/BrandData"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "restored_from": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "published_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Person"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "approved_by": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Person"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "approved_by",
+                    "data",
+                    "note",
+                    "number",
+                    "published_at",
+                    "published_by",
+                    "restored_from"
+                ]
+            },
+            "BrandVersions": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BrandVersion"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
             "BulkActionEnum": {
                 "enum": [
                     "archive",
@@ -5206,6 +5711,49 @@
                     "password"
                 ]
             },
+            "Logo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "derived": {
+                        "type": "boolean"
+                    },
+                    "svg": {
+                        "type": "string"
+                    },
+                    "png": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "derived",
+                    "height",
+                    "id",
+                    "png",
+                    "svg",
+                    "width"
+                ]
+            },
+            "LogoKindEnum": {
+                "enum": [
+                    "wordmark",
+                    "symbol"
+                ],
+                "type": "string",
+                "description": "* `wordmark` - Wordmark\n* `symbol` - Symbol"
+            },
             "Named": {
                 "type": "object",
                 "properties": {
@@ -5769,6 +6317,11 @@
                             }
                         ]
                     },
+                    "youtube_seconds": {
+                        "type": "integer",
+                        "maximum": 86400,
+                        "minimum": 0
+                    },
                     "source_url": {
                         "oneOf": [
                             {
@@ -5895,6 +6448,11 @@
                                 "maxLength": 0
                             }
                         ]
+                    },
+                    "youtube_seconds": {
+                        "type": "integer",
+                        "maximum": 86400,
+                        "minimum": 0
                     },
                     "source_url": {
                         "oneOf": [
@@ -6542,6 +7100,21 @@
                     "permissions"
                 ]
             },
+            "Schemes": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "string"
+                    },
+                    "dark": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
+                ]
+            },
             "SecurityOverview": {
                 "type": "object",
                 "properties": {
@@ -6744,6 +7317,118 @@
                 },
                 "required": [
                     "urls"
+                ]
+            },
+            "SiteIdentity": {
+                "type": "object",
+                "properties": {
+                    "brand_name": {
+                        "type": "string"
+                    },
+                    "tagline_sw": {
+                        "type": "string"
+                    },
+                    "tagline_en": {
+                        "type": "string"
+                    },
+                    "wordmark_light": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "wordmark_dark": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "symbol": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Logo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "brand_name",
+                    "symbol",
+                    "tagline_en",
+                    "tagline_sw",
+                    "wordmark_dark",
+                    "wordmark_light"
+                ]
+            },
+            "SiteTheme": {
+                "type": "object",
+                "properties": {
+                    "schema_version": {
+                        "type": "integer"
+                    },
+                    "hash": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "$ref": "#/components/schemas/ThemeKeyEnum"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "dark_color": {
+                        "type": "string"
+                    },
+                    "css": {
+                        "type": "string"
+                    },
+                    "theme_color": {
+                        "$ref": "#/components/schemas/Schemes"
+                    },
+                    "tokens": {
+                        "$ref": "#/components/schemas/SiteThemeTokens"
+                    }
+                },
+                "required": [
+                    "color",
+                    "css",
+                    "dark_color",
+                    "hash",
+                    "key",
+                    "schema_version",
+                    "theme_color",
+                    "tokens"
+                ]
+            },
+            "SiteThemeTokens": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "dark": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
                 ]
             },
             "StaffList": {
@@ -7413,6 +8098,15 @@
                         "$ref": "#/components/schemas/TextRequest"
                     }
                 }
+            },
+            "ThemeKeyEnum": {
+                "enum": [
+                    "signature",
+                    "bold",
+                    "quiet"
+                ],
+                "type": "string",
+                "description": "* `signature` - signature\n* `bold` - bold\n* `quiet` - quiet"
             },
             "TotpBegin": {
                 "type": "object",

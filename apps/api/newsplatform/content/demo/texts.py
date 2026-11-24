@@ -324,9 +324,9 @@ TAGS: list[T] = [
     ("Bajeti", "Budget"),
 ]
 # Blender Foundation open films, Creative Commons Attribution.
-YOUTUBE: list[tuple[str, str]] = [
-    ("aqz-KE-bpKQ", "Big Buck Bunny"),
-    ("eRsGyueVLvQ", "Sintel"),
-    ("R6MlUcmOul8", "Tears of Steel"),
-    ("WhWc3b3KhnY", "Spring"),
+YOUTUBE: list[tuple[str, str, int]] = [
+    ("aqz-KE-bpKQ", "Big Buck Bunny", 635),
+    ("eRsGyueVLvQ", "Sintel", 888),
+    ("R6MlUcmOul8", "Tears of Steel", 734),
+    ("WhWc3b3KhnY", "Spring", 464),
 ]

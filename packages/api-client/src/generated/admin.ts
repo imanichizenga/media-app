@@ -354,6 +354,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/brand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["brand_get"];
+        put: operations["brand_publish"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/brand/logos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["brand_logo_upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/brand/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["brand_versions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/brand/versions/{number}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["brand_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/categories": {
         parameters: {
             query?: never;
@@ -1413,6 +1477,87 @@ export interface components {
          * @enum {string}
          */
         BlockDiffOpEnum: "same" | "added" | "removed" | "changed" | "moved";
+        Brand: {
+            theme: components["schemas"]["SiteTheme"];
+            identity: components["schemas"]["SiteIdentity"];
+            version: number;
+            data: components["schemas"]["BrandData"];
+            can_edit: boolean;
+            approval_pending: boolean;
+        };
+        BrandAppearanceInput: {
+            /** @default 1 */
+            schema_version: number;
+            theme: components["schemas"]["ThemeKeyEnum"];
+            color: string;
+            dark_color: string;
+        };
+        BrandAppearanceInputRequest: {
+            /** @default 1 */
+            schema_version: number;
+            theme: components["schemas"]["ThemeKeyEnum"];
+            color: string;
+            dark_color: string;
+        };
+        BrandData: {
+            identity: components["schemas"]["BrandIdentityInput"];
+            appearance: components["schemas"]["BrandAppearanceInput"];
+        };
+        BrandDataRequest: {
+            identity: components["schemas"]["BrandIdentityInputRequest"];
+            appearance: components["schemas"]["BrandAppearanceInputRequest"];
+        };
+        BrandIdentityInput: {
+            brand_name: string;
+            tagline_sw: string;
+            tagline_en: string;
+            wordmark_light: string;
+            wordmark_dark: string;
+            symbol: string;
+        };
+        BrandIdentityInputRequest: {
+            brand_name: string;
+            tagline_sw: string;
+            tagline_en: string;
+            wordmark_light: string;
+            wordmark_dark: string;
+            symbol: string;
+        };
+        BrandLogoUploadRequest: {
+            kind: components["schemas"]["LogoKindEnum"];
+            /** @description Base64 */
+            content: string;
+        };
+        BrandLogoUploaded: {
+            logo: components["schemas"]["Logo"];
+            white: components["schemas"]["Logo"] | null;
+        };
+        BrandPublishRequest: {
+            version: number;
+            data: components["schemas"]["BrandDataRequest"];
+            /** @default  */
+            note: string;
+        };
+        BrandPublished: {
+            version: number;
+            approval_required: boolean;
+        };
+        BrandRestoreRequest: {
+            version: number;
+        };
+        BrandVersion: {
+            number: number;
+            data: components["schemas"]["BrandData"];
+            note: string;
+            restored_from: number | null;
+            /** Format: date-time */
+            published_at: string;
+            published_by: components["schemas"]["Person"] | null;
+            approved_by: components["schemas"]["Person"] | null;
+        };
+        BrandVersions: {
+            results: components["schemas"]["BrandVersion"][];
+        };
         /**
          * @description * `archive` - archive
          *     * `unpublish` - unpublish
@@ -1692,6 +1837,23 @@ export interface components {
             email: string;
             password: string;
         };
+        Logo: {
+            /** Format: uuid */
+            id: string;
+            width: number;
+            height: number;
+            derived: boolean;
+            svg: string;
+            png: {
+                [key: string]: string;
+            };
+        };
+        /**
+         * @description * `wordmark` - Wordmark
+         *     * `symbol` - Symbol
+         * @enum {string}
+         */
+        LogoKindEnum: "wordmark" | "symbol";
         Named: {
             /** Format: uuid */
             id: string;
@@ -1828,6 +1990,7 @@ export interface components {
             /** Format: uuid */
             video?: string | null;
             youtube_id?: string;
+            youtube_seconds?: number;
             source_url?: string;
             is_evergreen?: boolean;
             is_sensitive?: boolean;
@@ -1856,6 +2019,7 @@ export interface components {
             /** Format: uuid */
             video?: string | null;
             youtube_id?: string;
+            youtube_seconds?: number;
             source_url?: string;
             is_evergreen?: boolean;
             is_sensitive?: boolean;
@@ -2039,6 +2203,10 @@ export interface components {
             description: string;
             permissions: string[];
         };
+        Schemes: {
+            light: string;
+            dark: string;
+        };
         SecurityOverview: {
             passkeys: components["schemas"]["Passkey"][];
             totp: boolean;
@@ -2096,6 +2264,32 @@ export interface components {
         };
         SignedParts: {
             urls: {
+                [key: string]: string;
+            };
+        };
+        SiteIdentity: {
+            brand_name: string;
+            tagline_sw: string;
+            tagline_en: string;
+            wordmark_light: components["schemas"]["Logo"] | null;
+            wordmark_dark: components["schemas"]["Logo"] | null;
+            symbol: components["schemas"]["Logo"] | null;
+        };
+        SiteTheme: {
+            schema_version: number;
+            hash: string;
+            key: components["schemas"]["ThemeKeyEnum"];
+            color: string;
+            dark_color: string;
+            css: string;
+            theme_color: components["schemas"]["Schemes"];
+            tokens: components["schemas"]["SiteThemeTokens"];
+        };
+        SiteThemeTokens: {
+            light: {
+                [key: string]: string;
+            };
+            dark: {
                 [key: string]: string;
             };
         };
@@ -2280,6 +2474,13 @@ export interface components {
             sw?: components["schemas"]["TextRequest"];
             en?: components["schemas"]["TextRequest"];
         };
+        /**
+         * @description * `signature` - signature
+         *     * `bold` - bold
+         *     * `quiet` - quiet
+         * @enum {string}
+         */
+        ThemeKeyEnum: "signature" | "bold" | "quiet";
         TotpBegin: {
             secret: string;
             qr_svg: string;
@@ -2858,6 +3059,115 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    brand_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Brand"];
+                };
+            };
+        };
+    };
+    brand_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandPublishRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandPublished"];
+                };
+            };
+        };
+    };
+    brand_logo_upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandLogoUploadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandLogoUploaded"];
+                };
+            };
+        };
+    };
+    brand_versions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandVersions"];
+                };
+            };
+        };
+    };
+    brand_restore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandRestoreRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandPublished"];
                 };
             };
         };

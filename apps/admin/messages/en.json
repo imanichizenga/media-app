@@ -31,7 +31,8 @@
     "content": "Content",
     "media": "Media library",
     "taxonomy": "Categories and tags",
-    "author": "My author page"
+    "author": "My author page",
+    "appearance": "Appearance"
   },
   "errors": {
     "unavailable": "Something went wrong. Please try again.",
@@ -104,7 +105,21 @@
     "synonym_taken": "Another tag already uses one of these words.",
     "invalid_path": "Use an address on this site, such as /habari/kichwa.",
     "path_in_use": "A page is published at this address.",
-    "redirect_loop": "This would redirect in a circle."
+    "redirect_loop": "This would redirect in a circle.",
+    "contrast": "This colour is not readable everywhere it is used.",
+    "use_appearance": "Change this on the Appearance page.",
+    "logo_unsafe": "The file refers to something outside itself.",
+    "logo_unreadable": "The file could not be read. Use SVG or PNG.",
+    "logo_style": "The SVG uses a style sheet. Export it with plain attributes.",
+    "logo_text": "The SVG contains live text. Convert it to outlines.",
+    "logo_filter": "The SVG uses filters. Flatten them first.",
+    "logo_too_complex": "The drawing is too complex for a logo.",
+    "logo_no_viewbox": "The SVG has no size. Export it with a viewBox.",
+    "logo_shape": "The shape does not fit: a wordmark is wide, a symbol is square.",
+    "logo_small": "The picture is too small. A wordmark is at least 160 pixels high, a symbol 512 wide.",
+    "logo_opaque": "The background must be transparent.",
+    "logo_empty": "The file is empty.",
+    "logo_too_large": "The file is larger than 1 MB."
   },
   "login": {
     "title": "Sign in",
@@ -339,21 +354,15 @@
   },
   "settings": {
     "title": "Settings",
-    "lead": "Brand, language and security.",
+    "lead": "Language and security.",
     "saved": "Saved.",
     "sentForApproval": "Sent to a second person for approval.",
     "cidrHelp": "One network per line, for example 203.0.113.0/24.",
     "section": {
-      "identity": "Identity",
       "localization": "Language and time",
       "security": "Security"
     },
     "field": {
-      "brand_name": "Brand name",
-      "tagline_sw": "Tagline (Swahili)",
-      "tagline_en": "Tagline (English)",
-      "accent_light": "Accent, light theme",
-      "accent_dark": "Accent, dark theme",
       "default_locale": "Default language",
       "timezone": "Time zone",
       "idle_timeout_minutes": "Idle timeout (minutes)",
@@ -364,10 +373,7 @@
       "four_eyes": "Four-eyes approval",
       "geo_anomaly_action": "Sign-in from an unusual country",
       "ip_allowlist_enabled": "Only allow listed networks",
-      "ip_allowlist": "Allowed networks",
-      "logo_light": "Logo, light theme",
-      "logo_dark": "Logo, dark theme",
-      "favicon": "App icon (square)"
+      "ip_allowlist": "Allowed networks"
     },
     "option": {
       "sw": "Kiswahili",
@@ -453,10 +459,7 @@
     "play": "Play",
     "playError": "This video cannot be played right now.",
     "elsewhere": {
-      "author": "An author’s picture",
-      "logo_light": "Logo, light theme",
-      "logo_dark": "Logo, dark theme",
-      "favicon": "App icon"
+      "author": "An author’s picture"
     },
     "status": {
       "uploading": "Uploading",
@@ -569,7 +572,8 @@
       "body": "Write the article",
       "media": "Wait for files to finish, or remove failed ones",
       "credit": "Add a credit to every picture",
-      "alt": "Describe the main picture in every language"
+      "alt": "Describe the main picture in every language",
+      "duration": "Add the length of the video"
     },
     "embargo": "Embargo until",
     "embargoHelp": "It cannot be published before this time.",
@@ -793,7 +797,9 @@
       "unsupported": "This cannot be shown here.",
       "pinned": "Pinned",
       "gallery": "Pictures"
-    }
+    },
+    "youtubeLength": "Length",
+    "youtubeLengthHelp": "Minutes and seconds, for example 12:30."
   },
   "seo": {
     "google": "Search result",
@@ -949,5 +955,77 @@
     "made": "Made",
     "automatic": "Automatically",
     "byHand": "By hand"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "lead": "The name, the logos and the colours of the website and the app.",
+    "theme": "Theme",
+    "color": "Colour",
+    "brandColor": "Brand colour",
+    "brandColorHelp": "One colour. Every shade on every screen, light and dark, comes from it.",
+    "pick": "choose",
+    "hex": "Write six digits, for example #b5121b.",
+    "passes": "Readable everywhere, in all three themes.",
+    "fails": "{count, plural, one {Hard to read in # place.} other {Hard to read in # places.}}",
+    "needs": "needs",
+    "useNearest": "Use the nearest colour that passes, {color}",
+    "ownDark": "Choose the colour on dark surfaces myself",
+    "ownDarkHelp": "Otherwise it is worked out: lighter and softer, so it does not glare on black.",
+    "darkColor": "Brand colour on dark surfaces",
+    "sample": {
+      "button": "Button",
+      "text": "Link",
+      "logo": "Name",
+      "nav": "Current place",
+      "breaking": "Breaking"
+    },
+    "light": "Light",
+    "dark": "Dark",
+    "identity": "Name",
+    "brand_name": "Brand name",
+    "tagline_sw": "Tagline (Swahili)",
+    "tagline_en": "Tagline (English)",
+    "logos": "Logos",
+    "logosHelp": "SVG or PNG, up to 1 MB, with a transparent background. SVG files are cleaned before they are stored.",
+    "slot": {
+      "wordmark_light": "Wordmark on light",
+      "wordmark_dark": "Wordmark on dark",
+      "symbol": "Symbol"
+    },
+    "help": {
+      "wordmark_light": "Shown at the top of every page.",
+      "wordmark_dark": "Shown on dark headers.",
+      "symbol": "Browser tab, notifications and small spaces."
+    },
+    "absent": {
+      "wordmark_light": "Without a logo, the name is set in the headline typeface.",
+      "wordmark_dark": "Without one, the light wordmark is drawn in white.",
+      "symbol": "A square at least 512 pixels wide. Used in the browser tab, notifications and small spaces."
+    },
+    "upload": "Upload",
+    "replace": "Replace",
+    "remove": "Remove",
+    "buildTime": "The app icon, the name under it and the launch screen are part of the app itself. The stores require a new app release to change them.",
+    "note": "What changed (optional)",
+    "noteHelp": "Kept in the history.",
+    "publish": "Publish",
+    "discard": "Discard changes",
+    "published": "Published. Open pages change when they are next loaded; the app, the next time it starts.",
+    "sentForApproval": "Sent to a second person for approval.",
+    "waiting": "A change is waiting for a second person under Approvals.",
+    "preview": "Preview",
+    "previewNote": "The real screens, with sample stories.",
+    "phone": "Phone",
+    "desktop": "Desktop",
+    "screen": {
+      "home": "Home",
+      "article": "Article",
+      "shorts": "Shorts",
+      "auth": "Sign in",
+      "breaking": "Breaking"
+    },
+    "history": "Versions",
+    "current": "Current",
+    "restore": "Restore"
   }
 }

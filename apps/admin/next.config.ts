@@ -3,7 +3,6 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const security = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-  { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "no-referrer" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
@@ -22,11 +21,23 @@ const config: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
-  transpilePackages: ["@news/api-client", "@news/content-schema", "@news/ui"],
-  headers: async () => [{ source: "/(.*)", headers: security }],
+  transpilePackages: [
+    "@news/api-client",
+    "@news/content-schema",
+    "@news/design-tokens",
+    "@news/screens",
+    "@news/ui",
+  ],
+  headers: async () => [
+    { source: "/(.*)", headers: security },
+    // Only our own Appearance page may show the preview in a frame; nothing may frame anything else.
+    { source: "/((?!preview$).*)", headers: [{ key: "X-Frame-Options", value: "DENY" }] },
+    { source: "/preview", headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }] },
+  ],
   // Local and E2E only. In AWS the load balancer routes /api and /ws on the same origin.
   rewrites: async () => [
     ...(api ? [{ source: "/api/v1/:path*", destination: `${api}/api/v1/:path*` }] : []),
+    ...(api ? [{ source: "/theme/:path+", destination: `${api}/theme/:path+` }] : []),
     ...(api ? [{ source: "/media/:path+", destination: `${api}/media/:path+` }] : []),
     ...(realtime ? [{ source: "/ws/v1/:path*", destination: `${realtime}/ws/v1/:path*` }] : []),
   ],

@@ -110,18 +110,15 @@ class Command(BaseCommand):
         self.everyone = list(User.objects.filter(author__isnull=False))
 
     def _brand(self) -> None:
-        logos = {
-            f"logo_{n}": str(self._image(f"nembo-{n}.png", scenes.logo(n == "dark"), ("Nembo", "Logo")).pk)
-            for n in ("light", "dark")
-        }
         SettingsSection.objects.update_or_create(
-            key="identity",
+            key="brand",
             defaults={
                 "data": {
-                    "brand_name": "Mfano News",
-                    "tagline_sw": "Habari za kuaminika, kila saa",
-                    "tagline_en": "News you can trust, every hour",
-                    **logos,
+                    "identity": {
+                        "brand_name": "Mfano News",
+                        "tagline_sw": "Habari za kuaminika, kila saa",
+                        "tagline_en": "News you can trust, every hour",
+                    }
                 }
             },
         )
@@ -248,7 +245,7 @@ class Command(BaseCommand):
             if kind in (PostType.VIDEO, PostType.SHORT) and self.clips[kind == PostType.SHORT]:
                 data["video"] = self.rng.choice(self.clips[kind == PostType.SHORT]).pk
             if kind == PostType.YOUTUBE:
-                data["youtube_id"] = t.YOUTUBE[n % len(t.YOUTUBE)][0]
+                data["youtube_id"], _, data["youtube_seconds"] = t.YOUTUBE[n % len(t.YOUTUBE)]
             if kind == PostType.INSTAGRAM:
                 data["source_url"] = "https://www.instagram.com/p/mfano/"
             if kind == PostType.BREAKING:

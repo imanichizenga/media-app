@@ -6,13 +6,17 @@
   "exports": {
     "./tokens.css": "./dist/tokens.css",
     "./theme.css": "./dist/theme.css",
-    ".": "./dist/tokens.js"
+    "./theme": "./src/theme.ts"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "vectors": "node scripts/vectors.mjs",
+    "typecheck": "tsc --noEmit -p .",
     "test": "node --test test/*.test.mjs"
   },
   "devDependencies": {
-    "style-dictionary": "5.8.0"
+    "@types/node": "^24",
+    "style-dictionary": "5.8.0",
+    "typescript": "5.9.3"
   }
 }

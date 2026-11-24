@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { english, expect, joinWithPasskey, manage, PASSWORD, sql, test, watch } from "./helpers";
+import { english, expect, invitation, joinWithPasskey, manage, PASSWORD, sql, test, watch } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 let page: Page;
@@ -15,6 +15,7 @@ const PAGES = [
   "/roles",
   "/audit",
   "/logs",
+  "/appearance",
   "/settings",
   "/security",
   "/content",
@@ -218,6 +219,108 @@ test("four eyes: the requester cannot approve, a second person can", async ({ br
   await other.goto("/settings");
   await expect(other.getByLabel("Idle timeout (minutes)")).toHaveValue("20");
   await other.close();
+});
+
+const painted = (p: Page) =>
+  p.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--color-masthead-bg").trim());
+
+test("appearance: theme and colour are previewed, approved by a second person, shown without a flash, undone", async ({
+  browser,
+}) => {
+  const before = await painted(page);
+  await page.goto("/appearance");
+  await expect(page.getByText("Readable everywhere")).toBeVisible();
+  // A colour that fails says where, and offers the nearest one that does not.
+  const hex = page.getByRole("textbox", { name: "Brand colour", exact: true });
+  await hex.fill("#e30613");
+  await expect(page.getByText(/Hard to read in/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Publish" })).toBeDisabled();
+  await page.getByRole("button", { name: /Use the nearest colour/ }).click();
+  await expect(hex).toHaveValue("#d7000f");
+  // The preview is the real screens in the chosen colours, before anything is published.
+  await page.getByText("Bold Ink", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: /Bold Ink/ })).toBeChecked();
+  await page.getByLabel("Brand name").fill("Habari Leo");
+  const phone = page.frameLocator('iframe[title="Phone"]');
+  await expect(phone.getByText("Habari Leo").first()).toBeVisible();
+  const inside = () =>
+    phone.locator("html").evaluate((e) => getComputedStyle(e).getPropertyValue("--color-masthead-bg").trim());
+  await expect.poll(inside).toBe("#0b0b0c");
+  await page.getByRole("button", { name: "Breaking" }).click();
+  await expect(phone.getByText("Breaking news").first()).toBeVisible();
+  await page.getByRole("button", { name: "Dark", exact: true }).click();
+  await expect(phone.locator("html")).toHaveAttribute("data-theme", "dark");
+  expect(await painted(page)).toBe(before);
+  // A logo with a program in it arrives as a drawing.
+  await page
+    .getByLabel("Wordmark on light", { exact: true })
+    .last()
+    .setInputFiles({
+      name: "logo.svg",
+      mimeType: "image/svg+xml",
+      buffer: Buffer.from(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" onload="alert(1)"><script>alert(2)</script><path d="M0 0h400v100h-60v-60h-280v60h-60z" fill="#d7000f"/></svg>',
+      ),
+    });
+  const logo = page.getByRole("img", { name: "Wordmark on light" });
+  await expect(logo).toBeVisible();
+  const svg = await (await page.request.get((await logo.getAttribute("src")) ?? "")).text();
+  expect(svg).not.toMatch(/script|onload/);
+  await page.getByLabel("What changed").fill("New season");
+  await page.getByRole("button", { name: "Publish" }).click();
+  await expect(page.getByText("Sent to a second person for approval.")).toBeVisible();
+  expect(await painted(page)).toBe(before);
+
+  const other = await (await browser.newContext()).newPage();
+  await joinWithPasskey(
+    other,
+    "chiku@example.test",
+    "Chiku",
+    invitation("chiku@example.test", "super_admin"),
+  );
+  await other.goto("/approvals");
+  await other.getByRole("button", { name: "Approve", exact: true }).click();
+  await other.getByLabel("Note").fill("Agreed");
+  await other.getByRole("dialog").getByRole("button", { name: "Approve" }).click();
+  await expect(other.getByText("Nothing is waiting")).toBeVisible();
+
+  // No flash: the first thing ever painted already has the new colours.
+  await page.addInitScript(() => {
+    new PerformanceObserver(() => {
+      const root = document.documentElement;
+      root.dataset.firstPaint ??= getComputedStyle(root).getPropertyValue("--color-masthead-bg").trim();
+    }).observe({ type: "paint", buffered: true });
+  });
+  await page.goto("/appearance");
+  await expect(page.locator("html")).toHaveAttribute("data-first-paint", "#0b0b0c");
+  await expect(page.getByText(/New season/)).toBeVisible();
+  const css = await page.request.get("/theme/current.css");
+  expect(css.url()).toMatch(/\/theme\/[0-9a-f]{16}\.css$/);
+  expect(css.headers()["cache-control"]).toContain("immutable");
+
+  // Back with one click, and four eyes again.
+  sql(
+    'insert into site_config_brandversion (id, created_at, updated_at, number, data, css_hash, css, note, restored_from, published_by_id, approved_by_id) select gen_random_uuid(), now(), now(), 0, jsonb_set(data, \'{appearance}\', \'{"theme":"signature","color":"#b5121b","dark_color":"","schema_version":1}\'), \'x\', \'\', \'First\', null, null, null from site_config_brandversion limit 1',
+  );
+  await page.reload();
+  await page.getByRole("button", { name: "Restore 0" }).click();
+  await expect(page.getByText("Sent to a second person for approval.")).toBeVisible();
+  await other.goto("/approvals");
+  await other.getByRole("button", { name: "Approve", exact: true }).click();
+  await other.getByLabel("Note").fill("Back");
+  await other.getByRole("dialog").getByRole("button", { name: "Approve" }).click();
+  await expect(other.getByText("Nothing is waiting")).toBeVisible();
+  await page.goto("/");
+  expect(await painted(page)).toBe(before);
+  await other.close();
+});
+
+test("only the appearance page may frame the preview", async () => {
+  const preview = (await page.request.get("/preview")).headers();
+  expect(preview["content-security-policy"]).toContain("frame-ancestors 'self'");
+  expect(preview["x-frame-options"]).toBe("SAMEORIGIN");
+  const home = (await page.request.get("/login")).headers();
+  expect(home["x-frame-options"]).toBe("DENY");
 });
 
 test("language, theme and command palette", async () => {

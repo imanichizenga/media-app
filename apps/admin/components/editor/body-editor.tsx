@@ -35,7 +35,7 @@ function Card({ node, updateAttributes, deleteNode, selected, editor }: NodeView
   const name = t(`block.${block.type}` as never);
   return (
     <NodeViewWrapper
-      className={`my-4 rounded-md border bg-surface ${selected ? "border-accent" : "border-border"}`}
+      className={`my-4 rounded-md border bg-surface ${selected ? "border-brand" : "border-border"}`}
       data-block={block.type}
     >
       <div
@@ -154,7 +154,7 @@ function InsertMenu({ editor, kinds }: { editor: Editor; kinds: CardKind[] }) {
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
-          className="tap flex shrink-0 items-center gap-2 rounded-sm px-3 text-accent text-label hover:bg-surface-sunken"
+          className="tap flex shrink-0 items-center gap-2 rounded-sm px-3 text-brand-text text-label hover:bg-surface-sunken"
         >
           <Plus aria-hidden size={18} /> {t("insert")}
         </button>
@@ -177,7 +177,7 @@ function InsertMenu({ editor, kinds }: { editor: Editor; kinds: CardKind[] }) {
                     .insertContent({ type: "newsBlock", attrs: { id: block.id, block } })
                     .run();
                 }}
-                className="tap flex cursor-pointer items-center gap-3 rounded-sm px-3 outline-none data-[highlighted]:bg-accent-soft data-[highlighted]:text-accent"
+                className="tap flex cursor-pointer items-center gap-3 rounded-sm px-3 outline-none data-[highlighted]:bg-brand-soft data-[highlighted]:text-brand-text"
               >
                 <Icon aria-hidden size={18} /> {t(`block.${kind}`)}
               </DropdownMenu.Item>

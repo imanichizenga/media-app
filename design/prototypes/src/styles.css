@@ -3,6 +3,13 @@
 @import "@news/design-tokens/theme.css";
 @import "@news/ui/styles.css";
 @source "../../../packages/ui/src";
+@source "../../../packages/screens/src";
+
+/* The app's window classes (D7). The website keeps its own. */
+@theme {
+  --breakpoint-medium: 37.5rem;
+  --breakpoint-expanded: 52.5rem;
+}
 
 @font-face {
   font-family: "Inter Variable";

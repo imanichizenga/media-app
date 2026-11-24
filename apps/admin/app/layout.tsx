@@ -15,6 +15,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   // The theme comes from a cookie, so no inline script is needed to avoid a flash.
   return (
     <html lang={locale} data-theme={theme === "dark" || theme === "light" ? theme : undefined}>
+      <head>
+        {/* The published theme. It waits before first paint, and outranks the bundled colours. */}
+        <link rel="stylesheet" href="/theme/current.css" data-brand-theme="" />
+      </head>
       <body>
         <NextIntlClientProvider>
           <Providers nonce={head.get("x-nonce") ?? ""} monitoring={Boolean(process.env.SENTRY_DSN)}>

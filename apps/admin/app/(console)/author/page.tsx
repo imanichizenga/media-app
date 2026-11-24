@@ -121,7 +121,7 @@ function AuthorForm({ id, author }: { id: string; author: Author }) {
         {picture.data ? (
           <Thumb asset={picture.data.asset} className="size-24 rounded-full!" />
         ) : (
-          <span className="grid size-24 place-items-center rounded-full bg-accent-soft font-serif text-accent text-headline-l">
+          <span className="grid size-24 place-items-center rounded-full bg-brand-soft font-serif text-brand-text text-headline-l">
             {author.display_name.slice(0, 1)}
           </span>
         )}

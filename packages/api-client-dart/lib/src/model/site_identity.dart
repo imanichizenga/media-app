@@ -3,7 +3,7 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:news_api_client/src/model/public_image.dart';
+import 'package:news_api_client/src/model/logo.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -22,11 +22,9 @@ class SiteIdentity {
     required this.brandName,
     required this.taglineSw,
     required this.taglineEn,
-    required this.accentLight,
-    required this.accentDark,
-    required this.logoLight,
-    required this.logoDark,
-    required this.favicon,
+    required this.wordmarkLight,
+    required this.wordmarkDark,
+    required this.symbol,
   });
 
   @JsonKey(
@@ -51,39 +49,25 @@ class SiteIdentity {
   final String taglineEn;
 
   @JsonKey(
-    name: r'accent_light',
-    required: true,
-    includeIfNull: false,
-  )
-  final String accentLight;
-
-  @JsonKey(
-    name: r'accent_dark',
-    required: true,
-    includeIfNull: false,
-  )
-  final String accentDark;
-
-  @JsonKey(
-    name: r'logo_light',
+    name: r'wordmark_light',
     required: true,
     includeIfNull: true,
   )
-  final PublicImage? logoLight;
+  final Logo? wordmarkLight;
 
   @JsonKey(
-    name: r'logo_dark',
+    name: r'wordmark_dark',
     required: true,
     includeIfNull: true,
   )
-  final PublicImage? logoDark;
+  final Logo? wordmarkDark;
 
   @JsonKey(
-    name: r'favicon',
+    name: r'symbol',
     required: true,
     includeIfNull: true,
   )
-  final PublicImage? favicon;
+  final Logo? symbol;
 
   @override
   bool operator ==(Object other) =>
@@ -92,22 +76,18 @@ class SiteIdentity {
           other.brandName == brandName &&
           other.taglineSw == taglineSw &&
           other.taglineEn == taglineEn &&
-          other.accentLight == accentLight &&
-          other.accentDark == accentDark &&
-          other.logoLight == logoLight &&
-          other.logoDark == logoDark &&
-          other.favicon == favicon;
+          other.wordmarkLight == wordmarkLight &&
+          other.wordmarkDark == wordmarkDark &&
+          other.symbol == symbol;
 
   @override
   int get hashCode =>
       brandName.hashCode +
       taglineSw.hashCode +
       taglineEn.hashCode +
-      accentLight.hashCode +
-      accentDark.hashCode +
-      (logoLight == null ? 0 : logoLight.hashCode) +
-      (logoDark == null ? 0 : logoDark.hashCode) +
-      (favicon == null ? 0 : favicon.hashCode);
+      (wordmarkLight == null ? 0 : wordmarkLight.hashCode) +
+      (wordmarkDark == null ? 0 : wordmarkDark.hashCode) +
+      (symbol == null ? 0 : symbol.hashCode);
 
   factory SiteIdentity.fromJson(Map<String, dynamic> json) =>
       _$SiteIdentityFromJson(json);

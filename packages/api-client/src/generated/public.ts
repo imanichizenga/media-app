@@ -243,6 +243,8 @@ export interface components {
             image: components["schemas"]["PublicImage"] | null;
             video: components["schemas"]["PublicVideo"] | null;
             youtube_id: string;
+            /** @description Of the video, wherever it lives */
+            duration_ms: number | null;
             reading_minutes: number;
             /** Format: date-time */
             published_at: string;
@@ -298,6 +300,8 @@ export interface components {
             image: components["schemas"]["PublicImage"] | null;
             video: components["schemas"]["PublicVideo"] | null;
             youtube_id: string;
+            /** @description Of the video, wherever it lives */
+            duration_ms: number | null;
             reading_minutes: number;
             /** Format: date-time */
             published_at: string;
@@ -354,6 +358,17 @@ export interface components {
         HomeSection: {
             category: components["schemas"]["PublicCategory"];
             results: components["schemas"]["Card"][];
+        };
+        Logo: {
+            /** Format: uuid */
+            id: string;
+            width: number;
+            height: number;
+            derived: boolean;
+            svg: string;
+            png: {
+                [key: string]: string;
+            };
         };
         NavigationItem: {
             /** Format: uuid */
@@ -511,6 +526,10 @@ export interface components {
         Resolve: {
             path: string;
         };
+        Schemes: {
+            light: string;
+            dark: string;
+        };
         /** @description Until search is connected (M8), `available` is false and nothing is found. */
         Search: {
             next_cursor: string | null;
@@ -518,24 +537,41 @@ export interface components {
             available: boolean;
         };
         SiteConfig: {
+            theme: components["schemas"]["SiteTheme"];
+            identity: components["schemas"]["SiteIdentity"];
             version: string;
             media_base_url: string;
-            identity: components["schemas"]["SiteIdentity"];
             localization: components["schemas"]["SiteLocalization"];
         };
         SiteIdentity: {
             brand_name: string;
             tagline_sw: string;
             tagline_en: string;
-            accent_light: string;
-            accent_dark: string;
-            logo_light: components["schemas"]["PublicImage"] | null;
-            logo_dark: components["schemas"]["PublicImage"] | null;
-            favicon: components["schemas"]["PublicImage"] | null;
+            wordmark_light: components["schemas"]["Logo"] | null;
+            wordmark_dark: components["schemas"]["Logo"] | null;
+            symbol: components["schemas"]["Logo"] | null;
         };
         SiteLocalization: {
             default_locale: components["schemas"]["DefaultLocaleEnum"];
             timezone: string;
+        };
+        SiteTheme: {
+            schema_version: number;
+            hash: string;
+            key: components["schemas"]["ThemeKeyEnum"];
+            color: string;
+            dark_color: string;
+            css: string;
+            theme_color: components["schemas"]["Schemes"];
+            tokens: components["schemas"]["SiteThemeTokens"];
+        };
+        SiteThemeTokens: {
+            light: {
+                [key: string]: string;
+            };
+            dark: {
+                [key: string]: string;
+            };
         };
         StoryPage: {
             next_cursor: string | null;
@@ -547,6 +583,13 @@ export interface components {
             results: components["schemas"]["Card"][];
             tag: components["schemas"]["PublicLabel"];
         };
+        /**
+         * @description * `signature` - signature
+         *     * `bold` - bold
+         *     * `quiet` - quiet
+         * @enum {string}
+         */
+        ThemeKeyEnum: "signature" | "bold" | "quiet";
         Translation: {
             locale: string;
             path: string;

@@ -87,7 +87,7 @@ export function Preview({
         >
           {article && context ? (
             <article className="flex flex-col gap-4">
-              <p className="text-accent text-label">{article.category.name}</p>
+              <p className="text-brand-text text-label">{article.category.name}</p>
               <h2 className={phone ? "text-headline-m" : "text-display"}>{article.headline}</h2>
               {article.standfirst && <p className="text-body-l text-text-secondary">{article.standfirst}</p>}
               <p className="text-caption text-text-secondary">

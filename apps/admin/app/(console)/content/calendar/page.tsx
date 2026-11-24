@@ -70,7 +70,7 @@ export default function Calendar() {
         <ol className="grid gap-3 lg:grid-cols-7">
           {days.map((day) => (
             <li key={day} data-grows className="min-w-0">
-              <Card className={cx("h-full min-h-40 p-3!", day === today && "border-accent!")}>
+              <Card className={cx("h-full min-h-40 p-3!", day === today && "border-brand!")}>
                 <h2 className="pb-2 font-sans text-label">
                   {name(day, { weekday: "short", day: "numeric" })}
                 </h2>
@@ -128,7 +128,7 @@ function Day({ posts }: { posts: Entry[] }) {
           <Link
             href={`/content/${post.id}`}
             prefetch={false}
-            className="tap block rounded-sm bg-surface-sunken p-2 hover:text-accent"
+            className="tap block rounded-sm bg-surface-sunken p-2 hover:text-brand-text"
           >
             <span className="flex flex-wrap items-center gap-1 text-caption text-text-secondary">
               {format.dateTime(post.at, { timeStyle: "short" })}

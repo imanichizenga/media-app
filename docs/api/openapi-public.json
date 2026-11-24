@@ -666,6 +666,13 @@
                     "youtube_id": {
                         "type": "string"
                     },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Of the video, wherever it lives"
+                    },
                     "reading_minutes": {
                         "type": "integer"
                     },
@@ -783,6 +790,7 @@
                     "category",
                     "content_warning",
                     "correction_note",
+                    "duration_ms",
                     "engagement",
                     "first_published_at",
                     "headline",
@@ -893,6 +901,13 @@
                     "youtube_id": {
                         "type": "string"
                     },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "description": "Of the video, wherever it lives"
+                    },
                     "reading_minutes": {
                         "type": "integer"
                     },
@@ -922,6 +937,7 @@
                     "authors",
                     "breaking_until",
                     "category",
+                    "duration_ms",
                     "headline",
                     "id",
                     "image",
@@ -1114,6 +1130,41 @@
                 "required": [
                     "category",
                     "results"
+                ]
+            },
+            "Logo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "derived": {
+                        "type": "boolean"
+                    },
+                    "svg": {
+                        "type": "string"
+                    },
+                    "png": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "derived",
+                    "height",
+                    "id",
+                    "png",
+                    "svg",
+                    "width"
                 ]
             },
             "NavigationItem": {
@@ -1678,6 +1729,21 @@
                     "path"
                 ]
             },
+            "Schemes": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "string"
+                    },
+                    "dark": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
+                ]
+            },
             "Search": {
                 "type": "object",
                 "description": "Until search is connected (M8), `available` is false and nothing is found.",
@@ -1707,14 +1773,17 @@
             "SiteConfig": {
                 "type": "object",
                 "properties": {
+                    "theme": {
+                        "$ref": "#/components/schemas/SiteTheme"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/SiteIdentity"
+                    },
                     "version": {
                         "type": "string"
                     },
                     "media_base_url": {
                         "type": "string"
-                    },
-                    "identity": {
-                        "$ref": "#/components/schemas/SiteIdentity"
                     },
                     "localization": {
                         "$ref": "#/components/schemas/SiteLocalization"
@@ -1724,6 +1793,7 @@
                     "identity",
                     "localization",
                     "media_base_url",
+                    "theme",
                     "version"
                 ]
             },
@@ -1739,36 +1809,30 @@
                     "tagline_en": {
                         "type": "string"
                     },
-                    "accent_light": {
-                        "type": "string"
-                    },
-                    "accent_dark": {
-                        "type": "string"
-                    },
-                    "logo_light": {
+                    "wordmark_light": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/PublicImage"
+                                "$ref": "#/components/schemas/Logo"
                             },
                             {
                                 "type": "null"
                             }
                         ]
                     },
-                    "logo_dark": {
+                    "wordmark_dark": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/PublicImage"
+                                "$ref": "#/components/schemas/Logo"
                             },
                             {
                                 "type": "null"
                             }
                         ]
                     },
-                    "favicon": {
+                    "symbol": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/PublicImage"
+                                "$ref": "#/components/schemas/Logo"
                             },
                             {
                                 "type": "null"
@@ -1777,14 +1841,12 @@
                     }
                 },
                 "required": [
-                    "accent_dark",
-                    "accent_light",
                     "brand_name",
-                    "favicon",
-                    "logo_dark",
-                    "logo_light",
+                    "symbol",
                     "tagline_en",
-                    "tagline_sw"
+                    "tagline_sw",
+                    "wordmark_dark",
+                    "wordmark_light"
                 ]
             },
             "SiteLocalization": {
@@ -1800,6 +1862,66 @@
                 "required": [
                     "default_locale",
                     "timezone"
+                ]
+            },
+            "SiteTheme": {
+                "type": "object",
+                "properties": {
+                    "schema_version": {
+                        "type": "integer"
+                    },
+                    "hash": {
+                        "type": "string"
+                    },
+                    "key": {
+                        "$ref": "#/components/schemas/ThemeKeyEnum"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "dark_color": {
+                        "type": "string"
+                    },
+                    "css": {
+                        "type": "string"
+                    },
+                    "theme_color": {
+                        "$ref": "#/components/schemas/Schemes"
+                    },
+                    "tokens": {
+                        "$ref": "#/components/schemas/SiteThemeTokens"
+                    }
+                },
+                "required": [
+                    "color",
+                    "css",
+                    "dark_color",
+                    "hash",
+                    "key",
+                    "schema_version",
+                    "theme_color",
+                    "tokens"
+                ]
+            },
+            "SiteThemeTokens": {
+                "type": "object",
+                "properties": {
+                    "light": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "dark": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "dark",
+                    "light"
                 ]
             },
             "StoryPage": {
@@ -1851,6 +1973,15 @@
                     "results",
                     "tag"
                 ]
+            },
+            "ThemeKeyEnum": {
+                "enum": [
+                    "signature",
+                    "bold",
+                    "quiet"
+                ],
+                "type": "string",
+                "description": "* `signature` - signature\n* `bold` - bold\n* `quiet` - quiet"
             },
             "Translation": {
                 "type": "object",

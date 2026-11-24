@@ -50,6 +50,8 @@ def problems(post: Post) -> list[str]:
         missing.append("video")
     if post.type == PostType.YOUTUBE and not post.youtube_id:
         missing.append("youtube")
+    if post.type == PostType.YOUTUBE and not post.youtube_seconds:
+        missing.append("duration")
     if post.type in {PostType.ARTICLE, PostType.OPINION} and not any(t.body["blocks"] for t in texts):
         missing.append("body")
     ids = {i for t in texts for i in blocks.asset_ids(t.body)} | {
@@ -93,6 +95,7 @@ def refresh(post: Post) -> None:
         setattr(live, name, UUID(snap[name[:-3]]) if snap[name[:-3]] else None)
     for name in ("youtube_id", "source_url", "is_sensitive", "content_warning", "engagement"):
         setattr(live, name, snap[name])
+    live.youtube_seconds = snap.get("youtube_seconds", 0)  # older revisions have none
     for name in ("breaking_until", "live_ended_at"):
         setattr(live, name, datetime.fromisoformat(snap[name]) if snap.get(name) else None)
     texts = [
@@ -175,6 +178,7 @@ def build(
         "image": image(hero, locale) if hero else None,
         "video": video(clip, locale) if clip else None,
         "youtube_id": post.youtube_id,
+        "duration_ms": clip.duration_ms if clip else post.youtube_seconds * 1000 or None,
         "reading_minutes": blocks.reading_minutes(text.body),
         "published_at": _iso(post.published_at),
         "is_sensitive": post.is_sensitive,

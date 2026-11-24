@@ -45,6 +45,8 @@ class Post(BaseModel):
     hero = models.ForeignKey("media.Asset", null=True, on_delete=models.PROTECT, related_name="hero_of")
     video = models.ForeignKey("media.Asset", null=True, on_delete=models.PROTECT, related_name="video_of")
     youtube_id = models.CharField(max_length=11, blank=True, default="")
+    # YouTube does not tell it without an API key, and every video card shows one.
+    youtube_seconds = models.PositiveIntegerField(default=0)
     source_url = models.URLField(max_length=500, blank=True, default="")
     is_evergreen = models.BooleanField(default=False)
     is_sensitive = models.BooleanField(default=False)

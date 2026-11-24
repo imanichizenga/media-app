@@ -11,11 +11,9 @@ Name | Type | Description | Notes
 **brandName** | **String** |  | 
 **taglineSw** | **String** |  | 
 **taglineEn** | **String** |  | 
-**accentLight** | **String** |  | 
-**accentDark** | **String** |  | 
-**logoLight** | [**PublicImage**](PublicImage.md) |  | 
-**logoDark** | [**PublicImage**](PublicImage.md) |  | 
-**favicon** | [**PublicImage**](PublicImage.md) |  | 
+**wordmarkLight** | [**Logo**](Logo.md) |  | 
+**wordmarkDark** | [**Logo**](Logo.md) |  | 
+**symbol** | [**Logo**](Logo.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

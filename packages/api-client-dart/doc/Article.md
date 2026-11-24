@@ -20,6 +20,7 @@ Name | Type | Description | Notes
 **image** | [**PublicImage**](PublicImage.md) |  | 
 **video** | [**PublicVideo**](PublicVideo.md) |  | 
 **youtubeId** | **String** |  | 
+**durationMs** | **int** | Of the video, wherever it lives | 
 **readingMinutes** | **int** |  | 
 **publishedAt** | [**DateTime**](DateTime.md) |  | 
 **modifiedAt** | [**DateTime**](DateTime.md) |  | 

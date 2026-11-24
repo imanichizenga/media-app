@@ -215,7 +215,7 @@ resource "aws_lb_listener_rule" "admin_api" {
   }
   condition {
     path_pattern {
-      values = ["/api/v1/*"]
+      values = ["/api/v1/*", "/theme/*"]
     }
   }
 }

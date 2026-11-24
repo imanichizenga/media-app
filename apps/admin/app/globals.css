@@ -3,6 +3,13 @@
 @import "@news/design-tokens/theme.css";
 @import "@news/ui/styles.css";
 @source "../../../packages/ui/src";
+@source "../../../packages/screens/src";
+
+/* The window classes the previewed app screens use. */
+@theme {
+  --breakpoint-medium: 37.5rem;
+  --breakpoint-expanded: 52.5rem;
+}
 
 @font-face {
   font-family: "Inter Variable";
@@ -42,7 +49,7 @@
     cursor: pointer;
   }
   ::selection {
-    background: var(--color-accent-soft);
+    background: var(--color-brand-soft);
     color: var(--color-text-primary);
   }
 }
@@ -94,7 +101,7 @@ img.ProseMirror-separator {
   position: absolute;
   top: -2px;
   width: 24px;
-  border-top: 2px solid var(--color-accent);
+  border-top: 2px solid var(--color-brand);
 }
 .ProseMirror-focused .ProseMirror-gapcursor {
   display: block;
@@ -136,7 +143,7 @@ img.ProseMirror-separator {
   padding-left: 24px;
 }
 .ProseMirror a {
-  color: var(--color-accent);
+  color: var(--color-brand);
   text-decoration: underline;
   text-underline-offset: 2px;
 }

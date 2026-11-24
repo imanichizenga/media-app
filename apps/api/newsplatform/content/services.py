@@ -47,7 +47,15 @@ _TEXT_FIELDS = (
     "update_note",
     "correction_note",
 )
-_PLAIN = ("type", "youtube_id", "source_url", "is_evergreen", "is_sensitive", "content_warning")
+_PLAIN = (
+    "type",
+    "youtube_id",
+    "youtube_seconds",
+    "source_url",
+    "is_evergreen",
+    "is_sensitive",
+    "content_warning",
+)
 
 
 # ---- permissions ------------------------------------------------------------
