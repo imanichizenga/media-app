@@ -198,8 +198,9 @@ for (const v of VARIANTS)
     await page.getByRole("button", { name: t.editor.insert }).first().click();
     await shoot("editor-panels", v, "insert");
     await page.keyboard.press("Escape");
+    const headline = await page.locator("main textarea").first().inputValue();
     await page.getByRole("button", { name: t.content.preview }).click();
-    await expect(page.getByRole("dialog").getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("heading", { name: headline })).toBeVisible();
     await still();
     await shoot("preview", v, "loaded");
 
