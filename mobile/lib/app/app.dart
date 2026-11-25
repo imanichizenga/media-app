@@ -9,9 +9,11 @@ import '../core/config/app_config.dart';
 import '../core/providers.dart';
 import '../core/storage/prefs.dart';
 import '../core/telemetry/analytics.dart';
+import '../features/content/share.dart';
 import '../features/saved/library.dart';
 import '../features/system/gates.dart';
 import '../l10n/gen/strings.dart';
+import '../ui/components/story_menu.dart';
 import '../ui/tokens/theme.dart';
 import 'router.dart';
 
@@ -67,7 +69,10 @@ class _NewsAppState extends ConsumerState<NewsApp> {
       localizationsDelegates: const [Strings.delegate, ...GlobalMaterialLocalizations.delegates],
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: overlayFor(context.colors.bg),
-        child: Gatekeeper(child: child!),
+        child: StoryMenu(
+          open: (context, story, preview) => unawaited(openStoryMenu(context, ref, story, preview)),
+          child: Gatekeeper(child: child!),
+        ),
       ),
     );
   }

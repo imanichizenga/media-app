@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -10,7 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../app/router.dart';
 import '../../app/window.dart';
 import '../../core/models.dart';
-import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
+import '../../ui/adaptive/tops.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
 import '../../ui/components/picture.dart';
@@ -22,93 +24,68 @@ import 'feed_slivers.dart';
 import 'feeds.dart';
 
 /// A category, a tag, a developing story or an author: a title, what it is, its stories.
-class ListScreen extends ConsumerWidget {
+class ListScreen extends ConsumerStatefulWidget {
   const ListScreen({super.key, required this.feed, required this.path});
 
   final FeedKey feed;
   final String path;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ListScreen> createState() => _ListScreenState();
+}
+
+class _ListScreenState extends ConsumerState<ListScreen> with GoesToTop {
+  FeedKey get feed => widget.feed;
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(feedProvider(feed));
     final about = state.value?.about;
     final c = context.colors;
-    void open(Story story, {String? heroTag}) =>
-        openStory(context, story, heroTag: heroTag, from: feed.kind.name);
     // An address that nothing answers to may have moved.
     if (state.hasError && state.value == null) {
-      ref.listen(movedProvider(path), (_, next) {
+      ref.listen(movedProvider(widget.path), (_, next) {
         if (next.value case final target?) context.replace(target);
       });
     }
     // The sections are known before their stories are: the title and what is under it never arrive late.
-    final known = feed.kind != FeedKind.category
-        ? null
-        : ref.watch(navigationProvider).value?.value.where((n) => n.slug == feed.slug).firstOrNull;
+    final known = sectionOf(ref, feed);
     final title =
         known?.name ??
         about?.category?.name ??
         about?.tag?.name ??
         about?.story?.title ??
         about?.author?.name;
-    final first = state.value?.stories.firstOrNull;
-    final cover = feed.kind == FeedKind.category || feed.kind == FeedKind.story;
-    final showCover =
-        cover &&
-        windowOf(context) == WindowClass.compact &&
-        (state.value == null ? state.isLoading : first?.image != null);
-    return Scaffold(
-      body: Shimmer(
-        child: RefreshIndicator(
-          color: c.textPrimary,
-          backgroundColor: c.surfaceRaised,
-          edgeOffset: MediaQuery.paddingOf(context).top + 56,
-          onRefresh: () => ref.read(feedProvider(feed).notifier).refresh(),
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (n) {
-              if (n.metrics.axis == Axis.vertical && n.metrics.extentAfter < 1600) {
-                unawaited(ref.read(feedProvider(feed).notifier).loadMore());
-              }
-              return false;
-            },
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _TitleBar(
-                    top: MediaQuery.paddingOf(context).top,
-                    title: title ?? '',
-                    colors: c,
-                    back: Strings.of(context).back,
-                  ),
+    final person = feed.kind == FeedKind.author;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayFor(c.bg),
+      child: Scaffold(
+        body: Shimmer(
+          child: FeedPager(
+            feed: feed,
+            child: NewsScroll(
+              controller: scroll,
+              edge: MediaQuery.paddingOf(context).top + PlaceBar.extent,
+              onRefresh: () => ref.read(feedProvider(feed).notifier).refresh(),
+              header: [
+                PlaceBar(
+                  title ?? '',
+                  onBack: () => Navigator.of(context).canPop()
+                      ? Navigator.of(context).pop()
+                      : const HomeRoute().go(context),
                 ),
-                SliverToBoxAdapter(
-                  child: switch (feed.kind) {
-                    FeedKind.author => _AuthorHead(about?.author),
-                    _ => _Head(
-                      title: title,
+              ],
+              slivers: [
+                if (person)
+                  SliverToBoxAdapter(child: _AuthorHead(about?.author))
+                else
+                  SliverToBoxAdapter(
+                    child: FeedAboutHead(
                       text: about?.category?.description ?? about?.story?.summary ?? '',
                       children: about?.category?.children ?? known?.children ?? const [],
-                      loading: about == null,
                     ),
-                  },
-                ),
-                if (showCover) ...[
-                  SliverToBoxAdapter(
-                    child: CoverCard(first, open: open, place: 'list'),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s2)),
-                ],
-                ...feedSlivers(
-                  context,
-                  ref,
-                  feed: feed,
-                  open: open,
-                  place: 'list',
-                  skip: showCover && first != null ? 1 : 0,
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s12)),
+                ...FeedBody.slivers(context, ref, feed: feed, place: 'list'),
               ],
             ),
           ),
@@ -118,137 +95,112 @@ class ListScreen extends ConsumerWidget {
   }
 }
 
-class _TitleBar extends SliverPersistentHeaderDelegate {
-  const _TitleBar({
-    required this.top,
-    required this.title,
-    required this.colors,
-    required this.back,
-  });
+/// What the navigation already knows of a category.
+NavigationItem? sectionOf(WidgetRef ref, FeedKey feed) => feed.kind != FeedKind.category
+    ? null
+    : ref.watch(navigationProvider).value?.value.where((n) => n.slug == feed.slug).firstOrNull;
 
-  final double top;
-  final String title;
-  final NewsColors colors;
-  final String back;
+/// Asks for the next page before its end is seen.
+class FeedPager extends ConsumerWidget {
+  const FeedPager({super.key, required this.feed, required this.child});
 
-  @override
-  double get minExtent => top + 56;
-  @override
-  double get maxExtent => top + 56;
+  final FeedKey feed;
+  final Widget child;
 
   @override
-  Widget build(BuildContext context, double shrink, bool overlaps) => AnnotatedRegion(
-    value: overlayFor(colors.mastheadBg),
-    child: Container(
-      height: maxExtent,
-      padding: EdgeInsets.only(top: top, left: NewsSpace.s2, right: NewsSpace.s5),
-      decoration: BoxDecoration(
-        color: colors.mastheadBg,
-        border: Border(
-          bottom: BorderSide(color: overlaps ? colors.mastheadRule : colors.mastheadBg, width: 2),
-        ),
-      ),
-      child: Row(
-        children: [
-          RoundButton(
-            NewsIcons.arrowLeft,
-            label: back,
-            color: colors.mastheadFg,
-            onTap: () => context.canPop() ? context.pop() : const HomeRoute().go(context),
-          ),
-          Expanded(
-            child: AnimatedOpacity(
-              opacity: overlaps ? 1 : 0,
-              duration: NewsMotion.base,
-              child: ExcludeSemantics(
-                child: MediaQuery.withClampedTextScaling(
-                  maxScaleFactor: 1.2,
-                  child: Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.type.headlineS.copyWith(color: colors.mastheadFg),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
+  Widget build(BuildContext context, WidgetRef ref) => NotificationListener<ScrollNotification>(
+    onNotification: (n) {
+      if (n.metrics.axis == Axis.vertical && n.metrics.extentAfter < 1600) {
+        unawaited(ref.read(feedProvider(feed).notifier).loadMore());
+      }
+      return false;
+    },
+    child: child,
   );
-
-  @override
-  bool shouldRebuild(_TitleBar old) => old.title != title || old.top != top || old.colors != colors;
 }
 
-class _Head extends StatelessWidget {
-  const _Head({
-    required this.title,
-    required this.text,
-    required this.children,
-    required this.loading,
-  });
+/// The stories of a list: one over the width, then the rest.
+abstract final class FeedBody {
+  static List<Widget> slivers(
+    BuildContext context,
+    WidgetRef ref, {
+    required FeedKey feed,
+    required String place,
+  }) {
+    final state = ref.watch(feedProvider(feed));
+    final first = state.value?.stories.firstOrNull;
+    void open(Story story, {String? heroTag}) =>
+        openStory(context, story, heroTag: heroTag, from: feed.kind.name);
+    final cover =
+        (feed.kind == FeedKind.category || feed.kind == FeedKind.story) &&
+        windowOf(context) == WindowClass.compact &&
+        (state.value == null ? state.isLoading : first?.image != null);
+    return [
+      if (cover) ...[
+        SliverToBoxAdapter(
+          child: CoverCard(first, open: open, place: place),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s2)),
+      ],
+      ...feedSlivers(
+        context,
+        ref,
+        feed: feed,
+        open: open,
+        place: place,
+        skip: cover && first != null ? 1 : 0,
+      ),
+    ];
+  }
+}
 
-  final String? title;
+/// What a list is about, and its parts.
+class FeedAboutHead extends StatelessWidget {
+  const FeedAboutHead({super.key, this.text = '', required this.children});
+
   final String text;
   final List<PublicCategory> children;
-  final bool loading;
 
   @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (text.isNotEmpty)
         Padding(
+          padding: const EdgeInsets.fromLTRB(
+            NewsSpace.s5,
+            NewsSpace.s1,
+            NewsSpace.s5,
+            NewsSpace.s3,
+          ),
+          child: Text(
+            text,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: context.type.bodyM.copyWith(color: context.colors.textSecondary, height: 1.4),
+          ),
+        ),
+      if (children.isNotEmpty)
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.fromLTRB(
             NewsSpace.s5,
             NewsSpace.s2,
             NewsSpace.s5,
-            NewsSpace.s4,
+            NewsSpace.s3,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Semantics(
-                header: true,
-                child: TextOrBone(
-                  title,
-                  last: 0.5,
-                  style: context.type.display.copyWith(color: c.textPrimary, height: 1.1),
+              for (final k in children)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: NewsChip(k.name, onTap: () => openPath(context, k.path)),
                 ),
-              ),
-              if (text.isNotEmpty) ...[
-                const SizedBox(height: NewsSpace.s2),
-                Text(
-                  text,
-                  style: context.type.bodyL.copyWith(color: c.textSecondary, height: 1.45),
-                ),
-              ],
             ],
           ),
         ),
-        if (children.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: NewsSpace.s4),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-              child: Row(
-                children: [
-                  for (final k in children)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: NewsChip(k.name, onTap: () => context.push(k.path)),
-                    ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+    ],
+  );
 }
 
 class _AuthorHead extends StatelessWidget {
@@ -262,27 +214,18 @@ class _AuthorHead extends StatelessWidget {
     final type = context.type;
     final a = author;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(NewsSpace.s5, NewsSpace.s4, NewsSpace.s5, NewsSpace.s6),
+      padding: const EdgeInsets.fromLTRB(NewsSpace.s5, NewsSpace.s2, NewsSpace.s5, NewsSpace.s4),
       child: Column(
         children: [
           SizedBox.square(
-            dimension: 112,
+            dimension: 88,
             child: ClipOval(
               child: a != null && a.avatar == null
-                  ? Initial(a.name, size: 112)
+                  ? Initial(a.name, size: 88)
                   : NewsPicture(a?.avatar),
             ),
           ),
           const SizedBox(height: NewsSpace.s4),
-          Semantics(
-            header: true,
-            child: TextOrBone(
-              a?.name,
-              last: 0.5,
-              align: TextAlign.center,
-              style: type.headlineL.copyWith(color: c.textPrimary),
-            ),
-          ),
           if (a == null || a.title.isNotEmpty)
             TextOrBone(
               a?.title,

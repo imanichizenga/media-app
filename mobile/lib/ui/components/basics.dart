@@ -16,6 +16,7 @@ class Pressable extends StatefulWidget {
     required this.onTap,
     required this.child,
     this.label,
+    this.onHold,
     this.haptic = false,
     this.scale = 0.985,
     this.link = false,
@@ -23,6 +24,9 @@ class Pressable extends StatefulWidget {
 
   final VoidCallback? onTap;
   final Widget child;
+
+  /// What else there is to do, for a thumb that stays.
+  final VoidCallback? onHold;
 
   /// Replaces what the child would say.
   final String? label;
@@ -54,6 +58,12 @@ class _PressableState extends State<Pressable> {
               if (widget.haptic) HapticFeedback.lightImpact();
               widget.onTap!();
             },
+      onLongPress: widget.onHold == null
+          ? null
+          : () {
+              _set(false);
+              widget.onHold!();
+            },
       child: AnimatedScale(
         scale: _down && !context.still ? widget.scale : 1,
         duration: NewsMotion.fast,
@@ -73,6 +83,7 @@ class _PressableState extends State<Pressable> {
         label: widget.label,
         excludeSemantics: widget.label != null,
         onTap: widget.onTap,
+        onLongPress: widget.onHold,
         child: body,
       ),
     );
@@ -428,6 +439,77 @@ class NewsChip extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Two words, the one that is open heavier and underlined: over a video there is room for no more (N7).
+class TextTabs extends StatelessWidget {
+  const TextTabs({
+    super.key,
+    required this.labels,
+    required this.at,
+    required this.onChanged,
+    this.onMedia = false,
+  });
+
+  final List<String> labels;
+  final int at;
+  final ValueChanged<int> onChanged;
+  final bool onMedia;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final on = onMedia ? OverMedia.ink : c.textPrimary;
+    final off = onMedia ? OverMedia.soft : c.textSecondary;
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: 1.4,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final (i, label) in labels.indexed)
+            Semantics(
+              inMutuallyExclusiveGroup: true,
+              selected: i == at,
+              child: Pressable(
+                onTap: () => onChanged(i),
+                haptic: true,
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 48, minWidth: 64),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        label,
+                        style: context.type.title.copyWith(
+                          color: i == at ? on : off,
+                          fontSize: 17,
+                          height: 1.2,
+                          fontWeight: i == at ? FontWeight.w600 : FontWeight.w500,
+                          fontVariations: [FontVariation('wght', i == at ? 600 : 500)],
+                          shadows: onMedia ? OverMedia.textShadow : null,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      AnimatedContainer(
+                        duration: context.still ? Duration.zero : NewsMotion.base,
+                        width: i == at ? 22 : 0,
+                        height: 2.5,
+                        decoration: BoxDecoration(
+                          color: on,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

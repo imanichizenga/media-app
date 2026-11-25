@@ -467,4 +467,22 @@ class StringsSw extends Strings {
 
   @override
   String get refreshed => 'Habari zimesasishwa';
+
+  @override
+  String get copyLink => 'Nakili kiungo';
+
+  @override
+  String get linkCopied => 'Kiungo kimenakiliwa';
+
+  @override
+  String get newStories => 'Kuna habari mpya';
+
+  @override
+  String get shareQuote => 'Sambaza nukuu';
+
+  @override
+  String get settingOn => 'Imewashwa';
+
+  @override
+  String get settingOff => 'Imezimwa';
 }

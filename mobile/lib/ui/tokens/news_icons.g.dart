@@ -37,6 +37,7 @@ abstract final class NewsIcons {
   static const chevronDown = NewsIconData(['m6 9 6 6 6-6']);
   static const arrowRight = NewsIconData(['M5 12h14', 'm12 5 7 7-7 7']);
   static const arrowLeft = NewsIconData(['m12 19-7-7 7-7', 'M19 12H5']);
+  static const arrowUp = NewsIconData(['m5 12 7-7 7 7', 'M12 19V5']);
   static const x = NewsIconData(['M18 6 6 18', 'm6 6 12 12']);
   static const check = NewsIconData(['M20 6 9 17l-5-5']);
   static const zap = NewsIconData([

@@ -13,19 +13,29 @@ import 'basics.dart';
 import 'picture.dart';
 import 'signals.dart';
 import 'skeleton.dart';
+import 'story_menu.dart';
 
 /// Every card: picture, then *category · time*, then headline. A null story draws the same card in bones.
 typedef OpenStory = void Function(Story story, {String? heroTag});
 
 /// What a card is about and how fresh it is: always the first line, always in this order.
 class Kicker extends ConsumerWidget {
-  const Kicker(this.story, {super.key, this.onMedia = false, this.quiet = false});
+  const Kicker(
+    this.story, {
+    super.key,
+    this.onMedia = false,
+    this.quiet = false,
+    this.reading = false,
+  });
 
   final Story? story;
   final bool onMedia;
 
   /// The picture already carries the LIVE pill.
   final bool quiet;
+
+  /// Also how long it takes to read.
+  final bool reading;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,26 +50,57 @@ class Kicker extends ConsumerWidget {
     final s = Strings.of(context);
     final now = ref.watch(clockNowProvider)();
     final soft = context.type.caption.copyWith(color: onMedia ? OverMedia.soft : c.textSecondary);
-    final when = ago(story.publishedAt, s, now);
-    if (story.isLive && !quiet) {
-      return Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 8,
-        runSpacing: 4,
-        children: [
-          const LivePill(),
-          Text(when, style: soft),
-        ],
-      );
-    }
-    return Text.rich(
-      TextSpan(
-        text: story.isBreaking(now) ? s.breaking : story.category.name,
-        style: strong,
-        children: [TextSpan(text: '  ·  $when', style: soft)],
-      ),
+    final when = [
+      ago(story.publishedAt, s, now),
+      if (reading) s.minutesRead(story.readingMinutes < 1 ? 1 : story.readingMinutes),
+    ].join('  ·  ');
+    final live = story.isLive && !quiet;
+    return MetaLine(
+      lead: live
+          ? const LivePill()
+          : Text.rich(
+              TextSpan(
+                text: story.isBreaking(now) ? s.breaking : story.category.name,
+                style: strong,
+                children: [TextSpan(text: '  ·', style: soft)],
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textWidthBasis: TextWidthBasis.longestLine,
+            ),
+      // The time is said whole; what it belongs to gives way.
+      rest: Text(when, style: soft, maxLines: 1, softWrap: false),
     );
   }
+}
+
+/// One line, always. What leads gives way to what follows, which shrinks only when it alone is too long.
+class MetaLine extends StatelessWidget {
+  const MetaLine({super.key, required this.lead, required this.rest});
+
+  final Widget lead;
+  final Widget rest;
+
+  static const _gap = 7.0;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.only(right: _gap),
+            child: lead,
+          ),
+        ),
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: box.maxWidth),
+          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: rest),
+        ),
+      ],
+    ),
+  );
 }
 
 /// In a corner of the picture: how long a video is, how many pictures there are.
@@ -213,14 +254,49 @@ class _Tap extends ConsumerWidget {
   final String? heroTag;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => story == null
-      ? child
-      : Pressable(
-          link: true,
-          label: _say(context, story!, ref.watch(clockNowProvider)()),
-          onTap: () => open(story!, heroTag: heroTag),
-          child: child,
-        );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final story = this.story;
+    if (story == null) return child;
+    final menu = StoryMenu.of(context);
+    return Pressable(
+      link: true,
+      label: _say(context, story, ref.watch(clockNowProvider)()),
+      onTap: () => open(story, heroTag: heroTag),
+      onHold: menu == null ? null : () => menu.open(context, story, StoryPreview(story)),
+      child: child,
+    );
+  }
+}
+
+/// What a held card shows of itself: nothing in it can be pressed or fly.
+class StoryPreview extends StatelessWidget {
+  const StoryPreview(this.story, {super.key});
+
+  final Story story;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (story.image != null) ...[
+        StoryFrame(story, ratio: 16 / 9, radius: NewsRadius.md),
+        const SizedBox(height: NewsSpace.s3),
+      ],
+      Kicker(story, quiet: true),
+      const SizedBox(height: NewsSpace.s1),
+      Text(
+        story.headline,
+        style: context.type.headlineS.copyWith(color: context.colors.textPrimary, height: 1.24),
+      ),
+    ],
+  );
+}
+
+/// The lead's picture: as tall as leaves room for what follows (S1).
+double leadRatio(BuildContext context) {
+  final size = MediaQuery.sizeOf(context);
+  return size.width >= 600 || size.height < 720 ? 16 / 9 : 4 / 3;
 }
 
 /// The one story of the screen: the picture fills it, the headline sits on the picture.
@@ -231,18 +307,21 @@ class CoverCard extends StatelessWidget {
     required this.open,
     this.place = 'cover',
     this.radius = 0,
+    this.ratio,
   });
 
   final Story? story;
   final OpenStory open;
   final String place;
   final double radius;
+  final double? ratio;
 
   @override
   Widget build(BuildContext context) {
     final story = this.story;
     final tag = story == null ? null : '$place-${story.id}';
     final type = context.type;
+    final shape = ratio ?? leadRatio(context);
     return _Tap(
       story: story,
       open: open,
@@ -268,18 +347,18 @@ class CoverCard extends StatelessWidget {
                 ),
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: (box.maxWidth * 1.18).clamp(0, 620),
+                  minHeight: box.maxWidth / shape,
                   minWidth: box.maxWidth,
                 ),
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   heightFactor: 1,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(
+                    padding: const EdgeInsets.fromLTRB(
                       NewsSpace.s5,
-                      box.maxWidth * 0.5,
+                      NewsSpace.s8,
                       NewsSpace.s5,
-                      NewsSpace.s6,
+                      NewsSpace.s4,
                     ),
                     child: story == null
                         ? const _CoverBones()
@@ -288,35 +367,18 @@ class CoverCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Kicker(story, onMedia: true),
-                              const SizedBox(height: NewsSpace.s2),
+                              Kicker(story, onMedia: true, reading: true),
+                              const SizedBox(height: NewsSpace.s1),
                               Text(
                                 story.headline,
-                                style: type.display.copyWith(
-                                  color: OverMedia.ink,
-                                  fontSize: 34,
-                                  height: 1.12,
-                                  shadows: OverMedia.textShadow,
-                                ),
-                              ),
-                              if (story.standfirst.isNotEmpty) ...[
-                                const SizedBox(height: NewsSpace.s2),
-                                Text(
-                                  story.standfirst,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: type.bodyM.copyWith(color: OverMedia.soft, fontSize: 16),
-                                ),
-                              ],
-                              const SizedBox(height: NewsSpace.s3),
-                              Text(
-                                [
-                                  if (story.byline.isNotEmpty) story.byline,
-                                  Strings.of(context).minutesRead(
-                                    story.readingMinutes < 1 ? 1 : story.readingMinutes,
-                                  ),
-                                ].join('  ·  '),
-                                style: type.caption.copyWith(color: OverMedia.soft),
+                                style:
+                                    (box.maxWidth >= 560
+                                            ? type.headlineL.copyWith(height: 1.14)
+                                            : type.headlineM.copyWith(height: 1.18))
+                                        .copyWith(
+                                          color: OverMedia.ink,
+                                          shadows: OverMedia.textShadow,
+                                        ),
                               ),
                             ],
                           ),
@@ -348,7 +410,7 @@ class _CoverBones extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [bar(0.4, 12), bar(0.92, 28), bar(0.7, 28), bar(0.85, 14), bar(0.45, 12)],
+      children: [bar(0.4, 12), bar(0.92, 22), bar(0.7, 22)],
     );
   }
 }
@@ -381,13 +443,7 @@ class StandardCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              StoryFrame(story, ratio: ratio, heroTag: tag),
-              if ((story?.isVideo ?? false) && !story!.isSensitive) const PlayDisc(),
-            ],
-          ),
+          StoryFrame(story, ratio: ratio, heroTag: tag),
           const SizedBox(height: NewsSpace.s3),
           Kicker(story, quiet: true),
           const SizedBox(height: NewsSpace.s1),
@@ -615,21 +671,19 @@ class LiveBlogCard extends StatelessWidget {
   }
 }
 
-/// Says that a picture plays.
+/// Says that a picture plays: on the lead video only, the others say how long they are (V1).
 class PlayDisc extends StatelessWidget {
-  const PlayDisc({super.key, this.large = false});
-
-  final bool large;
+  const PlayDisc({super.key});
 
   @override
   Widget build(BuildContext context) => Container(
-    width: large ? 60 : 48,
-    height: large ? 60 : 48,
+    width: 60,
+    height: 60,
     alignment: Alignment.center,
     decoration: const BoxDecoration(color: OverMedia.chip, shape: BoxShape.circle),
-    child: Padding(
-      padding: const EdgeInsets.only(left: 3),
-      child: NewsIcon(NewsIcons.play, size: large ? 24 : 19, filled: true, color: OverMedia.ink),
+    child: const Padding(
+      padding: EdgeInsets.only(left: 3),
+      child: NewsIcon(NewsIcons.play, size: 24, filled: true, color: OverMedia.ink),
     ),
   );
 }
@@ -641,12 +695,14 @@ class VideoCard extends StatelessWidget {
     required this.open,
     this.place = 'video',
     this.large = false,
+    this.lead = false,
   });
 
   final Story? story;
   final OpenStory open;
   final String place;
   final bool large;
+  final bool lead;
 
   @override
   Widget build(BuildContext context) {
@@ -663,10 +719,12 @@ class VideoCard extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               StoryFrame(story, ratio: 16 / 9, heroTag: tag),
-              if (story != null && !story!.isSensitive) PlayDisc(large: large),
+              if (lead && story != null && !story!.isSensitive) const PlayDisc(),
             ],
           ),
           const SizedBox(height: NewsSpace.s3),
+          Kicker(story, quiet: true),
+          const SizedBox(height: NewsSpace.s1),
           TextOrBone(
             story?.headline,
             lines: 2,
@@ -677,8 +735,6 @@ class VideoCard extends StatelessWidget {
               height: 1.24,
             ),
           ),
-          const SizedBox(height: 4),
-          Kicker(story, quiet: true),
         ],
       ),
     );

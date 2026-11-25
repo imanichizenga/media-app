@@ -1,6 +1,6 @@
 # 0043. A stronger design for the app
 
-Status: accepted, 2026-11-24
+Status: accepted, 2026-11-24. **Partly superseded by [0044](0044-space-and-native.md)**: display size on Home, feeds and categories sharing one row, the floating pill, the sliding mark
 
 ## Context
 The client approved the themes and asked for a stronger mobile design.

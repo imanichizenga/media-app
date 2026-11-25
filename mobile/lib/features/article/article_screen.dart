@@ -9,18 +9,17 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_api_client/news_api_client.dart' hide Card;
 import 'package:news_design_tokens/news_design_tokens.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../app/router.dart';
 import '../../app/window.dart';
 import '../../core/config/app_config.dart';
-import '../../core/config/env.dart';
 import '../../core/format/format.dart';
 import '../../core/models.dart';
 import '../../core/network/failures.dart';
 import '../../core/providers.dart';
 import '../../core/telemetry/analytics.dart';
 import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
 import '../../ui/components/picture.dart';
@@ -34,6 +33,7 @@ import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
 import '../content/feeds.dart';
 import '../content/list_screen.dart' show Initial;
+import '../content/share.dart';
 import '../saved/library.dart';
 import 'blocks.dart';
 import 'text_size.dart';
@@ -65,6 +65,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
   bool _noted = false;
   int _mark = 0;
 
+  /// The actions give way to reading, and come back when one looks up or has finished.
+  final _bar = ValueNotifier<bool>(true);
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +81,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     _poll?.cancel();
     _scroll.dispose();
     _progress.dispose();
+    _bar.dispose();
     super.dispose();
   }
 
@@ -98,6 +102,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     final viewport = RenderAbstractViewport.of(box);
     final end = viewport.getOffsetToReveal(box, 1).offset;
     _progress.value = end <= 0 ? 1 : (_scroll.offset / end).clamp(0.0, 1.0);
+    if (_progress.value >= 1) _bar.value = true;
     final percent = (_progress.value * 100).round();
     for (final m in const [25, 50, 75, 100]) {
       if (percent >= m && _mark < m) {
@@ -123,10 +128,33 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     });
   }
 
-  Future<void> _share(Story story) async {
-    ref.read(analyticsProvider).track(StoryShared(story.id));
-    await SharePlus.instance.share(
-      ShareParams(uri: Uri.https(Env.webHost, story.path), subject: story.headline),
+  bool _reads(UserScrollNotification n) {
+    if (n.metrics.axis != Axis.vertical) return false;
+    if (n.direction == ScrollDirection.forward) _bar.value = true;
+    if (n.direction == ScrollDirection.reverse && _progress.value < 0.95) _bar.value = false;
+    return false;
+  }
+
+  Future<void> _save(Story story, Article? article) async {
+    final s = Strings.of(context);
+    final library = ref.read(libraryProvider.notifier);
+    final saved = ref.read(isSavedProvider(story.path));
+    final messenger = ScaffoldMessenger.of(context)..clearSnackBars();
+    if (saved) {
+      await library.unsave(story);
+    } else {
+      unawaited(library.save(story, article: article));
+    }
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(saved ? s.removed : s.savedDone),
+        action: saved
+            ? SnackBarAction(
+                label: s.undo,
+                onPressed: () => library.save(story, article: article),
+              )
+            : null,
+      ),
     );
   }
 
@@ -169,17 +197,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
           _Moving(story: story, article: article),
           const SizedBox(height: NewsSpace.s6),
         ] else if (!immersive && hasPicture) ...[
-          StoryFrame(story, ratio: 3 / 2, heroTag: widget.extra?.heroTag, mark: false),
+          StoryFrame(story, ratio: 16 / 9, heroTag: widget.extra?.heroTag, mark: false),
           const SizedBox(height: NewsSpace.s6),
         ],
         MediaQuery(
           data: MediaQuery.of(context)
               .copyWith(textScaler: _Scaled(MediaQuery.textScalerOf(context), scale)),
-          child: ArticleBody(
-            document: article == null ? null : documentOf(article),
-            data: article == null
-                ? null
-                : BodyContext(assets: article.assets, links: article.links),
+          child: Quotable(
+            onShare: story == null ? null : (words) => unawaited(shareQuote(ref, story, words)),
+            child: ArticleBody(
+              document: article == null ? null : documentOf(article),
+              data: article == null
+                  ? null
+                  : BodyContext(assets: article.assets, links: article.links),
+            ),
           ),
         ),
         if (article != null && article.tags.isNotEmpty) ...[
@@ -189,7 +220,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
             runSpacing: 8,
             children: [
               for (final tag in article.tags)
-                NewsChip(tag.name, onTap: () => context.push(tag.path)),
+                NewsChip(tag.name, onTap: () => openPath(context, tag.path)),
             ],
           ),
           const SizedBox(height: NewsSpace.s4),
@@ -202,7 +233,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
       decoration: BoxDecoration(
         color: c.bg,
         borderRadius: immersive
-            ? const BorderRadius.vertical(top: Radius.circular(28))
+            ? const BorderRadius.vertical(top: Radius.circular(_lipOf))
             : BorderRadius.zero,
       ),
       padding: EdgeInsets.fromLTRB(NewsSpace.s5, immersive ? 0 : NewsSpace.s4, NewsSpace.s5, 0),
@@ -240,79 +271,52 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayFor(c.bg),
       child: Scaffold(
-        body: Shimmer(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                controller: _scroll,
-                slivers: [
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: ArticleBarDelegate(
-                      top: top,
-                      expanded: immersive ? math.min(width * 1.08, 520) : 0,
-                      colors: c,
-                      story: story,
-                      heroTag: widget.extra?.heroTag,
-                      progress: _progress,
-                      back: s.back,
-                      onBack: () =>
-                          context.canPop() ? context.pop() : const HomeRoute().go(context),
-                    ),
-                  ),
-                  SliverToBoxAdapter(child: column),
-                  if (!wide)
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: articleWidth),
-                          child: RelatedStories(
-                            slug: widget.slug,
-                            locale: widget.locale,
-                            open: open,
-                          ),
-                        ),
-                      ),
-                    ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 132)),
-                ],
+        bottomNavigationBar: story == null
+            ? null
+            : ActionBar(
+                shown: _bar,
+                story: story,
+                onShare: () => unawaited(shareStory(ref, story)),
+                onSave: ref.watch(flagsProvider).offlineSaving
+                    ? () => unawaited(_save(story, article))
+                    : null,
+                onText: () => showTextSize(context),
               ),
-              if (story != null)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: MediaQuery.paddingOf(context).bottom + 16,
-                  child: ActionPill(
+        body: Shimmer(
+          child: NotificationListener<UserScrollNotification>(
+            onNotification: _reads,
+            child: CustomScrollView(
+              controller: _scroll,
+              slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: ArticleBarDelegate(
+                    top: top,
+                    // A picture, not a wall: the headline is why one came (S3).
+                    expanded: immersive
+                        ? math.min(width * 9 / 16, MediaQuery.sizeOf(context).height * 0.4) + _lipOf
+                        : 0,
+                    colors: c,
                     story: story,
-                    onShare: () => _share(story),
-                    onSave: !ref.watch(flagsProvider).offlineSaving
-                        ? null
-                        : () async {
-                            final library = ref.read(libraryProvider.notifier);
-                            final saved = ref.read(isSavedProvider(story.path));
-                            final messenger = ScaffoldMessenger.of(context)..clearSnackBars();
-                            if (saved) {
-                              await library.unsave(story);
-                            } else {
-                              unawaited(library.save(story, article: article));
-                            }
-                            messenger.showSnackBar(
-                              SnackBar(
-                                margin: const EdgeInsets.fromLTRB(20, 0, 20, 92),
-                                content: Text(saved ? s.removed : s.savedDone),
-                                action: saved
-                                    ? SnackBarAction(
-                                        label: s.undo,
-                                        onPressed: () => library.save(story, article: article),
-                                      )
-                                    : null,
-                              ),
-                            );
-                          },
-                    onText: () => showTextSize(context),
+                    heroTag: widget.extra?.heroTag,
+                    progress: _progress,
+                    back: s.back,
+                    onBack: () => context.canPop() ? context.pop() : const HomeRoute().go(context),
                   ),
                 ),
-            ],
+                SliverToBoxAdapter(child: column),
+                if (!wide)
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: articleWidth),
+                        child: RelatedStories(slug: widget.slug, locale: widget.locale, open: open),
+                      ),
+                    ),
+                  ),
+                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s10)),
+              ],
+            ),
           ),
         ),
       ),
@@ -354,7 +358,7 @@ class _Failed extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: RoundButton(
-              NewsIcons.arrowLeft,
+              backIcon(context),
               label: Strings.of(context).back,
               onTap: () => context.canPop() ? context.pop() : const HomeRoute().go(context),
             ),
@@ -378,6 +382,9 @@ class _Failed extends StatelessWidget {
   );
 }
 
+/// How much of the sheet lies over the picture.
+const _lipOf = 20.0;
+
 /// The picture under the bar, the bar over the text, and how far one has read.
 class ArticleBarDelegate extends SliverPersistentHeaderDelegate {
   const ArticleBarDelegate({
@@ -400,7 +407,7 @@ class ArticleBarDelegate extends SliverPersistentHeaderDelegate {
   final String back;
   final VoidCallback onBack;
 
-  static const _lip = 28.0;
+  static const _lip = _lipOf;
 
   @override
   double get minExtent => top + 56;
@@ -471,7 +478,7 @@ class ArticleBarDelegate extends SliverPersistentHeaderDelegate {
                 child: Row(
                   children: [
                     RoundButton(
-                      NewsIcons.arrowLeft,
+                      backIcon(context),
                       label: back,
                       overMedia: solid < 0.5,
                       onTap: onBack,
@@ -554,7 +561,7 @@ class ArticleHead extends ConsumerWidget {
                   ? TextOrBone(null, style: type.label, last: 0.3)
                   : Pressable(
                       link: true,
-                      onTap: () => context.push(story!.category.path),
+                      onTap: () => openPath(context, story!.category.path),
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(minHeight: 48),
                         child: Align(
@@ -576,9 +583,9 @@ class ArticleHead extends ConsumerWidget {
             lines: 3,
             style: type.display.copyWith(
               color: c.textPrimary,
-              fontSize: 33,
-              height: 1.14,
-              letterSpacing: -0.6,
+              fontSize: 28,
+              height: 1.16,
+              letterSpacing: -0.5,
             ),
           ),
         ),
@@ -587,9 +594,9 @@ class ArticleHead extends ConsumerWidget {
           TextOrBone(
             story?.standfirst,
             lines: 2,
-            style: type.serif.copyWith(color: c.textSecondary, fontSize: 20),
+            style: type.serif.copyWith(color: c.textSecondary, fontSize: 18, height: 1.38),
           ),
-        const SizedBox(height: NewsSpace.s5),
+        const SizedBox(height: NewsSpace.s3),
         _Byline(article: a, story: story),
         if (a != null && a.updateNote.isNotEmpty)
           _Note(
@@ -678,10 +685,10 @@ class _Byline extends ConsumerWidget {
     final row = Row(
       children: [
         SizedBox.square(
-          dimension: 46,
+          dimension: 40,
           child: ClipOval(
             child: author != null && author.avatar == null
-                ? Initial(author.name, size: 46)
+                ? Initial(author.name, size: 40)
                 : NewsPicture(author?.avatar),
           ),
         ),
@@ -708,7 +715,12 @@ class _Byline extends ConsumerWidget {
                   ],
                 ],
               ),
-              TextOrBone(line, last: 0.7, style: type.caption.copyWith(color: c.textSecondary)),
+              TextOrBone(
+                line,
+                last: 0.7,
+                maxLines: 1,
+                style: type.caption.copyWith(color: c.textSecondary),
+              ),
             ],
           ),
         ),
@@ -721,7 +733,7 @@ class _Byline extends ConsumerWidget {
       ),
       child: author == null
           ? row
-          : Pressable(link: true, onTap: () => context.push(author.path), child: row),
+          : Pressable(link: true, onTap: () => openPath(context, author.path), child: row),
     );
   }
 }
@@ -756,16 +768,19 @@ class _Moving extends ConsumerWidget {
   }
 }
 
-/// What one can do with the story, within reach of the thumb. More arrives with accounts (M4).
-class ActionPill extends ConsumerWidget {
-  const ActionPill({
+/// What one can do with the story. The page makes room for it, so it covers nothing; it steps aside while one reads
+/// down. More arrives with accounts (M4).
+class ActionBar extends ConsumerWidget {
+  const ActionBar({
     super.key,
+    required this.shown,
     required this.story,
     required this.onShare,
     required this.onSave,
     required this.onText,
   });
 
+  final ValueListenable<bool> shown;
   final Story story;
   final VoidCallback onShare;
   final VoidCallback? onSave;
@@ -776,50 +791,91 @@ class ActionPill extends ConsumerWidget {
     final c = context.colors;
     final s = Strings.of(context);
     final saved = ref.watch(isSavedProvider(story.path));
-    return Center(
+    // A screen reader finds what is there: nothing hides from it.
+    final always = MediaQuery.accessibleNavigationOf(context);
+    return ValueListenableBuilder(
+      valueListenable: shown,
+      builder: (context, on, child) => ClipRect(
+        child: AnimatedAlign(
+          duration: context.still ? Duration.zero : NewsMotion.base,
+          curve: NewsMotion.standard,
+          alignment: Alignment.topCenter,
+          heightFactor: on || always ? 1 : 0,
+          child: child,
+        ),
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: c.surfaceRaised,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: c.border),
-          boxShadow: OverMedia.shadow,
+          border: Border(top: BorderSide(color: c.border, width: 0.5)),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RoundButton(NewsIcons.aLargeSmall, label: s.textSize, onTap: onText),
-            if (onSave != null)
-              RoundButton(
-                NewsIcons.bookmark,
-                label: saved ? s.unsave : s.save,
-                filled: saved,
-                haptic: true,
-                onTap: onSave,
-              ),
-            const SizedBox(width: 4),
-            Pressable(
-              onTap: onShare,
-              haptic: true,
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 48),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(color: c.brand, borderRadius: BorderRadius.circular(26)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    NewsIcon(NewsIcons.share2, size: 18, color: c.onBrand),
-                    const SizedBox(width: 8),
-                    Text(s.share, style: context.type.label.copyWith(color: c.onBrand)),
-                  ],
-                ),
-              ),
+        padding: EdgeInsets.only(bottom: MediaQuery.viewPaddingOf(context).bottom),
+        child: Center(
+          heightFactor: 1,
+          child: Container(
+            height: 52,
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                RoundButton(NewsIcons.aLargeSmall, label: s.textSize, onTap: onText),
+                if (onSave != null)
+                  RoundButton(
+                    NewsIcons.bookmark,
+                    label: saved ? s.unsave : s.save,
+                    filled: saved,
+                    color: saved ? c.liked : null,
+                    haptic: true,
+                    onTap: onSave,
+                  ),
+                RoundButton(NewsIcons.share2, label: s.share, haptic: true, onTap: onShare),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+/// Text one can select, copy and pass on.
+class Quotable extends StatefulWidget {
+  const Quotable({super.key, required this.child, required this.onShare});
+
+  final Widget child;
+  final ValueChanged<String>? onShare;
+
+  @override
+  State<Quotable> createState() => _QuotableState();
+}
+
+class _QuotableState extends State<Quotable> {
+  String _words = '';
+
+  @override
+  Widget build(BuildContext context) => SelectionArea(
+    onSelectionChanged: (x) => _words = x?.plainText ?? '',
+    contextMenuBuilder: (context, region) => AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: region.contextMenuAnchors,
+      buttonItems: [
+        for (final item in region.contextMenuButtonItems)
+          if (item.type == ContextMenuButtonType.copy) item,
+        // The menu is drawn before the words are known: they are read when it is pressed.
+        if (widget.onShare != null)
+          ContextMenuButtonItem(
+            label: Strings.of(context).shareQuote,
+            onPressed: () {
+              final words = _words;
+              region.hideToolbar();
+              if (words.trim().isNotEmpty) widget.onShare!(words);
+            },
+          ),
+        for (final item in region.contextMenuButtonItems)
+          if (item.type == ContextMenuButtonType.selectAll) item,
+      ],
+    ),
+    child: widget.child,
+  );
 }
 
 /// What to read after this: the next story large, the others beneath.

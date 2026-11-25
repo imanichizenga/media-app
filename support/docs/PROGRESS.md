@@ -9,12 +9,13 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
-| **M3 Mobile app** | Done, pull request 11. **Waits for G2 on the app** and for a phone (G3) | Needs C1, D1, G3 |
+| **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
+| **M3.1 Mobile polish** | In progress, branch `m3-mobile` | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. **M3 is in pull request 11.** Is it approved (G2, app)? Screens: the gallery made by `support/docs/mobile/plan.md`, or `support/docs/design/screens/m3.zip`. Record the answer.
+1. **M3.1 is under way on `m3-mobile`** (S1–S5, N1–N7, V1–V4: ADR-0044). When its tests and gallery are done and CI is green: merge PR 11, then M2 Website on `m2-website`.
 2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in a minute. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
 3. Then M2 Website on its own branch: same stylesheet, `packages/ui`, `packages/i18n`, and the cover card (ADR-0043).
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
@@ -22,7 +23,7 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 6. Open risks:
    - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, every IAM and bucket policy, and the load balancer rule for `/theme/*`. Plan-tested only.
    - `uv` could not reach PyPI from this Codespace on 2026-11-24 (`curl` could). `UV_OFFLINE=1` works with the lockfile.
-7. Waiting for a person: G2 on the app; an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
+7. Waiting for a person: an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
 
 ## Human decisions
 
@@ -37,6 +38,8 @@ Recorded as given on **2026-11-24**.
 The full text of the task these come from is summarised in [design/public-experience.md](design/public-experience.md) (rules, D1 to D7) and ADR-0029 onward.
 
 > **G2 themes, 2026-11-24:** "i also approve your theme and design, now proceed with mobile, now in mobile i need more strong ui design". Same message: galleries may be zipped to free space, and `/tmp` may be used as long as no file is lost.
+
+> **G2 app (PR 11), 2026-11-25:** "APPROVED WITH CHANGES S1–S5, N1–N7, V1–V4 below. Merge PR 11 only after M3.1 passes. Write ADR-0044 "Space and native conventions", superseding the parts of ADR-0043 it changes: display size on Home, feeds and categories sharing one row." Two principles: "SPACE IS FOR NEWS: chrome must never crowd out content." "NATIVE FIRST: each platform must feel like it belongs on that platform, while the brand, typography and card anatomy stay identical." The changes are listed in [ADR-0044](adr/0044-space-and-native.md).
 
 ## Acceptance
 

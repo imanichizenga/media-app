@@ -57,4 +57,19 @@ void main() {
     ];
     expect(found, isEmpty);
   });
+  test('one place asks which platform it is', () {
+    final found = <String>[];
+    for (final f in files.where(
+      (f) => !f.path.startsWith('lib/ui/adaptive') && !f.path.startsWith('lib/ui/tokens'),
+    )) {
+      // What the server is told, and what Android is told, are not how things look.
+      if (f.path.startsWith('lib/core')) continue;
+      for (final (i, line) in f.readAsLinesSync().indexed) {
+        if (RegExp(r'isApple|TargetPlatform|Platform\.is|Cupertino').hasMatch(line)) {
+          found.add('${f.path}:${i + 1} $line');
+        }
+      }
+    }
+    expect(found, isEmpty);
+  });
 }

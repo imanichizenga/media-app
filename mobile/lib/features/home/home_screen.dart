@@ -1,35 +1,24 @@
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:news_api_client/news_api_client.dart' hide Card;
-import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../app/router.dart';
-import '../../app/shell.dart';
-import '../../app/window.dart';
-import '../../core/config/app_config.dart';
 import '../../core/models.dart';
-import '../../core/network/failures.dart';
-import '../../core/network/loaded.dart';
 import '../../core/providers.dart';
 import '../../core/telemetry/startup.dart';
 import '../../l10n/gen/strings.dart';
-import '../../ui/components/basics.dart';
-import '../../ui/components/cards.dart';
+import '../../ui/adaptive/adaptive.dart';
+import '../../ui/adaptive/tab_header.dart';
+import '../../ui/adaptive/tops.dart';
 import '../../ui/components/signals.dart';
 import '../../ui/components/skeleton.dart';
-import '../../ui/states/designed.dart';
 import '../../ui/tokens/theme.dart';
 import '../content/feed_slivers.dart';
 import '../content/feeds.dart';
-import '../system/banners.dart';
-import '../video/video_screen.dart';
-import 'carousel.dart';
-import 'masthead.dart';
+import '../content/list_screen.dart';
+import 'front.dart';
+import 'home_tabs.dart';
 
+/// The name, a row of tabs, and the news. Each tab is a page that keeps its place.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -37,332 +26,193 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final _scroll = ScrollController();
-  int _tab = 0;
+class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin, GoesToTop {
+  late TabController _tabs;
+  late List<HomeTab> _list = ref.read(homeTabsProvider);
+  final _scrolls = <String, ScrollController>{};
+  final _gone = ValueNotifier<double>(0);
 
   @override
   void initState() {
     super.initState();
-    tabAgain[0].addListener(_top);
-    ref.listenManual(homeFeedProvider, (_, next) {
-      if (next.hasValue) ref.read(startupProvider).drawn();
-    }, fireImmediately: true);
+    _tabs = TabController(length: _list.length, vsync: this)..addListener(_turned);
+    ref
+      ..listenManual(homeFeedProvider, (_, next) {
+        if (next.hasValue) ref.read(startupProvider).drawn();
+      }, fireImmediately: true)
+      ..listenManual(homeTabsProvider, (_, next) => _retab(next));
   }
 
   @override
   void dispose() {
-    tabAgain[0].removeListener(_top);
-    _scroll.dispose();
+    _tabs.dispose();
+    for (final s in _scrolls.values) {
+      s.dispose();
+    }
+    _gone.dispose();
     super.dispose();
   }
 
-  void _top() {
-    if (!_scroll.hasClients) return;
-    unawaited(
-      _scroll.animateTo(
-        0,
-        duration: context.still ? const Duration(milliseconds: 1) : NewsMotion.slow * 2,
-        curve: NewsMotion.standard,
-      ),
-    );
+  /// The sections arrived or changed: the reader stays in the page they are in.
+  void _retab(List<HomeTab> next) {
+    if (next.length == _list.length && next.indexed.every((e) => e.$2 == _list[e.$1])) return;
+    final id = _list[_tabs.index].id;
+    final at = next.indexWhere((x) => x.id == id);
+    final old = _tabs;
+    setState(() {
+      _list = next;
+      _tabs = TabController(
+        length: next.length,
+        initialIndex: at < 0 ? 0 : at,
+        vsync: this,
+        animationDuration: context.still ? Duration.zero : null,
+      )..addListener(_turned);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
   }
 
-  FeedKey get _latest => FeedKey(FeedKind.latest, '', ref.read(localeNameProvider));
+  ScrollController _scrollOf(HomeTab tab) => _scrolls.putIfAbsent(tab.id, ScrollController.new);
 
-  Future<void> _refresh() async {
-    unawaited(HapticFeedback.mediumImpact());
-    await Future.wait([
-      ref.read(homeFeedProvider.notifier).refresh(),
-      if (_tab == 1) ref.read(feedProvider(_latest).notifier).refresh(),
-      ref.read(appConfigControllerProvider.notifier).refresh(),
-    ]);
+  @override
+  ScrollController get shown => _scrollOf(_list[_tabs.index]);
+
+  double get _offset => shown.hasClients ? shown.offset : 0;
+
+  /// A page at its top is never shown under a bar that has gone.
+  void _turned() {
+    final most = _offset.clamp(0.0, double.infinity);
+    if (_gone.value > most) _gone.value = most;
+  }
+
+  bool _scrolled(ScrollNotification n) {
+    if (n.metrics.axis != Axis.vertical || n is! ScrollUpdateNotification) return false;
+    final most = TabHeader.collapses(context);
+    final at = n.metrics.pixels.clamp(0.0, double.infinity);
+    // Past either end the list is only being stretched.
+    if (n.metrics.outOfRange && at > 0) return false;
+    final next = (_gone.value + (n.scrollDelta ?? 0)).clamp(0.0, most);
+    _gone.value = next > at ? at.clamp(0.0, most) : next;
+    return false;
+  }
+
+  void _show(String id) {
+    final at = _list.indexWhere((x) => x.id == id);
+    if (at >= 0) _tabs.animateTo(at);
   }
 
   @override
   Widget build(BuildContext context) {
-    final home = ref.watch(homeFeedProvider);
     final s = Strings.of(context);
-    final loaded = home.value;
-    void open(Story story, {String? heroTag}) =>
-        openStory(context, story, heroTag: heroTag, from: 'home');
-    final now = ref.watch(clockNowProvider)();
-    final breaking = loaded?.value.breaking.where((b) => b.isBreaking(now)).firstOrNull;
+    final extent = TabHeader.extent(context);
     return Scaffold(
       body: Shimmer(
-        child: RefreshIndicator(
-          onRefresh: _refresh,
-          edgeOffset: MediaQuery.paddingOf(context).top + 92,
-          color: context.colors.textPrimary,
-          backgroundColor: context.colors.surfaceRaised,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (n) {
-              if (_tab == 1 && n.metrics.extentAfter < 1600) {
-                unawaited(ref.read(feedProvider(_latest).notifier).loadMore());
-              }
-              return false;
-            },
-            child: CustomScrollView(
-              controller: _scroll,
-              physics: const AlwaysScrollableScrollPhysics(),
-              scrollCacheExtent: const ScrollCacheExtent.pixels(900),
-              slivers: [
-                const HomeMasthead(),
-                if (breaking != null)
-                  SliverToBoxAdapter(
-                    child: BreakingBanner(story: breaking, onTap: () => open(breaking)),
-                  ),
-                SliverToBoxAdapter(child: StaleBanner(loaded: loaded)),
-                const SliverToBoxAdapter(child: UpdateBanner()),
-                if (loaded == null ? !home.hasError : loaded.value.live.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: LiveRail(stories: loaded?.value.live, onTap: open),
-                  ),
-                SliverToBoxAdapter(
-                  child: FeedBar(
-                    labels: [s.forYou, s.latest],
-                    at: _tab,
-                    onChanged: (i) => setState(() => _tab = i),
-                  ),
-                ),
-                if (_tab == 1)
-                  ...feedSlivers(
-                    context,
-                    ref,
-                    feed: _latest,
-                    open: open,
-                    place: 'latest',
-                    hide: {?breaking?.id},
-                  )
-                else
-                  ..._forYou(context, home, open, breaking),
-                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s10)),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _forYou(
-    BuildContext context,
-    AsyncValue<Loaded<Home>> home,
-    OpenStory open,
-    Story? breaking,
-  ) {
-    final s = Strings.of(context);
-    if (home case AsyncError(:final error) when home.value == null) {
-      return [
-        SliverToBoxAdapter(
-          child: Designed.failure(
-            context,
-            error,
-            retry: () => ref.invalidate(homeFeedProvider),
-            saved: error is OfflineFailure ? () => const SavedRoute().go(context) : null,
-          ),
-        ),
-      ];
-    }
-    final h = home.value?.value;
-    final lead = h?.lead.where((c) => c.id != breaking?.id).toList();
-    final latest = h?.latest.where((c) => c.id != breaking?.id).toList();
-    final List<Story?> top = lead?.skip(1).toList() ?? List.filled(3, null);
-    final List<Story?> river = latest ?? List.filled(8, null);
-    final window = windowOf(context);
-    final compact = window == WindowClass.compact;
-    final cover = lead?.firstOrNull;
-    Widget gap(double h) => SliverToBoxAdapter(child: SizedBox(height: h));
-    return [
-      if (h == null || cover != null)
-        SliverToBoxAdapter(
-          child: compact
-              ? CoverCard(cover, open: open)
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                  child: SizedBox(
-                    height: 460,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(NewsRadius.xl),
-                      child: OverflowBox(
-                        alignment: Alignment.bottomCenter,
-                        maxHeight: double.infinity,
-                        child: CoverCard(cover, open: open, radius: NewsRadius.xl),
-                      ),
+        child: Stack(
+          children: [
+            NotificationListener<ScrollNotification>(
+              onNotification: _scrolled,
+              child: TabBarView(
+                controller: _tabs,
+                children: [
+                  for (final tab in _list)
+                    _Page(
+                      key: PageStorageKey(tab.id),
+                      child: tab.feed == null
+                          ? FrontPage(scroll: _scrollOf(tab), top: extent, gone: _gone, show: _show)
+                          : _FeedPage(tab: tab, scroll: _scrollOf(tab), top: extent),
                     ),
-                  ),
-                ),
-        ),
-      if (top.isNotEmpty) ...[
-        gap(NewsSpace.s8),
-        SliverToBoxAdapter(child: SectionHead(s.topStories)),
-        gap(NewsSpace.s1),
-        SliverToBoxAdapter(
-          child: TopStories(stories: top, open: open),
-        ),
-      ],
-      gap(NewsSpace.s8),
-      SliverToBoxAdapter(
-        child: SectionHead(s.latest, more: s.more, onMore: () => setState(() => _tab = 1)),
-      ),
-      StorySliver(stories: river.take(5).toList(), open: open, place: 'river'),
-      if (h == null || h.videos.isNotEmpty) ...[
-        gap(NewsSpace.s6),
-        SliverToBoxAdapter(
-          child: _VideoBand(videos: h?.videos, shorts: h?.shorts, open: open),
-        ),
-      ],
-      if (river.length > 5) ...[
-        gap(NewsSpace.s4),
-        StorySliver(stories: river.skip(5).take(6).toList(), open: open, place: 'river2'),
-      ],
-      for (final HomeSection section in h?.sections ?? const []) ...[
-        gap(NewsSpace.s8),
-        SliverToBoxAdapter(
-          child: SectionHead(
-            section.category.name,
-            more: s.more,
-            onMore: () => context.push(section.category.path),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-            child: StandardCard(
-              section.results.first,
-              open: open,
-              place: 'section-${section.category.id}',
-              ratio: compact ? 16 / 10 : 21 / 9,
-            ),
-          ),
-        ),
-        gap(NewsSpace.s2),
-        StorySliver(
-          stories: section.results.skip(1).take(3).toList(),
-          open: open,
-          place: 'section-${section.category.id}',
-        ),
-      ],
-    ];
-  }
-}
-
-/// The two feeds, then the sections: one row, so the story comes sooner.
-class FeedBar extends ConsumerWidget {
-  const FeedBar({super.key, required this.labels, required this.at, required this.onChanged});
-
-  final List<String> labels;
-  final int at;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final nav = ref.watch(navigationProvider);
-    final items = nav.value?.value;
-    final c = context.colors;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5, vertical: NewsSpace.s3),
-      child: Row(
-        children: [
-          for (final (i, label) in labels.indexed)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: NewsChip(label, on: i == at, toggles: true, onTap: () => onChanged(i)),
-            ),
-          Container(
-            width: 1,
-            height: 24,
-            margin: const EdgeInsets.only(left: 2, right: 6),
-            color: c.border,
-          ),
-          if (items == null && !nav.hasError)
-            for (final w in const [64.0, 58.0, 84.0])
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Bone(width: w, height: 14),
-              )
-          else
-            for (final n in items ?? const <NavigationItem>[])
-              Pressable(
-                link: true,
-                onTap: () => context.push(n.path),
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 48),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(n.name, style: context.type.label.copyWith(color: c.textSecondary)),
-                ),
-              ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Moving pictures, on their own ground.
-class _VideoBand extends ConsumerWidget {
-  const _VideoBand({required this.videos, required this.shorts, required this.open});
-
-  final List<Story>? videos;
-  final List<Story>? shorts;
-  final OpenStory open;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final s = Strings.of(context);
-    final List<Story?> clips = videos?.take(8).toList() ?? List.filled(2, null);
-    final List<Story?> vertical = !ref.watch(flagsProvider).shorts
-        ? const []
-        : shorts?.take(10).toList() ?? List.filled(4, null);
-    void toVideo(int tab, [String? first]) {
-      ref.read(videoTabProvider.notifier).show(tab, first: first);
-      const VideoRoute().go(context);
-    }
-
-    final scale = (MediaQuery.textScalerOf(context).scale(10) / 10).clamp(1.0, 2.0);
-    return Container(
-      color: context.colors.surfaceSunken,
-      padding: const EdgeInsets.symmetric(vertical: NewsSpace.s8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionHead(s.videos, more: s.more, onMore: () => toVideo(1)),
-          const SizedBox(height: NewsSpace.s1),
-          SizedBox(
-            height: 174 + 110 * scale,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-              itemCount: clips.length,
-              separatorBuilder: (_, _) => const SizedBox(width: NewsSpace.s4),
-              itemBuilder: (_, i) => SizedBox(
-                width: 296,
-                child: VideoCard(clips[i], open: open, place: 'strip'),
+                ],
               ),
             ),
-          ),
-          if (vertical.isNotEmpty) ...[
-            const SizedBox(height: NewsSpace.s4),
-            SectionHead(s.shorts, more: s.more, onMore: () => toVideo(0)),
-            const SizedBox(height: NewsSpace.s1),
-            SizedBox(
-              height: 266,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                itemCount: vertical.length,
-                separatorBuilder: (_, _) => const SizedBox(width: NewsSpace.s3),
-                itemBuilder: (_, i) => SizedBox(
-                  width: 160,
-                  child: MediaQuery.withClampedTextScaling(
-                    maxScaleFactor: 1.4,
-                    child: ShortCard(vertical[i], onTap: () => toVideo(0, vertical[i]?.id)),
-                  ),
-                ),
-              ),
+            TabHeader(
+              tabs: _tabs,
+              labels: [
+                for (final tab in _list) tab.name ?? (tab.feed == null ? s.forYou : s.latest),
+              ],
+              gone: _gone,
+              onAgain: toTop,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Kept as it was while another page is read.
+class _Page extends StatefulWidget {
+  const _Page({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  State<_Page> createState() => _PageState();
+}
+
+class _PageState extends State<_Page> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+}
+
+class _FeedPage extends ConsumerWidget {
+  const _FeedPage({required this.tab, required this.scroll, required this.top});
+
+  final HomeTab tab;
+  final ScrollController scroll;
+  final double top;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final feed = tab.feed!;
+    final latest = feed.kind == FeedKind.latest;
+    final now = ref.watch(clockNowProvider)();
+    final breaking = !latest
+        ? null
+        : ref
+              .watch(homeFeedProvider)
+              .value
+              ?.value
+              .breaking
+              .where((b) => b.isBreaking(now))
+              .firstOrNull;
+    final section = sectionOf(ref, feed);
+    void open(Story story, {String? heroTag}) =>
+        openStory(context, story, heroTag: heroTag, from: 'home');
+    return FeedPager(
+      feed: feed,
+      child: NewsScroll(
+        controller: scroll,
+        edge: top,
+        onRefresh: () => ref.read(feedProvider(feed).notifier).refresh(),
+        header: [TabHeaderRoom(height: top)],
+        slivers: [
+          if (breaking != null)
+            SliverToBoxAdapter(
+              child: BreakingBanner(story: breaking, onTap: () => open(breaking)),
+            ),
+          if (section != null && section.children.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child: FeedAboutHead(children: section.children),
+              ),
+            ),
+          if (latest)
+            ...feedSlivers(
+              context,
+              ref,
+              feed: feed,
+              open: open,
+              place: 'latest',
+              hide: {?breaking?.id},
+            )
+          else
+            ...FeedBody.slivers(context, ref, feed: feed, place: 'tab-${tab.id}'),
         ],
       ),
     );

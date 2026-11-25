@@ -8,6 +8,7 @@ import '../../ui/tokens/theme.dart';
 
 Future<void> showTextSize(BuildContext context) => showModalBottomSheet<void>(
   context: context,
+  useRootNavigator: true,
   builder: (context) => const SafeArea(
     child: Padding(
       padding: EdgeInsets.fromLTRB(NewsSpace.s6, 0, NewsSpace.s6, NewsSpace.s6),
@@ -52,12 +53,13 @@ class TextSizeControl extends ConsumerWidget {
               ),
             ),
             Expanded(
-              child: Slider(
+              child: Slider.adaptive(
                 value: scale,
                 min: 0.85,
                 max: 1.6,
                 divisions: 5,
                 label: '${(scale * 100).round()}%',
+                activeColor: c.textPrimary,
                 semanticFormatterCallback: (v) => '${s.textSize}: ${(v * 100).round()}%',
                 onChanged: (v) => ref
                     .read(settingsControllerProvider.notifier)

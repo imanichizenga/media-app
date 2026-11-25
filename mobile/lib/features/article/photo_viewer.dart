@@ -137,31 +137,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
                       ),
                       const Spacer(),
                       if (photo.caption.isNotEmpty || photo.credit.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          decoration: const BoxDecoration(gradient: OverMedia.fade),
-                          padding: EdgeInsets.fromLTRB(
-                            20,
-                            56,
-                            20,
-                            MediaQuery.paddingOf(context).bottom + 20,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (photo.caption.isNotEmpty)
-                                Text(
-                                  photo.caption,
-                                  style: context.type.bodyM.copyWith(color: OverMedia.ink),
-                                ),
-                              if (photo.credit.isNotEmpty)
-                                Text(
-                                  photo.credit,
-                                  style: context.type.caption.copyWith(color: OverMedia.soft),
-                                ),
-                            ],
-                          ),
-                        ),
+                        _Caption(photo, key: ValueKey(_at)),
                     ],
                   ),
                 ),
@@ -187,6 +163,7 @@ class _Zoomable extends StatefulWidget {
 class _ZoomableState extends State<_Zoomable> {
   final _view = TransformationController();
   Offset _tap = Offset.zero;
+  bool _close = false;
 
   @override
   void dispose() {
@@ -194,7 +171,11 @@ class _ZoomableState extends State<_Zoomable> {
     super.dispose();
   }
 
-  void _report() => widget.onZoom(_view.value.getMaxScaleOnAxis() > 1.02);
+  void _report() {
+    final close = _view.value.getMaxScaleOnAxis() > 1.02;
+    if (close != _close) setState(() => _close = close);
+    widget.onZoom(close);
+  }
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -211,8 +192,67 @@ class _ZoomableState extends State<_Zoomable> {
     child: InteractiveViewer(
       transformationController: _view,
       maxScale: 5,
+      // At rest a finger turns the page or pulls the picture away.
+      panEnabled: _close,
       onInteractionEnd: (_) => _report(),
       child: widget.child,
     ),
   );
+}
+
+/// Two lines at first, all of it when asked.
+class _Caption extends StatefulWidget {
+  const _Caption(this.photo, {super.key});
+
+  final Photo photo;
+
+  @override
+  State<_Caption> createState() => _CaptionState();
+}
+
+class _CaptionState extends State<_Caption> {
+  bool _whole = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final photo = widget.photo;
+    return Semantics(
+      expanded: _whole,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() => _whole = !_whole),
+        child: AnimatedSize(
+          duration: context.still ? const Duration(milliseconds: 1) : NewsMotion.base,
+          curve: NewsMotion.standard,
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.5),
+            decoration: const BoxDecoration(
+              color: OverMedia.pill,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(NewsRadius.xl)),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 16, 20, MediaQuery.paddingOf(context).bottom + 16),
+            child: SingleChildScrollView(
+              physics: _whole ? null : const NeverScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (photo.caption.isNotEmpty)
+                    Text(
+                      photo.caption,
+                      maxLines: _whole ? null : 2,
+                      overflow: _whole ? null : TextOverflow.ellipsis,
+                      style: context.type.bodyM.copyWith(color: OverMedia.ink),
+                    ),
+                  if (photo.credit.isNotEmpty)
+                    Text(photo.credit, style: context.type.caption.copyWith(color: OverMedia.soft)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

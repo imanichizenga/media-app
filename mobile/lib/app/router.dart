@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_ui/material_ui.dart' show MaterialPage;
-import 'package:news_design_tokens/news_design_tokens.dart';
+import 'package:material_ui/material_ui.dart' show MaterialPage, MaterialPageRoute;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/models.dart';
@@ -16,13 +17,15 @@ import '../features/saved/saved_screen.dart';
 import '../features/system/not_found_screen.dart';
 import '../features/video/video_screen.dart';
 import '../features/you/you_screen.dart';
-import '../ui/tokens/theme.dart';
 import 'links.dart';
 import 'shell.dart';
 
 part 'router.g.dart';
 
 final rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+
+/// Each place's own stack.
+final branchKeys = List.generate(5, (i) => GlobalKey<NavigatorState>(debugLabel: 'place $i'));
 
 @TypedStatefulShellRoute<ShellRoute>(
   branches: [
@@ -46,22 +49,27 @@ class ShellRoute extends StatefulShellRouteData {
 
 class HomeBranch extends StatefulShellBranchData {
   const HomeBranch();
+  static final $navigatorKey = branchKeys[0];
 }
 
 class VideoBranch extends StatefulShellBranchData {
   const VideoBranch();
+  static final $navigatorKey = branchKeys[1];
 }
 
 class ExploreBranch extends StatefulShellBranchData {
   const ExploreBranch();
+  static final $navigatorKey = branchKeys[2];
 }
 
 class SavedBranch extends StatefulShellBranchData {
   const SavedBranch();
+  static final $navigatorKey = branchKeys[3];
 }
 
 class YouBranch extends StatefulShellBranchData {
   const YouBranch();
+  static final $navigatorKey = branchKeys[4];
 }
 
 class HomeRoute extends GoRouteData with $HomeRoute {
@@ -102,24 +110,8 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
 }
 
 /// Everything else is an address of the website. What it means is decided in one place, `parsePlace`.
-Page<void> _content(GoRouterState state, Widget child) => CustomTransitionPage(
-  key: state.pageKey,
-  name: state.uri.path,
-  transitionDuration: NewsMotion.slow,
-  reverseTransitionDuration: NewsMotion.base,
-  child: child,
-  transitionsBuilder: (context, animation, _, child) {
-    if (context.still) return child;
-    final eased = CurvedAnimation(parent: animation, curve: NewsMotion.standard);
-    return FadeTransition(
-      opacity: eased,
-      child: SlideTransition(
-        position: Tween(begin: const Offset(0, 0.04), end: Offset.zero).animate(eased),
-        child: child,
-      ),
-    );
-  },
-);
+Page<void> _content(GoRouterState state, Widget child) =>
+    MaterialPage(key: state.pageKey, name: state.uri.path, child: child);
 
 Widget screenFor(String path, {StoryExtra? extra}) => switch (parsePlace(path)) {
   ArticlePlace(:final locale, :final slug) => ArticleScreen(
@@ -174,3 +166,16 @@ void openStory(BuildContext context, Story story, {String? heroTag, String from 
       story.path,
       extra: StoryExtra(story, heroTag: heroTag, from: from),
     );
+
+/// A list (a category, a tag, a journalist) opens inside the place one is in; everything else over it.
+void openPath(BuildContext context, String path) {
+  if (parsePlace(path) is! ListPlace) return unawaited(context.push(path));
+  unawaited(
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        settings: RouteSettings(name: path),
+        builder: (_) => screenFor(path),
+      ),
+    ),
+  );
+}

@@ -458,4 +458,22 @@ class StringsEn extends Strings {
 
   @override
   String get refreshed => 'Stories refreshed';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get linkCopied => 'Link copied';
+
+  @override
+  String get newStories => 'New stories';
+
+  @override
+  String get shareQuote => 'Share quote';
+
+  @override
+  String get settingOn => 'On';
+
+  @override
+  String get settingOff => 'Off';
 }

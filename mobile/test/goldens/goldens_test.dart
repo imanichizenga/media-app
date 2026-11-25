@@ -4,6 +4,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_app/app/router.dart';
@@ -255,6 +256,58 @@ void main() {
       });
     }
   }
+  // Each platform's own shell, bars, sheets, dialogs and settings.
+  for (final scheme in [SchemeChoice.light, SchemeChoice.dark]) {
+    const platforms = TargetPlatformVariant({TargetPlatform.android, TargetPlatform.iOS});
+    Future<void> native(WidgetTester t, String name) =>
+        golden(t, 'native/${defaultTargetPlatform.name}-$name-${scheme.name}');
+    Future<Phone> open(WidgetTester t) => start(t, dpr: 1, photographs: false, scheme: scheme);
+    for (final screen in ['home', 'article', 'shorts', 'explore', 'saved', 'you', 'category']) {
+      testWidgets('native $screen ${scheme.name}', variant: platforms, (t) async {
+        final p = await open(t);
+        await visit(p, screen, 'sw');
+        await native(t, screen);
+      });
+    }
+    testWidgets('native home scrolled ${scheme.name}', variant: platforms, (t) async {
+      final p = await open(t);
+      await t.drag(find.byType(CustomScrollView).first, const Offset(0, -320));
+      await p.settle(2);
+      await native(t, 'home-scrolled');
+    });
+    testWidgets('native choice ${scheme.name}', variant: platforms, (t) async {
+      final p = await open(t);
+      await p.go('/profile');
+      await t.tap(find.text('Mwonekano'));
+      await p.settle();
+      await native(t, 'choice');
+    });
+    testWidgets('native dialog ${scheme.name}', variant: platforms, (t) async {
+      final p = await open(t);
+      await p.push(paths['sw']!);
+      await p.go('/saved');
+      await t.tap(find.text('Ulizosoma'));
+      await p.settle();
+      await t.tap(find.bySemanticsLabel('Futa historia'));
+      await p.settle();
+      await native(t, 'dialog');
+    });
+    testWidgets('native menu ${scheme.name}', variant: platforms, (t) async {
+      final p = await open(t);
+      await t.longPress(find.byType(CoverCard).first);
+      await p.settle();
+      await native(t, 'menu');
+    });
+  }
+  // S1's two phones, in both languages.
+  for (final locale in ['sw', 'en']) {
+    for (final (name, size) in [('360x640', const Size(360, 640)), ('390x844', phone)]) {
+      testWidgets('first screen $name $locale', (t) async {
+        await start(t, dpr: 1, photographs: false, locale: locale, size: size);
+        await golden(t, 'signature/first-screen-$name-$locale');
+      });
+    }
+  }
   for (final screen in ['home', 'article', 'you', 'shorts']) {
     testWidgets('$screen at twice the text size', (t) async {
       final p = await start(t, dpr: 1, photographs: false, textScale: 2);
@@ -373,7 +426,7 @@ void main() {
         final found = <String, Rect>{};
         for (final (name, finder) in [
           ('cover', find.byType(CoverCard)),
-          ('bar', find.byType(FeedBar)),
+          ('bar', find.byType(TabBar)),
           ('row', find.byType(RowCard)),
           ('body', find.byType(ArticleBody)),
         ]) {
@@ -386,9 +439,12 @@ void main() {
       final empty = FakeApi.data('sw')['home'] as Map<String, dynamic>;
       final breaking = empty['breaking'];
       empty['breaking'] = <Object>[];
+      final live = empty['live'];
+      empty['live'] = <Object>[]; // with both: space_test
       final bones = await places(loading: true);
       final real = await places(loading: false);
       empty['breaking'] = breaking;
+      empty['live'] = live;
       for (final key in bones.keys.where(real.containsKey)) {
         expect(
           (bones[key]!.left - real[key]!.left).abs(),

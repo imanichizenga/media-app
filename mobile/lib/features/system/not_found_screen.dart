@@ -5,10 +5,10 @@ import 'package:material_ui/material_ui.dart';
 import '../../app/router.dart';
 import '../../core/network/failures.dart';
 import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/skeleton.dart';
 import '../../ui/states/designed.dart';
-import '../../ui/tokens/news_icons.g.dart';
 import '../content/feeds.dart';
 
 /// An address nothing answers to. It may have moved: the server knows.
@@ -31,7 +31,7 @@ class NotFoundScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: RoundButton(
-                NewsIcons.arrowLeft,
+                backIcon(context),
                 label: Strings.of(context).back,
                 onTap: () => context.canPop() ? context.pop() : const HomeRoute().go(context),
               ),

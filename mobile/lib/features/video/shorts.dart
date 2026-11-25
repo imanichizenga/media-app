@@ -171,6 +171,17 @@ class _ShortsState extends ConsumerState<Shorts> with WidgetsBindingObserver {
             fit: StackFit.expand,
             children: [
               body,
+              // Whatever is filmed, what stands on it can be read.
+              const Align(
+                alignment: Alignment.topCenter,
+                child: IgnorePointer(
+                  child: SizedBox(
+                    height: 120,
+                    width: double.infinity,
+                    child: DecoratedBox(decoration: BoxDecoration(gradient: OverMedia.fadeTop)),
+                  ),
+                ),
+              ),
               if (widget.header != null)
                 Positioned(
                   top: top + 8,

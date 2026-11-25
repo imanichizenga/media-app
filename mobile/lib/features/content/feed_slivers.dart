@@ -21,11 +21,15 @@ class StorySliver extends StatelessWidget {
     required this.open,
     required this.place,
     this.feature = false,
+    this.whole = false,
   });
 
   final List<Story?> stories;
   final OpenStory open;
   final String place;
+
+  /// Only whole rows: nothing stands alone in a section.
+  final bool whole;
 
   /// Give every sixth story room.
   final bool feature;
@@ -38,7 +42,8 @@ class StorySliver extends StatelessWidget {
       WindowClass.expanded => 3,
     };
     if (columns > 1) {
-      final rows = (stories.length / columns).ceil();
+      final fits = stories.length ~/ columns;
+      final rows = whole && fits > 0 ? fits : (stories.length / columns).ceil();
       // One anatomy in a row, or nothing lines up.
       final videos = stories.every((s) => s?.isVideo ?? false);
       return SliverPadding(

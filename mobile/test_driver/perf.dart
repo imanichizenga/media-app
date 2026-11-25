@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:news_app/app/bootstrap.dart';
 import 'package:news_app/core/storage/database.dart';
 import 'package:news_app/core/storage/prefs.dart';
+import 'package:news_app/features/video/shorts.dart';
+import 'package:news_app/ui/adaptive/adaptive.dart';
 import 'package:news_app/ui/components/cards.dart';
 
 /// Frames of the feed and of Shorts in a profile build, with the real app and the phone's own storage. It also leaves
@@ -45,12 +47,13 @@ void main() {
       }
     }, reportKey: 'feed');
 
-    await t.tap(find.text('Video').last);
-    await until(find.byType(PageView));
+    await t.tap(find.descendant(of: find.byType(PlacesBar), matching: find.text('Video')));
+    final shorts = find.descendant(of: find.byType(Shorts), matching: find.byType(PageView));
+    await until(shorts);
     await rest(1500);
     await binding.watchPerformance(() async {
       for (var i = 0; i < 10; i++) {
-        await t.fling(find.byType(PageView).last, const Offset(0, -500), 2000);
+        await t.fling(shorts, const Offset(0, -500), 2000);
         await rest(1200);
       }
     }, reportKey: 'shorts');

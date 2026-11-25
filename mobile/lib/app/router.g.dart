@@ -12,11 +12,13 @@ RouteBase get $shellRoute => StatefulShellRouteData.$route(
   factory: $ShellRouteExtension._fromState,
   branches: [
     StatefulShellBranchData.$branch(
+      navigatorKey: HomeBranch.$navigatorKey,
       routes: [
         GoRouteData.$route(path: '/', hasOverriddenOnExit: false, factory: $HomeRoute._fromState),
       ],
     ),
     StatefulShellBranchData.$branch(
+      navigatorKey: VideoBranch.$navigatorKey,
       routes: [
         GoRouteData.$route(
           path: '/video',
@@ -26,6 +28,7 @@ RouteBase get $shellRoute => StatefulShellRouteData.$route(
       ],
     ),
     StatefulShellBranchData.$branch(
+      navigatorKey: ExploreBranch.$navigatorKey,
       routes: [
         GoRouteData.$route(
           path: '/search',
@@ -35,6 +38,7 @@ RouteBase get $shellRoute => StatefulShellRouteData.$route(
       ],
     ),
     StatefulShellBranchData.$branch(
+      navigatorKey: SavedBranch.$navigatorKey,
       routes: [
         GoRouteData.$route(
           path: '/saved',
@@ -44,6 +48,7 @@ RouteBase get $shellRoute => StatefulShellRouteData.$route(
       ],
     ),
     StatefulShellBranchData.$branch(
+      navigatorKey: YouBranch.$navigatorKey,
       routes: [
         GoRouteData.$route(
           path: '/profile',

@@ -97,49 +97,40 @@ class BreakingBanner extends StatelessWidget {
       label: '${s.breaking}: ${story.headline}',
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          color: c.signalBreakingBg,
-          border: Border(bottom: BorderSide(color: c.border, width: 0.5)),
-        ),
-        padding: const EdgeInsets.fromLTRB(NewsSpace.s5, 14, NewsSpace.s4, 14),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: c.signalBreakingLabel.withValues(alpha: 0.16),
-                shape: BoxShape.circle,
-              ),
-              child: NewsIcon(NewsIcons.zap, size: 17, filled: true, color: c.signalBreakingLabel),
-            ),
-            const SizedBox(width: NewsSpace.s3),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    s.breaking.toUpperCase(),
-                    style: context.type.eyebrow.copyWith(color: c.signalBreakingLabel, height: 1.3),
+        constraints: const BoxConstraints(minHeight: 48),
+        color: c.signalBreakingBg,
+        padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5, vertical: 4),
+        child: MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.3,
+          child: Row(
+            children: [
+              NewsIcon(NewsIcons.zap, size: 16, filled: true, color: c.signalBreakingLabel),
+              const SizedBox(width: NewsSpace.s2),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    text: '${s.breaking.toUpperCase()}   ',
+                    style: context.type.eyebrow.copyWith(color: c.signalBreakingLabel),
+                    children: [
+                      TextSpan(
+                        text: story.headline,
+                        style: context.type.label.copyWith(
+                          color: c.signalBreakingFg,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.w600,
+                          fontVariations: const [FontVariation('wght', 600)],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    story.headline,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.type.title.copyWith(
-                      color: c.signalBreakingFg,
-                      fontSize: 15,
-                      height: 1.3,
-                    ),
-                  ),
-                ],
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            const SizedBox(width: NewsSpace.s2),
-            NewsIcon(NewsIcons.chevronRight, size: 18, color: c.signalBreakingFg),
-          ],
+              const SizedBox(width: NewsSpace.s1),
+              NewsIcon(NewsIcons.chevronRight, size: 18, color: c.signalBreakingFg),
+            ],
+          ),
         ),
       ),
     );
@@ -154,7 +145,10 @@ class LiveRail extends ConsumerWidget {
   final List<Story>? stories;
   final ValueChanged<Story> onTap;
 
-  static const _width = 92.0;
+  static const _width = 76.0;
+
+  /// Never more, whatever is live.
+  static const extent = 96.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -162,55 +156,60 @@ class LiveRail extends ConsumerWidget {
     final c = context.colors;
     final s = Strings.of(context);
     final List<Story?> shown = stories ?? List.filled(4, null);
-    final style = context.type.caption.copyWith(color: c.textPrimary, height: 1.25, fontSize: 12.5);
+    final style = context.type.caption.copyWith(color: c.textPrimary, height: 1.2, fontSize: 12);
     return Semantics(
       container: true,
       label: s.liveNow,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s4, NewsSpace.s4, 0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (final story in shown)
-              Padding(
-                padding: const EdgeInsets.only(right: NewsSpace.s3),
-                child: Pressable(
-                  onTap: story == null ? null : () => onTap(story),
-                  label: story == null ? null : '${s.live}: ${story.headline}',
-                  link: true,
-                  scale: 0.95,
-                  child: SizedBox(
-                    width: _width,
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 76,
-                          height: 76,
-                          padding: const EdgeInsets.all(3.5),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: story == null ? c.border : c.signalLive,
-                              width: 2.5,
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.2,
+        child: SizedBox(
+          height: extent,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s2, NewsSpace.s4, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final story in shown)
+                  Padding(
+                    padding: const EdgeInsets.only(right: NewsSpace.s2),
+                    child: Pressable(
+                      onTap: story == null ? null : () => onTap(story),
+                      label: story == null ? null : '${s.live}: ${story.headline}',
+                      link: true,
+                      scale: 0.95,
+                      child: SizedBox(
+                        width: _width,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 58,
+                              height: 58,
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: story == null ? c.border : c.signalLive,
+                                  width: 2.5,
+                                ),
+                              ),
+                              child: ClipOval(child: NewsPicture(story?.image)),
                             ),
-                          ),
-                          child: ClipOval(child: NewsPicture(story?.image)),
+                            const SizedBox(height: NewsSpace.s1),
+                            TextOrBone(
+                              story?.headline,
+                              style: style,
+                              maxLines: 1,
+                              align: TextAlign.center,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: NewsSpace.s2),
-                        TextOrBone(
-                          story?.headline,
-                          style: style,
-                          lines: 2,
-                          maxLines: 2,
-                          align: TextAlign.center,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

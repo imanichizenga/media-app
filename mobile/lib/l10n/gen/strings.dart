@@ -896,6 +896,42 @@ abstract class Strings {
   /// In sw, this message translates to:
   /// **'Habari zimesasishwa'**
   String get refreshed;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In sw, this message translates to:
+  /// **'Nakili kiungo'**
+  String get copyLink;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kiungo kimenakiliwa'**
+  String get linkCopied;
+
+  /// No description provided for @newStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kuna habari mpya'**
+  String get newStories;
+
+  /// No description provided for @shareQuote.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sambaza nukuu'**
+  String get shareQuote;
+
+  /// No description provided for @settingOn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imewashwa'**
+  String get settingOn;
+
+  /// No description provided for @settingOff.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imezimwa'**
+  String get settingOff;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

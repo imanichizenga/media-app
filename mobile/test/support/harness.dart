@@ -20,6 +20,7 @@ import 'package:news_app/core/network/interceptors.dart';
 import 'package:news_app/core/providers.dart';
 import 'package:news_app/core/storage/database.dart';
 import 'package:news_app/core/storage/prefs.dart';
+import 'package:news_app/features/content/feeds.dart';
 import 'package:news_app/features/video/shorts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -108,6 +109,8 @@ class Phone {
     }
   }
 
+  Future<void> refreshHome() => container.read(homeFeedProvider.notifier).refresh();
+
   Future<void> go(String path) async {
     container.read(routerProvider).go(path);
     await settle();
@@ -138,13 +141,15 @@ Future<Phone> start(
   bool settle = true,
   double dpr = 2,
   bool photographs = true,
+  EdgeInsets padding = const EdgeInsets.only(top: 47, bottom: 24),
   Set<String> topics = const {},
   List<Override> overrides = const [],
 }) async {
   tester.view.devicePixelRatio = dpr;
   tester.view.physicalSize = size * dpr;
-  tester.view.padding = FakeViewPadding(top: 47 * dpr, bottom: 24 * dpr);
-  tester.view.viewPadding = FakeViewPadding(top: 47 * dpr, bottom: 24 * dpr);
+  final bars = FakeViewPadding(top: padding.top * dpr, bottom: padding.bottom * dpr);
+  tester.view.padding = bars;
+  tester.view.viewPadding = bars;
   tester.platformDispatcher.textScaleFactorTestValue = textScale;
   tester.platformDispatcher.accessibilityFeaturesTestValue = FakeAccessibilityFeatures(
     disableAnimations: still,

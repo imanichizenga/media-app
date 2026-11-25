@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -7,18 +5,19 @@ import 'package:news_design_tokens/news_design_tokens.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../app/router.dart';
-import '../../app/shell.dart';
 import '../../core/config/app_config.dart';
 import '../../core/models.dart';
 import '../../core/providers.dart';
 import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
+import '../../ui/adaptive/tops.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
 import '../../ui/components/skeleton.dart';
 import '../../ui/tokens/theme.dart';
 import '../content/feed_slivers.dart';
 import '../content/feeds.dart';
-import '../home/masthead.dart';
+import '../content/list_screen.dart' show FeedPager;
 import 'shorts.dart';
 
 part 'video_screen.g.dart';
@@ -54,42 +53,18 @@ class VideoScreen extends ConsumerStatefulWidget {
   ConsumerState<VideoScreen> createState() => _VideoScreenState();
 }
 
-class _VideoScreenState extends ConsumerState<VideoScreen> {
-  final _scroll = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    tabAgain[1].addListener(_top);
-  }
-
-  @override
-  void dispose() {
-    tabAgain[1].removeListener(_top);
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  void _top() {
-    if (_scroll.hasClients) {
-      unawaited(_scroll.animateTo(0, duration: NewsMotion.slow * 2, curve: NewsMotion.standard));
-    }
-  }
-
+class _VideoScreenState extends ConsumerState<VideoScreen> with GoesToTop {
   @override
   Widget build(BuildContext context) {
     final tab = ref.watch(videoTabProvider);
     final shorts = ref.watch(flagsProvider.select((f) => f.shorts));
     final s = Strings.of(context);
     final tabs = shorts
-        ? ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 260),
-            child: Segmented(
-              labels: [s.shorts, s.longVideos],
-              at: tab,
-              onDark: tab == 0,
-              onChanged: (i) => ref.read(videoTabProvider.notifier).show(i),
-            ),
+        ? TextTabs(
+            labels: [s.shorts, s.longVideos],
+            at: tab,
+            onMedia: tab == 0,
+            onChanged: (i) => ref.read(videoTabProvider.notifier).show(i),
           )
         : null;
     if (tab == 0) {
@@ -98,7 +73,7 @@ class _VideoScreenState extends ConsumerState<VideoScreen> {
         child: Shorts(header: tabs),
       );
     }
-    return _Long(header: tabs, scroll: _scroll);
+    return _Long(header: tabs, scroll: scroll);
   }
 }
 
@@ -117,49 +92,38 @@ class _Long extends ConsumerWidget {
         openStory(context, story, heroTag: heroTag, from: 'video');
     return Scaffold(
       body: Shimmer(
-        child: RefreshIndicator(
-          color: context.colors.textPrimary,
-          backgroundColor: context.colors.surfaceRaised,
-          edgeOffset: MediaQuery.paddingOf(context).top + 92,
-          onRefresh: () => ref.read(feedProvider(key).notifier).refresh(),
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (n) {
-              if (n.metrics.axis == Axis.vertical && n.metrics.extentAfter < 1600) {
-                unawaited(ref.read(feedProvider(key).notifier).loadMore());
-              }
-              return false;
-            },
-            child: CustomScrollView(
-              controller: scroll,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                const HomeMasthead(),
-                if (header != null)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: NewsSpace.s4),
-                      child: Center(child: header),
-                    ),
+        child: FeedPager(
+          feed: key,
+          child: NewsScroll(
+            controller: scroll,
+            edge: MediaQuery.paddingOf(context).top + PlaceBar.extent,
+            onRefresh: () => ref.read(feedProvider(key).notifier).refresh(),
+            header: [PlaceBar(Strings.of(context).navVideo)],
+            slivers: [
+              if (header != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: NewsSpace.s2),
+                    child: Align(alignment: Alignment.centerLeft, child: header),
                   ),
-                if (loading || first != null)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                      child: VideoCard(first, open: open, place: 'lead', large: true),
-                    ),
-                  ),
-                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s4)),
-                ...feedSlivers(
-                  context,
-                  ref,
-                  feed: key,
-                  open: open,
-                  place: 'videos',
-                  skip: first == null ? 0 : 1,
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s10)),
-              ],
-            ),
+              if (loading || first != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
+                    child: VideoCard(first, open: open, place: 'lead', large: true, lead: true),
+                  ),
+                ),
+              const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s4)),
+              ...feedSlivers(
+                context,
+                ref,
+                feed: key,
+                open: open,
+                place: 'videos',
+                skip: first == null ? 0 : 1,
+              ),
+            ],
           ),
         ),
       ),

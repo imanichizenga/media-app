@@ -5,7 +5,6 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_app/app/bootstrap.dart';
-import 'package:news_app/app/shell.dart';
 import 'package:news_app/core/config/app_config.dart';
 import 'package:news_app/core/config/theme_choice.dart';
 import 'package:news_app/core/providers.dart';
@@ -13,7 +12,9 @@ import 'package:news_app/core/storage/database.dart';
 import 'package:news_app/core/storage/prefs.dart';
 import 'package:news_app/features/article/article_screen.dart';
 import 'package:news_app/features/content/feeds.dart';
+import 'package:news_app/features/content/list_screen.dart';
 import 'package:news_app/features/home/home_screen.dart';
+import 'package:news_app/ui/adaptive/adaptive.dart';
 import 'package:news_app/ui/components/cards.dart';
 import 'package:news_app/ui/components/youtube.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -94,15 +95,21 @@ void main() {
     expect(find.text('Habari hii haipo'), findsOneWidget);
   });
 
-  testWidgets('each tab keeps its place; tapping it again goes to its top', (t) async {
+  testWidgets('each place keeps its place; tapping it again goes to its top, then to its root', (
+    t,
+  ) async {
     final p = await start(t);
-    await t.drag(find.byType(Scrollable).first, const Offset(0, -900));
+    final list = find.byType(CustomScrollView).first;
+    await t.drag(list, const Offset(0, -900));
     await p.settle(2);
-    double at() => t.state<ScrollableState>(find.byType(Scrollable).first).position.pixels;
+    double at() => t
+        .state<ScrollableState>(find.descendant(of: list, matching: find.byType(Scrollable)).first)
+        .position
+        .pixels;
     final before = at();
     expect(before, greaterThan(500));
     Finder tab(String name) =>
-        find.descendant(of: find.byType(BottomBar), matching: find.text(name));
+        find.descendant(of: find.byType(PlacesBar), matching: find.text(name));
     await t.tap(tab('Gundua'));
     await p.settle();
     await t.tap(tab('Nyumbani'));
@@ -111,6 +118,21 @@ void main() {
     await t.tap(tab('Nyumbani'));
     await p.settle();
     expect(at(), 0);
+    // A list opens inside its place, the bar still there.
+    await t.tap(tab('Gundua'));
+    await p.settle();
+    await t.tap(find.bySemanticsLabel('Biashara').first);
+    await p.settle();
+    expect(find.byType(ListScreen), findsOneWidget);
+    expect(find.byType(PlacesBar), findsOneWidget);
+    await t.drag(find.byType(CustomScrollView).last, const Offset(0, -700));
+    await p.settle(2);
+    await t.tap(tab('Gundua'));
+    await p.settle();
+    expect(find.byType(ListScreen), findsOneWidget, reason: 'first to the top');
+    await t.tap(tab('Gundua'));
+    await p.settle();
+    expect(find.byType(ListScreen), findsNothing, reason: 'then to the root');
   });
 
   testWidgets(
@@ -294,12 +316,16 @@ void main() {
   testWidgets('language, scheme and text size change at once', (t) async {
     final p = await start(t);
     await p.go('/profile');
+    await t.tap(find.text('Lugha'));
+    await p.settle();
     await t.tap(find.text('English'));
     await p.settle();
     expect(find.text('Appearance'), findsOneWidget);
+    await t.tap(find.text('Appearance'));
+    await p.settle();
     await t.tap(find.text('Dark'));
     await p.settle();
-    expect(Theme.of(t.element(find.text('Appearance'))).brightness, Brightness.dark);
+    expect(Theme.of(t.element(find.text('Appearance').first)).brightness, Brightness.dark);
     expect(p.container.read(settingsControllerProvider).locale, 'en');
   });
 

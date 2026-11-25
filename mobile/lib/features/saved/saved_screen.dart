@@ -4,12 +4,12 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../app/router.dart';
-import '../../app/shell.dart';
 import '../../core/models.dart';
 import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
+import '../../ui/adaptive/tops.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
 import '../../ui/components/skeleton.dart';
@@ -17,7 +17,6 @@ import '../../ui/states/designed.dart';
 import '../../ui/tokens/news_icon.dart';
 import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
-import '../explore/explore_screen.dart' show BigTitle;
 import 'library.dart';
 
 /// What the reader kept, and what they read. On this phone.
@@ -28,62 +27,19 @@ class SavedScreen extends ConsumerStatefulWidget {
   ConsumerState<SavedScreen> createState() => _SavedScreenState();
 }
 
-class _SavedScreenState extends ConsumerState<SavedScreen> {
-  final _scroll = ScrollController();
+class _SavedScreenState extends ConsumerState<SavedScreen> with GoesToTop {
   int _tab = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    tabAgain[3].addListener(_top);
-  }
-
-  @override
-  void dispose() {
-    tabAgain[3].removeListener(_top);
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  void _top() {
-    if (_scroll.hasClients) {
-      unawaited(_scroll.animateTo(0, duration: NewsMotion.slow * 2, curve: NewsMotion.standard));
-    }
-  }
 
   Future<void> _clear() async {
     final s = Strings.of(context);
-    final c = context.colors;
-    final yes = await showModalBottomSheet<bool>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(s.clearHistory, style: context.type.headlineS.copyWith(color: c.textPrimary)),
-              const SizedBox(height: 8),
-              Text(
-                s.clearHistoryConfirm,
-                style: context.type.bodyM.copyWith(color: c.textSecondary),
-              ),
-              const SizedBox(height: 24),
-              NewsButton(s.clear, wide: true, onTap: () => Navigator.pop(context, true)),
-              const SizedBox(height: 8),
-              NewsButton(
-                s.cancel,
-                wide: true,
-                kind: ButtonKind.quiet,
-                onTap: () => Navigator.pop(context, false),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final yes = await confirm(
+      context,
+      title: s.clearHistory,
+      body: s.clearHistoryConfirm,
+      yes: s.clear,
+      no: s.cancel,
     );
-    if (yes ?? false) await ref.read(libraryProvider.notifier).clearHistory();
+    if (yes) await ref.read(libraryProvider.notifier).clearHistory();
   }
 
   @override
@@ -97,20 +53,20 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
       value: overlayFor(c.bg),
       child: Scaffold(
         body: Shimmer(
-          child: CustomScrollView(
-            controller: _scroll,
+          child: NewsScroll(
+            controller: scroll,
+            header: [
+              PlaceBar(
+                s.navSaved,
+                trailing: _tab == 1 && (history?.isNotEmpty ?? false)
+                    ? RoundButton(NewsIcons.trash2, label: s.clearHistory, onTap: _clear)
+                    : null,
+              ),
+            ],
             slivers: [
               SliverToBoxAdapter(
-                child: BigTitle(
-                  s.navSaved,
-                  trailing: _tab == 1 && (history?.isNotEmpty ?? false)
-                      ? RoundButton(NewsIcons.trash2, label: s.clearHistory, onTap: _clear)
-                      : null,
-                ),
-              ),
-              SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: ConstrainedBox(
@@ -125,7 +81,6 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                 ),
               ),
               if (_tab == 0) ..._saved(open) else ..._history(history, open),
-              const SliverToBoxAdapter(child: SizedBox(height: 48)),
             ],
           ),
         ),

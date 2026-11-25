@@ -1,17 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_api_client/news_api_client.dart' hide Card;
 import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../app/router.dart';
-import '../../app/shell.dart';
 import '../../app/window.dart';
 import '../../core/models.dart';
 import '../../core/network/failures.dart';
 import '../../l10n/gen/strings.dart';
+import '../../ui/adaptive/adaptive.dart';
+import '../../ui/adaptive/tops.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/picture.dart';
 import '../../ui/components/skeleton.dart';
@@ -45,34 +43,12 @@ class ExploreScreen extends ConsumerStatefulWidget {
   ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  final _scroll = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    tabAgain[2].addListener(_top);
-  }
-
-  @override
-  void dispose() {
-    tabAgain[2].removeListener(_top);
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  void _top() {
-    if (_scroll.hasClients) {
-      unawaited(_scroll.animateTo(0, duration: NewsMotion.slow * 2, curve: NewsMotion.standard));
-    }
-  }
-
+class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
   @override
   Widget build(BuildContext context) {
     final nav = ref.watch(navigationProvider);
     final home = ref.watch(homeFeedProvider).value?.value;
     final s = Strings.of(context);
-    final c = context.colors;
     final items = nav.value?.value;
     // A section shows its own newest picture.
     PublicImage? face(NavigationItem? n) {
@@ -108,103 +84,64 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final scale = (MediaQuery.textScalerOf(context).scale(10) / 10).clamp(1.0, 2.0);
     return Scaffold(
       body: Shimmer(
-        child: RefreshIndicator(
-          color: c.textPrimary,
-          backgroundColor: c.surfaceRaised,
+        child: NewsScroll(
+          controller: scroll,
+          edge: MediaQuery.paddingOf(context).top + PlaceBar.extent,
           onRefresh: () => Future.wait([
             ref.read(navigationProvider.notifier).refresh(),
             ref.read(homeFeedProvider.notifier).refresh(),
           ]),
-          child: CustomScrollView(
-            controller: _scroll,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(child: BigTitle(s.navExplore)),
-              if (nav.hasError && items == null)
-                SliverToBoxAdapter(
-                  child: Designed.failure(
-                    context,
-                    nav.error!,
-                    retry: () => ref.invalidate(navigationProvider),
-                    saved: nav.error is OfflineFailure
-                        ? () => const SavedRoute().go(context)
-                        : null,
+          header: [PlaceBar(s.navExplore)],
+          slivers: [
+            if (nav.hasError && items == null)
+              SliverToBoxAdapter(
+                child: Designed.failure(
+                  context,
+                  nav.error!,
+                  retry: () => ref.invalidate(navigationProvider),
+                  saved: nav.error is OfflineFailure ? () => const SavedRoute().go(context) : null,
+                ),
+              )
+            else ...[
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
+                sliver: SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: NewsSpace.s3,
+                    crossAxisSpacing: NewsSpace.s3,
+                    mainAxisExtent: 112 + 24 * scale,
                   ),
-                )
-              else ...[
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                  sliver: SliverGrid.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: columns,
-                      mainAxisSpacing: NewsSpace.s3,
-                      crossAxisSpacing: NewsSpace.s3,
-                      mainAxisExtent: 112 + 24 * scale,
+                  itemCount: items?.length ?? 8,
+                  itemBuilder: (context, i) => CategoryTile(items?[i], image: face(items?[i])),
+                ),
+              ),
+              if (people.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s10)),
+                SliverToBoxAdapter(child: SectionHead(s.journalists)),
+                SliverToBoxAdapter(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final a in people)
+                          Padding(
+                            padding: const EdgeInsets.only(right: NewsSpace.s4),
+                            child: _Person(a),
+                          ),
+                      ],
                     ),
-                    itemCount: items?.length ?? 8,
-                    itemBuilder: (context, i) => CategoryTile(items?[i], image: face(items?[i])),
                   ),
                 ),
-                if (people.isNotEmpty) ...[
-                  const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s10)),
-                  SliverToBoxAdapter(child: SectionHead(s.journalists)),
-                  SliverToBoxAdapter(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (final a in people)
-                            Padding(
-                              padding: const EdgeInsets.only(right: NewsSpace.s4),
-                              child: _Person(a),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
               ],
-              const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s12)),
             ],
-          ),
+          ],
         ),
       ),
     );
   }
-}
-
-/// The name of a place, large, under the status bar.
-class BigTitle extends StatelessWidget {
-  const BigTitle(this.text, {super.key, this.trailing});
-
-  final String text;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(
-      NewsSpace.s5,
-      MediaQuery.paddingOf(context).top + NewsSpace.s6,
-      NewsSpace.s2,
-      NewsSpace.s5,
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Semantics(
-            header: true,
-            child: Text(
-              text,
-              style: context.type.display.copyWith(color: context.colors.textPrimary, height: 1.1),
-            ),
-          ),
-        ),
-        ?trailing,
-      ],
-    ),
-  );
 }
 
 class CategoryTile extends StatelessWidget {
@@ -228,7 +165,7 @@ class CategoryTile extends StatelessWidget {
       link: true,
       label: n.name,
       scale: 0.97,
-      onTap: () => context.push(n.path),
+      onTap: () => openPath(context, n.path),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(NewsRadius.lg),
         child: Stack(
@@ -272,7 +209,7 @@ class _Person extends StatelessWidget {
   Widget build(BuildContext context) => Pressable(
     link: true,
     label: Strings.of(context).storiesBy(author.name),
-    onTap: () => context.push(author.path),
+    onTap: () => openPath(context, author.path),
     scale: 0.95,
     child: SizedBox(
       width: 92,

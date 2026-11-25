@@ -132,5 +132,11 @@
   "imageOf": "Picha {i} kati ya {n}",
   "readingProgress": "Umesoma asilimia {n}",
   "filterBy": "Chuja",
-  "refreshed": "Habari zimesasishwa"
+  "refreshed": "Habari zimesasishwa",
+  "copyLink": "Nakili kiungo",
+  "linkCopied": "Kiungo kimenakiliwa",
+  "newStories": "Kuna habari mpya",
+  "shareQuote": "Sambaza nukuu",
+  "settingOn": "Imewashwa",
+  "settingOff": "Imezimwa"
 }

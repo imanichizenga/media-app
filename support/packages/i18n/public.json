@@ -165,5 +165,11 @@
   "imageOf": ["Picha {i} kati ya {n}", "Picture {i} of {n}"],
   "readingProgress": ["Umesoma asilimia {n}", "{n} percent read"],
   "filterBy": ["Chuja", "Filter"],
-  "refreshed": ["Habari zimesasishwa", "Stories refreshed"]
+  "refreshed": ["Habari zimesasishwa", "Stories refreshed"],
+  "copyLink": ["Nakili kiungo", "Copy link"],
+  "linkCopied": ["Kiungo kimenakiliwa", "Link copied"],
+  "newStories": ["Kuna habari mpya", "New stories"],
+  "shareQuote": ["Sambaza nukuu", "Share quote"],
+  "settingOn": ["Imewashwa", "On"],
+  "settingOff": ["Imezimwa", "Off"]
 }

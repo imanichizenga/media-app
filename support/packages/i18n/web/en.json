@@ -132,5 +132,11 @@
   "imageOf": "Picture {i} of {n}",
   "readingProgress": "{n} percent read",
   "filterBy": "Filter",
-  "refreshed": "Stories refreshed"
+  "refreshed": "Stories refreshed",
+  "copyLink": "Copy link",
+  "linkCopied": "Link copied",
+  "newStories": "New stories",
+  "shareQuote": "Share quote",
+  "settingOn": "On",
+  "settingOff": "Off"
 }

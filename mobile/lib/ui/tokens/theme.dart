@@ -1,3 +1,5 @@
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoPageTransitionsBuilder, CupertinoTextThemeData, NoDefaultCupertinoThemeData;
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_design_tokens/news_design_tokens.dart';
@@ -103,6 +105,14 @@ abstract final class OverMedia {
   static const textShadow = [Shadow(color: Color(0x99000000), blurRadius: 8, offset: Offset(0, 1))];
 }
 
+/// Pages arrive as the platform's pages do: from the side with an edge to swipe, or with predictive back.
+const _pages = PageTransitionsTheme(
+  builders: {
+    TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+    TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+  },
+);
+
 ThemeData buildTheme(ThemeChoice choice, ThemeScheme scheme) {
   final c = choice.colors(scheme);
   final dark = scheme == ThemeScheme.dark;
@@ -138,6 +148,22 @@ ThemeData buildTheme(ThemeChoice choice, ThemeScheme scheme) {
       selectionColor: c.textPrimary.withValues(alpha: 0.18),
       selectionHandleColor: c.textPrimary,
     ),
+    pageTransitionsTheme: _pages,
+    cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
+      brightness: dark ? Brightness.dark : Brightness.light,
+      primaryColor: c.textPrimary,
+      scaffoldBackgroundColor: c.bg,
+      textTheme: CupertinoTextThemeData(
+        primaryColor: c.textPrimary,
+        textStyle: type.bodyM.copyWith(color: c.textPrimary),
+        tabLabelTextStyle: type.caption.copyWith(
+          fontSize: 10.5,
+          height: 1.2,
+          fontWeight: FontWeight.w500,
+          fontVariations: const [FontVariation('wght', 500)],
+        ),
+      ),
+    ),
     dividerTheme: DividerThemeData(color: c.border, thickness: 1, space: 1),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
@@ -164,6 +190,13 @@ ThemeData buildTheme(ThemeChoice choice, ThemeScheme scheme) {
       trackHeight: 3,
     ),
   );
+}
+
+/// The active mark where it stands on the page rather than on the bar it was chosen for.
+Color activeOnPage(NewsColors c) {
+  final (a, b) = (c.navActive.computeLuminance(), c.bg.computeLuminance());
+  final contrast = (a > b ? a + 0.05 : b + 0.05) / (a > b ? b + 0.05 : a + 0.05);
+  return contrast >= 4.5 ? c.navActive : c.brandText;
 }
 
 /// Status and navigation bars that suit the ground beneath them.

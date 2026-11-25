@@ -16,6 +16,8 @@ import 'package:news_app/core/storage/prefs.dart';
 import 'package:news_app/features/article/article_screen.dart';
 import 'package:news_app/features/article/blocks.dart';
 import 'package:news_app/features/home/home_screen.dart';
+import 'package:news_app/features/video/shorts.dart';
+import 'package:news_app/ui/adaptive/adaptive.dart';
 import 'package:news_app/ui/components/cards.dart';
 import 'package:news_app/ui/tokens/theme.dart';
 import 'package:news_design_tokens/news_design_tokens.dart' show ThemeScheme;
@@ -143,7 +145,9 @@ void main() {
     await until(t, find.textContaining('kusoma'));
     await openCover(t);
     await until(t, find.byType(ArticleBody));
-    await t.tap(find.bySemanticsLabel('Hifadhi').last);
+    await t.tap(
+      find.descendant(of: find.byType(ActionBar), matching: find.bySemanticsLabel('Hifadhi')),
+    );
     for (var i = 0; i < 100; i++) {
       await t.pump(const Duration(milliseconds: 200));
       final rows = await db.select(db.savedArticles).get();
@@ -163,10 +167,11 @@ void main() {
     final db = await reader();
     await launch(t, db);
     await until(t, find.byType(CoverCard));
-    await t.tap(find.text('Video').last);
-    await until(t, find.byType(PageView));
+    await t.tap(find.descendant(of: find.byType(PlacesBar), matching: find.text('Video')));
+    final shorts = find.descendant(of: find.byType(Shorts), matching: find.byType(PageView));
+    await until(t, shorts);
     for (var i = 0; i < 20; i++) {
-      await t.fling(find.byType(PageView).last, const Offset(0, -500), 2000);
+      await t.fling(shorts, const Offset(0, -500), 2000);
       for (var k = 0; k < 5; k++) {
         await t.pump(const Duration(milliseconds: 120));
       }
