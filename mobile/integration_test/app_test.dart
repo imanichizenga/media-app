@@ -34,7 +34,8 @@ void main() {
       await t.pump(const Duration(milliseconds: 200));
       if (f.evaluate().isNotEmpty) return;
     }
-    fail('never appeared: $f');
+    final shown = find.byType(Text).evaluate().map((e) => (e.widget as Text).data).nonNulls.take(30);
+    fail('never appeared: $f; on screen: ${shown.join(' | ')}');
   }
 
   /// A cold start on the given storage.
