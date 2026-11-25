@@ -1,0 +1,56 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Mfano News Before and After</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* A light table: one row per screen, what it was, then what it is on each platform. The screens are the only colour. */
+:root {
+  --bg: #f3f2f1; --fg: #121314; --soft: #55585d; --line: #dcdad7; --card: #ffffff;
+  --serif: "Newsreader", Georgia, serif; --sans: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #141516; --fg: #f1f1ef; --soft: #a9adb3; --line: #303236; --card: #1c1d1f; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #141516; --fg: #f1f1ef; --soft: #a9adb3; --line: #303236; --card: #1c1d1f; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1120px; margin: 0 auto; display: grid; gap: 28px; }
+h1 { font: 600 clamp(28px, 5vw, 40px)/1.1 var(--serif); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h2 { font: 600 22px/1.2 var(--serif); margin: 0; }
+p { margin: 8px 0 0; color: var(--soft); font-size: 15px; line-height: 1.5; max-width: 62ch; }
+form { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line); }
+fieldset { margin: 0; display: inline-flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 3px; }
+legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+label { cursor: pointer; }
+label span { display: block; padding: 8px 16px; border-radius: 18px; font-size: 14px; font-weight: 500; color: var(--soft); }
+input { position: absolute; opacity: 0; }
+input:checked + span { background: var(--fg); color: var(--bg); }
+input:focus-visible + span { outline: 2px solid var(--fg); outline-offset: 2px; }
+.row { display: grid; gap: 14px; min-width: 0; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.wide .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+figure { margin: 0; min-width: 0; display: grid; gap: 8px; }
+img { display: block; width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--line); background: var(--card); }
+figcaption { font-size: 13px; font-weight: 500; color: var(--soft); text-align: center; }
+@media (max-width: 600px) { .shots { gap: 8px; } img { border-radius: 10px; } figcaption { font-size: 11px; } }
+</style>
+<main>
+  <header>
+    <h1>Mfano News, before and after</h1>
+    <p>Each screen as it was when the app was approved with changes, and as it is now on Android and on iPhone. Drawn by the app itself, with sample stories. The letters and numbers are those of your list.</p>
+  </header>
+  <form id="f">
+    <fieldset><legend>Appearance</legend>
+      <label><input id="s1" type="radio" name="scheme" value="light" checked><span>Light</span></label>
+      <label><input id="s2" type="radio" name="scheme" value="dark"><span>Dark</span></label>
+    </fieldset>
+  </form>
+<!-- rows -->
+</main>
+<script>
+const form = document.getElementById("f");
+function show() {
+  const want = new FormData(form).get("scheme");
+  for (const r of document.querySelectorAll(".row")) r.hidden = r.dataset.scheme !== want;
+}
+form.addEventListener("input", show);
+show();
+</script>
