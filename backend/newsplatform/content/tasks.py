@@ -16,6 +16,15 @@ def announce(tags: list[str], pages: list[str]) -> None:
     from newsplatform.seo.delivery import purge
 
     purge(tags, pages)
+    if pages:
+        index_now.delay(pages)
+
+
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=30)
+def index_now(pages: list[str]) -> None:
+    from newsplatform.seo.indexnow import submit
+
+    submit(pages)
 
 
 @shared_task

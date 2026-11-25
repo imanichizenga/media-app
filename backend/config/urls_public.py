@@ -4,6 +4,8 @@ from django.urls import path, re_path
 from newsplatform.common import health
 from newsplatform.content import public_api as content
 from newsplatform.media import dev
+from newsplatform.pages import public_api as pages
+from newsplatform.seo import public_api as seo
 from newsplatform.site_config import brand_api as brand
 from newsplatform.site_config.api import AppConfigView, PublicConfigView, well_known
 
@@ -33,6 +35,11 @@ urlpatterns = [
     path(CONTENT + "articles/<slug:slug>/related", content.RelatedView.as_view()),
     path(CONTENT + "navigation", content.NavigationView.as_view()),
     path(CONTENT + "search", content.SearchView.as_view()),
+    path(CONTENT + "pages", pages.PublicPageListView.as_view()),
+    path(CONTENT + "pages/<slug:key>", pages.PublicPageView.as_view()),
+    path(CONTENT + "sitemap", seo.SitemapIndexView.as_view()),
+    path(CONTENT + "sitemap/news", seo.SitemapNewsView.as_view()),
+    path(CONTENT + "sitemap/<slug:month>", seo.SitemapMonthView.as_view()),
     path(CONTENT + "resolve", content.ResolveView.as_view()),
 ]
 if settings.STORAGE_ENDPOINT_URL:

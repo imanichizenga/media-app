@@ -73,6 +73,10 @@ def author_path(locale: str, slug: str) -> str:
     return f"{prefix(locale)}/author/{slug}"
 
 
+def page_path(locale: str, key: str) -> str:
+    return f"{prefix(locale)}/{key}"
+
+
 def slugify(text: str, limit: int = 80) -> str:
     """ASCII, whole words, never empty for text that has letters. Apostrophes join: ng'ombe → ngombe."""
     text = re.sub("['`\u2018\u2019]", "", text)

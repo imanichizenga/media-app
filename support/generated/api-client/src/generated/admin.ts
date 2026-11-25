@@ -786,6 +786,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pages_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pages_get"];
+        put: operations["pages_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages/{key}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["pages_publish"];
+        delete: operations["pages_withdraw"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages/{key}/revisions/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pages_revision"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/posts": {
         parameters: {
             query?: never;
@@ -1907,6 +1971,87 @@ export interface components {
             shares?: boolean | null;
             reposts?: boolean | null;
             live_chat?: boolean | null;
+        };
+        PageBrief: {
+            key: components["schemas"]["PageKeyEnum"];
+            path: string;
+            version: number;
+            published_number: number | null;
+            /** Format: date-time */
+            published_at: string | null;
+            titles: {
+                [key: string]: string;
+            };
+        };
+        PageDetail: {
+            key: components["schemas"]["PageKeyEnum"];
+            path: string;
+            version: number;
+            published_number: number | null;
+            /** Format: date-time */
+            published_at: string | null;
+            titles: {
+                [key: string]: string;
+            };
+            texts: components["schemas"]["PageTexts"];
+            missing: string[];
+            assets: {
+                [key: string]: components["schemas"]["Asset"];
+            };
+            revisions: components["schemas"]["PageRevision"][];
+        };
+        /**
+         * @description * `about` - About
+         *     * `editorial-policy` - Editorial
+         *     * `corrections` - Corrections
+         *     * `contact` - Contact
+         *     * `privacy` - Privacy
+         *     * `terms` - Terms
+         * @enum {string}
+         */
+        PageKeyEnum: "about" | "editorial-policy" | "corrections" | "contact" | "privacy" | "terms";
+        PagePublishRequest: {
+            number: number;
+        };
+        PageRevision: {
+            number: number;
+            note: string;
+            author: components["schemas"]["Person"];
+            /** Format: date-time */
+            created_at: string;
+            is_published: boolean;
+        };
+        PageRevisionTexts: {
+            number: number;
+            texts: components["schemas"]["PageTexts"];
+        };
+        PageSaveRequest: {
+            version: number;
+            texts: components["schemas"]["PageTextsRequest"];
+            /** @default  */
+            note: string;
+        };
+        PageText: {
+            title: string;
+            summary: string;
+            body: {
+                [key: string]: unknown;
+            };
+        };
+        PageTextRequest: {
+            title: string;
+            summary: string;
+            body: {
+                [key: string]: unknown;
+            };
+        };
+        PageTexts: {
+            sw?: components["schemas"]["PageText"];
+            en?: components["schemas"]["PageText"];
+        };
+        PageTextsRequest: {
+            sw?: components["schemas"]["PageTextRequest"];
+            en?: components["schemas"]["PageTextRequest"];
         };
         Passkey: {
             /** Format: uuid */
@@ -3827,6 +3972,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["YouTubeVideo"];
+                };
+            };
+        };
+    };
+    pages_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageBrief"][];
+                };
+            };
+        };
+    };
+    pages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDetail"];
+                };
+            };
+        };
+    };
+    pages_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PageSaveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDetail"];
+                };
+            };
+        };
+    };
+    pages_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PagePublishRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDetail"];
+                };
+            };
+        };
+    };
+    pages_withdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    pages_revision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                number: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageRevisionTexts"];
                 };
             };
         };

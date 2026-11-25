@@ -1,17 +1,17 @@
+import type { ReactNode } from "react";
+import { Bone, cx } from "./base";
 import {
   Bookmark,
   ChevronRight,
   Heart,
+  type Icon,
   Images,
-  type LucideIcon,
-  MessageCircle,
+  MessageSquareQuote,
   Play,
   Share2,
   Zap,
-} from "lucide-react";
-import type { ReactNode } from "react";
+} from "./icons";
 import { type ImageAsset, Picture, type VideoAsset } from "./media";
-import { Bone, cx } from "./primitives";
 
 /** What a card needs. The public API's `Card` fits. */
 export type CardData = {
@@ -132,8 +132,19 @@ export const LivePill = ({ label, className }: { label: string; className?: stri
     {label}
   </span>
 );
-/** What a card is about and how fresh it is: always the first line, always in this order. */
-function Kicker({ card, env, quiet = false }: { card?: CardData; env: NewsEnv; quiet?: boolean }) {
+/** What a card is about and how fresh it is: one line, always. The category gives way, the time never (S4). */
+export function Kicker({
+  card,
+  env,
+  quiet = false,
+  reading = false,
+}: {
+  card?: CardData;
+  env: NewsEnv;
+  quiet?: boolean;
+  /** Also how long it takes to read. */
+  reading?: boolean;
+}) {
   if (!card)
     return (
       <p className="text-caption">
@@ -142,16 +153,24 @@ function Kicker({ card, env, quiet = false }: { card?: CardData; env: NewsEnv; q
     );
   const breaking = card.breaking_until !== null && Date.parse(card.breaking_until) > env.now;
   return (
-    <p className="flex flex-wrap items-center gap-x-2 text-caption text-text-secondary">
+    <p className="flex min-w-0 items-center gap-x-1.5 whitespace-nowrap text-caption text-text-secondary">
       {card.is_live && !quiet ? (
         <LivePill label={env.t.live} />
       ) : breaking ? (
-        <span className="font-semibold text-text-primary">{env.t.breaking}</span>
+        <span className="min-w-0 truncate font-semibold text-text-primary">{env.t.breaking}</span>
       ) : (
-        <span className="font-semibold text-text-primary">{card.category.name}</span>
+        <span className="min-w-0 truncate font-semibold text-text-primary">{card.category.name}</span>
       )}
       <span aria-hidden>·</span>
-      <time dateTime={card.published_at}>{ago(card.published_at, env)}</time>
+      <time dateTime={card.published_at} className="shrink-0">
+        {ago(card.published_at, env)}
+      </time>
+      {reading && (
+        <span className="shrink-0">
+          <span aria-hidden>· </span>
+          {env.t.minutes(Math.max(1, card.reading_minutes))}
+        </span>
+      )}
     </p>
   );
 }
@@ -159,16 +178,16 @@ const VIDEO = new Set(["video", "short", "youtube"]);
 /** Says what opens, in a corner of the picture. */
 function Mark({ card, env }: { card: CardData; env: NewsEnv }) {
   if (card.is_live) return null; // the LIVE pill says it
-  const [Icon, label]: [LucideIcon | null, string] =
+  const [Sign, label]: [Icon | null, string] =
     VIDEO.has(card.type) && card.duration_ms
       ? [Play, clock(card.duration_ms)]
       : card.type === "gallery"
         ? [Images, env.t.gallery]
         : [null, ""];
-  if (!Icon) return null;
+  if (!Sign) return null;
   return (
     <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-sm bg-black/75 px-2 py-0.5 text-caption text-white">
-      <Icon aria-hidden size={14} fill={Icon === Play ? "currentColor" : "none"} /> {label}
+      <Sign size={14} fill={Sign === Play ? "currentColor" : "none"} /> {label}
     </span>
   );
 }
@@ -250,35 +269,46 @@ function Headline({
 type CardProps = { card?: CardData; env: NewsEnv; priority?: boolean; className?: string };
 
 // ---- cards ----
-/** The one story of the page. */
+/**
+ * The one story of the page. On a phone the words stand on the picture, so that all of them are above the bar (S1); at
+ * a desk they stand under it.
+ */
 export function LeadCard({ card, env, priority, className }: CardProps) {
   return (
-    <article className={cx("group relative flex flex-col gap-3", className)} data-card="lead">
+    <article
+      className={cx(
+        "group relative flex flex-col gap-3 max-lg:-mx-4 max-lg:overflow-hidden max-lg:bg-black",
+        className,
+      )}
+      data-card="lead"
+    >
       <Frame
         card={card}
         env={env}
-        ratio="aspect-video"
+        ratio="aspect-video lead-tall"
         sizes="(min-width: 1024px) 640px, 100vw"
         priority={priority}
-        className="max-sm:-mx-4 max-sm:rounded-none"
+        className="max-lg:rounded-none"
       />
-      <Kicker card={card} env={env} quiet />
-      <Headline
-        card={card}
-        level={2}
-        className="text-headline-l lg:text-display"
-        bones={["w-full", "w-2/3"]}
-      />
-      <p className="text-body-l text-text-secondary">{card ? card.standfirst : lines(["w-full", "w-1/2"])}</p>
-      <p className="text-caption text-text-secondary">
-        {card ? (
-          <>
-            {card.authors.map((a) => a.name).join(", ")} · {env.t.minutes(card.reading_minutes)}
-          </>
-        ) : (
-          <Bone className="w-40" />
+      <div
+        className={cx(
+          "flex flex-col gap-1 lg:gap-3",
+          "max-lg:absolute max-lg:inset-x-0 max-lg:bottom-0 max-lg:p-4 max-lg:pt-16",
+          card &&
+            "cover max-lg:bg-linear-to-t max-lg:from-black/90 max-lg:via-black/70 max-lg:to-transparent",
         )}
-      </p>
+      >
+        <Kicker card={card} env={env} quiet reading />
+        <Headline
+          card={card}
+          level={2}
+          className="text-headline-m max-lg:leading-[1.2]! lg:text-display"
+          bones={["w-full", "w-2/3"]}
+        />
+        <p className="text-body-l text-text-secondary max-lg:hidden">
+          {card ? card.standfirst : lines(["w-full", "w-1/2"])}
+        </p>
+      </div>
     </article>
   );
 }
@@ -317,8 +347,8 @@ export function VideoCard({ card, env, className }: CardProps) {
   return (
     <article className={cx("group relative flex flex-col gap-2", className)} data-card="video">
       <Frame card={card} env={env} ratio="aspect-video" sizes="(min-width: 1024px) 300px, 75vw" />
-      <Headline card={card} className="text-title" bones={["w-full", "w-2/3"]} />
       <Kicker card={card} env={env} quiet />
+      <Headline card={card} className="text-title" bones={["w-full", "w-2/3"]} />
     </article>
   );
 }
@@ -360,13 +390,16 @@ export function SectionHeading({ title, href, env }: { title?: string; href?: st
 export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsEnv; title: string }) {
   if (cards?.length === 0) return null;
   return (
-    <section aria-label={title} className="-mx-4 overflow-x-auto px-4 scrollbar-none">
-      <ul className="flex gap-3">
+    <section
+      aria-label={title}
+      className="-mx-4 h-24 overflow-x-auto overflow-y-hidden px-4 scrollbar-none lg:h-28"
+    >
+      <ul className="flex gap-2 pt-2 lg:gap-4">
         {(cards ?? Array.from({ length: 4 }, () => undefined)).map((card, i) => (
-          <li key={card?.id ?? i} className="group relative w-24 shrink-0 text-center">
+          <li key={card?.id ?? i} className="group relative w-19 shrink-0 text-center lg:w-24">
             <span
               className={cx(
-                "relative mx-auto block size-20 rounded-full border-2 p-1",
+                "relative mx-auto block size-14 rounded-full border-2 p-0.5 lg:size-18",
                 card ? "border-signal-live" : "border-border",
               )}
             >
@@ -384,14 +417,14 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
                 )}
               </span>
             </span>
-            <span className="mt-2 line-clamp-2 break-words text-caption leading-4!">
+            <span className="mt-1 block truncate text-caption leading-4!">
               {card ? (
                 <a href={card.path} className="after:absolute after:inset-0">
                   <span className="sr-only">{env.t.live}: </span>
                   {card.headline}
                 </a>
               ) : (
-                lines(["w-full", "w-2/3"])
+                lines(["w-full"])
               )}
             </span>
           </li>
@@ -404,13 +437,10 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
 export function BreakingBanner({ card, env }: { card?: CardData; env: NewsEnv }) {
   if (!card) return null;
   return (
-    <a
-      href={card.path}
-      className="block border-border border-b bg-signal-breaking-bg text-signal-breaking-fg"
-    >
-      <span className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-        <Zap aria-hidden size={20} fill="currentColor" className="shrink-0 text-signal-breaking-label" />
-        <span className="min-w-0 flex-1">
+    <a href={card.path} className="block bg-signal-breaking-bg text-signal-breaking-fg">
+      <span className="mx-auto flex h-12 max-w-7xl items-center gap-2 px-4">
+        <Zap size={16} fill="currentColor" className="shrink-0 text-signal-breaking-label" />
+        <span className="min-w-0 flex-1 truncate">
           <strong className="mr-2 font-semibold text-caption text-signal-breaking-label tracking-wide uppercase">
             {env.t.breaking}
           </strong>
@@ -423,8 +453,8 @@ export function BreakingBanner({ card, env }: { card?: CardData; env: NewsEnv })
 }
 
 // ---- engagement (M4): only what the policy allows is ever passed in ----
-export type Action = { key: string; label: string; icon: LucideIcon; count?: number; active?: boolean };
-export const ACTIONS = { like: Heart, comment: MessageCircle, bookmark: Bookmark, share: Share2 };
+export type Action = { key: string; label: string; icon: Icon; count?: number; active?: boolean };
+export const ACTIONS = { like: Heart, comment: MessageSquareQuote, bookmark: Bookmark, share: Share2 };
 export function ActionBar({
   actions,
   locale,

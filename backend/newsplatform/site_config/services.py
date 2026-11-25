@@ -12,7 +12,16 @@ from newsplatform.common import context
 from newsplatform.common.errors import Conflict, DomainError, NotFound
 from newsplatform.rbac import selectors as rbac
 from newsplatform.site_config.models import SettingsSection
-from newsplatform.site_config.schemas import SECTIONS, App, Brand, Identity, Localization, Section, Security
+from newsplatform.site_config.schemas import (
+    SECTIONS,
+    App,
+    Brand,
+    Identity,
+    Localization,
+    Section,
+    Security,
+    Seo,
+)
 
 
 def get_section(key: str) -> tuple[Section, int]:
@@ -48,14 +57,33 @@ def public_config() -> dict[str, Any]:
 
     config, v1 = get_brand()
     local, v2 = get_section("localization")
+    seo, v3 = get_seo()
+    app = get_app()[0]
     assert isinstance(local, Localization)  # noqa: S101
     return {
-        "version": f"{v1}.{v2}",
+        "version": f"{v1}.{v2}.{v3}",
         "media_base_url": base_url(),
         "identity": brand.identity_body(config.identity),
         "theme": brand.theme_body(config.appearance),
         "localization": local.model_dump(),
+        "seo": {
+            "google_verification": seo.google_verification,
+            "bing_verification": seo.bing_verification,
+            "indexnow_key": seo.indexnow_key if seo.indexnow else "",
+            "same_as": seo.same_as,
+        },
+        # Where the app is, for the banner on phones; empty until there is one to offer.
+        "apps": {
+            "android": app.store_android if seo.app_banner else "",
+            "ios": app.store_ios if seo.app_banner else "",
+        },
     }
+
+
+def get_seo() -> tuple[Seo, int]:
+    section, version = get_section("seo")
+    assert isinstance(section, Seo)  # noqa: S101 (type narrowing)
+    return section, version
 
 
 _LINKS = ("about", "editorial", "corrections", "contact", "privacy", "terms")
@@ -164,10 +192,10 @@ def _write(*, actor: User, key: str, data: dict[str, Any], version: int, approve
         before={k: before.get(k) for k in changed},
         after={k: data[k] for k in changed},
     )
-    if key == "app":
+    if key in {"app", "seo"}:
         from newsplatform.content.tasks import announce
 
-        transaction.on_commit(lambda: announce.delay(["app-config"], []), robust=True)
+        transaction.on_commit(lambda: announce.delay(["app-config", "site"], []), robust=True)
     if key == "security":
         from newsplatform.staff_security.tasks import sync_waf_allowlist
 

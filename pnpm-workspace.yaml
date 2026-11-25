@@ -1,5 +1,6 @@
 packages:
   - admin
+  - web
   - support/packages/design-tokens
   - support/generated/api-client
   - support/packages/content-schema

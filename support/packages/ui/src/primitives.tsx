@@ -2,15 +2,9 @@
 import { CircleAlert, CircleCheck, Inbox, type LucideIcon, TriangleAlert, X } from "lucide-react";
 import { Dialog as RadixDialog } from "radix-ui";
 import { Children, type ComponentProps, createContext, type ReactNode, useContext, useId } from "react";
+import { Bone, cx } from "./base";
 
-export const cx = (...parts: (string | false | null | undefined)[]) => parts.filter(Boolean).join(" ");
-
-/** Skeleton text: sits inside the real element, so it inherits its exact line height. */
-export const Bone = ({ className = "w-24" }: { className?: string }) => (
-  <span aria-hidden className={cx("bone", className)}>
-    {" "}
-  </span>
-);
+export { Bone, cx };
 
 /** Holds a header button's place until permissions are known. */
 export const ActionBone = ({ className = "w-28" }: { className?: string }) => (

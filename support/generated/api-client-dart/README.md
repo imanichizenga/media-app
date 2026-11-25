@@ -73,9 +73,14 @@ Class | Method | HTTP request | Description
 [*ContentApi*](doc/ContentApi.md) | [**home**](doc/ContentApi.md#home) | **GET** /api/v1/content/home | 
 [*ContentApi*](doc/ContentApi.md) | [**latest**](doc/ContentApi.md#latest) | **GET** /api/v1/content/latest | 
 [*ContentApi*](doc/ContentApi.md) | [**navigation**](doc/ContentApi.md#navigation) | **GET** /api/v1/content/navigation | 
+[*ContentApi*](doc/ContentApi.md) | [**page**](doc/ContentApi.md#page) | **GET** /api/v1/content/pages/{key} | 
+[*ContentApi*](doc/ContentApi.md) | [**pages**](doc/ContentApi.md#pages) | **GET** /api/v1/content/pages | 
 [*ContentApi*](doc/ContentApi.md) | [**related**](doc/ContentApi.md#related) | **GET** /api/v1/content/articles/{slug}/related | 
 [*ContentApi*](doc/ContentApi.md) | [**resolve**](doc/ContentApi.md#resolve) | **GET** /api/v1/content/resolve | 
 [*ContentApi*](doc/ContentApi.md) | [**search**](doc/ContentApi.md#search) | **GET** /api/v1/content/search | 
+[*ContentApi*](doc/ContentApi.md) | [**sitemapIndex**](doc/ContentApi.md#sitemapindex) | **GET** /api/v1/content/sitemap | 
+[*ContentApi*](doc/ContentApi.md) | [**sitemapMonth**](doc/ContentApi.md#sitemapmonth) | **GET** /api/v1/content/sitemap/{month} | 
+[*ContentApi*](doc/ContentApi.md) | [**sitemapNews**](doc/ContentApi.md#sitemapnews) | **GET** /api/v1/content/sitemap/news | 
 [*ContentApi*](doc/ContentApi.md) | [**story**](doc/ContentApi.md#story) | **GET** /api/v1/content/stories/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**tag**](doc/ContentApi.md#tag) | **GET** /api/v1/content/tags/{slug} | 
 [*SiteConfigApi*](doc/SiteConfigApi.md) | [**siteConfig**](doc/SiteConfigApi.md#siteconfig) | **GET** /api/v1/site-config | 
@@ -104,6 +109,7 @@ Class | Method | HTTP request | Description
  - [HomeSection](doc/HomeSection.md)
  - [Logo](doc/Logo.md)
  - [NavigationItem](doc/NavigationItem.md)
+ - [PageTranslation](doc/PageTranslation.md)
  - [PostTypeEnum](doc/PostTypeEnum.md)
  - [PublicAuthor](doc/PublicAuthor.md)
  - [PublicByline](doc/PublicByline.md)
@@ -112,6 +118,9 @@ Class | Method | HTTP request | Description
  - [PublicImage](doc/PublicImage.md)
  - [PublicImageKindEnum](doc/PublicImageKindEnum.md)
  - [PublicLabel](doc/PublicLabel.md)
+ - [PublicPage](doc/PublicPage.md)
+ - [PublicPageLink](doc/PublicPageLink.md)
+ - [PublicPages](doc/PublicPages.md)
  - [PublicPolicy](doc/PublicPolicy.md)
  - [PublicRegion](doc/PublicRegion.md)
  - [PublicSeo](doc/PublicSeo.md)
@@ -124,11 +133,18 @@ Class | Method | HTTP request | Description
  - [Resolve](doc/Resolve.md)
  - [Schemes](doc/Schemes.md)
  - [Search](doc/Search.md)
+ - [SiteApps](doc/SiteApps.md)
  - [SiteConfig](doc/SiteConfig.md)
  - [SiteIdentity](doc/SiteIdentity.md)
  - [SiteLocalization](doc/SiteLocalization.md)
+ - [SiteSeo](doc/SiteSeo.md)
  - [SiteTheme](doc/SiteTheme.md)
  - [SiteThemeTokens](doc/SiteThemeTokens.md)
+ - [SitemapEntries](doc/SitemapEntries.md)
+ - [SitemapEntry](doc/SitemapEntry.md)
+ - [SitemapIndex](doc/SitemapIndex.md)
+ - [SitemapMonth](doc/SitemapMonth.md)
+ - [SitemapTranslation](doc/SitemapTranslation.md)
  - [StoryPage](doc/StoryPage.md)
  - [TagPage](doc/TagPage.md)
  - [ThemeKeyEnum](doc/ThemeKeyEnum.md)

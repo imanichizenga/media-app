@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./base": "./src/base.tsx",
+    "./icons": "./src/icons.tsx",
     "./primitives": "./src/primitives.tsx",
     "./content": "./src/content.tsx",
     "./media": "./src/media.tsx",

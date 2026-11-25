@@ -16,9 +16,14 @@ Method | HTTP request | Description
 [**home**](ContentApi.md#home) | **GET** /api/v1/content/home | 
 [**latest**](ContentApi.md#latest) | **GET** /api/v1/content/latest | 
 [**navigation**](ContentApi.md#navigation) | **GET** /api/v1/content/navigation | 
+[**page**](ContentApi.md#page) | **GET** /api/v1/content/pages/{key} | 
+[**pages**](ContentApi.md#pages) | **GET** /api/v1/content/pages | 
 [**related**](ContentApi.md#related) | **GET** /api/v1/content/articles/{slug}/related | 
 [**resolve**](ContentApi.md#resolve) | **GET** /api/v1/content/resolve | 
 [**search**](ContentApi.md#search) | **GET** /api/v1/content/search | 
+[**sitemapIndex**](ContentApi.md#sitemapindex) | **GET** /api/v1/content/sitemap | 
+[**sitemapMonth**](ContentApi.md#sitemapmonth) | **GET** /api/v1/content/sitemap/{month} | 
+[**sitemapNews**](ContentApi.md#sitemapnews) | **GET** /api/v1/content/sitemap/news | 
 [**story**](ContentApi.md#story) | **GET** /api/v1/content/stories/{slug} | 
 [**tag**](ContentApi.md#tag) | **GET** /api/v1/content/tags/{slug} | 
 
@@ -348,6 +353,94 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **page**
+> PublicPage page(key, locale)
+
+
+
+GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+final String key = key_example; // String | 
+final String locale = locale_example; // String | 
+
+try {
+    final response = api.page(key, locale);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->page: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **key** | **String**|  | 
+ **locale** | **String**|  | [optional] [default to 'sw']
+
+### Return type
+
+[**PublicPage**](PublicPage.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **pages**
+> PublicPages pages(locale)
+
+
+
+GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+final String locale = locale_example; // String | 
+
+try {
+    final response = api.pages(locale);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->pages: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **locale** | **String**|  | [optional] [default to 'sw']
+
+### Return type
+
+[**PublicPages**](PublicPages.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **related**
 > Related related(slug, locale)
 
@@ -469,6 +562,127 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**Search**](Search.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **sitemapIndex**
+> SitemapIndex sitemapIndex()
+
+
+
+GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+
+try {
+    final response = api.sitemapIndex();
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->sitemapIndex: $e\n');
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**SitemapIndex**](SitemapIndex.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **sitemapMonth**
+> SitemapEntries sitemapMonth(month)
+
+
+
+GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+final String month = month_example; // String | 
+
+try {
+    final response = api.sitemapMonth(month);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->sitemapMonth: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **month** | **String**|  | 
+
+### Return type
+
+[**SitemapEntries**](SitemapEntries.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **sitemapNews**
+> SitemapEntries sitemapNews()
+
+
+
+GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+
+try {
+    final response = api.sitemapNews();
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->sitemapNews: $e\n');
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**SitemapEntries**](SitemapEntries.md)
 
 ### Authorization
 

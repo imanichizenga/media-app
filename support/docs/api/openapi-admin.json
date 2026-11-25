@@ -2074,6 +2074,226 @@
                 }
             }
         },
+        "/api/v1/pages": {
+            "get": {
+                "operationId": "pages_list",
+                "tags": [
+                    "pages"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PageBrief"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/pages/{key}": {
+            "get": {
+                "operationId": "pages_get",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "pages"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageDetail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "pages_save",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "pages"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PageSaveRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageDetail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/pages/{key}/publish": {
+            "post": {
+                "operationId": "pages_publish",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "pages"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PagePublishRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageDetail"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "pages_withdraw",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "pages"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/pages/{key}/revisions/{number}": {
+            "get": {
+                "operationId": "pages_revision",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "number",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "pages"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageRevisionTexts"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/posts": {
             "get": {
                 "operationId": "posts_list",
@@ -5950,6 +6170,267 @@
                             "boolean",
                             "null"
                         ]
+                    }
+                }
+            },
+            "PageBrief": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "$ref": "#/components/schemas/PageKeyEnum"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "integer"
+                    },
+                    "published_number": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "published_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "titles": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "key",
+                    "path",
+                    "published_at",
+                    "published_number",
+                    "titles",
+                    "version"
+                ]
+            },
+            "PageDetail": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "$ref": "#/components/schemas/PageKeyEnum"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "integer"
+                    },
+                    "published_number": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "published_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "titles": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "texts": {
+                        "$ref": "#/components/schemas/PageTexts"
+                    },
+                    "missing": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "assets": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/Asset"
+                        }
+                    },
+                    "revisions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PageRevision"
+                        }
+                    }
+                },
+                "required": [
+                    "assets",
+                    "key",
+                    "missing",
+                    "path",
+                    "published_at",
+                    "published_number",
+                    "revisions",
+                    "texts",
+                    "titles",
+                    "version"
+                ]
+            },
+            "PageKeyEnum": {
+                "enum": [
+                    "about",
+                    "editorial-policy",
+                    "corrections",
+                    "contact",
+                    "privacy",
+                    "terms"
+                ],
+                "type": "string",
+                "description": "* `about` - About\n* `editorial-policy` - Editorial\n* `corrections` - Corrections\n* `contact` - Contact\n* `privacy` - Privacy\n* `terms` - Terms"
+            },
+            "PagePublishRequest": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer",
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "number"
+                ]
+            },
+            "PageRevision": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/Person"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_published": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "author",
+                    "created_at",
+                    "is_published",
+                    "note",
+                    "number"
+                ]
+            },
+            "PageRevisionTexts": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "integer"
+                    },
+                    "texts": {
+                        "$ref": "#/components/schemas/PageTexts"
+                    }
+                },
+                "required": [
+                    "number",
+                    "texts"
+                ]
+            },
+            "PageSaveRequest": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "texts": {
+                        "$ref": "#/components/schemas/PageTextsRequest"
+                    },
+                    "note": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 300
+                    }
+                },
+                "required": [
+                    "texts",
+                    "version"
+                ]
+            },
+            "PageText": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "maxLength": 120
+                    },
+                    "summary": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "body": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    }
+                },
+                "required": [
+                    "body",
+                    "summary",
+                    "title"
+                ]
+            },
+            "PageTextRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "maxLength": 120
+                    },
+                    "summary": {
+                        "type": "string",
+                        "maxLength": 300
+                    },
+                    "body": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    }
+                },
+                "required": [
+                    "body",
+                    "summary",
+                    "title"
+                ]
+            },
+            "PageTexts": {
+                "type": "object",
+                "properties": {
+                    "sw": {
+                        "$ref": "#/components/schemas/PageText"
+                    },
+                    "en": {
+                        "$ref": "#/components/schemas/PageText"
+                    }
+                }
+            },
+            "PageTextsRequest": {
+                "type": "object",
+                "properties": {
+                    "sw": {
+                        "$ref": "#/components/schemas/PageTextRequest"
+                    },
+                    "en": {
+                        "$ref": "#/components/schemas/PageTextRequest"
                     }
                 }
             },

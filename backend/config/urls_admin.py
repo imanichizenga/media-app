@@ -8,6 +8,7 @@ from newsplatform.content import api as content
 from newsplatform.integrations import api as integrations
 from newsplatform.media import api as media
 from newsplatform.media import dev
+from newsplatform.pages import api as pages
 from newsplatform.rbac import api as rbac
 from newsplatform.realtime import api as realtime
 from newsplatform.seo import api as seo
@@ -111,6 +112,10 @@ urlpatterns = [
     path(API + "stories", taxonomy.StoryListView.as_view()),
     path(API + "stories/<uuid:story_id>", taxonomy.StoryView.as_view()),
     path(API + "regions", taxonomy.RegionListView.as_view()),
+    path(API + "pages", pages.PageListView.as_view()),
+    path(API + "pages/<slug:key>", pages.PageView.as_view()),
+    path(API + "pages/<slug:key>/publish", pages.PagePublishView.as_view()),
+    path(API + "pages/<slug:key>/revisions/<int:number>", pages.PageRevisionView.as_view()),
     path(API + "redirects", seo.RedirectListView.as_view()),
     path(API + "redirects/<uuid:redirect_id>", seo.RedirectView.as_view()),
 ]

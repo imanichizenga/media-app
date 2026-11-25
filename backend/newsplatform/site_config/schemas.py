@@ -161,6 +161,29 @@ class App(Section):
         return self
 
 
+class Seo(Section):
+    """What search engines ask for. Public: all of it is served to anyone who asks."""
+
+    google_verification: str = _field(
+        "", "Google Search Console code", "Msimbo wa Google Search Console", pattern=r"^[A-Za-z0-9_-]{0,100}$"
+    )
+    bing_verification: str = _field(
+        "", "Bing Webmaster code", "Msimbo wa Bing Webmaster", pattern=r"^[A-Za-z0-9]{0,64}$"
+    )
+    indexnow: bool = _field(False, "Tell search engines at once (IndexNow)", "Julisha injini za utafutaji")
+    indexnow_key: str = _field("", "IndexNow key", "Ufunguo wa IndexNow", pattern=r"^([a-f0-9]{32})?$")
+    same_as: list[Url] = _field(
+        [], "The publisher's profiles elsewhere", "Kurasa za mchapishaji kwingine", max_length=12
+    )
+    app_banner: bool = _field(False, "Offer the app on phones", "Pendekeza programu kwenye simu")
+
+    @model_validator(mode="after")
+    def _key(self) -> Seo:
+        if self.indexnow and not self.indexnow_key:
+            raise ValueError("IndexNow needs a key of 32 hexadecimal characters")
+        return self
+
+
 class Engagement(Section):
     """Global defaults and kill switches (engagement.policy)."""
 
@@ -172,6 +195,7 @@ SECTIONS: dict[str, type[Section]] = {
     "brand": Brand,
     "localization": Localization,
     "app": App,
+    "seo": Seo,
     "security": Security,
     "engagement": Engagement,
 }

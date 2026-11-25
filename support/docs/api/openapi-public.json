@@ -351,6 +351,84 @@
                 }
             }
         },
+        "/api/v1/content/pages": {
+            "get": {
+                "operationId": "pages",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicPages"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/pages/{key}": {
+            "get": {
+                "operationId": "page",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "key",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/content/resolve": {
             "get": {
                 "operationId": "resolve",
@@ -416,6 +494,79 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Search"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/sitemap": {
+            "get": {
+                "operationId": "sitemap_index",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SitemapIndex"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/sitemap/{month}": {
+            "get": {
+                "operationId": "sitemap_month",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "month",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SitemapEntries"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/sitemap/news": {
+            "get": {
+                "operationId": "sitemap_news",
+                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SitemapEntries"
                                 }
                             }
                         },
@@ -1425,6 +1576,21 @@
                     "slug"
                 ]
             },
+            "PageTranslation": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "locale",
+                    "path"
+                ]
+            },
             "PostTypeEnum": {
                 "enum": [
                     "article",
@@ -1735,6 +1901,101 @@
                     "slug"
                 ]
             },
+            "PublicPage": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "summary": {
+                        "type": "string"
+                    },
+                    "body": {
+                        "type": "object",
+                        "additionalProperties": {}
+                    },
+                    "assets": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "translations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PageTranslation"
+                        }
+                    }
+                },
+                "required": [
+                    "assets",
+                    "body",
+                    "key",
+                    "locale",
+                    "modified_at",
+                    "path",
+                    "published_at",
+                    "summary",
+                    "title",
+                    "translations"
+                ]
+            },
+            "PublicPageLink": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "key",
+                    "modified_at",
+                    "path",
+                    "title"
+                ]
+            },
+            "PublicPages": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicPageLink"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
             "PublicPolicy": {
                 "type": "object",
                 "properties": {
@@ -1999,6 +2260,21 @@
                     "results"
                 ]
             },
+            "SiteApps": {
+                "type": "object",
+                "properties": {
+                    "android": {
+                        "type": "string"
+                    },
+                    "ios": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "android",
+                    "ios"
+                ]
+            },
             "SiteConfig": {
                 "type": "object",
                 "properties": {
@@ -2016,12 +2292,20 @@
                     },
                     "localization": {
                         "$ref": "#/components/schemas/SiteLocalization"
+                    },
+                    "seo": {
+                        "$ref": "#/components/schemas/SiteSeo"
+                    },
+                    "apps": {
+                        "$ref": "#/components/schemas/SiteApps"
                     }
                 },
                 "required": [
+                    "apps",
                     "identity",
                     "localization",
                     "media_base_url",
+                    "seo",
                     "theme",
                     "version"
                 ]
@@ -2093,6 +2377,32 @@
                     "timezone"
                 ]
             },
+            "SiteSeo": {
+                "type": "object",
+                "properties": {
+                    "google_verification": {
+                        "type": "string"
+                    },
+                    "bing_verification": {
+                        "type": "string"
+                    },
+                    "indexnow_key": {
+                        "type": "string"
+                    },
+                    "same_as": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "bing_verification",
+                    "google_verification",
+                    "indexnow_key",
+                    "same_as"
+                ]
+            },
             "SiteTheme": {
                 "type": "object",
                 "properties": {
@@ -2151,6 +2461,154 @@
                 "required": [
                     "dark",
                     "light"
+                ]
+            },
+            "SitemapEntries": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SitemapEntry"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
+            "SitemapEntry": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "locale": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "headline": {
+                        "type": "string"
+                    },
+                    "standfirst": {
+                        "type": "string"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "image": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicImage"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "video": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/PublicVideo"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "youtube_id": {
+                        "type": "string"
+                    },
+                    "duration_ms": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "is_sensitive": {
+                        "type": "boolean"
+                    },
+                    "translations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SitemapTranslation"
+                        }
+                    }
+                },
+                "required": [
+                    "duration_ms",
+                    "headline",
+                    "image",
+                    "is_sensitive",
+                    "locale",
+                    "modified_at",
+                    "path",
+                    "published_at",
+                    "standfirst",
+                    "translations",
+                    "type",
+                    "video",
+                    "youtube_id"
+                ]
+            },
+            "SitemapIndex": {
+                "type": "object",
+                "properties": {
+                    "months": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SitemapMonth"
+                        }
+                    }
+                },
+                "required": [
+                    "months"
+                ]
+            },
+            "SitemapMonth": {
+                "type": "object",
+                "properties": {
+                    "month": {
+                        "type": "string"
+                    },
+                    "count": {
+                        "type": "integer"
+                    },
+                    "modified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "videos": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "count",
+                    "modified_at",
+                    "month",
+                    "videos"
+                ]
+            },
+            "SitemapTranslation": {
+                "type": "object",
+                "properties": {
+                    "locale": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "locale",
+                    "path"
                 ]
             },
             "StoryPage": {

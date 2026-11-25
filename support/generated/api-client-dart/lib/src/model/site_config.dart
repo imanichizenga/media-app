@@ -3,9 +3,11 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:news_api_client/src/model/site_apps.dart';
 import 'package:news_api_client/src/model/site_localization.dart';
 import 'package:news_api_client/src/model/site_identity.dart';
 import 'package:news_api_client/src/model/site_theme.dart';
+import 'package:news_api_client/src/model/site_seo.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -26,6 +28,8 @@ class SiteConfig {
     required this.version,
     required this.mediaBaseUrl,
     required this.localization,
+    required this.seo,
+    required this.apps,
   });
 
   @JsonKey(
@@ -63,6 +67,20 @@ class SiteConfig {
   )
   final SiteLocalization localization;
 
+  @JsonKey(
+    name: r'seo',
+    required: true,
+    includeIfNull: false,
+  )
+  final SiteSeo seo;
+
+  @JsonKey(
+    name: r'apps',
+    required: true,
+    includeIfNull: false,
+  )
+  final SiteApps apps;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -71,7 +89,9 @@ class SiteConfig {
           other.identity == identity &&
           other.version == version &&
           other.mediaBaseUrl == mediaBaseUrl &&
-          other.localization == localization;
+          other.localization == localization &&
+          other.seo == seo &&
+          other.apps == apps;
 
   @override
   int get hashCode =>
@@ -79,7 +99,9 @@ class SiteConfig {
       identity.hashCode +
       version.hashCode +
       mediaBaseUrl.hashCode +
-      localization.hashCode;
+      localization.hashCode +
+      seo.hashCode +
+      apps.hashCode;
 
   factory SiteConfig.fromJson(Map<String, dynamic> json) =>
       _$SiteConfigFromJson(json);

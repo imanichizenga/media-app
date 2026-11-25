@@ -17,6 +17,10 @@ abstract class _$SiteConfigCWProxy {
 
   SiteConfig localization(SiteLocalization localization);
 
+  SiteConfig seo(SiteSeo seo);
+
+  SiteConfig apps(SiteApps apps);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +33,8 @@ abstract class _$SiteConfigCWProxy {
     String version,
     String mediaBaseUrl,
     SiteLocalization localization,
+    SiteSeo seo,
+    SiteApps apps,
   });
 }
 
@@ -56,6 +62,12 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
       this(localization: localization);
 
   @override
+  SiteConfig seo(SiteSeo seo) => this(seo: seo);
+
+  @override
+  SiteConfig apps(SiteApps apps) => this(apps: apps);
+
+  @override
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
@@ -69,6 +81,8 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
     Object? version = const $CopyWithPlaceholder(),
     Object? mediaBaseUrl = const $CopyWithPlaceholder(),
     Object? localization = const $CopyWithPlaceholder(),
+    Object? seo = const $CopyWithPlaceholder(),
+    Object? apps = const $CopyWithPlaceholder(),
   }) {
     return SiteConfig(
       theme: theme == const $CopyWithPlaceholder()
@@ -91,6 +105,14 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
           ? _value.localization
           // ignore: cast_nullable_to_non_nullable
           : localization as SiteLocalization,
+      seo: seo == const $CopyWithPlaceholder()
+          ? _value.seo
+          // ignore: cast_nullable_to_non_nullable
+          : seo as SiteSeo,
+      apps: apps == const $CopyWithPlaceholder()
+          ? _value.apps
+          // ignore: cast_nullable_to_non_nullable
+          : apps as SiteApps,
     );
   }
 }
@@ -116,7 +138,9 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
             'identity',
             'version',
             'media_base_url',
-            'localization'
+            'localization',
+            'seo',
+            'apps'
           ],
         );
         final val = SiteConfig(
@@ -128,6 +152,10 @@ SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
           mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
           localization: $checkedConvert('localization',
               (v) => SiteLocalization.fromJson(v as Map<String, dynamic>)),
+          seo: $checkedConvert(
+              'seo', (v) => SiteSeo.fromJson(v as Map<String, dynamic>)),
+          apps: $checkedConvert(
+              'apps', (v) => SiteApps.fromJson(v as Map<String, dynamic>)),
         );
         return val;
       },
@@ -141,4 +169,6 @@ Map<String, dynamic> _$SiteConfigToJson(SiteConfig instance) =>
       'version': instance.version,
       'media_base_url': instance.mediaBaseUrl,
       'localization': instance.localization.toJson(),
+      'seo': instance.seo.toJson(),
+      'apps': instance.apps.toJson(),
     };

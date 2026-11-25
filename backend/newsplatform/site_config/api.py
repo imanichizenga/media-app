@@ -33,6 +33,18 @@ class PublicConfigView(APIView):
                 default_locale=serializers.ChoiceField(choices=["sw", "en"]),
                 timezone=serializers.CharField(),
             ),
+            seo=schema(
+                "SiteSeo",
+                google_verification=serializers.CharField(allow_blank=True),
+                bing_verification=serializers.CharField(allow_blank=True),
+                indexnow_key=serializers.CharField(allow_blank=True),
+                same_as=serializers.ListField(child=serializers.CharField()),
+            ),
+            apps=schema(
+                "SiteApps",
+                android=serializers.CharField(allow_blank=True),
+                ios=serializers.CharField(allow_blank=True),
+            ),
         ),
     )
     def get(self, request: Request) -> Response:

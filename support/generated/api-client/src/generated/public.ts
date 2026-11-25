@@ -140,6 +140,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/content/pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        get: operations["pages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content/pages/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        get: operations["page"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/content/resolve": {
         parameters: {
             query?: never;
@@ -166,6 +200,57 @@ export interface paths {
         };
         /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
         get: operations["search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content/sitemap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        get: operations["sitemap_index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content/sitemap/{month}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        get: operations["sitemap_month"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content/sitemap/news": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        get: operations["sitemap_news"];
         put?: never;
         post?: never;
         delete?: never;
@@ -450,6 +535,10 @@ export interface components {
             icon: string;
             children: components["schemas"]["PublicCategory"][];
         };
+        PageTranslation: {
+            locale: string;
+            path: string;
+        };
         /**
          * @description * `article` - Article
          *     * `breaking` - Breaking
@@ -541,6 +630,36 @@ export interface components {
             name: string;
             path: string;
         };
+        PublicPage: {
+            key: string;
+            locale: string;
+            path: string;
+            title: string;
+            summary: string;
+            body: {
+                [key: string]: unknown;
+            };
+            assets: {
+                [key: string]: {
+                    [key: string]: unknown;
+                };
+            };
+            /** Format: date-time */
+            published_at: string;
+            /** Format: date-time */
+            modified_at: string;
+            translations: components["schemas"]["PageTranslation"][];
+        };
+        PublicPageLink: {
+            key: string;
+            title: string;
+            path: string;
+            /** Format: date-time */
+            modified_at: string;
+        };
+        PublicPages: {
+            results: components["schemas"]["PublicPageLink"][];
+        };
         PublicPolicy: {
             likes: boolean;
             comments: components["schemas"]["CommentsEnum"];
@@ -610,12 +729,18 @@ export interface components {
             results: components["schemas"]["Card"][];
             available: boolean;
         };
+        SiteApps: {
+            android: string;
+            ios: string;
+        };
         SiteConfig: {
             theme: components["schemas"]["SiteTheme"];
             identity: components["schemas"]["SiteIdentity"];
             version: string;
             media_base_url: string;
             localization: components["schemas"]["SiteLocalization"];
+            seo: components["schemas"]["SiteSeo"];
+            apps: components["schemas"]["SiteApps"];
         };
         SiteIdentity: {
             brand_name: string;
@@ -628,6 +753,12 @@ export interface components {
         SiteLocalization: {
             default_locale: components["schemas"]["DefaultLocaleEnum"];
             timezone: string;
+        };
+        SiteSeo: {
+            google_verification: string;
+            bing_verification: string;
+            indexnow_key: string;
+            same_as: string[];
         };
         SiteTheme: {
             schema_version: number;
@@ -646,6 +777,40 @@ export interface components {
             dark: {
                 [key: string]: string;
             };
+        };
+        SitemapEntries: {
+            results: components["schemas"]["SitemapEntry"][];
+        };
+        SitemapEntry: {
+            path: string;
+            locale: string;
+            type: string;
+            headline: string;
+            standfirst: string;
+            /** Format: date-time */
+            published_at: string;
+            /** Format: date-time */
+            modified_at: string;
+            image: components["schemas"]["PublicImage"] | null;
+            video: components["schemas"]["PublicVideo"] | null;
+            youtube_id: string;
+            duration_ms: number | null;
+            is_sensitive: boolean;
+            translations: components["schemas"]["SitemapTranslation"][];
+        };
+        SitemapIndex: {
+            months: components["schemas"]["SitemapMonth"][];
+        };
+        SitemapMonth: {
+            month: string;
+            count: number;
+            /** Format: date-time */
+            modified_at: string;
+            videos: number;
+        };
+        SitemapTranslation: {
+            locale: string;
+            path: string;
         };
         StoryPage: {
             next_cursor: string | null;
@@ -857,6 +1022,50 @@ export interface operations {
             };
         };
     };
+    pages: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPages"];
+                };
+            };
+        };
+    };
+    page: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPage"];
+                };
+            };
+        };
+    };
     resolve: {
         parameters: {
             query: {
@@ -896,6 +1105,65 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Search"];
+                };
+            };
+        };
+    };
+    sitemap_index: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapIndex"];
+                };
+            };
+        };
+    };
+    sitemap_month: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                month: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapEntries"];
+                };
+            };
+        };
+    };
+    sitemap_news: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SitemapEntries"];
                 };
             };
         };

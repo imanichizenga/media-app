@@ -46,3 +46,17 @@
 .on-dark {
   display: var(--logo-on-dark, none);
 }
+/* The lead on a phone: lower on a short one, so that its words and the next story both fit (S1). */
+@media (max-width: 1023px) {
+  .cover,
+  .cover * {
+    /* biome-ignore lint/complexity/noImportantStyles: the cards' own ink must not win over a picture */
+    color: #fff !important;
+    text-shadow: 0 1px 6px rgb(0 0 0 / 0.5);
+  }
+}
+@media (max-width: 639px) and (min-height: 720px) {
+  .lead-tall {
+    aspect-ratio: 4 / 3;
+  }
+}

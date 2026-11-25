@@ -17,12 +17,16 @@ import 'package:news_api_client/src/model/home.dart';
 import 'package:news_api_client/src/model/home_section.dart';
 import 'package:news_api_client/src/model/logo.dart';
 import 'package:news_api_client/src/model/navigation_item.dart';
+import 'package:news_api_client/src/model/page_translation.dart';
 import 'package:news_api_client/src/model/public_author.dart';
 import 'package:news_api_client/src/model/public_byline.dart';
 import 'package:news_api_client/src/model/public_category.dart';
 import 'package:news_api_client/src/model/public_category_detail.dart';
 import 'package:news_api_client/src/model/public_image.dart';
 import 'package:news_api_client/src/model/public_label.dart';
+import 'package:news_api_client/src/model/public_page.dart';
+import 'package:news_api_client/src/model/public_page_link.dart';
+import 'package:news_api_client/src/model/public_pages.dart';
 import 'package:news_api_client/src/model/public_policy.dart';
 import 'package:news_api_client/src/model/public_region.dart';
 import 'package:news_api_client/src/model/public_seo.dart';
@@ -34,11 +38,18 @@ import 'package:news_api_client/src/model/related_target.dart';
 import 'package:news_api_client/src/model/resolve.dart';
 import 'package:news_api_client/src/model/schemes.dart';
 import 'package:news_api_client/src/model/search.dart';
+import 'package:news_api_client/src/model/site_apps.dart';
 import 'package:news_api_client/src/model/site_config.dart';
 import 'package:news_api_client/src/model/site_identity.dart';
 import 'package:news_api_client/src/model/site_localization.dart';
+import 'package:news_api_client/src/model/site_seo.dart';
 import 'package:news_api_client/src/model/site_theme.dart';
 import 'package:news_api_client/src/model/site_theme_tokens.dart';
+import 'package:news_api_client/src/model/sitemap_entries.dart';
+import 'package:news_api_client/src/model/sitemap_entry.dart';
+import 'package:news_api_client/src/model/sitemap_index.dart';
+import 'package:news_api_client/src/model/sitemap_month.dart';
+import 'package:news_api_client/src/model/sitemap_translation.dart';
 import 'package:news_api_client/src/model/story_page.dart';
 import 'package:news_api_client/src/model/tag_page.dart';
 import 'package:news_api_client/src/model/translation.dart';
@@ -107,6 +118,9 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
     case 'NavigationItem':
       return NavigationItem.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'PageTranslation':
+      return PageTranslation.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'PostTypeEnum':
     case 'PublicAuthor':
       return PublicAuthor.fromJson(value as Map<String, dynamic>) as ReturnType;
@@ -123,6 +137,13 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
     case 'PublicImageKindEnum':
     case 'PublicLabel':
       return PublicLabel.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicPage':
+      return PublicPage.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PublicPageLink':
+      return PublicPageLink.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PublicPages':
+      return PublicPages.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'PublicPolicy':
       return PublicPolicy.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'PublicRegion':
@@ -148,6 +169,8 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
       return Schemes.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'Search':
       return Search.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'SiteApps':
+      return SiteApps.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteConfig':
       return SiteConfig.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteIdentity':
@@ -155,10 +178,24 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
     case 'SiteLocalization':
       return SiteLocalization.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'SiteSeo':
+      return SiteSeo.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteTheme':
       return SiteTheme.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'SiteThemeTokens':
       return SiteThemeTokens.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'SitemapEntries':
+      return SitemapEntries.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'SitemapEntry':
+      return SitemapEntry.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'SitemapIndex':
+      return SitemapIndex.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'SitemapMonth':
+      return SitemapMonth.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'SitemapTranslation':
+      return SitemapTranslation.fromJson(value as Map<String, dynamic>)
           as ReturnType;
     case 'StoryPage':
       return StoryPage.fromJson(value as Map<String, dynamic>) as ReturnType;

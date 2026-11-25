@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "newsplatform.media",
     "newsplatform.content",
     "newsplatform.seo",
+    "newsplatform.pages",
     "newsplatform.engagement",
 ]
 MIDDLEWARE = [
@@ -165,6 +166,7 @@ SPECTACULAR_SETTINGS = {
         "newsplatform.common.schema.relax_nullable_json",
     ],
     "ENUM_NAME_OVERRIDES": {
+        "PageKeyEnum": "newsplatform.pages.models.PageKey",
         "ThemeKeyEnum": "newsplatform.site_config.theme.derive.CHOICES",
         "LogoKindEnum": "newsplatform.site_config.models.BrandLogo.Kind",
         "IntegrationStatusEnum": "newsplatform.integrations.models.ConfigStatus",

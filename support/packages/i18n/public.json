@@ -173,5 +173,18 @@
   "newStories": ["Kuna habari mpya", "New stories"],
   "shareQuote": ["Sambaza nukuu", "Share quote"],
   "settingOn": ["Imewashwa", "On"],
-  "settingOff": ["Imezimwa", "Off"]
+  "settingOff": ["Imezimwa", "Off"],
+  "skipToNews": ["Ruka hadi habari", "Skip to the news"],
+  "olderStories": ["Habari za awali", "Older stories"],
+  "openInApp": ["Soma kwa urahisi kwenye programu", "Read more easily in the app"],
+  "open": ["Fungua", "Open"],
+  "search": ["Tafuta", "Search"],
+  "searchSoon": ["Chagua kundi usome habari zake.", "Choose a section to read its stories."],
+  "serverErrorTitle": ["Hitilafu imetokea", "Something went wrong"],
+  "legal": ["Kurasa za tovuti", "About this site"],
+  "correctionsPage": ["Marekebisho yetu", "Our corrections"],
+  "publishedAt": ["Imechapishwa", "Published"],
+  "updatedAt": ["Imesasishwa", "Updated"],
+  "authorStories": ["Habari zake", "Stories"],
+  "pageOf": ["Ukurasa wa {n}", "Page {n}"]
 }

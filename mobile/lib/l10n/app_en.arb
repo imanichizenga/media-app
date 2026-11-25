@@ -141,5 +141,18 @@
   "newStories": "New stories",
   "shareQuote": "Share quote",
   "settingOn": "On",
-  "settingOff": "Off"
+  "settingOff": "Off",
+  "skipToNews": "Skip to the news",
+  "olderStories": "Older stories",
+  "openInApp": "Read more easily in the app",
+  "open": "Open",
+  "search": "Search",
+  "searchSoon": "Choose a section to read its stories.",
+  "serverErrorTitle": "Something went wrong",
+  "legal": "About this site",
+  "correctionsPage": "Our corrections",
+  "publishedAt": "Published",
+  "updatedAt": "Updated",
+  "authorStories": "Stories",
+  "pageOf": "Page {n}"
 }

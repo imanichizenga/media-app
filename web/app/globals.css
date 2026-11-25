@@ -1,0 +1,95 @@
+@import "tailwindcss";
+@import "@news/design-tokens/tokens.css";
+@import "@news/design-tokens/theme.css";
+@import "@news/ui/styles.css";
+@source "../../support/packages/ui/src";
+
+@font-face {
+  font-family: "Inter Variable";
+  src: url("../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader Variable";
+  src: url("../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2")
+    format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+/* The fallbacks have the same metrics, so nothing moves when the fonts arrive. */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial");
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia");
+  size-adjust: 95%;
+  ascent-override: 78%;
+  descent-override: 28%;
+  line-gap-override: 0%;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 7rem;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans), "Inter Fallback", sans-serif;
+    font-size: var(--text-body-m);
+    line-height: var(--text-body-m--line-height);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  h1,
+  h2,
+  h3,
+  .font-serif {
+    font-family: var(--font-serif), "Newsreader Fallback", serif;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--color-brand-soft);
+    color: var(--color-text-primary);
+  }
+}
+/* The bar steps aside while one reads down (N2, S3); the page always keeps its room. */
+.hides {
+  transition: transform 200ms ease;
+}
+:root[data-reading] .hides {
+  transform: translateY(100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hides {
+    transition: none;
+  }
+}
+:root[data-text="1"] .reads {
+  font-size: 1.125em;
+}
+:root[data-text="2"] .reads {
+  font-size: 1.25em;
+}
+:root[data-text="3"] .reads {
+  font-size: 1.4em;
+}

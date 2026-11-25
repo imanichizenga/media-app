@@ -252,5 +252,25 @@
   "newStories": "Kuna habari mpya",
   "shareQuote": "Sambaza nukuu",
   "settingOn": "Imewashwa",
-  "settingOff": "Imezimwa"
+  "settingOff": "Imezimwa",
+  "skipToNews": "Ruka hadi habari",
+  "olderStories": "Habari za awali",
+  "openInApp": "Soma kwa urahisi kwenye programu",
+  "open": "Fungua",
+  "search": "Tafuta",
+  "searchSoon": "Chagua kundi usome habari zake.",
+  "serverErrorTitle": "Hitilafu imetokea",
+  "legal": "Kurasa za tovuti",
+  "correctionsPage": "Marekebisho yetu",
+  "publishedAt": "Imechapishwa",
+  "updatedAt": "Imesasishwa",
+  "authorStories": "Habari zake",
+  "pageOf": "Ukurasa wa {n}",
+  "@pageOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  }
 }

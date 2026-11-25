@@ -1,0 +1,15 @@
+# news_api_client.model.SitemapEntries
+
+## Load the model package
+```dart
+import 'package:news_api_client/api.dart';
+```
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**results** | [**List&lt;SitemapEntry&gt;**](SitemapEntry.md) |  | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
