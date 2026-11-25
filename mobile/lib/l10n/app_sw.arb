@@ -272,5 +272,8 @@
         "type": "int"
       }
     }
-  }
+  },
+  "places": "Sehemu kuu",
+  "savedEmptyWeb": "Gusa alama ya kuhifadhi kwenye habari yoyote. Itabaki kwenye kifaa hiki.",
+  "offlineNote": "Huna mtandao."
 }

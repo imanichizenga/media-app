@@ -186,5 +186,11 @@
   "publishedAt": ["Imechapishwa", "Published"],
   "updatedAt": ["Imesasishwa", "Updated"],
   "authorStories": ["Habari zake", "Stories"],
-  "pageOf": ["Ukurasa wa {n}", "Page {n}"]
+  "pageOf": ["Ukurasa wa {n}", "Page {n}"],
+  "places": ["Sehemu kuu", "Main places"],
+  "savedEmptyWeb": [
+    "Gusa alama ya kuhifadhi kwenye habari yoyote. Itabaki kwenye kifaa hiki.",
+    "Tap the bookmark on any story. It stays on this device."
+  ],
+  "offlineNote": ["Huna mtandao.", "You are offline."]
 }

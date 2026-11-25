@@ -1,12 +1,16 @@
 import "server-only";
-import { blocksText } from "./text";
 import type { Article, Card, Site } from "./api";
 import { env } from "./env";
 import { at, type Locale } from "./locale";
+import { blocksText } from "./text";
 
 export const absolute = (path: string) => `${env.site}${path === "/" ? "" : path}`;
 export const mediaUrl = (site: Site, key: string) =>
-  /^https?:/.test(key) ? key : key.startsWith("/") ? absolute(key) : `${site.media_base_url}/${key}`;
+  /^https?:/.test(key)
+    ? key
+    : key.startsWith("/") || !site.media_base_url
+      ? absolute(`/${key.replace(/^\//, "")}`)
+      : `${site.media_base_url}/${key}`;
 /** Google asks for three shapes, each at least 1200 wide; the API cut them when the picture was uploaded. */
 export function crops(site: Site, image: Card["image"]): string[] {
   if (!image?.crops) return [];
@@ -112,4 +116,7 @@ export function newsArticle(site: Site, a: Article) {
 export const graph = (...items: object[]) => ({ "@context": "https://schema.org", "@graph": items });
 /** Inside a script element: nothing in it can close that element. */
 export const json = (value: object) =>
-  JSON.stringify(value).replace(/</g, "\\u003c").replace(/ /g, "\\u2028").replace(/ /g, "\\u2029");
+  JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");

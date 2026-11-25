@@ -17,14 +17,16 @@ export type Query = Promise<{ cursor?: string | string[] }>;
 export async function pagingOf(query: Query) {
   const { cursor } = await query;
   const one = Array.isArray(cursor) ? cursor[0] : cursor;
-  if (one && !/^[A-Za-z0-9_-]{1,200}$/.test(one)) notFound();
+  if (one && !/^[A-Za-z0-9_=-]{1,200}$/.test(one)) notFound();
   return one ? { cursor: one } : {};
 }
-type List = {
+export type List = {
   locale: Locale;
   path: string;
   title: string;
+  seoTitle?: string;
   text?: string;
+  seoText?: string;
   found: { results: Card[]; next_cursor: string | null };
   first: boolean;
   others?: { locale: string; path: string }[];
@@ -32,20 +34,21 @@ type List = {
   head?: ReactNode;
   data?: object[];
   lead?: boolean;
-  place?: "home" | "video";
+  hidden?: boolean;
+  section?: string;
+  rss?: string;
 };
-export const listMeta = async (
-  l: Pick<List, "locale" | "path" | "title" | "text" | "others" | "first"> & { seoTitle?: string },
-): Promise<Metadata> =>
+export const listMeta = async (l: List): Promise<Metadata> =>
   metaOf({
     site: await readSite(),
     locale: l.locale,
     path: l.path,
-    title: l.seoTitle ?? l.title,
-    description: l.text,
+    title: l.seoTitle || l.title,
+    description: l.seoText || l.text,
     others: l.others,
     // Older pages are for readers; a search engine reads the stories from the sitemap.
     index: l.first,
+    rss: l.rss,
   });
 
 /** A page of stories about one thing. */
@@ -57,9 +60,10 @@ export async function ListPage(l: List) {
     <Frame
       locale={l.locale}
       path={l.path}
-      place={l.place ?? "home"}
+      place="home"
       view={view}
       title={l.title}
+      section={l.section}
       other={l.others?.[0]?.path}
     >
       <JsonLd
@@ -73,7 +77,7 @@ export async function ListPage(l: List) {
         )}
       />
       <Wide>
-        {l.head ?? <PageHead title={l.title} text={l.text} />}
+        {l.head ?? <PageHead title={l.title} text={l.text} hidden={l.hidden} />}
         <Feed
           list={cards(l.found.results)}
           env={view}

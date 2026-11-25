@@ -154,5 +154,8 @@
   "publishedAt": "Published",
   "updatedAt": "Updated",
   "authorStories": "Stories",
-  "pageOf": "Page {n}"
+  "pageOf": "Page {n}",
+  "places": "Main places",
+  "savedEmptyWeb": "Tap the bookmark on any story. It stays on this device.",
+  "offlineNote": "You are offline."
 }

@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --port 3000",
-    "build": "next build",
-    "start": "next start --port 3000",
-    "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run"
+    "islands": "node scripts/islands.mjs",
+    "dev": "node scripts/islands.mjs && next dev --port 3000",
+    "build": "node scripts/islands.mjs && next build",
+    "typecheck": "node scripts/islands.mjs && next typegen && tsc --noEmit",
+    "test": "node scripts/islands.mjs && vitest run"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
@@ -19,6 +19,7 @@
     "@news/i18n": "workspace:*",
     "@news/ui": "workspace:*",
     "@redis/client": "5.12.4",
+    "hls.js": "1.7.4",
     "next": "16.4.6",
     "next-intl": "4.15.3",
     "react": "19.3.1",
@@ -29,6 +30,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "0.28.2",
     "tailwindcss": "4.3.5",
     "typescript": "5.9.3",
     "vitest": "5.1.1"

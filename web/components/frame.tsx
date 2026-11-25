@@ -10,7 +10,13 @@ import { OpenInApp, SchemeButton } from "./client";
 
 type Place = "home" | "video" | "explore" | "saved" | "you";
 const ICON = "tap grid w-11 place-items-center rounded-sm hover:bg-current/10";
-const PLACES: [Place, Icon, string, "navHome" | "navVideo" | "navExplore" | "navSaved" | "navYou", boolean][] = [
+const PLACES: [
+  Place,
+  Icon,
+  string,
+  "navHome" | "navVideo" | "navExplore" | "navSaved" | "navYou",
+  boolean,
+][] = [
   ["home", House, "/", "navHome", true],
   ["video", Play, "/video", "navVideo", true],
   ["explore", Compass, "/search", "navExplore", false],
@@ -27,10 +33,18 @@ export const logoOf = (site: Site) => ({
 });
 
 /** The five places, at the foot of a phone. */
-export function Places({ locale, place, onDark = false }: { locale: Locale; place?: Place; onDark?: boolean }) {
+export function Places({
+  locale,
+  place,
+  onDark = false,
+}: {
+  locale: Locale;
+  place?: Place;
+  onDark?: boolean;
+}) {
   const t = words(locale);
   return (
-    <nav aria-label={t("navHome")}>
+    <nav aria-label={t("places")}>
       <ul className="flex">
         {PLACES.map(([key, Sign, path, name, solid]) => {
           const on = key === place;
@@ -62,7 +76,18 @@ export function Places({ locale, place, onDark = false }: { locale: Locale; plac
 }
 
 /** For you, the latest, the sections: one row, with the mark under the open one (N3). */
-function Row({ locale, nav, here }: { locale: Locale; nav: Nav[]; here: string }) {
+function Row({
+  locale,
+  nav,
+  here,
+  quiet,
+}: {
+  locale: Locale;
+  nav: Nav[];
+  here: string;
+  /** On a phone the row belongs to Home and its tabs (N3): elsewhere it would crowd out the news. */
+  quiet: boolean;
+}) {
   const t = words(locale);
   const tabs: [string, string][] = [
     [at(locale, "/"), t("forYou")],
@@ -72,7 +97,7 @@ function Row({ locale, nav, here }: { locale: Locale; nav: Nav[]; here: string }
   return (
     <nav
       aria-label={t("categories")}
-      className="sticky top-0 z-20 border-border border-b bg-bg lg:static"
+      className={cx("sticky top-0 z-20 border-border border-b bg-bg lg:static", quiet && "max-lg:hidden")}
     >
       <ul className="mx-auto flex h-12 max-w-7xl overflow-x-auto px-1 scrollbar-none lg:justify-center">
         {tabs.map(([path, name]) => (
@@ -105,6 +130,8 @@ export async function Frame({
   breaking,
   bottom,
   title,
+  section,
+  reading = false,
   children,
 }: {
   locale: Locale;
@@ -118,15 +145,20 @@ export async function Frame({
   bottom?: ReactNode;
   /** On a phone the masthead is Home's alone: other places show their own name (S2). */
   title?: ReactNode;
+  /** The tab to mark, when the page is not one itself. */
+  section?: string;
+  /** The foot gives way while one reads on. */
+  reading?: boolean;
   children: ReactNode;
 }) {
   const [site, nav, foot] = await Promise.all([readSite(), navigation(locale), pages(locale)]);
   const t = words(locale);
-  const front = bare(path) === "/" || bare(path) === "/latest" || nav.some((n) => n.path === path);
+  const front =
+    (path !== "" && bare(path) === "/") || bare(path) === "/latest" || nav.some((n) => n.path === path);
   const logo = logoOf(site);
   const otherLocale: Locale = locale === "sw" ? "en" : "sw";
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col" data-reading-page={reading ? "" : undefined}>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-bg focus:p-3"
@@ -156,7 +188,11 @@ export async function Frame({
             )}
           </div>
           <div className="flex justify-end">
-            <a href={at(locale, "/search")} aria-label={t("navExplore")} className={cx(ICON, "max-lg:hidden")}>
+            <a
+              href={at(locale, "/search")}
+              aria-label={t("navExplore")}
+              className={cx(ICON, "max-lg:hidden")}
+            >
               <Search size={20} />
             </a>
             <a
@@ -173,7 +209,7 @@ export async function Frame({
         </div>
       </header>
       {/* Part of the frame: known before the page is, so nothing pushes the page down later (V2). */}
-      <Row locale={locale} nav={nav} here={path} />
+      <Row locale={locale} nav={nav} here={section ?? path} quiet={!front} />
       <BreakingBanner card={breaking} env={view} />
       <main id="main" className="flex-1 pb-24 lg:pb-16">
         {children}
@@ -192,7 +228,7 @@ export async function Frame({
           </ul>
         </div>
       </footer>
-      {site.apps.android && (
+      {site.apps.android && !reading && (
         <OpenInApp href={site.apps.android} text={t("openInApp")} action={t("open")} close={t("close")} />
       )}
       <div

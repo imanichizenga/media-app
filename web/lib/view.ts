@@ -1,7 +1,7 @@
 import "server-only";
-import type { CardData, NewsEnv } from "@news/ui/news";
 import type { ContentContext } from "@news/ui/content";
-import { ago } from "@news/ui/news";
+import type { CardData, NewsEnv } from "@news/ui/news";
+import { ago as agoOf } from "@news/ui/news";
 import type { Article, Card, Site } from "./api";
 import { words } from "./i18n";
 import type { Locale } from "./locale";
@@ -47,7 +47,7 @@ export function contentOf(
       gallery: t("gallery"),
     },
     interactive: true,
-    formatTime: (iso) => ago(iso, view),
+    formatTime: (iso) => agoOf(iso, view),
   };
 }
 export const dateOf = (iso: string, locale: Locale, timeZone: string) =>
@@ -56,3 +56,4 @@ export const dateOf = (iso: string, locale: Locale, timeZone: string) =>
     timeStyle: "short",
     timeZone,
   }).format(Date.parse(iso));
+export { agoOf };

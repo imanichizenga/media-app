@@ -73,3 +73,7 @@ mobile/android/local.properties
 mobile/android/app/.cxx/
 .flutter-plugins-dependencies
 *.symbols
+
+# Built by web/scripts/islands.mjs
+web/public/js/
+web/generated/

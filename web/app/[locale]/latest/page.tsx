@@ -14,16 +14,16 @@ const about = (locale: Locale) => {
     others: [{ locale: other, path: at(other, "/latest") }],
   };
 };
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  return listMeta({ ...about(locale), first: !("cursor" in (await pagingOf(searchParams))) });
-}
-export default async function Page({ params, searchParams }: Props) {
-  const { locale } = await params;
-  const paging = await pagingOf(searchParams);
-  return ListPage({
+async function load({ params, searchParams }: Props) {
+  const [{ locale }, paging] = await Promise.all([params, pagingOf(searchParams)]);
+  return {
     ...about(locale),
+    hidden: true,
     found: await latest(locale, paging),
     first: !("cursor" in paging),
-  });
+  };
+}
+export const generateMetadata = async (props: Props): Promise<Metadata> => listMeta(await load(props));
+export default async function Page(props: Props) {
+  return <ListPage {...(await load(props))} />;
 }

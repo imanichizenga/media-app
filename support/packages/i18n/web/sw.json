@@ -153,5 +153,8 @@
   "publishedAt": "Imechapishwa",
   "updatedAt": "Imesasishwa",
   "authorStories": "Habari zake",
-  "pageOf": "Ukurasa wa {n}"
+  "pageOf": "Ukurasa wa {n}",
+  "places": "Sehemu kuu",
+  "savedEmptyWeb": "Gusa alama ya kuhifadhi kwenye habari yoyote. Itabaki kwenye kifaa hiki.",
+  "offlineNote": "Huna mtandao."
 }

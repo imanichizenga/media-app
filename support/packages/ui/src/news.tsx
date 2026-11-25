@@ -138,10 +138,13 @@ export function Kicker({
   env,
   quiet = false,
   reading = false,
+  cover = false,
 }: {
   card?: CardData;
   env: NewsEnv;
   quiet?: boolean;
+  /** Over the lead's picture on a phone, where the picture's own corner is taken. */
+  cover?: boolean;
   /** Also how long it takes to read. */
   reading?: boolean;
 }) {
@@ -154,19 +157,22 @@ export function Kicker({
   const breaking = card.breaking_until !== null && Date.parse(card.breaking_until) > env.now;
   return (
     <p className="flex min-w-0 items-center gap-x-1.5 whitespace-nowrap text-caption text-text-secondary">
-      {card.is_live && !quiet ? (
-        <LivePill label={env.t.live} />
-      ) : breaking ? (
+      {card.is_live && (cover || !quiet) && (
+        <LivePill label={env.t.live} className={cover ? "lg:hidden" : ""} />
+      )}
+      {card.is_live && !quiet && !cover ? null : breaking ? (
         <span className="min-w-0 truncate font-semibold text-text-primary">{env.t.breaking}</span>
       ) : (
         <span className="min-w-0 truncate font-semibold text-text-primary">{card.category.name}</span>
       )}
-      <span aria-hidden>·</span>
+      <span aria-hidden className="shrink-0">
+        ·
+      </span>
       <time dateTime={card.published_at} className="shrink-0">
         {ago(card.published_at, env)}
       </time>
-      {reading && (
-        <span className="shrink-0">
+      {reading && !card.is_live && (
+        <span className="min-w-0 truncate">
           <span aria-hidden>· </span>
           {env.t.minutes(Math.max(1, card.reading_minutes))}
         </span>
@@ -176,7 +182,7 @@ export function Kicker({
 }
 const VIDEO = new Set(["video", "short", "youtube"]);
 /** Says what opens, in a corner of the picture. */
-function Mark({ card, env }: { card: CardData; env: NewsEnv }) {
+function Mark({ card, env, className }: { card: CardData; env: NewsEnv; className?: string }) {
   if (card.is_live) return null; // the LIVE pill says it
   const [Sign, label]: [Icon | null, string] =
     VIDEO.has(card.type) && card.duration_ms
@@ -186,7 +192,12 @@ function Mark({ card, env }: { card: CardData; env: NewsEnv }) {
         : [null, ""];
   if (!Sign) return null;
   return (
-    <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-sm bg-black/75 px-2 py-0.5 text-caption text-white">
+    <span
+      className={cx(
+        "absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-sm bg-black/75 px-2 py-0.5 text-caption text-white",
+        className,
+      )}
+    >
       <Sign size={14} fill={Sign === Play ? "currentColor" : "none"} /> {label}
     </span>
   );
@@ -199,6 +210,7 @@ function Frame({
   sizes,
   priority,
   plain = false,
+  covered = false,
   className,
 }: {
   card?: CardData;
@@ -207,8 +219,11 @@ function Frame({
   sizes: string;
   priority?: boolean;
   plain?: boolean;
+  /** Marks at a desk only. */
+  covered?: boolean;
   className?: string;
 }) {
+  const corner = covered ? "max-lg:hidden" : undefined;
   return (
     <div className={cx("relative overflow-hidden rounded-md bg-surface-sunken", ratio, className)}>
       {card ? (
@@ -228,8 +243,10 @@ function Frame({
               {env.t.sensitive}
             </span>
           )}
-          {!plain && <Mark card={card} env={env} />}
-          {!plain && card.is_live && <LivePill label={env.t.live} className="absolute bottom-2 left-2" />}
+          {!plain && <Mark card={card} env={env} className={corner} />}
+          {!plain && card.is_live && (
+            <LivePill label={env.t.live} className={cx("absolute bottom-2 left-2", corner)} />
+          )}
         </>
       ) : (
         <span aria-hidden className="bone block! size-full rounded-none!" />
@@ -252,7 +269,7 @@ function Headline({
 }) {
   const Tag = level === 2 ? "h2" : "h3";
   return (
-    <Tag className={cx("font-serif text-balance", className)}>
+    <Tag className={cx("font-serif text-balance break-words", className)}>
       {card ? (
         <a
           href={card.path}
@@ -273,7 +290,7 @@ type CardProps = { card?: CardData; env: NewsEnv; priority?: boolean; className?
  * The one story of the page. On a phone the words stand on the picture, so that all of them are above the bar (S1); at
  * a desk they stand under it.
  */
-export function LeadCard({ card, env, priority, className }: CardProps) {
+export function LeadCard({ card, env, priority, play = false, className }: CardProps & { play?: boolean }) {
   return (
     <article
       className={cx(
@@ -285,11 +302,23 @@ export function LeadCard({ card, env, priority, className }: CardProps) {
       <Frame
         card={card}
         env={env}
-        ratio="aspect-video lead-tall"
+        ratio={play ? "aspect-4/3 lg:aspect-video" : "aspect-video lead-tall"}
         sizes="(min-width: 1024px) 640px, 100vw"
         priority={priority}
+        covered
         className="max-lg:rounded-none"
       />
+      {play && card && (
+        // The only play mark outside a player (V1).
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 grid aspect-2/1 place-items-center text-white lg:aspect-video"
+        >
+          <span className="grid size-16 place-items-center rounded-full bg-black/60">
+            <Play size={28} fill="currentColor" />
+          </span>
+        </span>
+      )}
       <div
         className={cx(
           "flex flex-col gap-1 lg:gap-3",
@@ -298,7 +327,7 @@ export function LeadCard({ card, env, priority, className }: CardProps) {
             "cover max-lg:bg-linear-to-t max-lg:from-black/90 max-lg:via-black/70 max-lg:to-transparent",
         )}
       >
-        <Kicker card={card} env={env} quiet reading />
+        <Kicker card={card} env={env} quiet reading cover />
         <Headline
           card={card}
           level={2}
@@ -515,12 +544,16 @@ export function Designed({
   title,
   body,
   action,
+  level = 2,
 }: {
   kind: "empty" | "error" | "offline";
+  /** 1 when it is the whole page. */
+  level?: 1 | 2;
   title: string;
   body: string;
   action: ReactNode;
 }) {
+  const Title = level === 1 ? "h1" : "h2";
   return (
     <div className="mx-auto flex max-w-sm flex-col items-center gap-3 px-4 py-16 text-center">
       <svg aria-hidden="true" viewBox="0 0 120 120" className="size-32 text-text-secondary">
@@ -529,7 +562,7 @@ export function Designed({
           {DRAWINGS[kind]}
         </g>
       </svg>
-      <h2 className="font-serif text-headline-m">{title}</h2>
+      <Title className="font-serif text-headline-m">{title}</Title>
       <p className="text-text-secondary">{body}</p>
       <div className="pt-2">{action}</div>
     </div>

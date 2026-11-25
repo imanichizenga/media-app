@@ -8,7 +8,7 @@ const security = [
   { key: "X-Frame-Options", value: "DENY" },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
+    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },
 ];
 const api = process.env.API_PROXY_TARGET;
@@ -16,8 +16,13 @@ const api = process.env.API_PROXY_TARGET;
 const config: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  cacheHandler: require.resolve("./cache-handler.mjs"),
+  cacheMaxMemorySize: 0,
+  outputFileTracingIncludes: { "/og/*/*": ["./fonts/*.woff"] },
   reactStrictMode: true,
   // Files under the media CDN are already every size: nothing is resized here.
+  // Titles and descriptions are in the head of every document, for every reader.
+  htmlLimitedBots: /.*/,
   images: { unoptimized: true },
   transpilePackages: ["@news/api-client", "@news/content-schema", "@news/i18n", "@news/ui"],
   headers: async () => [{ source: "/(.*)", headers: security }],

@@ -38,16 +38,16 @@ async function read<R>(
 const client = () => createPublicClient({ baseUrl: env.api });
 export const pathTag = (path: string) => `path:${path}`;
 
-export const site = cache(() =>
-  read((o) => client().GET("/api/v1/site-config", o), 300, ["site", "brand"]),
-);
+export const site = cache(() => read((o) => client().GET("/api/v1/site-config", o), 300, ["site", "brand"]));
 export const navigation = cache((locale: Locale) =>
   read((o) => client().GET("/api/v1/content/navigation", { params: { query: { locale } }, ...o }), 3600, [
     "navigation",
   ]),
 );
 export const pages = cache((locale: Locale) =>
-  read((o) => client().GET("/api/v1/content/pages", { params: { query: { locale } }, ...o }), 3600, ["pages"]),
+  read((o) => client().GET("/api/v1/content/pages", { params: { query: { locale } }, ...o }), 3600, [
+    "pages",
+  ]),
 );
 export const page = cache((locale: Locale, key: string) =>
   read(
@@ -63,7 +63,10 @@ export const home = cache((locale: Locale) =>
 export const article = cache((locale: Locale, slug: string, path: string) =>
   read(
     (o) =>
-      client().GET("/api/v1/content/articles/{slug}", { params: { path: { slug }, query: { locale } }, ...o }),
+      client().GET("/api/v1/content/articles/{slug}", {
+        params: { path: { slug }, query: { locale } },
+        ...o,
+      }),
     300,
     [pathTag(path), "latest-articles"],
   ),
@@ -110,7 +113,10 @@ export const category = cache((locale: Locale, slug: string, p: Paging = {}) =>
 export const tag = cache((locale: Locale, slug: string, p: Paging = {}) =>
   read(
     (o) =>
-      client().GET("/api/v1/content/tags/{slug}", { params: { path: { slug }, query: { locale, ...p } }, ...o }),
+      client().GET("/api/v1/content/tags/{slug}", {
+        params: { path: { slug }, query: { locale, ...p } },
+        ...o,
+      }),
     300,
     ["latest", `tag-${slug}`],
   ),

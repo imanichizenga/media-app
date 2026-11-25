@@ -86,5 +86,5 @@ async function load({ params, searchParams }: Props) {
 }
 export const generateMetadata = async (props: Props): Promise<Metadata> => listMeta(await load(props));
 export default async function Page(props: Props) {
-  return ListPage(await load(props));
+  return <ListPage {...(await load(props))} />;
 }

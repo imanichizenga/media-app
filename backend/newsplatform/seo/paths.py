@@ -45,6 +45,13 @@ RESERVED = frozenset(
         "images",
         "manifest",
         "offline",
+        "missing",
+        "skeletons",
+        "document",
+        "og",
+        "js",
+        "theme",
+        "indexnow",
     }
 )
 

@@ -7,6 +7,7 @@
       "!**/.next",
       "!**/.turbo",
       "!**/generated",
+      "!web/public/js",
       "!backend",
       "!support/infra",
       "!support/docs",

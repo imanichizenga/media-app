@@ -93,3 +93,24 @@
 :root[data-text="3"] .reads {
   font-size: 1.4em;
 }
+
+/* A story's picture: 16:9 at most, and never more than 40% of the screen (S3). */
+.hero {
+  aspect-ratio: 16 / 9;
+  max-height: 40dvh;
+  width: auto;
+}
+@media (min-width: 1024px) {
+  .hero {
+    max-height: none;
+  }
+}
+/* Two documents, one site: moving between them is a short fade where the browser can. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

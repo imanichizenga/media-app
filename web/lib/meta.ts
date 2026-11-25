@@ -17,6 +17,7 @@ export function metaOf({
   og,
   type = "website",
   article,
+  rss,
 }: {
   site: Site;
   locale: Locale;
@@ -28,6 +29,7 @@ export function metaOf({
   index?: boolean;
   og?: string;
   type?: "website" | "article";
+  rss?: string;
   article?: { published: string; modified: string; section: string; authors: string[] };
 }): Metadata {
   const name = site.identity.brand_name;
@@ -46,11 +48,17 @@ export function metaOf({
     alternates: {
       canonical: absolute(path),
       languages,
-      types: { "application/rss+xml": absolute(locale === "en" ? "/rss/en" : "/rss") },
+      types: { "application/rss+xml": absolute(rss ?? (locale === "en" ? "/rss/en" : "/rss")) },
     },
     robots:
       index && !env.closed
-        ? { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 }
+        ? {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+            "max-video-preview": -1,
+          }
         : { index: false, follow: true },
     openGraph: {
       title: title ?? name,
@@ -69,7 +77,12 @@ export function metaOf({
           }
         : { type: "website" as const }),
     },
-    twitter: { card: "summary_large_image", title: title ?? name, description: text.slice(0, 200), images: [image] },
+    twitter: {
+      card: "summary_large_image",
+      title: title ?? name,
+      description: text.slice(0, 200),
+      images: [image],
+    },
     verification: {
       ...(site.seo.google_verification ? { google: site.seo.google_verification } : {}),
       ...(site.seo.bing_verification ? { other: { "msvalidate.01": site.seo.bing_verification } } : {}),

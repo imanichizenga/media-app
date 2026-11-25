@@ -346,3 +346,56 @@ RAIL_TITLES: list[T] = [
     ("Mafuriko Morogoro", "Morogoro floods"),
     ("Kinachoendelea Bungeni", "Parliament, live"),
 ]
+
+# The site's own pages. Said to be samples in so many words: the real ones are the publisher's to write (G5).
+PAGES: list[tuple[str, T, T]] = [
+    (
+        "about",
+        ("Kuhusu sisi", "About us"),
+        (
+            "Sisi ni chombo cha habari cha mfano. Tunaandika habari za Tanzania na Afrika Mashariki.",
+            "We are a sample newsroom. We report on Tanzania and East Africa.",
+        ),
+    ),
+    (
+        "editorial-policy",
+        ("Sera ya uhariri", "Editorial policy"),
+        (
+            "Kila habari inathibitishwa na vyanzo viwili kabla ya kuchapishwa.",
+            "Every story is confirmed by two sources before it is published.",
+        ),
+    ),
+    (
+        "corrections",
+        ("Masahihisho", "Corrections"),
+        (
+            "Tukikosea, tunasahihisha waziwazi na kueleza kilichobadilika.",
+            "When we are wrong we correct it in the open and say what changed.",
+        ),
+    ),
+    (
+        "contact",
+        ("Wasiliana nasi", "Contact us"),
+        ("Andika kwa dawati la habari: habari@example.org.", "Write to the news desk: news@example.org."),
+    ),
+    (
+        "privacy",
+        ("Faragha", "Privacy"),
+        (
+            "Msomaji hahitaji akaunti. Habari zilizohifadhiwa hubaki kwenye kifaa chake.",
+            "Reading needs no account. Saved stories stay on the reader's own device.",
+        ),
+    ),
+    (
+        "terms",
+        ("Masharti", "Terms"),
+        (
+            "Unaweza kusoma na kusambaza viungo vya habari zetu bila malipo.",
+            "You may read our stories and share links to them free of charge.",
+        ),
+    ),
+]
+PAGE_NOTE: T = (
+    "Haya ni maandishi ya mfano. Maandishi rasmi yataandikwa na mchapishaji.",
+    "This is sample text. The publisher will write the real one.",
+)

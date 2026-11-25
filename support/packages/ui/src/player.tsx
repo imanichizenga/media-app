@@ -1,8 +1,11 @@
 /// <reference path="./hls-light.d.ts" />
 "use client";
-import { Play } from "lucide-react";
+
 import { useEffect, useRef, useState } from "react";
+import { Play } from "./icons";
 import { address, type VideoAsset } from "./media";
+
+// On the website no React runs: web/islands does the same from the data attributes (ADR-0046).
 
 /** Adaptive HLS. Nothing is downloaded before the reader asks: not the stream, not the player. */
 export function VideoPlayer({
@@ -48,6 +51,7 @@ export function VideoPlayer({
     <div
       className="relative mx-auto max-h-[80dvh] overflow-hidden rounded-md bg-black"
       style={{ aspectRatio: ratio }}
+      data-hls={address(mediaBase, video.hls)}
     >
       {/* biome-ignore lint/a11y/useMediaCaption: captions arrive with the caption track (spec §6, M7) */}
       <video
@@ -63,6 +67,7 @@ export function VideoPlayer({
         <button
           type="button"
           onClick={() => setStarted(true)}
+          data-do="video"
           aria-label={playLabel}
           className="absolute inset-0 grid place-items-center bg-black/20 text-white transition-colors hover:bg-black/30"
         >
@@ -71,11 +76,14 @@ export function VideoPlayer({
           </span>
         </button>
       )}
-      {failed && (
-        <p role="alert" className="absolute inset-x-0 bottom-0 bg-black/80 p-3 text-center text-white">
-          {errorLabel}
-        </p>
-      )}
+      <p
+        role="alert"
+        hidden={!failed}
+        data-failed
+        className="absolute inset-x-0 bottom-0 bg-black/80 p-3 text-center text-white [[hidden]]:hidden"
+      >
+        {errorLabel}
+      </p>
     </div>
   );
 }
@@ -129,7 +137,15 @@ export function YouTubeFacade({
     );
   const label = `${playLabel}: ${title || "YouTube"}`;
   return interactive ? (
-    <button type="button" onClick={() => setOpen(true)} aria-label={label} className={box}>
+    <button
+      type="button"
+      onClick={() => setOpen(true)}
+      data-do="youtube"
+      data-youtube={videoId}
+      data-start={start}
+      aria-label={label}
+      className={box}
+    >
       {inner}
     </button>
   ) : (

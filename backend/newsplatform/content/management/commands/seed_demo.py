@@ -22,6 +22,7 @@ from newsplatform.content.models import Listing, Post, PostType, Publication
 from newsplatform.media import services as media
 from newsplatform.media.models import Asset, AssetStatus
 from newsplatform.media.tasks import process
+from newsplatform.pages import services as pages
 from newsplatform.rbac.models import Role, RoleAssignment
 from newsplatform.rbac.services import sync_system_roles
 from newsplatform.seo.paths import slugify
@@ -77,6 +78,7 @@ class Command(BaseCommand):
             self._brand()
             self._posts(options["posts"])
             self._spread_pictures()
+            self._pages()
         finally:
             for task, delay in zip(queued, kept, strict=True):
                 task.delay = delay
@@ -128,6 +130,29 @@ class Command(BaseCommand):
                 }
             },
         )
+
+    def _pages(self) -> None:
+        for key, titles, words in t.PAGES:
+            texts = {
+                locale: {
+                    "title": titles[i],
+                    "summary": words[i],
+                    "body": {
+                        "version": 1,
+                        "blocks": [
+                            {
+                                "type": "paragraph",
+                                "id": f"{key[:4]}{n}".replace("-", "0").ljust(8, "0"),
+                                "content": [{"type": "text", "text": line}],
+                            }
+                            for n, line in enumerate((words[i], t.PAGE_NOTE[i]))
+                        ],
+                    },
+                }
+                for i, locale in enumerate(LOCALES)
+            }
+            pages.save(actor=self.editor, key=key, version=0, texts=texts)
+            pages.publish(actor=self.editor, key=key, number=1)
 
     # ---- sections ------------------------------------------------------------
     def _taxonomy(self) -> None:

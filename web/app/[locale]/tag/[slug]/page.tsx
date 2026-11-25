@@ -7,8 +7,7 @@ import { goneOrMoved } from "@/lib/missing";
 type Props = { params: Promise<{ locale: Locale; slug: string }>; searchParams: Query };
 async function load({ params, searchParams }: Props) {
   const [{ locale, slug }, paging] = await Promise.all([params, pagingOf(searchParams)]);
-  const found =
-    (await orNull(tag(locale, slug, paging))) ?? (await goneOrMoved(at(locale, `/tag/${slug}`)));
+  const found = (await orNull(tag(locale, slug, paging))) ?? (await goneOrMoved(at(locale, `/tag/${slug}`)));
   const other: Locale = locale === "sw" ? "en" : "sw";
   return {
     locale,
@@ -21,5 +20,5 @@ async function load({ params, searchParams }: Props) {
 }
 export const generateMetadata = async (props: Props): Promise<Metadata> => listMeta(await load(props));
 export default async function Page(props: Props) {
-  return ListPage(await load(props));
+  return <ListPage {...(await load(props))} />;
 }
