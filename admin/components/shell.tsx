@@ -4,6 +4,7 @@ import { Command } from "cmdk";
 import {
   Activity,
   BadgeCheck,
+  FileText,
   Fingerprint,
   FolderTree,
   Images,
@@ -40,6 +41,7 @@ export const NAV: Item[] = [
   { href: "/content", key: "content", icon: Newspaper, perm: "content.create" },
   { href: "/media", key: "media", icon: Images, perm: "media.upload" },
   { href: "/taxonomy", key: "taxonomy", icon: FolderTree, perm: "content.create" },
+  { href: "/pages", key: "pages", icon: FileText, perm: "pages.manage" },
   { href: "/integrations", key: "integrations", icon: Plug, perm: "integrations.view" },
   { href: "/approvals", key: "approvals", icon: BadgeCheck, perm: "approvals.decide" },
   { href: "/staff", key: "staff", icon: Users, perm: "staff.view" },

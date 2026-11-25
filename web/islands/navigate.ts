@@ -11,7 +11,7 @@ let skeletons: Promise<Document | null> | null = null;
 let visit = 0;
 let onArrive: () => void = () => {};
 let onLeave: () => void = () => {};
-let here = location.pathname + location.search;
+let here = "";
 
 const keyOf = (u: URL | Location) => u.pathname + u.search;
 const english = () => document.documentElement.lang === "en";
@@ -154,6 +154,7 @@ export const replace = (html: Document) => put(html, false);
 export function begin(arrive: () => void, leave: () => void) {
   onArrive = arrive;
   onLeave = leave;
+  here = keyOf(location);
   if (!page(document)) return;
   history.scrollRestoration = "manual";
   addEventListener("popstate", () => {

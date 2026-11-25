@@ -32,7 +32,8 @@
     "media": "Maktaba ya media",
     "taxonomy": "Makundi na lebo",
     "author": "Ukurasa wangu wa mwandishi",
-    "appearance": "Mwonekano"
+    "appearance": "Mwonekano",
+    "pages": "Kurasa"
   },
   "errors": {
     "unavailable": "Hitilafu imetokea. Tafadhali jaribu tena.",
@@ -361,7 +362,8 @@
     "section": {
       "localization": "Lugha na saa",
       "security": "Usalama",
-      "app": "Programu ya simu"
+      "app": "Programu ya simu",
+      "seo": "Injini za utafutaji"
     },
     "field": {
       "default_locale": "Lugha chaguo-msingi",
@@ -397,7 +399,13 @@
       "pins": "Pini za cheti",
       "android_packages": "Programu za Android zinazofungua viungo",
       "android_certificates": "Vyeti vya kusaini vya Android",
-      "ios_app_ids": "Programu za iOS zinazofungua viungo"
+      "ios_app_ids": "Programu za iOS zinazofungua viungo",
+      "google_verification": "Msimbo wa Google Search Console",
+      "bing_verification": "Msimbo wa Bing Webmaster",
+      "indexnow": "Julisha injini za utafutaji papo hapo (IndexNow)",
+      "indexnow_key": "Ufunguo wa IndexNow (herufi 32 za heksadesimali)",
+      "same_as": "Kurasa za mchapishaji kwingine",
+      "app_banner": "Pendekeza programu kwenye simu"
     },
     "option": {
       "sw": "Kiswahili",
@@ -1056,5 +1064,44 @@
     "history": "Matoleo",
     "current": "La sasa",
     "restore": "Rejesha"
+  },
+  "pages": {
+    "title": "Kurasa",
+    "lead": "Kurasa za sheria na uhariri. Wasomaji huzipata chini ya tovuti zikichapishwa, kwa lugha zote mbili.",
+    "publishedOn": "Toleo la {n} limechapishwa {when}",
+    "draftOnly": "Rasimu, haijachapishwa",
+    "empty": "Hakuna kilichoandikwa bado",
+    "back": "Rudi kwenye kurasa",
+    "save": "Hifadhi",
+    "publish": "Chapisha",
+    "saved": "Imehifadhiwa. Wasomaji bado wanaona toleo lililochapishwa.",
+    "published": "Imechapishwa.",
+    "withdrawn": "Imeondolewa. Wasomaji hawauoni tena ukurasa huu.",
+    "missing": "Bado vinahitajika: {what}.",
+    "pageTitle": "Kichwa",
+    "summary": "Muhtasari",
+    "note": "Maelezo ya badiliko hili",
+    "history": "Matoleo",
+    "revision": "Toleo la {n}",
+    "live": "Limechapishwa",
+    "open": "Fungua kwenye kihariri",
+    "publishThis": "Chapisha hili",
+    "withdraw": "Ondoa",
+    "withdrawLead": "Ukurasa na kiungo chake chini ya tovuti vitaondoka kwa wasomaji. Matoleo yake yatabaki.",
+    "part": {
+      "sw_title": "kichwa cha Kiswahili",
+      "en_title": "kichwa cha Kiingereza",
+      "sw_body": "maandishi ya Kiswahili",
+      "en_body": "maandishi ya Kiingereza",
+      "media": "faili zilizo tayari"
+    },
+    "key": {
+      "about": "Kuhusu sisi",
+      "editorial-policy": "Sera ya uhariri",
+      "corrections": "Masahihisho",
+      "contact": "Wasiliana nasi",
+      "privacy": "Faragha",
+      "terms": "Masharti"
+    }
   }
 }

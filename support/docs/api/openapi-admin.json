@@ -2245,8 +2245,15 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No response body"
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageDetail"
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }

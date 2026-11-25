@@ -518,6 +518,12 @@ importers:
       vitest:
         specifier: 5.1.1
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0))
+      xmllint-wasm:
+        specifier: 5.3.0
+        version: 5.3.0(@types/node@24.19.2)
+      zod:
+        specifier: 4.6.6
+        version: 4.6.6
 
 packages:
 
@@ -3551,6 +3557,12 @@ packages:
     engines: {node: '>=20.11'}
     hasBin: true
 
+  xmllint-wasm@5.3.0:
+    resolution: {integrity: sha512-sEgRXdf2t13eYCFCURmCE6h2hwleEOIS9VL/jOh9JJJnez2YXIooi2Ghm05/JZEPXyPawN8sMASPVZlmh8Sd6A==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+
   yaml-ast-parser@0.0.43:
     resolution: {integrity: sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==}
 
@@ -6430,6 +6442,10 @@ snapshots:
       has-tostringtag: 1.0.2
 
   why-is-node-running@3.2.1: {}
+
+  xmllint-wasm@5.3.0(@types/node@24.19.2):
+    dependencies:
+      '@types/node': 24.19.2
 
   yaml-ast-parser@0.0.43: {}
 

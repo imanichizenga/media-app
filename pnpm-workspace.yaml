@@ -17,6 +17,7 @@ minimumReleaseAgeExclude:
 allowBuilds:
   "@parcel/watcher": false
   "@swc/core": false
+  esbuild: false
 # Build-time dependencies of style-dictionary, lifted to patched majors (GHSA-3g3m-2fjr-6pw4, GHSA-g3hv-75wg-m249).
 # Remove once style-dictionary depends on them itself.
 overrides:

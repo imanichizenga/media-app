@@ -32,7 +32,8 @@
     "media": "Media library",
     "taxonomy": "Categories and tags",
     "author": "My author page",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "pages": "Pages"
   },
   "errors": {
     "unavailable": "Something went wrong. Please try again.",
@@ -361,7 +362,8 @@
     "section": {
       "localization": "Language and time",
       "security": "Security",
-      "app": "Mobile app"
+      "app": "Mobile app",
+      "seo": "Search engines"
     },
     "field": {
       "default_locale": "Default language",
@@ -397,7 +399,13 @@
       "pins": "Certificate pins",
       "android_packages": "Android packages that open links",
       "android_certificates": "Android signing certificates",
-      "ios_app_ids": "iOS app IDs that open links"
+      "ios_app_ids": "iOS app IDs that open links",
+      "google_verification": "Google Search Console code",
+      "bing_verification": "Bing Webmaster code",
+      "indexnow": "Tell search engines at once (IndexNow)",
+      "indexnow_key": "IndexNow key (32 hexadecimal characters)",
+      "same_as": "The publisher's profiles elsewhere",
+      "app_banner": "Offer the app on phones"
     },
     "option": {
       "sw": "Kiswahili",
@@ -1056,5 +1064,44 @@
     "history": "Versions",
     "current": "Current",
     "restore": "Restore"
+  },
+  "pages": {
+    "title": "Pages",
+    "lead": "Legal and editorial pages. Readers find them in the footer once published, in both languages.",
+    "publishedOn": "Revision {n} published {when}",
+    "draftOnly": "Draft, not published",
+    "empty": "Nothing written yet",
+    "back": "Back to pages",
+    "save": "Save",
+    "publish": "Publish",
+    "saved": "Saved. Readers still see the published revision.",
+    "published": "Published.",
+    "withdrawn": "Withdrawn. Readers no longer see this page.",
+    "missing": "Still needed: {what}.",
+    "pageTitle": "Title",
+    "summary": "Summary",
+    "note": "Note about this change",
+    "history": "Revisions",
+    "revision": "Revision {n}",
+    "live": "Published",
+    "open": "Open in the editor",
+    "publishThis": "Publish this one",
+    "withdraw": "Withdraw",
+    "withdrawLead": "The page and its link in the footer disappear for readers. Its revisions stay.",
+    "part": {
+      "sw_title": "Swahili title",
+      "en_title": "English title",
+      "sw_body": "Swahili text",
+      "en_body": "English text",
+      "media": "files that are ready"
+    },
+    "key": {
+      "about": "About us",
+      "editorial-policy": "Editorial policy",
+      "corrections": "Corrections",
+      "contact": "Contact us",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
   }
 }

@@ -51,6 +51,14 @@ const SECTIONS: Record<string, Spec[]> = {
     { name: "android_certificates", kind: "list" },
     { name: "ios_app_ids", kind: "list" },
   ],
+  seo: [
+    { name: "google_verification", kind: "text" },
+    { name: "bing_verification", kind: "text" },
+    { name: "indexnow", kind: "check" },
+    { name: "indexnow_key", kind: "text" },
+    { name: "same_as", kind: "list" },
+    { name: "app_banner", kind: "check" },
+  ],
   security: [
     { name: "idle_timeout_minutes", kind: "number" },
     { name: "absolute_timeout_hours", kind: "number" },

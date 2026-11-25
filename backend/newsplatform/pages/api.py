@@ -147,7 +147,7 @@ class PagePublishView(StaffView):
         services.publish(actor=session_of(request).user, key=key, number=data.validated_data["number"])
         return Response(_detail(services.get(key)))
 
-    @extend_schema(operation_id="pages_withdraw", responses=PageDetailSerializer)
+    @extend_schema(operation_id="pages_withdraw", responses={200: PageDetailSerializer})
     def delete(self, request: Request, key: str) -> Response:
         services.withdraw(actor=session_of(request).user, key=key)
         return Response(_detail(services.get(key)))

@@ -13,6 +13,8 @@ export const keys = {
   staff: ["staff"] as const,
   roles: ["roles"] as const,
   security: ["me", "security"] as const,
+  pages: ["pages"] as const,
+  page: (key: string) => ["pages", key] as const,
   settings: (key: string) => ["settings", key] as const,
 };
 
