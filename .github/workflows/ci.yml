@@ -225,7 +225,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           working-directory: mobile
           script: |
-            flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json --timeout 8m
+            ../support/scripts/mobile-emulator.sh
             ../support/scripts/mobile-perf.sh
       - name: What was measured
         if: always()
