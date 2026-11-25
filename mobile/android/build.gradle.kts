@@ -1,7 +1,9 @@
 allprojects {
     repositories {
-        google()
-        mavenCentral()
+        // Flutter's engine is only in Flutter's own repository. Asking these for it, once per file and build, is what
+        // Maven Central answers with 429 on shared CI machines.
+        google { content { excludeGroup("io.flutter") } }
+        mavenCentral { content { excludeGroup("io.flutter") } }
     }
 }
 
