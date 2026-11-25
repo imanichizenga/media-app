@@ -156,7 +156,7 @@ resource "aws_vpc_security_group_ingress_rule" "alb" {
   ip_protocol       = "tcp"
 }
 resource "aws_vpc_security_group_egress_rule" "alb" {
-  for_each                     = toset(["3001", "8000"])
+  for_each                     = toset(["3000", "3001", "8000"])
   security_group_id            = aws_security_group.alb.id
   description                  = "To tasks"
   referenced_security_group_id = aws_security_group.app.id
@@ -165,7 +165,7 @@ resource "aws_vpc_security_group_egress_rule" "alb" {
   ip_protocol                  = "tcp"
 }
 resource "aws_vpc_security_group_ingress_rule" "app" {
-  for_each                     = toset(["3001", "8000"])
+  for_each                     = toset(["3000", "3001", "8000"])
   security_group_id            = aws_security_group.app.id
   description                  = "From load balancers"
   referenced_security_group_id = aws_security_group.alb.id

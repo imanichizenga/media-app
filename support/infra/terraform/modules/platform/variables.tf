@@ -28,6 +28,10 @@ variable "zone_id" {
 variable "api_host" { type = string }
 variable "admin_host" { type = string }
 variable "media_host" { type = string }
+variable "web_host" {
+  description = "Readers' address of the website. www. of it redirects here."
+  type        = string
+}
 variable "db_instance_class" { type = string }
 variable "db_allocated_gb" { type = number }
 variable "db_multi_az" { type = bool }

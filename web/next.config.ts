@@ -25,7 +25,11 @@ const config: NextConfig = {
   htmlLimitedBots: /.*/,
   images: { unoptimized: true },
   transpilePackages: ["@news/api-client", "@news/content-schema", "@news/i18n", "@news/ui"],
-  headers: async () => [{ source: "/(.*)", headers: security }],
+  headers: async () => [
+    { source: "/(.*)", headers: security },
+    // The content is in the name.
+    { source: "/js/(.*)", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },
+  ],
   // Local and E2E only. In AWS the load balancer and the CDN route these on the same origin.
   rewrites: async () => ({
     beforeFiles: [],

@@ -663,7 +663,9 @@ def test_prune_removes_what_nobody_needs(journalist, store, monkeypatch):
     assert gone.pk
 
 
-@pytest.mark.parametrize("name", ["STORAGE_ENDPOINT_URL", "LOCAL_TRANSCODER", "LOCAL_SCANNER"])
+@pytest.mark.parametrize(
+    "name", ["STORAGE_ENDPOINT_URL", "LOCAL_TRANSCODER", "LOCAL_SCANNER", "LOCAL_WEB_ORIGIN"]
+)
 def test_stand_ins_are_refused_when_deployed(settings, name):
     settings.IS_DEPLOYED = True
     setattr(settings, name, "eicar")

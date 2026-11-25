@@ -1,6 +1,6 @@
 # Generated credentials are ephemeral and written with write-only arguments: they never enter Terraform state.
 ephemeral "random_password" "this" {
-  for_each = toset(["owner", "app", "cache", "broker", "django", "origin"])
+  for_each = toset(["owner", "app", "cache", "broker", "django", "origin", "web", "revalidate"])
   length   = 64
   special  = false
 }
@@ -98,6 +98,8 @@ resource "aws_elasticache_parameter_group" "this" {
   for_each = {
     cache  = [["cluster-enabled", "yes"], ["maxmemory-policy", "volatile-lru"]]
     broker = [["cluster-enabled", "no"], ["maxmemory-policy", "noeviction"]]
+    # The website's answers and single-use numbers: apart from the API's, so neither can read or evict the other's.
+    web = [["cluster-enabled", "no"], ["maxmemory-policy", "volatile-lru"]]
   }
   name   = "${local.prefix}-${each.key}"
   family = "redis7"
@@ -110,7 +112,7 @@ resource "aws_elasticache_parameter_group" "this" {
   }
 }
 resource "aws_elasticache_replication_group" "this" {
-  for_each                   = { cache = var.cache_shards, broker = 1 }
+  for_each                   = { cache = var.cache_shards, broker = 1, web = 1 }
   replication_group_id       = "${local.prefix}-${each.key}"
   description                = "${local.prefix} ${each.key}"
   engine                     = "redis"
@@ -136,6 +138,7 @@ locals {
   redis_host = {
     cache  = aws_elasticache_replication_group.this["cache"].configuration_endpoint_address
     broker = aws_elasticache_replication_group.this["broker"].primary_endpoint_address
+    web    = aws_elasticache_replication_group.this["web"].primary_endpoint_address
   }
   # Values the app reads through PgBouncer on localhost, so DATABASE_URL points at the sidecar.
   secret_values = {
@@ -146,8 +149,11 @@ locals {
     OWNER_DATABASE_URL   = "postgresql://news_owner:${ephemeral.random_password.this["owner"].result}@${aws_db_instance.primary.address}:5432/news"
     REDIS_URL            = "rediss://:${ephemeral.random_password.this["cache"].result}@${local.redis_host.cache}:6379/0"
     BROKER_URL           = "rediss://:${ephemeral.random_password.this["broker"].result}@${local.redis_host.broker}:6379/0?ssl_cert_reqs=required"
+    WEB_REDIS_URL        = "rediss://:${ephemeral.random_password.this["web"].result}@${local.redis_host.web}:6379/0"
+    # Also entered, once, in Admin → Integrations → Website and CDN.
+    REVALIDATE_SECRET = ephemeral.random_password.this["revalidate"].result
   }
-  secret_names = toset(["DJANGO_SECRET_KEY", "ORIGIN_VERIFY_SECRET", "APP_DB_PASSWORD", "DATABASE_URL", "OWNER_DATABASE_URL", "REDIS_URL", "BROKER_URL"])
+  secret_names = toset(["DJANGO_SECRET_KEY", "ORIGIN_VERIFY_SECRET", "APP_DB_PASSWORD", "DATABASE_URL", "OWNER_DATABASE_URL", "REDIS_URL", "BROKER_URL", "WEB_REDIS_URL", "REVALIDATE_SECRET"])
 }
 resource "aws_secretsmanager_secret" "this" {
   for_each                = local.secret_names

@@ -47,6 +47,7 @@ module "platform" {
   api_host             = "api.${var.domain}"
   admin_host           = "admin.${var.domain}"
   media_host           = "media.${var.domain}"
+  web_host             = var.domain
   az_count             = 2
   nat_per_az           = false
   db_instance_class    = "db.t4g.large"
@@ -64,6 +65,7 @@ module "platform" {
     api-public      = { cpu = 1024, memory = 2048, min = 1, max = 4 }
     api-admin       = { cpu = 512, memory = 1024, min = 1, max = 4 }
     admin-web       = { cpu = 512, memory = 1024, min = 1, max = 4 }
+    web             = { cpu = 1024, memory = 2048, min = 1, max = 4 }
     ws-admin        = { cpu = 256, memory = 1024, min = 1, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 1, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 1, max = 10 }

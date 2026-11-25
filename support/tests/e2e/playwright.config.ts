@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 const api = "cd ../../../backend &&";
-const env = {
+export const env = {
   ENVIRONMENT: "dev",
   API_SURFACE: "admin",
   DJANGO_SETTINGS_MODULE: "config.settings.dev",
@@ -15,6 +15,7 @@ const env = {
   STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
   LOCAL_TRANSCODER: "1",
   LOCAL_SCANNER: "eicar",
+  LOCAL_WEB_ORIGIN: process.env.WEB_E2E ? "http://localhost:3000" : "",
 };
 export default defineConfig({
   testDir: ".",

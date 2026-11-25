@@ -21,6 +21,7 @@ variables {
   api_host          = "api.example.com"
   admin_host        = "admin.example.com"
   media_host        = "media.example.com"
+  web_host          = "example.com"
   nat_per_az        = true
   db_instance_class = "db.r8g.xlarge"
   db_allocated_gb   = 200
@@ -32,6 +33,7 @@ variables {
     api-public      = { cpu = 1024, memory = 2048, min = 3, max = 60 }
     api-admin       = { cpu = 512, memory = 1024, min = 3, max = 4 }
     admin-web       = { cpu = 512, memory = 1024, min = 3, max = 4 }
+    web             = { cpu = 1024, memory = 2048, min = 3, max = 40 }
     ws-admin        = { cpu = 256, memory = 1024, min = 2, max = 4 }
     worker-critical = { cpu = 512, memory = 1024, min = 3, max = 10 }
     worker-default  = { cpu = 512, memory = 1024, min = 3, max = 10 }
@@ -155,5 +157,57 @@ run "the_media_worker_is_confined" {
   assert {
     condition     = !anytrue([for a in flatten([for s in local.task_policies.admin : s.Action]) : startswith(a, "s3:Get") || startswith(a, "s3:Delete")])
     error_message = "The console signs uploads. It does not read or delete media."
+  }
+}
+run "the_website_is_kept_by_the_cdn_and_knows_no_reader" {
+  command = plan
+  assert {
+    condition     = one(one(aws_cloudfront_cache_policy.web.parameters_in_cache_key_and_forwarded_to_origin).cookies_config).cookie_behavior == "none" && one(aws_cloudfront_origin_request_policy.web.cookies_config).cookie_behavior == "none"
+    error_message = "No cookie may reach the website or split its cache."
+  }
+  assert {
+    condition     = one(one(one(aws_cloudfront_cache_policy.web.parameters_in_cache_key_and_forwarded_to_origin).query_strings_config).query_strings).items == toset(["cursor", "v"])
+    error_message = "Tracking parameters must not make new copies of a page."
+  }
+  assert {
+    condition     = one(aws_cloudfront_distribution.web.default_cache_behavior).allowed_methods == toset(["GET", "HEAD"]) && one(aws_cloudfront_distribution.web.ordered_cache_behavior).path_pattern == "/api/*" && contains(one(aws_cloudfront_distribution.web.ordered_cache_behavior).allowed_methods, "POST")
+    error_message = "Pages are read only; the signed order is never cached."
+  }
+  assert {
+    condition     = aws_cloudfront_distribution.web.aliases == toset(["example.com", "www.example.com"]) && strcontains(aws_cloudfront_function.www.code, "statusCode: 301")
+    error_message = "One address: www redirects."
+  }
+  assert {
+    condition     = aws_lb_listener_rule.web_theme.priority < aws_lb_listener_rule.web.priority
+    error_message = "The theme comes from the API, before the website answers for the rest."
+  }
+}
+run "the_website_holds_no_key_but_its_own" {
+  command = plan
+  assert {
+    condition     = local.definitions.web.role == "site" && !contains(keys(local.task_policies), "site")
+    error_message = "The website needs no AWS permissions."
+  }
+  assert {
+    condition     = length(setintersection(toset(local.web_secrets), toset(local.runtime_secrets))) == 0
+    error_message = "The website shares no secret with the API."
+  }
+  assert {
+    condition     = aws_elasticache_replication_group.this["web"].num_node_groups == 1 && aws_elasticache_replication_group.this["web"].transit_encryption_enabled
+    error_message = "Its cache is its own, encrypted, and not a cluster (its client is not)."
+  }
+  assert {
+    condition     = aws_route53_zone.internal.name == "api.example.com" && one(aws_route53_zone.internal.vpc) != null
+    error_message = "The website reads the API inside the network, past no CDN."
+  }
+}
+run "only_production_is_indexed" {
+  command = plan
+  variables {
+    environment = "staging"
+  }
+  assert {
+    condition     = local.web_env.SITE_CLOSED == "1"
+    error_message = "Search engines must not see staging."
   }
 }

@@ -54,6 +54,8 @@ jobs:
       SECURITY_GROUP: ${{ vars.APP_SECURITY_GROUP }}
       API_HOST: ${{ vars.API_HOST }}
       ADMIN_HOST: ${{ vars.ADMIN_HOST }}
+      WEB_HOST: ${{ vars.WEB_HOST }}
+      WEB_DISTRIBUTION: ${{ vars.WEB_DISTRIBUTION }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }
@@ -81,6 +83,16 @@ jobs:
             provenance: true,
             sbom: true,
             tags: "${{ env.REGISTRY }}/admin:${{ env.TAG }}",
+          }
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          {
+            context: .,
+            file: web/Dockerfile,
+            push: true,
+            provenance: true,
+            sbom: true,
+            tags: "${{ env.REGISTRY }}/web:${{ env.TAG }}",
           }
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:

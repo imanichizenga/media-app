@@ -98,6 +98,8 @@ resource "aws_iam_role_policy" "deploy" {
         Resource  = ["arn:aws:iam::${local.account}:role/${local.prefix}-task-*", "arn:aws:iam::${local.account}:role/${local.prefix}-exec-*"]
         Condition = { StringEquals = { "iam:PassedToService" = "ecs-tasks.amazonaws.com" } }
       },
+      # A release names its own stylesheet and script, so the CDN starts again with it. Ids are not known here.
+      { Effect = "Allow", Action = "cloudfront:CreateInvalidation", Resource = "arn:aws:cloudfront::${local.account}:distribution/*" },
     ]
   })
 }

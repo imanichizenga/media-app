@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "this" {
-  for_each             = toset(["api", "admin", "pgbouncer"])
+  for_each             = toset(["api", "admin", "web", "pgbouncer"])
   name                 = "${local.prefix}/${each.key}"
   image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {
@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "ecs" {
   }
 }
 resource "aws_iam_role" "execution" {
-  for_each           = toset(["runtime", "migrate"])
+  for_each           = toset(["runtime", "migrate", "web"])
   name               = "${local.prefix}-exec-${each.key}"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 }
@@ -70,14 +70,16 @@ resource "aws_iam_role_policy" "execution" {
       {
         Effect = "Allow", Action = "secretsmanager:GetSecretValue"
         # Only the migration task can read the schema owner's credentials.
-        Resource = [for n, s in aws_secretsmanager_secret.this : s.arn if each.key == "migrate" || n != "OWNER_DATABASE_URL"]
+        Resource = [
+          for n, s in aws_secretsmanager_secret.this : s.arn if(each.key == "web") == contains(local.web_secrets, n) && (each.key == "migrate" || n != "OWNER_DATABASE_URL")
+        ]
       },
       { Effect = "Allow", Action = "kms:Decrypt", Resource = aws_kms_key.data.arn },
     ]
   })
 }
 resource "aws_iam_role" "task" {
-  for_each           = toset(["public", "admin", "realtime", "worker", "media", "web", "migrate"])
+  for_each           = toset(["public", "admin", "realtime", "worker", "media", "web", "site", "migrate"])
   name               = "${local.prefix}-task-${each.key}"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
 }
@@ -101,7 +103,7 @@ locals {
     { Effect = "Allow", Action = ["s3:PutObject", "s3:AbortMultipartUpload", "s3:ListMultipartUploadParts"], Resource = "${aws_s3_bucket.this["media"].arn}/originals/*" },
   ]
   policy_purge = [
-    { Effect = "Allow", Action = ["cloudfront:CreateInvalidation"], Resource = [for d in aws_cloudfront_distribution.app : d.arn] },
+    { Effect = "Allow", Action = ["cloudfront:CreateInvalidation"], Resource = concat([for d in aws_cloudfront_distribution.app : d.arn], [aws_cloudfront_distribution.web.arn]) },
   ]
   policy_audit = [
     # No delete and no retention bypass: the anchor can only ever be added to. DeleteObjectVersion stays denied.
@@ -144,6 +146,16 @@ locals {
     API_SURFACE            = "public"
     METRICS_NAMESPACE      = local.prefix
   }
+  # The website's, and only its: it holds no key to the database, the broker or the API's cache.
+  web_secrets = ["WEB_REDIS_URL", "REVALIDATE_SECRET"]
+  web_env = {
+    PORT         = "3000"
+    HOSTNAME     = "0.0.0.0"
+    SITE_URL     = "https://${var.web_host}"
+    API_BASE_URL = "https://${var.api_host}"
+    MEDIA_ORIGIN = "https://${var.media_host}"
+    SITE_CLOSED  = var.environment == "prod" ? "" : "1"
+  }
   runtime_secrets = ["DJANGO_SECRET_KEY", "ORIGIN_VERIFY_SECRET", "DATABASE_URL", "REDIS_URL", "BROKER_URL"]
   uvicorn         = ["gunicorn", "config.asgi:application", "-k", "uvicorn_worker.UvicornWorker", "-b", "0.0.0.0:8000", "--access-logfile", "-"]
   # Staff sockets (ADR-0020). Pings keep idle sockets inside the load balancer's 60-second timeout.
@@ -160,9 +172,11 @@ locals {
     worker-media    = { image = "api", role = "media", port = 0, env = {}, command = concat(local.celery, ["worker", "-Q", join(",", concat(["ops"], local.worker_queues["worker-media"])), "-c", "2", "-l", "INFO"]), tg = null }
     beat            = { image = "api", role = "worker", port = 0, env = {}, command = concat(local.celery, ["beat", "-l", "INFO", "-s", "/tmp/celerybeat"]), tg = null }
     admin-web       = { image = "admin", role = "web", port = 3001, env = {}, command = ["admin/server.js"], tg = "admin-web" }
+    web             = { image = "web", role = "site", port = 3000, env = local.web_env, command = ["web/server.js"], tg = "web" }
     migrate         = { image = "api", role = "migrate", port = 0, env = { APP_DB_USER = "news_app", DATABASE_SSLMODE = "verify-full" }, command = ["python", "manage.py", "release"], tg = null }
   }
-  deployed = { for k, d in local.definitions : k => d if k != "migrate" }
+  target_groups = merge(aws_lb_target_group.this, { web = aws_lb_target_group.web })
+  deployed      = { for k, d in local.definitions : k => d if k != "migrate" }
 }
 resource "aws_ecs_task_definition" "this" {
   for_each                 = local.definitions
@@ -171,7 +185,7 @@ resource "aws_ecs_task_definition" "this" {
   network_mode             = "awsvpc"
   cpu                      = try(var.services[each.key].cpu, 512)
   memory                   = try(var.services[each.key].memory, 1024)
-  execution_role_arn       = aws_iam_role.execution[each.key == "migrate" ? "migrate" : "runtime"].arn
+  execution_role_arn       = aws_iam_role.execution[contains(["migrate", "web"], each.key) ? each.key : "runtime"].arn
   task_role_arn            = aws_iam_role.task[each.value.role].arn
   runtime_platform {
     cpu_architecture        = "ARM64"
@@ -194,8 +208,11 @@ resource "aws_ecs_task_definition" "this" {
         { name = "PORT", value = "3001" }, { name = "HOSTNAME", value = "0.0.0.0" }, { name = "SENTRY_DSN", value = var.sentry_browser_dsn },
         { name = "MEDIA_ORIGIN", value = "https://${var.media_host}" },
         { name = "UPLOAD_ORIGIN", value = "https://${aws_s3_bucket.this["media"].bucket_regional_domain_name}" },
-      ] : [for k, v in merge(local.bootstrap_env, each.value.env) : { name = k, value = v }]
-      secrets = each.value.image == "admin" ? [] : each.key == "migrate" ? concat(
+      ] : [for k, v in each.key == "web" ? each.value.env : merge(local.bootstrap_env, each.value.env) : { name = k, value = v }]
+      secrets = each.value.image == "admin" ? [] : each.key == "web" ? [
+        { name = "REDIS_URL", valueFrom = aws_secretsmanager_secret.this["WEB_REDIS_URL"].arn },
+        { name = "REVALIDATE_SECRET", valueFrom = aws_secretsmanager_secret.this["REVALIDATE_SECRET"].arn },
+        ] : each.key == "migrate" ? concat(
         [for n in ["DJANGO_SECRET_KEY", "REDIS_URL", "BROKER_URL", "APP_DB_PASSWORD"] : { name = n, valueFrom = aws_secretsmanager_secret.this[n].arn }],
         [{ name = "DATABASE_URL", valueFrom = aws_secretsmanager_secret.this["OWNER_DATABASE_URL"].arn }],
       ) : [for n in local.runtime_secrets : { name = n, valueFrom = aws_secretsmanager_secret.this[n].arn }]
@@ -240,12 +257,12 @@ resource "aws_ecs_service" "this" {
   dynamic "load_balancer" {
     for_each = each.value.tg == null ? [] : [each.value.tg]
     content {
-      target_group_arn = aws_lb_target_group.this[load_balancer.value].arn
+      target_group_arn = local.target_groups[load_balancer.value].arn
       container_name   = "app"
       container_port   = each.value.port
     }
   }
-  depends_on = [aws_lb_listener.this, aws_lb_listener_rule.admin_api, aws_lb_listener_rule.admin_ws]
+  depends_on = [aws_lb_listener.this, aws_lb_listener_rule.admin_api, aws_lb_listener_rule.admin_ws, aws_lb_listener_rule.web]
   lifecycle {
     ignore_changes = [task_definition, desired_count] # owned by CI/CD and autoscaling
   }
@@ -288,7 +305,7 @@ resource "aws_appautoscaling_policy" "requests" {
     scale_out_cooldown = 30
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
-      resource_label         = "${aws_lb.this[each.key == "api-public" ? "api" : "admin"].arn_suffix}/${aws_lb_target_group.this[each.value.tg].arn_suffix}"
+      resource_label         = "${aws_lb.this[contains(["api-public", "web"], each.key) ? "api" : "admin"].arn_suffix}/${local.target_groups[each.value.tg].arn_suffix}"
     }
   }
 }

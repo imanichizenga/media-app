@@ -296,6 +296,7 @@ jobs:
         include:
           - { name: api, context: backend, file: backend/Dockerfile }
           - { name: admin, context: ., file: admin/Dockerfile }
+          - { name: web, context: ., file: web/Dockerfile }
           - {
               name: pgbouncer,
               context: support/infra/docker/pgbouncer,

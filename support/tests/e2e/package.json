@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "e2e": "playwright test",
+    "web": "WEB_E2E=1 playwright test --config playwright.web.config.ts",
     "screens": "SCREENS=${SCREENS:-m1} playwright test && node contact-sheet.mjs ${SCREENS:-m1}"
   },
   "devDependencies": {

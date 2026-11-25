@@ -113,6 +113,9 @@ AWS_ENDPOINT_URL = env_str("AWS_ENDPOINT_URL", "")
 STORAGE_ENDPOINT_URL = env_str("STORAGE_ENDPOINT_URL", "")  # SeaweedFS
 LOCAL_TRANSCODER = env_bool("LOCAL_TRANSCODER")  # FFmpeg in place of MediaConvert
 LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
+LOCAL_WEB_ORIGIN = env_str(
+    "LOCAL_WEB_ORIGIN", ""
+)  # a website on this machine, told like the real one (ADR-0046)
 
 # Staff realm
 ADMIN_ORIGIN = env_str("ADMIN_ORIGIN", None if IS_DEPLOYED else "http://localhost:3001")

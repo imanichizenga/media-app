@@ -1,7 +1,7 @@
 resource "aws_acm_certificate" "edge" {
   provider                  = aws.us_east_1
   domain_name               = var.api_host
-  subject_alternative_names = [var.admin_host, var.media_host]
+  subject_alternative_names = [var.admin_host, var.media_host, var.web_host, "www.${var.web_host}"]
   validation_method         = "DNS"
   lifecycle {
     create_before_destroy = true
@@ -9,7 +9,7 @@ resource "aws_acm_certificate" "edge" {
 }
 resource "aws_acm_certificate" "origin" {
   domain_name               = var.api_host
-  subject_alternative_names = [var.admin_host]
+  subject_alternative_names = [var.admin_host, var.web_host]
   validation_method         = "DNS"
   lifecycle {
     create_before_destroy = true
@@ -17,12 +17,12 @@ resource "aws_acm_certificate" "origin" {
 }
 # Both certificates share validation records, which depend only on the hostname and account.
 locals {
-  validation = { for host in [var.api_host, var.admin_host, var.media_host] : host => one([
+  validation = { for host in [var.api_host, var.admin_host, var.media_host, var.web_host, "www.${var.web_host}"] : host => one([
     for o in aws_acm_certificate.edge.domain_validation_options : o if o.domain_name == host
   ]) }
 }
 resource "aws_route53_record" "validation" {
-  for_each        = toset([var.api_host, var.admin_host, var.media_host])
+  for_each        = toset([var.api_host, var.admin_host, var.media_host, var.web_host, "www.${var.web_host}"])
   zone_id         = var.zone_id
   name            = local.validation[each.key].resource_record_name
   type            = local.validation[each.key].resource_record_type
@@ -37,12 +37,12 @@ resource "aws_acm_certificate_validation" "edge" {
 }
 resource "aws_acm_certificate_validation" "origin" {
   certificate_arn         = aws_acm_certificate.origin.arn
-  validation_record_fqdns = [for host in [var.api_host, var.admin_host] : aws_route53_record.validation[host].fqdn]
+  validation_record_fqdns = [for host in [var.api_host, var.admin_host, var.web_host] : aws_route53_record.validation[host].fqdn]
 }
 
 # ---- WAF ----
 locals {
-  waf_rate = { api = 2000, admin = 600, media = 10000 }
+  waf_rate = { api = 2000, admin = 600, media = 10000, web = 3000 }
 }
 resource "aws_wafv2_ip_set" "admin" {
   for_each           = { IPV4 = ["0.0.0.0/1", "128.0.0.0/1"], IPV6 = ["::/1", "8000::/1"] }

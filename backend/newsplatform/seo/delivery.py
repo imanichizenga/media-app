@@ -7,7 +7,9 @@ import time
 import uuid
 from typing import Any
 
+import httpx
 import structlog
+from django.conf import settings
 
 from newsplatform.common.http import SafeResponse, fetch
 from newsplatform.integrations.base import guarded_call
@@ -28,6 +30,9 @@ def payload(tags: list[str], pages: list[str]) -> dict[str, Any]:
 def purge(tags: list[str], pages: list[str]) -> None:
     from newsplatform.integrations.providers.web import WebConfig, invalidate
 
+    if settings.LOCAL_WEB_ORIGIN:
+        _tell_local(payload(tags, pages))
+        return
     config = get_active("web", WebConfig)
     if config is None:
         log.info("purge_skipped", reason="not_configured", tags=len(tags))
@@ -40,6 +45,21 @@ def purge(tags: list[str], pages: list[str]) -> None:
     finally:
         with guarded_call("web", "cdn.purge"):
             invalidate(config, tags, pages)
+
+
+# The website's own default outside production (web/lib/env.ts).
+LOCAL_SECRET = "local-dev-only-local-dev-only-local"  # noqa: S105
+
+
+def _tell_local(message: dict[str, Any]) -> None:
+    """A website on this machine, which the safe client rightly refuses to reach. Refused when deployed."""
+    now, body = int(time.time()), json.dumps(message, separators=(",", ":")).encode()
+    httpx.post(
+        f"{settings.LOCAL_WEB_ORIGIN}/api/revalidate",
+        content=body,
+        headers={"x-timestamp": str(now), "x-signature": sign(LOCAL_SECRET, now, body)},
+        timeout=5,
+    ).raise_for_status()
 
 
 def post_signed(config: Any, message: dict[str, Any], now: int) -> SafeResponse:

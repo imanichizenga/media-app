@@ -140,7 +140,19 @@ def test_update_is_public_and_audited(admin_api, client):
 def test_public_config_exposes_no_security_settings(db):
     from newsplatform.site_config.services import public_config
 
-    assert set(public_config()) == {"version", "media_base_url", "identity", "theme", "localization"}
+    config = public_config()
+    assert set(config) == {
+        "version",
+        "media_base_url",
+        "identity",
+        "theme",
+        "localization",
+        "seo",
+        "apps",
+    }
+    # What a page's own source shows anyway.
+    assert set(config["seo"]) == {"google_verification", "bing_verification", "indexnow_key", "same_as"}
+    assert set(config["apps"]) == {"android", "ios"}
 
 
 def test_admin_cannot_touch_security(admin_api):

@@ -2,9 +2,9 @@
 # Release order: migrate (expand only) → roll services → smoke test. ECS rolls each service back on failed health
 # checks; if anything fails after that, every service returns to the revision it ran before.
 set -euo pipefail
-: "${ENVIRONMENT:?}" "${REGISTRY:?}" "${TAG:?}" "${SUBNETS:?}" "${SECURITY_GROUP:?}" "${API_HOST:?}" "${ADMIN_HOST:?}"
+: "${ENVIRONMENT:?}" "${REGISTRY:?}" "${TAG:?}" "${SUBNETS:?}" "${SECURITY_GROUP:?}" "${API_HOST:?}" "${ADMIN_HOST:?}" "${WEB_HOST:?}" "${WEB_DISTRIBUTION:?}"
 prefix="news-$ENVIRONMENT"
-services=(worker-critical worker-default worker-media beat api-public api-admin ws-admin admin-web)
+services=(worker-critical worker-default worker-media beat api-public api-admin ws-admin admin-web web)
 network="awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SECURITY_GROUP],assignPublicIp=DISABLED}"
 
 # New revision of a family with every image of ours moved to $TAG; prints its ARN.
@@ -50,6 +50,9 @@ for s in "${services[@]}"; do
   [ "$now" = "${target[$s]}" ] || { echo "$s was rolled back by its circuit breaker"; false; }
 done
 
+# Pages name the stylesheet and script of their release: the CDN starts again with the new ones.
+aws cloudfront create-invalidation --distribution-id "$WEB_DISTRIBUTION" --paths '/*' --query Invalidation.Id --output text
+
 curl -fsS --retry 5 --retry-all-errors "https://$API_HOST/health/ready" > /dev/null
 curl -fsS --retry 5 --retry-all-errors "https://$API_HOST/api/v1/site-config" > /dev/null
 curl -fsS --retry 5 --retry-all-errors "https://$ADMIN_HOST/healthz" > /dev/null
@@ -61,4 +64,8 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "https://$API_HOST/api/v1/auth/ses
 code=$(curl -s -o /dev/null -w '%{http_code}' --http1.1 -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' \
   -H 'Sec-WebSocket-Key: AAAAAAAAAAAAAAAAAAAAAA==' "https://$ADMIN_HOST/ws/v1/staff")
 [ "$code" = "403" ] || { echo "The staff socket answered $code, expected 403"; false; }
+curl -fsS --retry 5 --retry-all-errors "https://$WEB_HOST/" | grep -q 'id="page"'
+curl -fsS --retry 5 --retry-all-errors "https://$WEB_HOST/robots.txt" > /dev/null
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "https://$WEB_HOST/api/revalidate" -d '{}')
+[ "$code" = "401" ] || { echo "The website took an unsigned order ($code)"; false; }
 echo "Deployed $TAG to $ENVIRONMENT"
