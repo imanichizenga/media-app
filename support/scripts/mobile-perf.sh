@@ -11,7 +11,8 @@ echo "== building the app"; date -u
 timeout 1200 flutter build apk "${flags[@]}" --target-platform android-x64 --target lib/main.dart
 cp build/app/outputs/flutter-apk/app-dev-profile.apk build/app-profile.apk
 echo "== frames"; date -u
-timeout 1200 flutter drive "${flags[@]}" --driver test_driver/perf_driver.dart --target test_driver/perf.dart --keep-app-running
+# The test connects to the VM service from the device; the debug proxy (DDS) listens on the computer only.
+timeout 1200 flutter drive "${flags[@]}" --no-dds --driver test_driver/perf_driver.dart --target test_driver/perf.dart --keep-app-running
 echo "== cold starts"; date -u
 # The app itself over the measuring one; its storage stays.
 adb shell am force-stop "$app"
