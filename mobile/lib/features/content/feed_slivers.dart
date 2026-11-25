@@ -39,6 +39,8 @@ class StorySliver extends StatelessWidget {
     };
     if (columns > 1) {
       final rows = (stories.length / columns).ceil();
+      // One anatomy in a row, or nothing lines up.
+      final videos = stories.every((s) => s?.isVideo ?? false);
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
         sliver: SliverList.builder(
@@ -52,7 +54,7 @@ class StorySliver extends StatelessWidget {
                   if (i > r * columns) const SizedBox(width: NewsSpace.s6),
                   Expanded(
                     child: i < stories.length
-                        ? (stories[i]?.isVideo ?? false)
+                        ? videos
                               ? VideoCard(stories[i], open: open, place: place)
                               : StandardCard(stories[i], open: open, place: place, large: false)
                         : const SizedBox.shrink(),

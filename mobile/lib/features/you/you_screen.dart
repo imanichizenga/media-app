@@ -77,122 +77,128 @@ class _YouScreenState extends ConsumerState<YouScreen> {
           controller: _scroll,
           padding: EdgeInsets.zero,
           children: [
-            BigTitle(s.navYou),
             Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: articleWidth),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _Group(
-                        title: s.language,
-                        icon: NewsIcons.languages,
-                        child: Segmented(
-                          labels: const ['Kiswahili', 'English'],
-                          at: settings.locale == 'sw' ? 0 : 1,
-                          onChanged: (i) => change((x) => x.copyWith(locale: i == 0 ? 'sw' : 'en')),
-                        ),
-                      ),
-                      _Group(
-                        title: s.appearance,
-                        icon: NewsIcons.sunMoon,
-                        child: Segmented(
-                          labels: [s.schemeSystem, s.schemeLight, s.schemeDark],
-                          at: settings.scheme.index,
-                          onChanged: (i) =>
-                              change((x) => x.copyWith(scheme: SchemeChoice.values[i])),
-                        ),
-                      ),
-                      _Group(
-                        title: s.textSize,
-                        icon: NewsIcons.aLargeSmall,
-                        child: const TextSizeControl(title: false),
-                      ),
-                      if (nav.isNotEmpty)
-                        _Group(
-                          title: s.topics,
-                          icon: NewsIcons.layers,
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              for (final n in nav)
-                                NewsChip(
-                                  n.name,
-                                  toggles: true,
-                                  on: settings.topics.contains(n.id),
-                                  icon: categoryIcons[n.icon],
-                                  onTap: () => change(
-                                    (x) => x.copyWith(
-                                      topics: x.topics.contains(n.id)
-                                          ? ({...x.topics}..remove(n.id))
-                                          : {...x.topics, n.id},
-                                    ),
-                                  ),
-                                ),
-                            ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BigTitle(s.navYou),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _Group(
+                            title: s.language,
+                            icon: NewsIcons.languages,
+                            child: Segmented(
+                              labels: const ['Kiswahili', 'English'],
+                              at: settings.locale == 'sw' ? 0 : 1,
+                              onChanged: (i) =>
+                                  change((x) => x.copyWith(locale: i == 0 ? 'sw' : 'en')),
+                            ),
                           ),
-                        ),
-                      _Group(
-                        title: s.dataSaver,
-                        icon: NewsIcons.gauge,
-                        trailing: NewsSwitch(
-                          label: s.dataSaver,
-                          on: settings.dataSaver,
-                          onChanged: (v) => change((x) => x.copyWith(dataSaver: v)),
-                        ),
-                        child: Text(
-                          s.dataSaverBody,
-                          style: context.type.bodyM.copyWith(color: c.textSecondary),
-                        ),
-                      ),
-                      _Links([
-                        (
-                          NewsIcons.trash2,
-                          s.clearCache,
-                          () async {
-                            final messenger = ScaffoldMessenger.of(context);
-                            await seenPictures.emptyCache();
-                            await ref.read(databaseProvider).clearCache();
-                            messenger.showSnackBar(SnackBar(content: Text(s.cacheCleared)));
-                          },
-                        ),
-                      ]),
-                      if (pages.isNotEmpty)
-                        _Links([
-                          for (final (icon, name, url) in pages)
-                            (
-                              icon,
-                              name,
-                              () => unawaited(
-                                launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView),
+                          _Group(
+                            title: s.appearance,
+                            icon: NewsIcons.sunMoon,
+                            child: Segmented(
+                              labels: [s.schemeSystem, s.schemeLight, s.schemeDark],
+                              at: settings.scheme.index,
+                              onChanged: (i) =>
+                                  change((x) => x.copyWith(scheme: SchemeChoice.values[i])),
+                            ),
+                          ),
+                          _Group(
+                            title: s.textSize,
+                            icon: NewsIcons.aLargeSmall,
+                            child: const TextSizeControl(title: false),
+                          ),
+                          if (nav.isNotEmpty)
+                            _Group(
+                              title: s.topics,
+                              icon: NewsIcons.layers,
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  for (final n in nav)
+                                    NewsChip(
+                                      n.name,
+                                      toggles: true,
+                                      on: settings.topics.contains(n.id),
+                                      icon: categoryIcons[n.icon],
+                                      onTap: () => change(
+                                        (x) => x.copyWith(
+                                          topics: x.topics.contains(n.id)
+                                              ? ({...x.topics}..remove(n.id))
+                                              : {...x.topics, n.id},
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
-                        ]),
-                      _Links([
-                        (
-                          NewsIcons.fileText,
-                          s.licences,
-                          () => showLicensePage(
-                            context: context,
-                            applicationName: brand.name,
-                            applicationVersion: info.version,
+                          _Group(
+                            title: s.dataSaver,
+                            icon: NewsIcons.gauge,
+                            trailing: NewsSwitch(
+                              label: s.dataSaver,
+                              on: settings.dataSaver,
+                              onChanged: (v) => change((x) => x.copyWith(dataSaver: v)),
+                            ),
+                            child: Text(
+                              s.dataSaverBody,
+                              style: context.type.bodyM.copyWith(color: c.textSecondary),
+                            ),
                           ),
-                        ),
-                      ]),
-                      const SizedBox(height: 24),
-                      const Center(child: Wordmark(size: 22, onDark: null)),
-                      const SizedBox(height: 4),
-                      Text(
-                        s.version('${info.version} (${info.buildNumber})'),
-                        textAlign: TextAlign.center,
-                        style: context.type.caption.copyWith(color: c.textTertiary),
+                          _Links([
+                            (
+                              NewsIcons.trash2,
+                              s.clearCache,
+                              () async {
+                                final messenger = ScaffoldMessenger.of(context);
+                                await seenPictures.emptyCache();
+                                await ref.read(databaseProvider).clearCache();
+                                messenger.showSnackBar(SnackBar(content: Text(s.cacheCleared)));
+                              },
+                            ),
+                          ]),
+                          if (pages.isNotEmpty)
+                            _Links([
+                              for (final (icon, name, url) in pages)
+                                (
+                                  icon,
+                                  name,
+                                  () => unawaited(
+                                    launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView),
+                                  ),
+                                ),
+                            ]),
+                          _Links([
+                            (
+                              NewsIcons.fileText,
+                              s.licences,
+                              () => showLicensePage(
+                                context: context,
+                                applicationName: brand.name,
+                                applicationVersion: info.version,
+                              ),
+                            ),
+                          ]),
+                          const SizedBox(height: 24),
+                          const Center(child: Wordmark(size: 22, onDark: null)),
+                          const SizedBox(height: 4),
+                          Text(
+                            s.version('${info.version} (${info.buildNumber})'),
+                            textAlign: TextAlign.center,
+                            style: context.type.caption.copyWith(color: c.textTertiary),
+                          ),
+                          const SizedBox(height: 48),
+                        ],
                       ),
-                      const SizedBox(height: 48),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

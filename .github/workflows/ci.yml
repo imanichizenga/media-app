@@ -144,7 +144,7 @@ jobs:
           dart run build_runner build
           dart format lib > /dev/null
           git diff --exit-code -- lib
-      - run: dart format --output=none --set-exit-if-changed lib test integration_test
+      - run: dart format --output=none --set-exit-if-changed lib test integration_test test_driver
       - run: dart analyze --fatal-infos
       - name: Unit, widget and golden tests
         run: flutter test
@@ -170,7 +170,7 @@ jobs:
           }
   mobile-android:
     runs-on: ubuntu-24.04
-    timeout-minutes: 50
+    timeout-minutes: 75
     services: *services
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -224,7 +224,12 @@ jobs:
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           working-directory: mobile
-          script: flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json --timeout 8m
+          script: |
+            flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json --timeout 8m
+            ../support/scripts/mobile-perf.sh
+      - name: What was measured
+        if: always()
+        run: cat mobile/build/perf.md >> "$GITHUB_STEP_SUMMARY" || true
   mobile-ios:
     runs-on: macos-26
     timeout-minutes: 60

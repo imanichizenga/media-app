@@ -381,7 +381,13 @@ class StandardCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StoryFrame(story, ratio: ratio, heroTag: tag),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              StoryFrame(story, ratio: ratio, heroTag: tag),
+              if ((story?.isVideo ?? false) && !story!.isSensitive) const PlayDisc(),
+            ],
+          ),
           const SizedBox(height: NewsSpace.s3),
           Kicker(story, quiet: true),
           const SizedBox(height: NewsSpace.s1),
@@ -609,6 +615,25 @@ class LiveBlogCard extends StatelessWidget {
   }
 }
 
+/// Says that a picture plays.
+class PlayDisc extends StatelessWidget {
+  const PlayDisc({super.key, this.large = false});
+
+  final bool large;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: large ? 60 : 48,
+    height: large ? 60 : 48,
+    alignment: Alignment.center,
+    decoration: const BoxDecoration(color: OverMedia.chip, shape: BoxShape.circle),
+    child: Padding(
+      padding: const EdgeInsets.only(left: 3),
+      child: NewsIcon(NewsIcons.play, size: large ? 24 : 19, filled: true, color: OverMedia.ink),
+    ),
+  );
+}
+
 class VideoCard extends StatelessWidget {
   const VideoCard(
     this.story, {
@@ -638,22 +663,7 @@ class VideoCard extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               StoryFrame(story, ratio: 16 / 9, heroTag: tag),
-              if (story != null && !story!.isSensitive)
-                Container(
-                  width: large ? 60 : 48,
-                  height: large ? 60 : 48,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: OverMedia.chip, shape: BoxShape.circle),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 3),
-                    child: NewsIcon(
-                      NewsIcons.play,
-                      size: large ? 24 : 19,
-                      filled: true,
-                      color: OverMedia.ink,
-                    ),
-                  ),
-                ),
+              if (story != null && !story!.isSensitive) PlayDisc(large: large),
             ],
           ),
           const SizedBox(height: NewsSpace.s3),

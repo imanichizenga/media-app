@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/native.dart';
@@ -11,6 +12,7 @@ import 'package:news_app/core/providers.dart';
 import 'package:news_app/core/storage/database.dart';
 import 'package:news_app/core/storage/prefs.dart';
 import 'package:news_app/features/article/article_screen.dart';
+import 'package:news_app/features/content/feeds.dart';
 import 'package:news_app/features/home/home_screen.dart';
 import 'package:news_app/ui/components/cards.dart';
 import 'package:news_app/ui/components/youtube.dart';
@@ -311,6 +313,28 @@ void main() {
     }
     final asked = p.api.asked.where((o) => o.uri.path.endsWith('/latest')).toList();
     expect(asked.where((o) => o.uri.queryParameters['cursor'] == 'two'), hasLength(1));
+  });
+
+  testWidgets('a page that arrives after a refresh never brings the old list back', (t) async {
+    final api = FakeApi()..pages = Completer<void>();
+    final p = await start(t, api: api);
+    const key = FeedKey(FeedKind.latest, '', 'sw');
+    final hold = p.container.listen(feedProvider(key), (_, _) {});
+    await p.settle();
+    final feed = p.container.read(feedProvider(key).notifier);
+    unawaited(feed.loadMore());
+    await p.settle(2);
+    final all = FakeApi.data('sw')['latest'] as List<dynamic>;
+    api.replies['/api/v1/content/latest'] = FakeApi.page(all.skip(3).take(4).toList(), 'newer');
+    unawaited(feed.refresh());
+    await p.settle();
+    api.replies.remove('/api/v1/content/latest');
+    api.pages!.complete();
+    await p.settle();
+    final shown = hold.read().value!;
+    expect(shown.stories.map((s) => s.id), all.skip(3).take(4).map((s) => (s as Map)['id']));
+    expect(shown.next, 'newer');
+    expect(shown.loadingMore, isFalse);
   });
 
   testWidgets('a story is read aloud whole: category, headline, time', (t) async {

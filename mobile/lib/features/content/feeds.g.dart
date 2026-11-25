@@ -135,7 +135,7 @@ final class FeedProvider extends $AsyncNotifierProvider<Feed, FeedState> {
   }
 }
 
-String _$feedHash() => r'733fa0fd67ab212fbbb66b2a8decdd494f985c7d';
+String _$feedHash() => r'45b9ed29c7d8e7fdb9be88caf4fd9610c1e58d19';
 
 final class FeedFamily extends $Family
     with

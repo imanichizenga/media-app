@@ -180,21 +180,28 @@ class Feed extends _$Feed {
     final now = state.value;
     if (now == null || now.next == null || now.loadingMore) return;
     state = AsyncData(now.copyWith(loadingMore: true, moreFailed: false));
+    // A refresh meanwhile began the list again: then this page no longer follows it.
+    FeedState? current() => switch (ref.mounted ? state.value : null) {
+      final c? when c.next == now.next => c,
+      _ => null,
+    };
     try {
       final page = await fromNetwork((x) => _ask(x, now.next));
-      if (!ref.mounted) return;
+      final kept = current();
+      if (kept == null) return;
       // Stories published meanwhile push others onto the next page: never show one twice.
-      final seen = {for (final s in now.stories) s.id};
+      final seen = {for (final s in kept.stories) s.id};
       state = AsyncData(
-        now.copyWith(
-          stories: [...now.stories, ...page.value.stories.where((s) => seen.add(s.id))],
+        kept.copyWith(
+          stories: [...kept.stories, ...page.value.stories.where((s) => seen.add(s.id))],
           next: page.value.next,
           clearNext: page.value.next == null,
           loadingMore: false,
         ),
       );
     } on Failure {
-      if (ref.mounted) state = AsyncData(now.copyWith(loadingMore: false, moreFailed: true));
+      final kept = current();
+      if (kept != null) state = AsyncData(kept.copyWith(loadingMore: false, moreFailed: true));
     }
   }
 

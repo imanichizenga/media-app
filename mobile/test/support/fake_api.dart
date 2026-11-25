@@ -18,6 +18,9 @@ class FakeApi implements HttpClientAdapter {
   /// Never answers: what the skeletons are drawn over.
   bool silent = false;
 
+  /// Holds back the next pages of lists until completed.
+  Completer<void>? pages;
+
   static final _data = <String, Map<String, dynamic>>{};
   static Map<String, dynamic> data(String locale) => _data[locale] ??= _read(locale);
 
@@ -120,6 +123,7 @@ class FakeApi implements HttpClientAdapter {
   ) async {
     asked.add(options);
     if (silent && !options.uri.path.endsWith('/content/navigation')) await Completer<void>().future;
+    if (options.uri.queryParameters.containsKey('cursor')) await pages?.future;
     if (offline) {
       throw DioException(requestOptions: options, type: DioExceptionType.connectionError);
     }

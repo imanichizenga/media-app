@@ -15,6 +15,7 @@ import '../../core/models.dart';
 import '../../core/network/failures.dart';
 import '../../core/network/loaded.dart';
 import '../../core/providers.dart';
+import '../../core/telemetry/startup.dart';
 import '../../l10n/gen/strings.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/components/cards.dart';
@@ -44,6 +45,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     tabAgain[0].addListener(_top);
+    ref.listenManual(homeFeedProvider, (_, next) {
+      if (next.hasValue) ref.read(startupProvider).drawn();
+    }, fireImmediately: true);
   }
 
   @override
