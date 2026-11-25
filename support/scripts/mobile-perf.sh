@@ -7,9 +7,12 @@ app="tz.mfano.news.dev"
 main="$app/tz.mfano.news_app.MainActivity"
 flags=(--profile --flavor dev --dart-define-from-file=config/dev.json)
 # Built first, so that nothing compiles while something is measured.
-flutter build apk "${flags[@]}" --target-platform android-x64 --target lib/main.dart
+echo "== building the app"; date -u
+timeout 1200 flutter build apk "${flags[@]}" --target-platform android-x64 --target lib/main.dart
 cp build/app/outputs/flutter-apk/app-dev-profile.apk build/app-profile.apk
-flutter drive "${flags[@]}" --driver test_driver/perf_driver.dart --target test_driver/perf.dart --keep-app-running
+echo "== frames"; date -u
+timeout 1200 flutter drive "${flags[@]}" --driver test_driver/perf_driver.dart --target test_driver/perf.dart --keep-app-running
+echo "== cold starts"; date -u
 # The app itself over the measuring one; its storage stays.
 adb shell am force-stop "$app"
 adb install -r build/app-profile.apk
