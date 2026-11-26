@@ -10,7 +10,9 @@ dir="$1" app="${2:-tz.mfano.news}"
 log="$dir/logcat.txt" emu="$dir/emulator.log" kern="$dir/dmesg.log"
 first() { grep -m 8 -E "$1" "$2" 2> /dev/null; }
 crash="$(first "FATAL EXCEPTION|Fatal signal [0-9]+.*$app|>>> $app|ANR in $app|am_crash.*$app|am_anr.*$app" "$log")"
-lmk="$(first "(lowmemorykiller|lmkd).*(Kill|kill).*$app|am_kill.*$app|Process $app.* has died" "$log")"
+# `am_kill … stop <app> due to from pid` is a force-stop that a script asked for: not a death.
+lmk="$(grep -E "(lowmemorykiller|lmkd).*(Kill|kill).*$app|am_kill.*$app|Process $app.* has died" "$log" 2> /dev/null |
+  grep -v "due to from pid" | head -8)"
 status="$(sed -n 's/^== emulator exited with status //p' "$emu" 2> /dev/null | tail -1)"
 emuerr="$(first "Segmentation fault|Aborted|core dumped|FATAL|terminate called|Assertion|crashed" "$emu")"
 oom="$(first "Out of memory|oom-kill|Killed process|invoked oom-killer" "$kern")"
@@ -25,6 +27,10 @@ oom="$(first "Out of memory|oom-kill|Killed process|invoked oom-killer" "$kern")
   elif [ -n "$status" ] || [ -n "$emuerr" ]; then
     echo "**(b) The emulator ended by itself** (status ${status:-unknown}), with no OOM kill on the runner:"
     printf '```\n%s\n```\n' "$emuerr"
+    if [ -s "$dir/backtrace.txt" ]; then
+      echo "Where it crashed (the first frames of the crashing thread, and the libraries they are in):"
+      printf '```\n%s\n```\n' "$(grep -m 25 -E '^#[0-9]+' "$dir/backtrace.txt")"
+    fi
   else
     echo "The device was still running at the end: no crash, no kill."
   fi

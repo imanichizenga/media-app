@@ -106,7 +106,9 @@ jobs:
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
       - name: Start the emulator
         timeout-minutes: 8
-        run: support/scripts/android-emulator.sh start "$EVIDENCE"
+        run: |
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
+          support/scripts/android-emulator.sh start "$EVIDENCE"
       - name: Integration tests
         timeout-minutes: 15
         working-directory: mobile
