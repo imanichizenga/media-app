@@ -303,6 +303,7 @@ class Command(BaseCommand):
         kinds = (kinds + [PostType.ARTICLE] * total)[:total]
         self.rng.shuffle(kinds)
         now, at = timezone.now(), timezone.now() - timedelta(minutes=4)
+        self.lives = 0
         stories, tags = list(Story.objects.all()), list(Tag.objects.all())
         regions = {r.name_sw: r for r in Region.objects.all()}
         desks = [slugs[0] for _, slugs, *_ in t.CATEGORIES]
@@ -369,8 +370,11 @@ class Command(BaseCommand):
         if post.type in (PostType.LIVE_BLOG, PostType.BREAKING) or stage is None:
             post.refresh_from_db()
             post.published_at = post.first_published_at = now if post.type == PostType.BREAKING else at
-            if post.type == PostType.LIVE_BLOG and n % 2:
-                post.live_ended_at = at + timedelta(hours=1)
+            # Every second live blog has ended; the first never has, so there is always live coverage to show.
+            if post.type == PostType.LIVE_BLOG:
+                self.lives += 1
+                if self.lives % 2 == 0:
+                    post.live_ended_at = at + timedelta(hours=1)
             post.save()
             go(self.editor, "publish")
             return

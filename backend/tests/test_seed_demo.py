@@ -65,6 +65,7 @@ def test_demo_content_is_complete_and_publishable(settings, capsys):
     texts = CategoryText.objects.filter(short_name__gt="")
     assert texts.count() == 2
     assert all(len(x.short_name) <= 14 < len(x.name) for x in texts)
+    assert Publication.objects.filter(is_live=True).exists(), "there is always live coverage to show"
     live = Publication.objects.filter(type=PostType.LIVE_BLOG)
     assert {p.card["rail_title"] for p in live} & {sw for sw, _ in RAIL_TITLES} | {
         en for _, en in RAIL_TITLES
