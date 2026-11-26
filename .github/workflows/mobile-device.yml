@@ -83,7 +83,7 @@ jobs:
           (cd .. && docker compose --profile storage up -d --wait seaweedfs)
           uv sync --locked
           uv run python manage.py migrate -v0
-          uv run python manage.py seed_demo --posts=60 --images=8 --videos=2
+          uv run python manage.py seed_demo --posts=60 --images=10 --videos=2
           uv run python manage.py shell -v0 -c "
           from newsplatform.site_config.models import SettingsSection as S
           S.objects.update_or_create(key='app', defaults={'data': {'min_android': '0.1.0', 'store_android': 'https://example.com'}})
