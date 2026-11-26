@@ -11,12 +11,12 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
 | **M3 Mobile app** | Done, pull request 11 (merged 2026-11-26). **G2: approved with changes** 2026-11-25. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
 | **M3.1 Mobile polish** | Done (ADR-0044), merged with pull request 11: every test G2 asked for, platform goldens, gallery `m3-1.zip` | n/a |
-| **M2 Website** | Done on `m2-website` (ADR-0045 to 0047): 49 E2E tests, Lighthouse in budget, gallery `m2.zip` (204 screens). **Waiting for G2** on the M3.1 and M2 galleries | Needs A1 to A3: Rich Results Test, real CDN purge, Search Console |
+| **M2 Website** | Done on `m2-website` (ADR-0045 to 0047), 2026-11-26: 58 website E2E tests in CI (`e2e-web`), all green locally; strict CSP without a nonce; Lighthouse every score 100, LCP 1.52 to 1.70 s; inside navigation with a red loading bar, no reloads; gallery `m2.zip` (214 screens). PR open; merges after **G2** on the M3.2 and M2 galleries | Needs A1 to A3, A8: Rich Results Test, real CDN purge, Search Console, ECS deploy |
 | M4 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. **M2 is done on `m2-website`** (pull request open). **Do not start M4** until the human confirms the M3.1 and M2 galleries. Then M4 Identity & engagement as a vertical slice (plan in the M2 pull request).
+1. **M2 is done on `m2-website`; M3.2 on `m3-2`.** **Do not start M4** until the human approves the M3.2 and M2 galleries (G2). Then M4 Identity & engagement as a vertical slice (plan in the hand-off and the M2 pull request).
 2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in a minute. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
 3. Website checks: build admin (both proxy targets), then `WEB_LOCAL=1 API_PROXY_TARGET=http://127.0.0.1:8010 pnpm --filter @news/web... build`, then `pnpm --filter @news/e2e web`. Gallery: `SCREENS=m2 pnpm --filter @news/e2e web`, then `node contact-sheet.mjs m2` in `support/tests/e2e`.
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
@@ -78,12 +78,15 @@ The full text of the task these come from is summarised in [design/public-experi
 | M2-THEMES Gallery, axe, no sideways scroll | Met: 320 prototype screens, 0 findings | n/a |
 
 | M2 Every public page server-rendered with ISR; signed, single-use revalidation | Met: `web/test`, `publish.spec.ts` (publish in admin → page updates) | Real CloudFront purge unobserved |
-| M2 Strict nonce CSP, HSTS, no third-party scripts | Met: `seo.spec.ts` | n/a |
-| M2 Structured data, sitemaps (News, image, video), RSS, hreflang, redirects | Met: schema validator and XSDs in `web/test`, `seo.spec.ts` | Rich Results Test, Search Console |
+| M2 Strict CSP without a nonce (a CDN-kept nonce is no secret): `script-src 'self'`, Trusted Types, reports logged; HSTS; no third-party scripts | Met: `web/test/safety.test.ts`, `document.test.ts`; `seo.spec.ts` checks every page for inline scripts and a real browser for violations | Violation reports from real readers |
+| M2 Structured data, sitemaps (News, image, video), RSS, hreflang, redirects | Met: schema validator, Google's required and recommended fields (`web/test/google.ts`, read 2026-11-26) on every page, News sitemap against Google's XSD; `seo.spec.ts` | Rich Results Test, Search Console |
 | M2 axe in both schemes, no sideways scroll at 320 px, skeleton matches the page (8 px, CLS < 0.05) | Met: `site.spec.ts`, `states.spec.ts` | n/a |
 | M2 Space rule: lead headline above the bottom bar at 360×640 | Met: `site.spec.ts` | n/a |
-| M2 Lighthouse (phone, slow 4G, median of 3): LCP < 2.0 s, CLS < 0.05, article JS < 120 KB | Met 2026-11-26: Home 1911 ms, Article 1900, Category 1679, Video 1994 (close to the line); CLS ≤ 0.010; TBT ≤ 6 ms; 5.5 KB script; lab INP 16 ms | Field data needs real readers |
-| M2 Gallery | Met: `support/docs/design/screens/m2.zip`, app screens beside web | Waiting for G2 |
+| M2 Lighthouse (phone, throttled, median of 3) on Home, Article, Category, Video, Live: LCP < 2.0 s, CLS < 0.05, TBT < 150 ms, JS < 120 KB; performance ≥ 95, accessibility and SEO 100, best practices ≥ 95 | Met 2026-11-26: LCP Home 1517 ms, Article 1595, Category 1587, Video 1695, Live 1588; CLS ≤ 0.002; TBT ≤ 5 ms; 6.6 KB script; every score 100. Fonts subsetted (65 KB, was 106) and an 800 px picture: they were the 0.4 s that put Video at the line | Field data needs real readers |
+| M2 Guards for the document layer: no framework runtime or flight data, islands < 6 KB, true 404/301/503, complete without script, inside navigation falls back | Met: `contract.spec.ts`, `document.test.ts`, `site.spec.ts`, `states.spec.ts`; Next pinned, Dependabot patches only, [upgrade-next.md](runbooks/upgrade-next.md) | n/a |
+| M2 The same product as the app (ADR-0044, M3.2) | Met: one-line meta (R2), rail titles (R3), no play buttons (R1), a row of sections that says it goes on, "Open in app" banner; differences in [consistency.md](design/consistency.md) | n/a |
+| M2 Terraform plan tests for `web.tf`; the image builds and passes Trivy | Met in CI (`infra`, `images`) | ECS deploy needs A1 to A3 |
+| M2 Gallery | Met: `support/docs/design/screens/m2.zip` (214): every page, phone and desk, light and dark, sw and en; three themes on Home, Article, Shorts, Category; skeleton, empty, offline, 404, 503; the app beside the web | Waiting for G2 |
 
 | M3 Every screen a guest needs, sw and en, light and dark, three themes | Met: 128 goldens and checks | n/a |
 | M3 Every content fixture renders | Met, except `long-article` as a picture (its blocks are covered by the others) | n/a |
