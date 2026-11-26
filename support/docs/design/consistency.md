@@ -17,6 +17,7 @@ screens side by side on the same content: [m2](screens/m2.zip) (app beside phone
 | Live rail (R3) | Rings, at most 96 high, two lines under each: the editor's rail title or the headline cut between words by the server (`rail_title`, one source for both) |
 | Signals | Breaking: one line, full width, icon and label. Live: the pill and the ring |
 | Space (S1) | At 360×640 the lead's whole headline and meta stand above the bottom bar, in both languages. Tests: `space_test.dart`, `site.spec.ts` |
+| A row of sections that goes on | The side with more fades so the next section peeks in; a chevron there (44 wide, named for screen readers) goes most of a row on; nothing on a side with nothing more. Tests: `residuals_test.dart`, `site.spec.ts` |
 | Home's frame (S2) | The wordmark on Home only; one row of tabs, underlined; the other places use a plain title |
 | Article (S3) | The picture at most 16:9 and 40% of the screen; headline, standfirst and byline in the first screen; neutral actions in a bar that covers nothing and steps aside while reading down |
 | Red | The wordmark and its rule, the active place, primary buttons, links, the saved mark, breaking and live; at most 7.5% of any screen (`residuals_test.dart`) |
