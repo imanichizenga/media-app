@@ -12,6 +12,8 @@ pluginManagement {
 
     repositories {
         google()
+        // Google's copy of Maven Central first (see build.gradle.kts).
+        maven("https://maven-central.storage-download.googleapis.com/maven2/")
         mavenCentral()
         gradlePluginPortal()
     }

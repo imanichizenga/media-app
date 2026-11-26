@@ -17,7 +17,9 @@ status="$(sed -n 's/^== emulator exited with status //p' "$emu" 2> /dev/null | t
 # A core is proof the emulator crashed, even if it was still writing it when the job looked.
 core="$(sed -n 's/^core: [^ ]*core\.\([^ .]*\)\.[0-9]* binary: \(.*\)/thread \1 of \2/p' "$dir/backtrace.txt" 2> /dev/null)"
 [ -n "$core" ] && [ -z "$status" ] && status="crashed ($core)"
-emuerr="$(first "Segmentation fault|Aborted|core dumped|FATAL|terminate called|Assertion|crashed|Failed to find ColorBuffer|invalid color buffer" "$emu")"
+emuerr="$(first "Segmentation fault|Aborted|core dumped|FATAL|terminate called|Assertion|crashed" "$emu")"
+# gfxstream says this in runs that end well too: quoted for the record, never a verdict on its own.
+colour="$(grep -c "Failed to find ColorBuffer" "$emu" 2> /dev/null)"
 oom="$(first "Out of memory|oom-kill|Killed process|invoked oom-killer" "$kern")"
 {
   echo "### Device verdict"
@@ -38,6 +40,7 @@ oom="$(first "Out of memory|oom-kill|Killed process|invoked oom-killer" "$kern")
     echo "The device was still running at the end: no crash, no kill."
   fi
   [ -n "$status" ] && echo "Emulator exit status: $status"
+  [ "${colour:-0}" -gt 0 ] && echo "gfxstream logged \"Failed to find ColorBuffer\" $colour time(s)."
   [ -e "$dir/watch.md" ] && { echo; tail -n +2 "$dir/watch.md"; }
 } > "$dir/verdict.md"
 cat "$dir/verdict.md"
