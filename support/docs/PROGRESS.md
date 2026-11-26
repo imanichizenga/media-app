@@ -10,18 +10,19 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
 | **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
-| **M3.1 Mobile polish** | In progress, branch `m3-mobile` | n/a |
+| **M3.1 Mobile polish** | Done on `m3-mobile` (ADR-0044): every test G2 asked for, platform goldens, gallery `m3-1.zip`. CI green on iOS 2026-11-26 after the simulator was bounded; PR 11 merges when the whole run is green | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. **M3.1 is under way on `m3-mobile`** (S1–S5, N1–N7, V1–V4: ADR-0044). When its tests and gallery are done and CI is green: merge PR 11, then M2 Website on `m2-website`.
+1. **M3.1 is done.** PR 11 merges as soon as one CI run is green end to end. Since 2026-11-26 the iOS simulator run is bounded and retried once if it never attaches (`support/scripts/mobile-simulator.sh`).
 2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in a minute. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
-3. Then M2 Website on its own branch: same stylesheet, `packages/ui`, `packages/i18n`, and the cover card (ADR-0043).
+3. **M2 Website is under way on `m2-website`** (branched from `m3-mobile`; rebase it on `main` after PR 11 merges).
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
 5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
 6. Open risks:
    - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, every IAM and bucket policy, and the load balancer rule for `/theme/*`. Plan-tested only.
+   - The hosted Android emulator sometimes goes `offline` in the middle of a test (2026-11-26: twice in one job, in different tests, with the same commit green before). The job retries once. If it keeps happening: a larger runner, or fewer services beside the emulator.
    - `uv` could not reach PyPI from this Codespace on 2026-11-24 (`curl` could). `UV_OFFLINE=1` works with the lockfile.
 7. Waiting for a person: an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
 
