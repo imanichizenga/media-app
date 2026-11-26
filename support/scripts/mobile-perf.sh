@@ -4,7 +4,6 @@
 # mobile-build.sh made both. Writes build/perf.json and build/perf.md; fails above the budgets in support/docs/perf/mobile.md.
 set -euo pipefail
 adb() { timeout 60 "$(type -P adb)" "$@"; }
-trap '[ $? = 0 ] || [ "$(adb get-state 2> /dev/null)" = device ] || touch build/emulator-lost' EXIT
 app="tz.mfano.news.dev"
 main="$app/tz.mfano.news_app.MainActivity"
 echo "== frames"; date -u
