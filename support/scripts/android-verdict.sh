@@ -14,7 +14,10 @@ crash="$(first "FATAL EXCEPTION|Fatal signal [0-9]+.*$app|>>> $app|ANR in $app|a
 lmk="$(grep -E "(lowmemorykiller|lmkd).*(Kill|kill).*$app|am_kill.*$app|Process $app.* has died" "$log" 2> /dev/null |
   grep -v "due to from pid" | head -8)"
 status="$(sed -n 's/^== emulator exited with status //p' "$emu" 2> /dev/null | tail -1)"
-emuerr="$(first "Segmentation fault|Aborted|core dumped|FATAL|terminate called|Assertion|crashed" "$emu")"
+# A core is proof the emulator crashed, even if it was still writing it when the job looked.
+core="$(sed -n 's/^core: [^ ]*core\.\([^ .]*\)\.[0-9]* binary: \(.*\)/thread \1 of \2/p' "$dir/backtrace.txt" 2> /dev/null)"
+[ -n "$core" ] && [ -z "$status" ] && status="crashed ($core)"
+emuerr="$(first "Segmentation fault|Aborted|core dumped|FATAL|terminate called|Assertion|crashed|Failed to find ColorBuffer|invalid color buffer" "$emu")"
 oom="$(first "Out of memory|oom-kill|Killed process|invoked oom-killer" "$kern")"
 {
   echo "### Device verdict"
