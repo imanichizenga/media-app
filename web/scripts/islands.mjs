@@ -22,4 +22,20 @@ const entry = Object.entries(result.metafile.outputs).find(([, o]) =>
   o.entryPoint?.endsWith("islands/site.ts"),
 );
 const file = entry[0].split("/").pop();
-writeFileSync(`${root}generated/islands.json`, `${JSON.stringify({ site: `/js/${file}` })}\n`);
+// The early script is classic and alone: it runs before the stylesheet's first paint, and imports nothing.
+const early = await build({
+  entryPoints: [`${root}islands/early.ts`],
+  outdir: `${root}public/js`,
+  entryNames: "[name]-[hash]",
+  bundle: true,
+  format: "iife",
+  target: ["chrome100", "safari15.4", "firefox100"],
+  minify: true,
+  metafile: true,
+  legalComments: "none",
+});
+const earlyFile = Object.keys(early.metafile.outputs)[0].split("/").pop();
+writeFileSync(
+  `${root}generated/islands.json`,
+  `${JSON.stringify({ site: `/js/${file}`, early: `/js/${earlyFile}` })}\n`,
+);

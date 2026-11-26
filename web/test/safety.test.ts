@@ -1,8 +1,11 @@
+import { createHash } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import { policy } from "@/lib/csp";
+import { STYLE } from "@/lib/failure-style";
 import { internalToken } from "@/lib/internal";
 import { messageOf, sign, verify } from "@/lib/signature";
-import { slim } from "@/lib/slim";
+import { inlineScripts, slim } from "@/lib/slim";
+import { violations } from "@/lib/violations";
 import { x } from "@/lib/xml";
 import { kindOf } from "../islands/navigate";
 
@@ -47,31 +50,95 @@ describe("the revalidation order", () => {
 });
 
 describe("the policy", () => {
-  const csp = policy("abc", { media: "https://media.example/x" });
-  test("lets nothing run that is not ours", () => {
+  const csp = policy({ media: "https://media.example/x" });
+  const directive = (name: string) => csp.split("; ").find((d) => d.startsWith(`${name} `));
+  test("lets nothing run that is not a file of ours, and has no nonce to leak", () => {
     expect(csp).toContain("default-src 'none'");
-    expect(csp).toContain("script-src 'self' 'nonce-abc' 'strict-dynamic'");
-    expect(csp.match(/script-src[^;]*/)?.[0]).not.toContain("unsafe");
-    expect(csp).toContain("frame-ancestors 'none'");
+    expect(directive("script-src")).toBe("script-src 'self'");
+    expect(csp).not.toMatch(/nonce|strict-dynamic|unsafe-eval|unsafe-hashes/);
+    // Only style attributes may be inline (a picture's colour and focal point): they cannot run anything.
+    expect(csp.split("; ").filter((d) => d.includes("unsafe-inline"))).toEqual([
+      "style-src-attr 'unsafe-inline'",
+    ]);
+    for (const d of ["object-src 'none'", "base-uri 'none'", "frame-ancestors 'none'", "form-action 'self'"])
+      expect(csp).toContain(d);
     expect(csp).toContain("upgrade-insecure-requests");
   });
-  test("names the media host, and only a real one", () => {
-    expect(csp).toContain("img-src 'self' data: https://media.example https://i.ytimg.com");
-    expect(policy("a", { media: "javascript:alert(1)" })).not.toContain("javascript");
+  test("names the media host and YouTube's privacy host, and only real ones", () => {
+    expect(directive("img-src")).toBe("img-src 'self' data: https://media.example https://i.ytimg.com");
+    expect(directive("media-src")).toBe("media-src 'self' blob: https://media.example");
+    expect(directive("connect-src")).toBe("connect-src 'self' https://media.example");
+    expect(directive("frame-src")).toBe("frame-src https://www.youtube-nocookie.com");
+    expect(policy({ media: "javascript:alert(1)" })).not.toContain("javascript");
+  });
+  test("allows the failure page's style by its hash, and nothing else inline", () => {
+    const style = directive("style-src") ?? "";
+    expect(style).toMatch(/^style-src 'self' 'sha256-[A-Za-z0-9+/]+=*'$/);
+    const hash = createHash("sha256").update(STYLE).digest("base64");
+    expect(style).toContain(hash);
+  });
+  test("asks for Trusted Types, with one policy, and says where to report", () => {
+    expect(csp).toContain("require-trusted-types-for 'script'");
+    expect(directive("trusted-types")).toBe("trusted-types navigate");
+    expect(csp).toContain("report-uri /api/csp-report");
+    expect(csp).toContain("report-to csp");
+  });
+});
+
+describe("a report of what the policy refused", () => {
+  test("is read in both formats, keeping no query string", () => {
+    const old = JSON.stringify({
+      "csp-report": {
+        "document-uri": "https://site.example/siasa?token=secret",
+        "effective-directive": "script-src-elem",
+        "blocked-uri": "https://evil.example/x.js?u=1",
+        "source-file": "https://site.example/js/site-1.js",
+        "line-number": 3,
+      },
+    });
+    const [v] = violations(old);
+    expect(v).toEqual({
+      page: "https://site.example/siasa",
+      directive: "script-src-elem",
+      blocked: "https://evil.example/x.js",
+      source: "https://site.example/js/site-1.js",
+      line: 3,
+      disposition: "enforce",
+    });
+    const modern = JSON.stringify([
+      {
+        type: "csp-violation",
+        body: {
+          documentURL: "https://site.example/",
+          effectiveDirective: "script-src-elem",
+          blockedURL: "inline",
+        },
+      },
+      { type: "deprecation", body: {} },
+    ]);
+    expect(violations(modern)).toEqual([
+      expect.objectContaining({ blocked: "inline", page: "https://site.example/" }),
+    ]);
+  });
+  test("anything else is nothing", () => {
+    for (const body of ["", "{", "[]", '{"a":1}', "x".repeat(9000)]) expect(violations(body)).toEqual([]);
   });
 });
 
 describe("a document", () => {
   const page =
-    '<html><head><link rel="preload" as="script" href="/_next/a.js"/><link rel="stylesheet" href="/a.css"/><script src="/_next/a.js" async=""></script><script nonce="n" data-keep="">early</script><script type="module" src="/js/s.js" nonce="n" data-keep=""></script></head><body><script type="application/ld+json">{"a":1}</script><script nonce="n">self.__next_f.push([1,"<b>"])</script>hi</body></html>';
-  test("keeps its own scripts and data, and nothing of the framework's", () => {
+    '<html><head><link rel="preload" as="script" href="/_next/a.js"/><link rel="stylesheet" href="/a.css"/><script src="/_next/a.js" async=""></script><script data-keep="">early</script><script src="/js/early.js" data-keep=""></script><script type="module" src="/js/s.js" data-keep=""></script></head><body><script type="application/ld+json">{"a":1}</script><script nonce="n">self.__next_f.push([1,"<b>"])</script>hi</body></html>';
+  test("keeps its own script files and data, and nothing inline or of the framework's", () => {
     const { html } = slim(page);
     expect(html).not.toContain("/_next/a.js");
     expect(html).not.toContain("__next_f");
-    expect(html).toContain("early");
+    expect(html).not.toContain(">early<");
+    expect(html).toContain('src="/js/early.js"');
     expect(html).toContain("/js/s.js");
     expect(html).toContain('{"a":1}');
     expect(html).toContain('href="/a.css"');
+    expect(inlineScripts(html)).toEqual([]);
+    expect(inlineScripts(page).length).toBe(2);
   });
   test("says its own status", () => {
     expect(slim('<meta name="x-status" content="404"/>').status).toBe(404);

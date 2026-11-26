@@ -491,4 +491,55 @@ class StringsSw extends Strings {
 
   @override
   String get settingOff => 'Imezimwa';
+
+  @override
+  String get skipToNews => 'Ruka hadi habari';
+
+  @override
+  String get olderStories => 'Habari za awali';
+
+  @override
+  String get openInApp => 'Soma kwa urahisi kwenye programu';
+
+  @override
+  String get open => 'Fungua';
+
+  @override
+  String get search => 'Tafuta';
+
+  @override
+  String get searchSoon => 'Chagua kundi usome habari zake.';
+
+  @override
+  String get serverErrorTitle => 'Hitilafu imetokea';
+
+  @override
+  String get legal => 'Kurasa za tovuti';
+
+  @override
+  String get correctionsPage => 'Marekebisho yetu';
+
+  @override
+  String get publishedAt => 'Imechapishwa';
+
+  @override
+  String get updatedAt => 'Imesasishwa';
+
+  @override
+  String get authorStories => 'Habari zake';
+
+  @override
+  String pageOf(int n) {
+    return 'Ukurasa wa $n';
+  }
+
+  @override
+  String get places => 'Sehemu kuu';
+
+  @override
+  String get savedEmptyWeb =>
+      'Gusa alama ya kuhifadhi kwenye habari yoyote. Itabaki kwenye kifaa hiki.';
+
+  @override
+  String get offlineNote => 'Huna mtandao.';
 }

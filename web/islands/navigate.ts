@@ -3,6 +3,18 @@
  * its skeleton meanwhile. Anything unusual is an ordinary navigation, so nothing depends on this.
  */
 type Got = { url: URL; html: Document };
+
+/**
+ * Trusted Types (lib/csp.ts): the only HTML this island parses is a document of this site, fetched from this origin
+ * with no credentials, and parsed inert (DOMParser runs no script). The policy says so, once, by name.
+ */
+type Policy = { createHTML: (s: string) => string };
+const trusted: Policy = (
+  globalThis as {
+    trustedTypes?: { createPolicy: (name: string, rules: Policy) => Policy };
+  }
+).trustedTypes?.createPolicy("navigate", { createHTML: (s) => s }) ?? { createHTML: (s) => s };
+const parse = (html: string) => new DOMParser().parseFromString(trusted.createHTML(html), "text/html");
 const LIFE = 15_000;
 const PATIENCE = 90; // quicker than this, a skeleton would only flicker
 const asked = new Map<string, { at: number; got: Promise<Got> }>();
@@ -56,7 +68,7 @@ export function ask(url: URL): Promise<Got> {
     if (res.status >= 500 || !type.includes("text/html")) throw new Error(String(res.status));
     const end = new URL(res.url);
     end.hash = url.hash;
-    return { url: end, html: new DOMParser().parseFromString(await res.text(), "text/html") };
+    return { url: end, html: parse(await res.text()) };
   });
   asked.set(key, { at: Date.now(), got });
   got.catch(() => asked.delete(key));
@@ -187,7 +199,7 @@ export function begin(arrive: () => void, leave: () => void) {
   addEventListener("load", () =>
     idle(() => {
       skeletons = fetch(english() ? "/en/skeletons" : "/skeletons", { credentials: "omit" })
-        .then(async (r) => (r.ok ? new DOMParser().parseFromString(await r.text(), "text/html") : null))
+        .then(async (r) => (r.ok ? parse(await r.text()) : null))
         .catch(() => null);
     }),
   );

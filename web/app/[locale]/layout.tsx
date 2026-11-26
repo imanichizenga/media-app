@@ -1,5 +1,4 @@
 import type { Viewport } from "next";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Offline } from "@/components/client";
@@ -22,10 +21,6 @@ export async function generateViewport(): Promise<Viewport> {
   };
 }
 
-// Before first paint: the reader's own scheme and text size, so that nothing flashes.
-const EARLY =
-  "try{var d=document.documentElement,s=localStorage.scheme,t=localStorage.text;if(s==='dark'||s==='light')d.dataset.theme=s;if(/^[1-3]$/.test(t))d.dataset.text=t}catch(e){}";
-
 export default async function Layout({
   children,
   params,
@@ -35,17 +30,15 @@ export default async function Layout({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const [site, head] = await Promise.all([readSite(), headers()]);
+  const site = await readSite();
   const t = words(locale);
-  const nonce = head.get("x-nonce") ?? undefined;
   const ios = /\/id(\d+)/.exec(site.apps.ios)?.[1];
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        <script nonce={nonce} data-keep="" suppressHydrationWarning>
-          {EARLY}
-        </script>
-        <script type="module" src={islands.site} nonce={nonce} data-keep="" suppressHydrationWarning />
+        {/* Before first paint: the reader's own scheme and text size (islands/early.ts). Files only: no inline script. */}
+        <script src={islands.early} data-keep="" />
+        <script type="module" src={islands.site} data-keep="" />
         {/* Content-hashed and immutable: the published theme, before first paint (ADR-0032). */}
         <link rel="stylesheet" href={site.theme.css} data-brand-theme="" />
         <link rel="manifest" href={`/theme/manifest-${locale}.webmanifest`} />

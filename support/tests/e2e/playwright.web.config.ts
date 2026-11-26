@@ -9,7 +9,7 @@ export default defineConfig({
   testDir: "./web",
   testMatch: process.env.SCREENS
     ? "screens.spec.ts"
-    : ["site.spec.ts", "seo.spec.ts", "states.spec.ts", "publish.spec.ts", "perf.spec.ts"],
+    : ["site.spec.ts", "seo.spec.ts", "contract.spec.ts", "states.spec.ts", "publish.spec.ts", "perf.spec.ts"],
   use: { ...base.use, baseURL: "http://localhost:3000", locale: "sw-TZ", timezoneId: "Africa/Dar_es_Salaam" },
   webServer: [
     ...servers,
@@ -21,7 +21,8 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
-      command: `cp -r ../../../web/.next/static ${site}/.next/ && cp -r ../../../web/public ../../../web/fonts ${site}/ && node ${site}/server.js`,
+      // Its log is kept for the tests that read it (helpers.webLog), and still shown.
+      command: `cp -r ../../../web/.next/static ${site}/.next/ && cp -r ../../../web/public ../../../web/fonts ${site}/ && node ${site}/server.js 2>&1 | tee .web-server.log`,
       env: {
         WEB_LOCAL: "1",
         API_BASE_URL: "http://127.0.0.1:8010",

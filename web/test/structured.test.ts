@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { breadcrumbs, graph, json, newsArticle, organization, videoObject, website } from "@/lib/seo";
 import { article, image, site, video } from "./data";
+import { missing } from "./google";
 import { structured } from "./schema";
 
 const ok = (...items: object[]) => structured.parse(JSON.parse(json(graph(...items))));
@@ -56,5 +57,34 @@ describe("structured data", () => {
     expect(text).not.toContain("<");
     expect(text).not.toContain("\u2028");
     expect(JSON.parse(text).a).toContain("</script>");
+  });
+});
+
+describe("complete for Google (test/google.ts)", () => {
+  const items = (...made: object[]) =>
+    (JSON.parse(json(graph(...made)))["@graph"] as Record<string, unknown>[]).filter((x) => x["@type"]);
+  test("an article, a live blog, a video, a trail and the publisher lack nothing Google asks for", () => {
+    const live = { ...article, type: "live_blog" as const } as typeof article;
+    for (const item of items(
+      newsArticle(site, article),
+      newsArticle(site, live),
+      videoObject(site, { ...article, video, duration_ms: 95_000 } as never),
+      videoObject(site, { ...article, youtube_id: "dQw4w9WgXcQ", duration_ms: 95_000 } as never),
+      trail,
+      organization(site),
+    ))
+      expect(missing(item), String(item["@type"])).toEqual([]);
+  });
+  test("the check itself finds what is missing", () => {
+    expect(missing({ "@type": "VideoObject", name: "x" })).toEqual([
+      "VideoObject: required thumbnailUrl",
+      "VideoObject: required uploadDate",
+      "VideoObject: recommended contentUrl|embedUrl",
+      "VideoObject: recommended description",
+      "VideoObject: recommended duration",
+    ]);
+    expect(missing({ "@type": "BreadcrumbList", itemListElement: [{ position: 1, name: "a" }] })).toContain(
+      "BreadcrumbList: at least two items",
+    );
   });
 });

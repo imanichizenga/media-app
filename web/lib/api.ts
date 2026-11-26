@@ -15,7 +15,7 @@ export class Unavailable extends Error {}
 
 /**
  * The data cache: every answer is kept, tagged, and made again when the newsroom says so (`/api/revalidate`) or after
- * a while. Pages are rendered from it for each request, so each has its own CSP nonce (ADR-0046).
+ * a while. Pages are rendered from it for each request, and each is cheap to make again (ADR-0046).
  */
 async function read<R>(
   ask: (options: { next: { revalidate: number; tags: string[] } }) => Promise<{

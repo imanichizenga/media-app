@@ -132,7 +132,12 @@ export const LivePill = ({ label, className }: { label: string; className?: stri
     {label}
   </span>
 );
-/** What a card is about and how fresh it is: one line, always. The category gives way, the time never (S4). */
+/**
+ * What a card is about and how fresh it is: one line, always, and nothing in it cut (ADR-0044, R2). In order of what
+ * matters: the category, whole; the time; the reading time. The line is one line high and its parts wrap whole onto a
+ * hidden second line, so without script the reading time goes first, then the time. With script (islands/site.ts),
+ * when the time has gone the category takes the short name its editor gave it, and the time comes back.
+ */
 export function Kicker({
   card,
   env,
@@ -155,24 +160,32 @@ export function Kicker({
       </p>
     );
   const breaking = card.breaking_until !== null && Date.parse(card.breaking_until) > env.now;
+  const pill = card.is_live && (cover || !quiet);
+  const named = !(card.is_live && !quiet && !cover);
+  const name = breaking ? env.t.breaking : card.category.name;
+  const short = breaking ? "" : (card.category.short_name ?? "");
   return (
-    <p className="flex min-w-0 items-center gap-x-1.5 whitespace-nowrap text-caption text-text-secondary">
-      {card.is_live && (cover || !quiet) && (
-        <LivePill label={env.t.live} className={cover ? "lg:hidden" : ""} />
+    <p
+      data-meta=""
+      className="meta flex h-[1lh] min-w-0 flex-wrap items-center gap-x-1.5 overflow-hidden text-caption text-text-secondary"
+    >
+      {pill && <LivePill label={env.t.live} className={cx("shrink-0", cover ? "lg:hidden" : "")} />}
+      {named && (
+        <span className="shrink-0 whitespace-nowrap font-semibold text-text-primary">
+          <span data-name="">{name}</span>
+          {short && short !== name && (
+            <span data-short="" hidden>
+              {short}
+            </span>
+          )}
+        </span>
       )}
-      {card.is_live && !quiet && !cover ? null : breaking ? (
-        <span className="min-w-0 truncate font-semibold text-text-primary">{env.t.breaking}</span>
-      ) : (
-        <span className="min-w-0 truncate font-semibold text-text-primary">{card.category.name}</span>
-      )}
-      <span aria-hidden className="shrink-0">
-        ·
+      <span data-time="" className="shrink-0 whitespace-nowrap">
+        <span aria-hidden>· </span>
+        <time dateTime={card.published_at}>{ago(card.published_at, env)}</time>
       </span>
-      <time dateTime={card.published_at} className="shrink-0">
-        {ago(card.published_at, env)}
-      </time>
       {reading && !card.is_live && (
-        <span className="min-w-0 truncate">
+        <span data-reading="" className="shrink-0 whitespace-nowrap">
           <span aria-hidden>· </span>
           {env.t.minutes(Math.max(1, card.reading_minutes))}
         </span>
@@ -308,17 +321,6 @@ export function LeadCard({ card, env, priority, play = false, className }: CardP
         covered
         className="max-lg:rounded-none"
       />
-      {play && card && (
-        // The only play mark outside a player (V1).
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 grid aspect-2/1 place-items-center text-white lg:aspect-video"
-        >
-          <span className="grid size-16 place-items-center rounded-full bg-black/60">
-            <Play size={28} fill="currentColor" />
-          </span>
-        </span>
-      )}
       <div
         className={cx(
           "flex flex-col gap-1 lg:gap-3",
@@ -425,7 +427,7 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
     >
       <ul className="flex gap-2 pt-2 lg:gap-4">
         {(cards ?? Array.from({ length: 4 }, () => undefined)).map((card, i) => (
-          <li key={card?.id ?? i} className="group relative w-19 shrink-0 text-center lg:w-24">
+          <li key={card?.id ?? i} className="group relative w-20 shrink-0 text-center lg:w-24">
             <span
               className={cx(
                 "relative mx-auto block size-14 rounded-full border-2 p-0.5 lg:size-18",
@@ -446,14 +448,17 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
                 )}
               </span>
             </span>
-            <span className="mt-1 block truncate text-caption leading-4!">
+            {/* Two lines (R3): the editor's rail title, or the headline cut between words by the server. */}
+            <span className="rail-title mt-1 block text-[0.75rem] leading-[1.15]">
               {card ? (
                 <a href={card.path} className="after:absolute after:inset-0">
-                  <span className="sr-only">{env.t.live}: </span>
-                  {card.headline}
+                  <span className="sr-only">
+                    {env.t.live}: {card.headline}
+                  </span>
+                  <span aria-hidden>{card.rail_title || card.headline}</span>
                 </a>
               ) : (
-                lines(["w-full"])
+                lines(["w-full", "w-2/3"])
               )}
             </span>
           </li>

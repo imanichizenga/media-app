@@ -482,4 +482,54 @@ class StringsEn extends Strings {
 
   @override
   String get settingOff => 'Off';
+
+  @override
+  String get skipToNews => 'Skip to the news';
+
+  @override
+  String get olderStories => 'Older stories';
+
+  @override
+  String get openInApp => 'Read more easily in the app';
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get searchSoon => 'Choose a section to read its stories.';
+
+  @override
+  String get serverErrorTitle => 'Something went wrong';
+
+  @override
+  String get legal => 'About this site';
+
+  @override
+  String get correctionsPage => 'Our corrections';
+
+  @override
+  String get publishedAt => 'Published';
+
+  @override
+  String get updatedAt => 'Updated';
+
+  @override
+  String get authorStories => 'Stories';
+
+  @override
+  String pageOf(int n) {
+    return 'Page $n';
+  }
+
+  @override
+  String get places => 'Main places';
+
+  @override
+  String get savedEmptyWeb => 'Tap the bookmark on any story. It stays on this device.';
+
+  @override
+  String get offlineNote => 'You are offline.';
 }

@@ -1,5 +1,5 @@
 import { PUBLIC } from "@/lib/cdn";
-import { policy } from "@/lib/csp";
+import { policy, REPORTING_ENDPOINTS } from "@/lib/csp";
 import { env } from "@/lib/env";
 import { failure } from "@/lib/failure";
 import { internalToken } from "@/lib/internal";
@@ -12,14 +12,14 @@ const SELF = `http://${host}:${process.env.PORT || 3000}`;
 /** The page as a document: rendered by the App Router, sent without its client runtime (ADR-0046). */
 export async function GET(request: Request) {
   const path = request.headers.get("x-path") ?? "/";
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = policy(nonce, { media: process.env.MEDIA_ORIGIN, local: Boolean(process.env.WEB_LOCAL) });
+  const csp = policy({ media: process.env.MEDIA_ORIGIN, local: Boolean(process.env.WEB_LOCAL) });
+  const security = { "content-security-policy": csp, "reporting-endpoints": REPORTING_ENDPOINTS };
   const fail = async () =>
-    new Response(await failure(path, nonce), {
+    new Response(await failure(path), {
       status: 503,
       headers: {
         "content-type": "text/html; charset=utf-8",
-        "content-security-policy": csp,
+        ...security,
         // The CDN goes on showing what it has (stale-if-error).
         "cache-control": "no-store",
         "retry-after": "30",
@@ -31,7 +31,6 @@ export async function GET(request: Request) {
       redirect: "manual",
       headers: {
         "x-internal": internalToken(env.revalidateSecret),
-        "x-nonce": nonce,
         "user-agent": "document",
         "accept-encoding": "identity",
       },
@@ -58,10 +57,6 @@ export async function GET(request: Request) {
   const { html, status } = slim(await res.text());
   return new Response(html, {
     status: status ?? res.status,
-    headers: {
-      "content-type": "text/html; charset=utf-8",
-      "content-security-policy": csp,
-      "cache-control": PUBLIC,
-    },
+    headers: { "content-type": "text/html; charset=utf-8", ...security, "cache-control": PUBLIC },
   });
 }

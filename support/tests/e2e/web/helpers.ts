@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import type { Page } from "@playwright/test";
 import { test as base, expect } from "../helpers";
 
@@ -73,4 +74,7 @@ export async function ready(page: Page, path: string) {
   await page.goto(path);
   await page.waitForLoadState("networkidle");
 }
+/** What the website wrote to its log in this run (playwright.web.config.ts keeps it). */
+export const WEB_LOG = new URL("../.web-server.log", import.meta.url).pathname;
+export const webLog = () => (existsSync(WEB_LOG) ? readFileSync(WEB_LOG, "utf8") : "");
 export { expect };

@@ -19,7 +19,10 @@ updates:
       npm-minor-patch: { update-types: [minor, patch] }
     ignore:
       - { dependency-name: typescript, update-types: ["version-update:semver-major"] }
-      - { dependency-name: next, update-types: ["version-update:semver-major"] }
+      # The website's document layer depends on what Next renders (ADR-0046): minors are upgraded by hand, with
+      # support/docs/runbooks/upgrade-next.md. One lockfile serves both apps, so this holds for the admin too.
+      - { dependency-name: next, update-types: ["version-update:semver-major", "version-update:semver-minor"] }
+      - { dependency-name: "@next/*", update-types: ["version-update:semver-major", "version-update:semver-minor"] }
       - { dependency-name: react, update-types: ["version-update:semver-major"] }
       - { dependency-name: react-dom, update-types: ["version-update:semver-major"] }
       - { dependency-name: "@types/node", update-types: ["version-update:semver-major"] }

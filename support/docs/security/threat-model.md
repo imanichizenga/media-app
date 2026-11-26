@@ -18,6 +18,8 @@ STRIDE per component. Each milestone extends this document. "Test" names the aut
 | | **E** Socket outliving its session | Revalidated every 10 seconds, fails closed | `test_an_ended_session_closes_open_sockets` |
 | | **D** Flooding | 4 KB messages, 20 topics, ticket rate limit, 5-second sign-in window | `test_silent_client_is_dropped`, `test_number_of_topics_is_capped` |
 | Admin web | **E** XSS | Nonce CSP, Trusted Types, no data in HTML, no tokens in storage | E2E, every page |
+| Public website | **E** XSS through cached pages | No nonce (a CDN-kept page is seen by many readers, so a nonce in it is no secret): `script-src 'self'`, nothing inline on any page (the early script and the islands are files), JSON-LD is data, Trusted Types with one named policy, `object-src`/`base-uri`/`frame-ancestors 'none'`, YouTube only from youtube-nocookie | `web/test/safety.test.ts`, `document.test.ts`; `seo.spec.ts` (every page, and a real browser with no violation) |
+| | **I** Violation reports carrying reader data | `/api/csp-report` keeps origin and path only (never the query), 8 KB at most, logs, stores nothing | `safety.test.ts`, `seo.spec.ts` |
 | | **T** Open redirect | Same-site path check on `next` | E2E |
 | Browser errors | **I** Personal data in reports | Rebuilt from an allowlist, text redacted, no breadcrumbs or replay | `monitoring.test.ts`, E2E |
 | | **E** Tunnel used as an open relay | Fixed destination, same-origin only, one event per request, size and rate limits | `monitoring.test.ts` |

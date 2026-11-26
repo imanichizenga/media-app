@@ -20,15 +20,12 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
   const own = DEV || request.headers.get("x-internal") === internalToken(env.revalidateSecret);
   if (!own) {
-    headers.delete("x-nonce");
     headers.set("x-path", pathname + search);
     return NextResponse.rewrite(new URL("/document", request.url), { request: { headers } });
   }
   const locale = pathname === "/en" || pathname.startsWith("/en/") ? "en" : "sw";
   const inner = locale === "en" ? pathname : `/sw${pathname === "/" ? "" : pathname}`;
-  const nonce = request.headers.get("x-nonce") ?? Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = policy(nonce, { media: process.env.MEDIA_ORIGIN, dev: DEV, local: true });
-  headers.set("x-nonce", nonce);
+  const csp = policy({ media: process.env.MEDIA_ORIGIN, dev: DEV, local: true });
   headers.set("x-locale", locale);
   headers.set("content-security-policy", csp);
   const response = NextResponse.rewrite(new URL(inner + search, request.url), { request: { headers } });

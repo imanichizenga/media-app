@@ -36,7 +36,7 @@ async function load({ params, searchParams }: Props) {
           ...(a.expertise.length ? { knowsAbout: a.expertise } : {}),
           ...(a.links.length ? { sameAs: a.links } : {}),
           ...(a.avatar ? { image: crops(site, a.avatar as Article["image"]) } : {}),
-          worksFor: organization(site),
+          worksFor: organization(site, locale),
         },
       },
     ],

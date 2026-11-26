@@ -14,7 +14,10 @@ from newsplatform.pages.models import Page, PageKey, PageRevision
 from newsplatform.seo import paths
 from newsplatform.staff_security.authentication import session_of
 
-_PERMS: dict[str, str | None] = dict.fromkeys(["GET", "PUT", "POST", "DELETE"], services.PERM)
+
+def _perms(*methods: str) -> dict[str, str | None]:
+    """Exactly the methods a view has: a method without a declared rule must not exist (test_platform)."""
+    return dict.fromkeys(methods, services.PERM)
 
 
 class PageTextSerializer(serializers.Serializer[Any]):
@@ -87,7 +90,7 @@ def _detail(page: Page) -> dict[str, Any]:
 
 
 class PageListView(StaffView):
-    perms: ClassVar[dict[str, str | None]] = _PERMS
+    perms: ClassVar[dict[str, str | None]] = _perms("GET")
 
     @extend_schema(operation_id="pages_list", responses=PageBriefSerializer(many=True))
     def get(self, request: Request) -> Response:
@@ -100,7 +103,7 @@ class PageListView(StaffView):
 
 
 class PageView(StaffView):
-    perms: ClassVar[dict[str, str | None]] = _PERMS
+    perms: ClassVar[dict[str, str | None]] = _perms("GET", "PUT")
 
     @extend_schema(operation_id="pages_get", responses=PageDetailSerializer)
     def get(self, request: Request, key: str) -> Response:
@@ -120,7 +123,7 @@ class PageView(StaffView):
 
 
 class PageRevisionView(StaffView):
-    perms: ClassVar[dict[str, str | None]] = _PERMS
+    perms: ClassVar[dict[str, str | None]] = _perms("GET")
 
     @extend_schema(
         operation_id="pages_revision",
@@ -134,7 +137,7 @@ class PageRevisionView(StaffView):
 
 
 class PagePublishView(StaffView):
-    perms: ClassVar[dict[str, str | None]] = _PERMS
+    perms: ClassVar[dict[str, str | None]] = _perms("POST", "DELETE")
     step_up: ClassVar[tuple[str, ...]] = ("POST", "DELETE")
 
     class PagePublish(serializers.Serializer[Any]):

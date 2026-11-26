@@ -6,7 +6,9 @@ import { expect, places, test } from "./helpers";
 // the median of three runs. INP needs a person; in the lab its stand-ins are total blocking time and one real tap.
 const PORT = 9333;
 const RUNS = 3;
-const BUDGET = { lcp: 2000, cls: 0.05, tbt: 200, inp: 200, articleJs: 120 * 1024 };
+// TBT stands in for INP in the lab. Scores: performance ≥ 95, accessibility and SEO 100, best practices ≥ 95.
+const BUDGET = { lcp: 2000, cls: 0.05, tbt: 150, inp: 200, articleJs: 120 * 1024 };
+const SCORES = { performance: 0.95, accessibility: 1, seo: 1, "best-practices": 0.95 } as const;
 const median = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)];
 
 test.describe.configure({ mode: "serial" });
@@ -17,17 +19,21 @@ const measured: Record<string, Record<string, number>> = {};
 test.afterAll(() => {
   // The numbers, for the step summary and the pull request.
   console.log(
-    ["| Page | LCP ms | CLS | TBT ms | Script KB (gzip) |", "|---|---|---|---|---|"]
+    [
+      "| Page | LCP ms | CLS | TBT ms | Script KB (gzip) | Perf | A11y | SEO | BP |",
+      "|---|---|---|---|---|---|---|---|---|",
+    ]
       .concat(
         Object.entries(measured).map(
-          ([p, m]) => `| ${p} | ${m.lcp} | ${m.cls.toFixed(3)} | ${m.tbt} | ${(m.js / 1024).toFixed(1)} |`,
+          ([p, m]) =>
+            `| ${p} | ${m.lcp} | ${m.cls.toFixed(3)} | ${m.tbt} | ${(m.js / 1024).toFixed(1)} | ${m.performance} | ${m.accessibility} | ${m.seo} | ${m["best-practices"]} |`,
         ),
       )
       .join("\n"),
   );
 });
 
-for (const name of ["home", "article", "category", "video"])
+for (const name of ["home", "article", "category", "video", "live"])
   test(`Lighthouse: ${name}`, async () => {
     const path = (await places("sw"))[name] as string;
     const browser = await chromium.launch({ args: [`--remote-debugging-port=${PORT}`] });
@@ -38,7 +44,7 @@ for (const name of ["home", "article", "category", "video"])
           port: PORT,
           output: "json",
           logLevel: "error",
-          onlyCategories: ["performance"],
+          onlyCategories: Object.keys(SCORES),
         });
         const a = result?.lhr.audits ?? {};
         const requests =
@@ -49,6 +55,9 @@ for (const name of ["home", "article", "category", "video"])
           cls: a["cumulative-layout-shift"]?.numericValue ?? Infinity,
           tbt: a["total-blocking-time"]?.numericValue ?? Infinity,
           js: requests.filter((r) => r.resourceType === "Script").reduce((s, r) => s + r.transferSize, 0),
+          ...Object.fromEntries(
+            Object.keys(SCORES).map((c) => [c, Math.round((result?.lhr.categories[c]?.score ?? 0) * 100)]),
+          ),
         });
       }
       const m = {
@@ -56,12 +65,17 @@ for (const name of ["home", "article", "category", "video"])
         cls: median(runs.map((r) => r.cls)),
         tbt: Math.round(median(runs.map((r) => r.tbt))),
         js: median(runs.map((r) => r.js)),
+        ...Object.fromEntries(
+          Object.keys(SCORES).map((c) => [c, median(runs.map((r) => (r as never)[c] as number))]),
+        ),
       };
       measured[name] = m;
       expect.soft(m.lcp, "LCP").toBeLessThan(BUDGET.lcp);
       expect.soft(m.cls, "CLS").toBeLessThan(BUDGET.cls);
       expect.soft(m.tbt, "TBT").toBeLessThan(BUDGET.tbt);
       if (name === "article") expect.soft(m.js, "article script, gzipped").toBeLessThan(BUDGET.articleJs);
+      for (const [c, least] of Object.entries(SCORES))
+        expect.soft((m as Record<string, number>)[c], `${c} score`).toBeGreaterThanOrEqual(least * 100);
     } finally {
       await browser.close();
     }

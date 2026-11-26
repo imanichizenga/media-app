@@ -944,6 +944,102 @@ abstract class Strings {
   /// In sw, this message translates to:
   /// **'Imezimwa'**
   String get settingOff;
+
+  /// No description provided for @skipToNews.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ruka hadi habari'**
+  String get skipToNews;
+
+  /// No description provided for @olderStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari za awali'**
+  String get olderStories;
+
+  /// No description provided for @openInApp.
+  ///
+  /// In sw, this message translates to:
+  /// **'Soma kwa urahisi kwenye programu'**
+  String get openInApp;
+
+  /// No description provided for @open.
+  ///
+  /// In sw, this message translates to:
+  /// **'Fungua'**
+  String get open;
+
+  /// No description provided for @search.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tafuta'**
+  String get search;
+
+  /// No description provided for @searchSoon.
+  ///
+  /// In sw, this message translates to:
+  /// **'Chagua kundi usome habari zake.'**
+  String get searchSoon;
+
+  /// No description provided for @serverErrorTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Hitilafu imetokea'**
+  String get serverErrorTitle;
+
+  /// No description provided for @legal.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kurasa za tovuti'**
+  String get legal;
+
+  /// No description provided for @correctionsPage.
+  ///
+  /// In sw, this message translates to:
+  /// **'Marekebisho yetu'**
+  String get correctionsPage;
+
+  /// No description provided for @publishedAt.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imechapishwa'**
+  String get publishedAt;
+
+  /// No description provided for @updatedAt.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imesasishwa'**
+  String get updatedAt;
+
+  /// No description provided for @authorStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari zake'**
+  String get authorStories;
+
+  /// No description provided for @pageOf.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ukurasa wa {n}'**
+  String pageOf(int n);
+
+  /// No description provided for @places.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sehemu kuu'**
+  String get places;
+
+  /// No description provided for @savedEmptyWeb.
+  ///
+  /// In sw, this message translates to:
+  /// **'Gusa alama ya kuhifadhi kwenye habari yoyote. Itabaki kwenye kifaa hiki.'**
+  String get savedEmptyWeb;
+
+  /// No description provided for @offlineNote.
+  ///
+  /// In sw, this message translates to:
+  /// **'Huna mtandao.'**
+  String get offlineNote;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

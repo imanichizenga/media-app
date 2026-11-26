@@ -31,38 +31,15 @@ abstract final class NewsIcons {
     'M8.59 13.51L15.42 17.49',
     'M15.41 6.51L8.59 10.49',
   ]);
-  static const search = NewsIconData([
-    'm21 21-4.34-4.34',
-    'M3 11a8 8 0 1 0 16 0a8 8 0 1 0 -16 0Z',
-  ]);
-  static const chevronRight = NewsIconData([
-    'm9 18 6-6-6-6',
-  ]);
-  static const chevronLeft = NewsIconData([
-    'm15 18-6-6 6-6',
-  ]);
-  static const chevronDown = NewsIconData([
-    'm6 9 6 6 6-6',
-  ]);
-  static const arrowRight = NewsIconData([
-    'M5 12h14',
-    'm12 5 7 7-7 7',
-  ]);
-  static const arrowLeft = NewsIconData([
-    'm12 19-7-7 7-7',
-    'M19 12H5',
-  ]);
-  static const arrowUp = NewsIconData([
-    'm5 12 7-7 7 7',
-    'M12 19V5',
-  ]);
-  static const x = NewsIconData([
-    'M18 6 6 18',
-    'm6 6 12 12',
-  ]);
-  static const check = NewsIconData([
-    'M20 6 9 17l-5-5',
-  ]);
+  static const search = NewsIconData(['m21 21-4.34-4.34', 'M3 11a8 8 0 1 0 16 0a8 8 0 1 0 -16 0Z']);
+  static const chevronRight = NewsIconData(['m9 18 6-6-6-6']);
+  static const chevronLeft = NewsIconData(['m15 18-6-6 6-6']);
+  static const chevronDown = NewsIconData(['m6 9 6 6 6-6']);
+  static const arrowRight = NewsIconData(['M5 12h14', 'm12 5 7 7-7 7']);
+  static const arrowLeft = NewsIconData(['m12 19-7-7 7-7', 'M19 12H5']);
+  static const arrowUp = NewsIconData(['m5 12 7-7 7 7', 'M12 19V5']);
+  static const x = NewsIconData(['M18 6 6 18', 'm6 6 12 12']);
+  static const check = NewsIconData(['M20 6 9 17l-5-5']);
   static const zap = NewsIconData([
     'M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z',
   ]);
@@ -92,10 +69,7 @@ abstract final class NewsIcons {
     'm2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16',
     'M3.304 13h6.392',
   ]);
-  static const clock = NewsIconData([
-    'M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0Z',
-    'M12 6v6l4 2',
-  ]);
+  static const clock = NewsIconData(['M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0Z', 'M12 6v6l4 2']);
   static const trash2 = NewsIconData([
     'M10 11v6',
     'M14 11v6',
@@ -237,10 +211,7 @@ abstract final class NewsIcons {
     'M15 7h2a5 5 0 1 1 0 10h-2',
     'M8 12L16 12',
   ]);
-  static const gauge = NewsIconData([
-    'm12 14 4-4',
-    'M3.34 19a10 10 0 1 1 17.32 0',
-  ]);
+  static const gauge = NewsIconData(['m12 14 4-4', 'M3.34 19a10 10 0 1 1 17.32 0']);
   static const newspaper = NewsIconData([
     'M15 18h-5',
     'M18 14h-8',
@@ -255,10 +226,7 @@ abstract final class NewsIcons {
     'M3 22h18',
     'M6 18v-7',
   ]);
-  static const trendingUp = NewsIconData([
-    'M16 7h6v6',
-    'm22 7-8.5 8.5-5-5L2 17',
-  ]);
+  static const trendingUp = NewsIconData(['M16 7h6v6', 'm22 7-8.5 8.5-5-5L2 17']);
   static const trophy = NewsIconData([
     'M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2',
     'M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2',
@@ -352,11 +320,7 @@ abstract final class NewsIcons {
     'M12 17v5',
     'M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z',
   ]);
-  static const menu = NewsIconData([
-    'M4 5h16',
-    'M4 12h16',
-    'M4 19h16',
-  ]);
+  static const menu = NewsIconData(['M4 5h16', 'M4 12h16', 'M4 19h16']);
   static const smartphone = NewsIconData([
     'M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2Z',
     'M12 18h.01',

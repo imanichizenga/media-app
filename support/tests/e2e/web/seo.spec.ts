@@ -1,6 +1,9 @@
+import { policy } from "../../../../web/lib/csp";
+import { inlineScripts } from "../../../../web/lib/slim";
+import { missing } from "../../../../web/test/google";
 import { structured } from "../../../../web/test/schema";
 import { manage } from "../helpers";
-import { api, expect, places, test } from "./helpers";
+import { api, expect, places, ready, test, webLog } from "./helpers";
 
 const head = (html: string, re: RegExp) => [...html.matchAll(re)].map((m) => m[1]);
 for (const locale of ["sw", "en"] as const)
@@ -25,8 +28,20 @@ for (const locale of ["sw", "en"] as const)
         expect(langs, name).toContain("x-default");
       }
       expect(said(/<meta property="og:image" content="([^"]+)"/g), name).toHaveLength(1);
-      for (const json of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs))
-        expect(() => structured.parse(JSON.parse(json[1] ?? "")), `${name} JSON-LD`).not.toThrow();
+      for (const json of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
+        const data = JSON.parse(json[1] ?? "");
+        expect(() => structured.parse(data), `${name} JSON-LD`).not.toThrow();
+        // Complete for Google: its required and recommended fields (web/test/google.ts).
+        const items = (data["@graph"] ?? [data]) as Record<string, unknown>[];
+        const nested = items.flatMap((x) => [x, ...[x.publisher, x.worksFor].filter(Boolean)]) as Record<
+          string,
+          unknown
+        >[];
+        expect(
+          nested.flatMap((x) => missing(x, false)),
+          `${name} for Google`,
+        ).toEqual([]);
+      }
       const types = [...html.matchAll(/"@type":"(\w+)"/g)].map((m) => m[1]);
       const wanted: Record<string, string> = {
         home: "NewsMediaOrganization",
@@ -54,12 +69,16 @@ test("the other language's page points back", async ({ request }) => {
   expect(there).toEqual(here);
 });
 
-test("security headers and a fresh nonce on every page", async ({ request }) => {
+test("one strict policy, the same for every reader, and nothing inline runs on any page", async ({
+  request,
+}) => {
   const [a, b] = [await request.get("/"), await request.get("/")];
   const csp = a.headers()["content-security-policy"] ?? "";
-  expect(csp).toContain("default-src 'none'");
-  expect(csp.match(/script-src[^;]*/)?.[0]).not.toContain("unsafe");
-  expect(csp).not.toBe(b.headers()["content-security-policy"]);
+  // The policy a reader gets is exactly the one lib/csp.ts writes; no nonce, so a cached page gives nothing away.
+  expect(csp).toBe(policy({ media: process.env.MEDIA_ORIGIN, local: true }));
+  expect(csp).toBe(b.headers()["content-security-policy"]);
+  expect(csp).not.toContain("nonce");
+  expect(a.headers()["reporting-endpoints"]).toBe('csp="/api/csp-report"');
   expect(a.headers()).toMatchObject({
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
@@ -69,31 +88,76 @@ test("security headers and a fresh nonce on every page", async ({ request }) => 
   expect(a.headers()["cache-control"]).toContain("s-maxage=60");
   expect(a.headers()["cache-control"]).toContain("stale-while-revalidate");
   expect(a.headers()["set-cookie"]).toBeUndefined();
-  // Nothing of the framework's own is sent, and nobody else's anything.
-  const html = await a.text();
-  // The stylesheet is the framework's file; no script of its is.
-  expect(html).not.toMatch(/<script[^>]*src="\/_next\//);
-  expect(html.match(/<script[^>]*src="([^"]+)"/g)).toHaveLength(1);
-  expect(html).not.toMatch(
-    /<(script|link|img|iframe)[^>]+(src|href)="https?:\/\/(?!localhost)[^"]*\.(js|css)/,
-  );
+  for (const locale of ["sw", "en"] as const)
+    for (const [name, path] of Object.entries(await places(locale))) {
+      if (!path) continue;
+      const res = await request.get(path);
+      const html = await res.text();
+      expect(inlineScripts(html), `${locale} ${name}`).toEqual([]);
+      expect(res.headers()["content-security-policy"], `${locale} ${name}`).toBe(csp);
+      // Our own files only: the early script and the islands. Nothing of the framework's, nobody else's anything.
+      const sources = [...html.matchAll(/<script[^>]*\bsrc="([^"]+)"/g)].map((m) => m[1]);
+      expect(sources, `${locale} ${name}`).toEqual([
+        expect.stringMatching(/^\/js\/early-/),
+        expect.stringMatching(/^\/js\/site-/),
+      ]);
+      expect(html).not.toMatch(
+        /<(script|link|img|iframe)[^>]+(src|href)="https?:\/\/(?!localhost)[^"]*\.(js|css)/,
+      );
+    }
+});
+
+test("a violation of the policy is reported and logged", async ({ request }) => {
+  const report = {
+    "csp-report": {
+      "document-uri": "http://localhost:3000/?q=private",
+      "effective-directive": "script-src-elem",
+      "blocked-uri": "inline",
+    },
+  };
+  const res = await request.post("/api/csp-report", {
+    headers: { "content-type": "application/csp-report" },
+    data: JSON.stringify(report),
+  });
+  expect(res.status()).toBe(204);
+  expect(res.headers()["cache-control"]).toBe("no-store");
+  await expect
+    .poll(() =>
+      webLog().includes(
+        '"event":"csp_violation","page":"http://localhost:3000/","directive":"script-src-elem","blocked":"inline"',
+      ),
+    )
+    .toBe(true);
+  expect(webLog()).not.toContain("q=private");
+  expect((await request.post("/api/csp-report", { data: "x".repeat(10_000) })).status()).toBe(413);
+});
+
+test("a browser runs the page under the policy without a single violation", async ({ page }) => {
+  const refused: string[] = [];
+  // The policy fixture reports every violation as a console error starting "CSP".
+  page.on("console", (m) => {
+    if (/^CSP |Content Security Policy|TrustedHTML|Trusted Type/i.test(m.text())) refused.push(m.text());
+  });
+  const { article, video, live } = await places("sw");
+  for (const path of ["/", article, video, live, "/en"]) if (path) await ready(page, path);
+  // Moving inside the site parses a document through the Trusted Types policy.
+  await ready(page, "/");
+  await page.locator("main a[href^='/']").first().click();
+  await page.waitForLoadState("networkidle");
+  expect(refused).toEqual([]);
 });
 
 test("cached pages hold nothing personal: any reader gets the same", async ({ request }) => {
   const read = async (headers: Record<string, string>) =>
-    (await (await request.get("/", { headers })).text())
-      .replace(/nonce="[^"]+"/g, "")
-      .replace(/dakika \d+|saa \d+/g, "");
+    (await (await request.get("/", { headers })).text()).replace(/dakika \d+|saa \d+/g, "");
   expect(await read({ cookie: "x=1; scheme=dark", "user-agent": "one" })).toBe(
     await read({ "user-agent": "two" }),
   );
 });
 
 test("an internal request cannot be made from outside", async ({ request }) => {
-  const res = await request.get("/", {
-    headers: { "x-internal": "guess", "x-nonce": "mine", "x-path": "/privacy" },
-  });
-  expect(await res.text()).not.toContain('nonce="mine"');
+  const res = await request.get("/", { headers: { "x-internal": "guess", "x-path": "/privacy" } });
+  expect(await res.text()).not.toContain('<link rel="canonical" href="http://localhost:3000/privacy"');
   expect((await request.get("/document")).status()).toBe(404);
   expect((await request.get("/missing")).status()).toBe(404);
 });

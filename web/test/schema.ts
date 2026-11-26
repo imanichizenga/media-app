@@ -14,6 +14,7 @@ const organization = z.strictObject({
   "@id": url,
   name: z.string().min(1),
   url,
+  description: z.string().min(1).optional(),
   logo: z
     .strictObject({
       "@type": z.literal("ImageObject"),

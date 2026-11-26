@@ -77,3 +77,4 @@ mobile/android/app/.cxx/
 # Built by web/scripts/islands.mjs
 web/public/js/
 web/generated/
+support/tests/e2e/.web-server.log

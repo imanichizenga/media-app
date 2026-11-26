@@ -24,13 +24,16 @@ const thumbnail = (site: Site, c: Pick<Card, "image" | "video" | "youtube_id">):
 export const duration = (ms: number | null) =>
   ms ? `PT${Math.floor(ms / 60_000)}M${Math.round(ms / 1000) % 60}S` : undefined;
 
-export function organization(site: Site) {
+export function organization(site: Site, locale: Locale = "sw") {
   const logo = site.identity.symbol ?? site.identity.wordmark_light;
+  // The brand's own line in the reader's language (Google recommends a description); absent if not written.
+  const description = (locale === "en" ? site.identity.tagline_en : site.identity.tagline_sw)?.trim();
   return {
     "@type": "NewsMediaOrganization",
     "@id": `${absolute("/")}/#organization`,
     name: site.identity.brand_name,
     url: absolute("/"),
+    ...(description ? { description } : {}),
     ...(logo
       ? {
           logo: {
@@ -86,7 +89,7 @@ export function newsArticle(site: Site, a: Article) {
     datePublished: a.published_at,
     dateModified: a.modified_at,
     author: a.authors.map((p) => ({ "@type": "Person", name: p.name, url: absolute(p.path) })),
-    publisher: organization(site),
+    publisher: organization(site, a.locale === "en" ? "en" : "sw"),
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     url,
     inLanguage: a.locale,

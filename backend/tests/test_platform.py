@@ -78,6 +78,12 @@ def test_public_surface_has_no_admin_routes():
         "navigation",
         "search",
         "resolve",
+        # M2: the publisher's own pages and the sitemaps the website serves.
+        "pages",
+        "pages/<slug:key>",
+        "sitemap",
+        "sitemap/news",
+        "sitemap/<slug:month>",
     }
     for p in patterns:
         if "/content/" in str(p.pattern):

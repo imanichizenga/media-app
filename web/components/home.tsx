@@ -38,7 +38,7 @@ export async function HomeView({
       breaking={hot && cards([hot])[0]}
       other={at(locale === "sw" ? "en" : "sw", "/")}
     >
-      <JsonLd data={graph(organization(site), website(site, locale))} />
+      <JsonLd data={graph(organization(site, locale), website(site, locale))} />
       <h1 className="sr-only">{site.identity.brand_name}</h1>
       <Wide className="lg:pt-4">
         {told && <LiveRail cards={cards(told.live)} env={view} title={t("liveNow")} />}

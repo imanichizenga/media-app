@@ -56,7 +56,7 @@ async function Still(props: Props) {
     <Frame locale={locale} path={p.path} view={view} title={p.title} other={p.translations[0]?.path}>
       <JsonLd
         data={graph(
-          organization(site),
+          organization(site, locale),
           breadcrumbs([
             { name: site.identity.brand_name, path: at(locale, "/") },
             { name: p.title, path: p.path },
