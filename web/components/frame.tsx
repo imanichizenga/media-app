@@ -1,5 +1,15 @@
 import { cx } from "@news/ui/base";
-import { Bookmark, CircleUser, Compass, House, type Icon, Play, Search } from "@news/ui/icons";
+import {
+  Bookmark,
+  ChevronLeft,
+  ChevronRight,
+  CircleUser,
+  Compass,
+  House,
+  type Icon,
+  Play,
+  Search,
+} from "@news/ui/icons";
 import { BreakingBanner, type CardData, type NewsEnv, Wordmark } from "@news/ui/news";
 import type { ReactNode } from "react";
 import type { Nav, Site } from "@/lib/api";
@@ -99,24 +109,44 @@ function Row({
       aria-label={t("categories")}
       className={cx("sticky top-0 z-20 border-border border-b bg-bg lg:static", quiet && "max-lg:hidden")}
     >
-      <ul className="mx-auto flex h-12 max-w-7xl overflow-x-auto px-1 scrollbar-none lg:justify-center">
-        {tabs.map(([path, name]) => (
-          <li key={path} className="shrink-0">
-            <a
-              href={path}
-              aria-current={here === path ? "page" : undefined}
-              className={cx(
-                "inline-flex h-12 items-center whitespace-nowrap border-b-3 px-3 text-label",
-                here === path
-                  ? "border-brand-text font-semibold text-text-primary"
-                  : "border-transparent text-text-secondary hover:text-text-primary",
-              )}
-            >
-              {name}
-            </a>
-          </li>
+      {/* More sections than the row shows: the side with more fades, and a chevron there goes on (islands/site.ts). */}
+      <div data-tabs="" className="relative mx-auto max-w-7xl">
+        <ul className="flex h-12 overflow-x-auto px-1 scrollbar-none lg:justify-center-safe">
+          {tabs.map(([path, name]) => (
+            <li key={path} className="shrink-0">
+              <a
+                href={path}
+                aria-current={here === path ? "page" : undefined}
+                className={cx(
+                  "inline-flex h-12 items-center whitespace-nowrap border-b-3 px-3 text-label",
+                  here === path
+                    ? "border-brand-text font-semibold text-text-primary"
+                    : "border-transparent text-text-secondary hover:text-text-primary",
+                )}
+              >
+                {name}
+              </a>
+            </li>
+          ))}
+        </ul>
+        {(
+          [
+            [-1, t("earlierTabs"), ChevronLeft, "left-0"],
+            [1, t("moreTabs"), ChevronRight, "right-0"],
+          ] as const
+        ).map(([way, label, Sign, side]) => (
+          <button
+            key={way}
+            type="button"
+            data-tabs-go={way}
+            aria-label={label}
+            hidden
+            className={cx("tabs-go absolute inset-y-0 w-11 place-items-center text-text-secondary", side)}
+          >
+            <Sign size={20} />
+          </button>
         ))}
-      </ul>
+      </div>
     </nav>
   );
 }

@@ -114,3 +114,39 @@
     navigation: none;
   }
 }
+
+/* A row of sections that goes on (components/frame.tsx, islands/site.ts): the side with more fades out, so the next
+   section peeks in, and a chevron there goes on. Without script a phone's row fades at its end, where it usually goes
+   on; the island then says exactly which sides have more. */
+[data-tabs] > ul {
+  --fade: 2.5rem;
+}
+@media (max-width: 1023px) {
+  [data-tabs]:not([data-ready]) > ul {
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
+  }
+}
+[data-tabs][data-after] > ul {
+  mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
+}
+[data-tabs][data-before] > ul {
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade));
+}
+[data-tabs][data-before][data-after] > ul {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade),
+    #000 calc(100% - var(--fade)),
+    transparent
+  );
+}
+.tabs-go:not([hidden]) {
+  display: grid;
+}
+.tabs-go {
+  background: linear-gradient(to left, var(--color-bg) 55%, transparent);
+}
+.tabs-go.left-0 {
+  background: linear-gradient(to right, var(--color-bg) 55%, transparent);
+}

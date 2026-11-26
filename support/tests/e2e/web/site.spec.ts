@@ -280,6 +280,35 @@ test.describe("space is for news", () => {
     ).toHaveCount(1);
   });
 
+  test("a row of sections that goes on says so, and its chevron goes on", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.goto("/");
+    const row = page.locator("[data-tabs]");
+    await expect(row).toHaveAttribute("data-after", "");
+    await expect(row.getByRole("button", { name: "Sehemu za awali" })).toBeHidden();
+    const more = row.getByRole("button", { name: "Sehemu zaidi" });
+    await expect(more).toBeVisible();
+    const box = await more.boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    const scrolled = () => row.locator("ul").evaluate((u) => u.scrollLeft);
+    const before = await scrolled();
+    await more.click();
+    await expect.poll(scrolled).toBeGreaterThan(before + 100);
+    await expect(row.getByRole("button", { name: "Sehemu za awali" })).toBeVisible();
+    // A desk that has room for every section shows no chevron, and every tab is reachable.
+    await page.setViewportSize(DESK);
+    await page.goto("/");
+    const fits = await row.locator("ul").evaluate((u) => u.scrollWidth <= u.clientWidth + 1);
+    if (fits) await expect(row.locator("[data-tabs-go]:visible")).toHaveCount(0);
+    expect(
+      await row
+        .locator("li")
+        .first()
+        .evaluate((li) => li.getBoundingClientRect().left),
+    ).toBeGreaterThanOrEqual(0);
+  });
+
   test("the live rail: two lines under each ring, within 96 (R3)", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 640 });
     await page.goto("/");

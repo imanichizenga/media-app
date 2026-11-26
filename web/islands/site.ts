@@ -221,6 +221,36 @@ addEventListener("resize", () => {
   fitting = requestAnimationFrame(fitMeta);
 });
 
+// ---- a row of sections that goes on ----
+// The sides with more are marked for the stylesheet (a fade), and their chevrons shown; a chevron goes most of a row on.
+function tabs() {
+  for (const row of all("[data-tabs]") as NodeListOf<HTMLElement>) {
+    const list = row.querySelector("ul");
+    if (!list) continue;
+    const mark = () => {
+      const before = list.scrollLeft > 1;
+      const after = list.scrollLeft + list.clientWidth < list.scrollWidth - 1;
+      row.toggleAttribute("data-before", before);
+      row.toggleAttribute("data-after", after);
+      for (const b of row.querySelectorAll<HTMLButtonElement>("[data-tabs-go]"))
+        b.hidden = b.dataset.tabsGo === "1" ? !after : !before;
+    };
+    if (!row.dataset.ready) {
+      row.dataset.ready = "";
+      list.addEventListener("scroll", mark, { passive: true });
+      addEventListener("resize", mark);
+      for (const b of row.querySelectorAll<HTMLButtonElement>("[data-tabs-go]"))
+        b.addEventListener("click", () =>
+          list.scrollBy({
+            left: Number(b.dataset.tabsGo) * list.clientWidth * 0.7,
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          }),
+        );
+    }
+    mark();
+  }
+}
+
 // ---- each page ----
 let stopShorts: (() => void)[] = [];
 function arrive() {
@@ -240,6 +270,7 @@ function arrive() {
   }
   stopShorts = [...all("[data-shorts]")].map(shorts);
   fitMeta();
+  tabs();
 }
 function leave() {
   for (const stop of stopShorts) stop();
