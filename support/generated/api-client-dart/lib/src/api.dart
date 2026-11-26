@@ -7,6 +7,7 @@ import 'package:news_api_client/src/auth/api_key_auth.dart';
 import 'package:news_api_client/src/auth/basic_auth.dart';
 import 'package:news_api_client/src/auth/bearer_auth.dart';
 import 'package:news_api_client/src/auth/oauth.dart';
+import 'package:news_api_client/src/api/app_config_api.dart';
 import 'package:news_api_client/src/api/content_api.dart';
 import 'package:news_api_client/src/api/site_config_api.dart';
 
@@ -124,6 +125,12 @@ class NewsApiClient {
           .apiKeys
           .remove(name);
     }
+  }
+
+  /// Get AppConfigApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  AppConfigApi getAppConfigApi() {
+    return AppConfigApi(dio);
   }
 
   /// Get ContentApi instance, base route and serializer can be overridden by a given but be careful,

@@ -63,8 +63,8 @@ def test_public_surface_has_no_admin_routes():
     rest = {str(p.pattern) for p in patterns if "/content/" not in str(p.pattern)}
     theme = {p.strip("^").split("theme/")[1].split("(")[0] for p in rest if "theme/" in p}
     assert theme == {"", "current.css", "logo/", "manifest-"}
-    other = {p for p in rest if "theme/" not in p}
-    assert other == {"health/live", "health/ready", "api/v1/site-config"}
+    other = {p for p in rest if "theme/" not in p and "well-known" not in p}
+    assert other == {"health/live", "health/ready", "api/v1/site-config", "api/v1/app-config"}
     assert content == {
         "home",
         "latest",

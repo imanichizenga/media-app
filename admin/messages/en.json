@@ -360,7 +360,8 @@
     "cidrHelp": "One network per line, for example 203.0.113.0/24.",
     "section": {
       "localization": "Language and time",
-      "security": "Security"
+      "security": "Security",
+      "app": "Mobile app"
     },
     "field": {
       "default_locale": "Default language",
@@ -373,7 +374,30 @@
       "four_eyes": "Four-eyes approval",
       "geo_anomaly_action": "Sign-in from an unusual country",
       "ip_allowlist_enabled": "Only allow listed networks",
-      "ip_allowlist": "Allowed networks"
+      "ip_allowlist": "Allowed networks",
+      "min_android": "Oldest Android version allowed",
+      "recommended_android": "Recommended Android version",
+      "store_android": "Google Play address",
+      "min_ios": "Oldest iOS version allowed",
+      "recommended_ios": "Recommended iOS version",
+      "store_ios": "App Store address",
+      "maintenance": "Maintenance: the app shows only this message",
+      "maintenance_sw": "Message (Swahili)",
+      "maintenance_en": "Message (English)",
+      "shorts": "Shorts",
+      "youtube": "YouTube player",
+      "offline_saving": "Saving for offline reading",
+      "link_about": "About us page",
+      "link_editorial": "Editorial policy page",
+      "link_corrections": "Corrections page",
+      "link_contact": "Contact page",
+      "link_privacy": "Privacy page",
+      "link_terms": "Terms page",
+      "pinning": "Certificate pinning",
+      "pins": "Certificate pins",
+      "android_packages": "Android packages that open links",
+      "android_certificates": "Android signing certificates",
+      "ios_app_ids": "iOS app IDs that open links"
     },
     "option": {
       "sw": "Kiswahili",
@@ -383,7 +407,8 @@
       "off": "Off",
       "alert": "Alert",
       "block": "Block"
-    }
+    },
+    "listHelp": "One per line."
   },
   "security": {
     "title": "My security",

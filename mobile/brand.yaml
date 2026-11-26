@@ -1,0 +1,10 @@
+# What the stores fix when the app is built. Everything else about the brand comes from the admin console.
+# After a change: support/scripts/mobile-brand.sh, then commit what it wrote and release a new version.
+name: Mfano News
+android_id: tz.mfano.news
+ios_id: tz.mfano.news
+color: "#b5121b"
+letter: M
+host_dev: dev.example.com
+host_staging: staging.example.com
+host_prod: www.example.com

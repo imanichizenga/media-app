@@ -1,0 +1,74 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Mfano News App Screens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* A light table: a fixed control row, then phones side by side. The screens are the only colour. */
+:root {
+  --bg: #f3f2f1; --fg: #121314; --soft: #55585d; --line: #dcdad7; --card: #ffffff; --accent: #b5121b;
+  --serif: "Newsreader", Georgia, serif; --sans: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #141516; --fg: #f1f1ef; --soft: #a9adb3; --line: #303236; --card: #1c1d1f; --accent: #e1675d; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #141516; --fg: #f1f1ef; --soft: #a9adb3; --line: #303236; --card: #1c1d1f; --accent: #e1675d; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { max-width: 1240px; margin: 0 auto; display: grid; gap: 24px; }
+h1 { font: 600 clamp(28px, 5vw, 40px)/1.1 var(--serif); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+p { margin: 8px 0 0; color: var(--soft); font-size: 15px; line-height: 1.5; max-width: 62ch; }
+form { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; flex-wrap: wrap; gap: 10px 20px; border-bottom: 1px solid var(--line); }
+fieldset { margin: 0; display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 3px; }
+legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+label { cursor: pointer; }
+label span { display: block; padding: 8px 14px; border-radius: 18px; font-size: 14px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+input { position: absolute; opacity: 0; }
+input:checked + span { background: var(--fg); color: var(--bg); }
+input:focus-visible + span { outline: 2px solid var(--fg); outline-offset: 2px; }
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 32px 24px; align-items: start; }
+figure { margin: 0; min-width: 0; display: grid; gap: 10px; }
+.wide { grid-column: span 2; }
+img { display: block; width: 100%; height: auto; border-radius: 28px; border: 1px solid var(--line); background: var(--card); }
+.wide img { border-radius: 18px; }
+figcaption { font-size: 14px; font-weight: 500; text-align: center; }
+#none { color: var(--soft); }
+@media (max-width: 600px) { #grid { grid-template-columns: 1fr 1fr; gap: 20px 12px; } img { border-radius: 16px; } figcaption { font-size: 12px; } fieldset { flex-wrap: wrap; } label span { padding: 8px 11px; } }
+</style>
+<main>
+  <header>
+    <h1>Mfano News, the app</h1>
+    <p>Every screen as the app draws it, with sample stories. Choose a theme, light or dark, and a language. The second language and the two other themes show the key screens.</p>
+  </header>
+  <form id="f">
+    <fieldset><legend>Theme</legend>
+      <label><input id="t1" type="radio" name="themeKey" value="signature" checked><span>Red Signature</span></label>
+      <label><input id="t2" type="radio" name="themeKey" value="bold"><span>Bold Ink</span></label>
+      <label><input id="t3" type="radio" name="themeKey" value="quiet"><span>Quiet Paper</span></label>
+    </fieldset>
+    <fieldset><legend>Appearance</legend>
+      <label><input id="s1" type="radio" name="scheme" value="light" checked><span>Light</span></label>
+      <label><input id="s2" type="radio" name="scheme" value="dark"><span>Dark</span></label>
+    </fieldset>
+    <fieldset><legend>Language</legend>
+      <label><input id="l1" type="radio" name="locale" value="sw" checked><span>Kiswahili</span></label>
+      <label><input id="l2" type="radio" name="locale" value="en"><span>English</span></label>
+    </fieldset>
+  </form>
+  <section id="grid" aria-label="Screens">
+<!-- figures -->
+  </section>
+  <p id="none" hidden>This theme was drawn in Kiswahili only. Choose Kiswahili to see it.</p>
+</main>
+<script>
+const form = document.getElementById("f");
+const shots = [...document.querySelectorAll(".shot")];
+function show() {
+  const want = [...new FormData(form)];
+  let n = 0;
+  for (const s of shots) {
+    s.hidden = !want.every(([k, v]) => s.dataset[k] === v);
+    if (!s.hidden) n++;
+  }
+  document.getElementById("none").hidden = n > 0;
+}
+form.addEventListener("input", show);
+show();
+</script>

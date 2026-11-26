@@ -5,6 +5,27 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/v1/app-config": {
+            "get": {
+                "operationId": "app_config",
+                "description": "For installed apps. ETag and a short life: a kill switch must arrive within minutes.",
+                "tags": [
+                    "app-config"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppConfig"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/content/articles/{slug}": {
             "get": {
                 "operationId": "article",
@@ -608,6 +629,189 @@
     },
     "components": {
         "schemas": {
+            "AppConfig": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "$ref": "#/components/schemas/SiteTheme"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/SiteIdentity"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "media_base_url": {
+                        "type": "string"
+                    },
+                    "versions": {
+                        "$ref": "#/components/schemas/AppVersions"
+                    },
+                    "maintenance": {
+                        "$ref": "#/components/schemas/AppMaintenance"
+                    },
+                    "flags": {
+                        "$ref": "#/components/schemas/AppFlags"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/AppLinks"
+                    },
+                    "pinning": {
+                        "$ref": "#/components/schemas/AppPinning"
+                    },
+                    "localization": {
+                        "$ref": "#/components/schemas/AppLocalization"
+                    }
+                },
+                "required": [
+                    "flags",
+                    "identity",
+                    "links",
+                    "localization",
+                    "maintenance",
+                    "media_base_url",
+                    "pinning",
+                    "theme",
+                    "version",
+                    "versions"
+                ]
+            },
+            "AppFlags": {
+                "type": "object",
+                "properties": {
+                    "shorts": {
+                        "type": "boolean"
+                    },
+                    "youtube": {
+                        "type": "boolean"
+                    },
+                    "offline_saving": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "offline_saving",
+                    "shorts",
+                    "youtube"
+                ]
+            },
+            "AppLinks": {
+                "type": "object",
+                "properties": {
+                    "about": {
+                        "type": "string"
+                    },
+                    "editorial": {
+                        "type": "string"
+                    },
+                    "corrections": {
+                        "type": "string"
+                    },
+                    "contact": {
+                        "type": "string"
+                    },
+                    "privacy": {
+                        "type": "string"
+                    },
+                    "terms": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "about",
+                    "contact",
+                    "corrections",
+                    "editorial",
+                    "privacy",
+                    "terms"
+                ]
+            },
+            "AppLocalization": {
+                "type": "object",
+                "properties": {
+                    "default_locale": {
+                        "$ref": "#/components/schemas/DefaultLocaleEnum"
+                    },
+                    "timezone": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "default_locale",
+                    "timezone"
+                ]
+            },
+            "AppMaintenance": {
+                "type": "object",
+                "properties": {
+                    "on": {
+                        "type": "boolean"
+                    },
+                    "sw": {
+                        "type": "string"
+                    },
+                    "en": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "en",
+                    "on",
+                    "sw"
+                ]
+            },
+            "AppPinning": {
+                "type": "object",
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "pins": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "enabled",
+                    "pins"
+                ]
+            },
+            "AppPlatformVersions": {
+                "type": "object",
+                "properties": {
+                    "minimum": {
+                        "type": "string"
+                    },
+                    "recommended": {
+                        "type": "string"
+                    },
+                    "store": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "minimum",
+                    "recommended",
+                    "store"
+                ]
+            },
+            "AppVersions": {
+                "type": "object",
+                "properties": {
+                    "android": {
+                        "$ref": "#/components/schemas/AppPlatformVersions"
+                    },
+                    "ios": {
+                        "$ref": "#/components/schemas/AppPlatformVersions"
+                    }
+                },
+                "required": [
+                    "android",
+                    "ios"
+                ]
+            },
             "Article": {
                 "type": "object",
                 "description": "`body` is a content document (support/packages/content-schema). `assets` holds its files, by id.",

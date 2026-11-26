@@ -1,5 +1,7 @@
 from typing import Any, ClassVar
 
+from django.http import HttpRequest, JsonResponse
+from django.views.decorators.http import require_safe
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.request import Request
@@ -38,6 +40,68 @@ class PublicConfigView(APIView):
             services.public_config(),
             headers={"Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600"},
         )
+
+
+class AppPlatformVersionsSerializer(serializers.Serializer[Any]):
+    minimum = serializers.CharField(allow_blank=True)
+    recommended = serializers.CharField(allow_blank=True)
+    store = serializers.CharField(allow_blank=True)
+
+
+class AppConfigView(APIView):
+    """For installed apps. ETag and a short life: a kill switch must arrive within minutes."""
+
+    authentication_classes = []
+    permission_classes = [PublicEndpoint]
+
+    @extend_schema(
+        operation_id="app_config",
+        auth=[],
+        responses=schema(
+            "AppConfig",
+            version=serializers.CharField(),
+            media_base_url=serializers.CharField(allow_blank=True),
+            versions=schema(
+                "AppVersions", android=AppPlatformVersionsSerializer(), ios=AppPlatformVersionsSerializer()
+            ),
+            maintenance=schema(
+                "AppMaintenance",
+                on=serializers.BooleanField(),
+                sw=serializers.CharField(allow_blank=True),
+                en=serializers.CharField(allow_blank=True),
+            ),
+            flags=schema("AppFlags", **{n: serializers.BooleanField() for n in services._FLAGS}),
+            links=schema("AppLinks", **{n: serializers.CharField(allow_blank=True) for n in services._LINKS}),
+            pinning=schema(
+                "AppPinning",
+                enabled=serializers.BooleanField(),
+                pins=serializers.ListField(child=serializers.CharField()),
+            ),
+            identity=IdentitySerializer,
+            theme=ThemeSerializer,
+            localization=schema(
+                "AppLocalization",
+                default_locale=serializers.ChoiceField(choices=["sw", "en"]),
+                timezone=serializers.CharField(),
+            ),
+        ),
+    )
+    def get(self, request: Request) -> Response:
+        return Response(
+            services.app_config(),
+            headers={
+                "Cache-Control": "public, max-age=60, s-maxage=120, stale-while-revalidate=600, "
+                "stale-if-error=86400",
+                "Surrogate-Key": "app-config brand",
+            },
+        )
+
+
+@require_safe
+def well_known(request: HttpRequest, name: str) -> JsonResponse:
+    """Served here until the website exists; then it forwards these two addresses."""
+    body: Any = services.asset_links() if name == "assetlinks.json" else services.apple_links()
+    return JsonResponse(body, safe=False, headers={"Cache-Control": "public, max-age=300, s-maxage=3600"})
 
 
 SectionBody = schema(

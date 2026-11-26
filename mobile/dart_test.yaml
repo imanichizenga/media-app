@@ -1,0 +1,5 @@
+tags:
+  look:
+    skip: "Draws screens to look at; run with --run-skipped --tags look"
+  golden:
+    timeout: 60s

@@ -5,6 +5,7 @@ packages:
   - support/packages/content-schema
   - support/packages/ui
   - support/packages/screens
+  - support/packages/i18n
   - support/tests/e2e
   - support/design/prototypes
 minimumReleaseAgeExclude:

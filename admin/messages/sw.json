@@ -360,7 +360,8 @@
     "cidrHelp": "Mtandao mmoja kwa kila mstari, mfano 203.0.113.0/24.",
     "section": {
       "localization": "Lugha na saa",
-      "security": "Usalama"
+      "security": "Usalama",
+      "app": "Programu ya simu"
     },
     "field": {
       "default_locale": "Lugha chaguo-msingi",
@@ -373,7 +374,30 @@
       "four_eyes": "Idhini ya watu wawili",
       "geo_anomaly_action": "Kuingia kutoka nchi isiyo ya kawaida",
       "ip_allowlist_enabled": "Ruhusu mitandao iliyoorodheshwa tu",
-      "ip_allowlist": "Mitandao inayoruhusiwa"
+      "ip_allowlist": "Mitandao inayoruhusiwa",
+      "min_android": "Toleo la zamani zaidi la Android",
+      "recommended_android": "Toleo la Android linalopendekezwa",
+      "store_android": "Anwani ya Google Play",
+      "min_ios": "Toleo la zamani zaidi la iOS",
+      "recommended_ios": "Toleo la iOS linalopendekezwa",
+      "store_ios": "Anwani ya App Store",
+      "maintenance": "Matengenezo: programu ionyeshe ujumbe huu tu",
+      "maintenance_sw": "Ujumbe (Kiswahili)",
+      "maintenance_en": "Ujumbe (Kiingereza)",
+      "shorts": "Video fupi",
+      "youtube": "Kicheza YouTube",
+      "offline_saving": "Kuhifadhi kwa kusoma bila mtandao",
+      "link_about": "Ukurasa wa kuhusu sisi",
+      "link_editorial": "Ukurasa wa sera ya uhariri",
+      "link_corrections": "Ukurasa wa marekebisho",
+      "link_contact": "Ukurasa wa mawasiliano",
+      "link_privacy": "Ukurasa wa faragha",
+      "link_terms": "Ukurasa wa masharti",
+      "pinning": "Kufunga cheti",
+      "pins": "Pini za cheti",
+      "android_packages": "Programu za Android zinazofungua viungo",
+      "android_certificates": "Vyeti vya kusaini vya Android",
+      "ios_app_ids": "Programu za iOS zinazofungua viungo"
     },
     "option": {
       "sw": "Kiswahili",
@@ -383,7 +407,8 @@
       "off": "Imezimwa",
       "alert": "Tahadharisha",
       "block": "Zuia"
-    }
+    },
+    "listHelp": "Moja kwa kila mstari."
   },
   "security": {
     "title": "Usalama wangu",

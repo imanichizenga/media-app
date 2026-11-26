@@ -1,6 +1,6 @@
 # The public experience
 
-Design spec for the website (M2) and the app (M3). Prototypes: `support/design/prototypes`. Galleries: [screens/m2-themes](screens/m2-themes/index.html) (current), [screens/m2-design](screens/m2-design/index.html) (as approved on 2026-11-24 with changes D1 to D7). The three themes wait for G2; building does not wait for it.
+Design spec for the website (M2) and the app (M3). Prototypes: `support/design/prototypes`. Galleries: [screens/m2-themes](screens/m2-themes.zip) (current), [screens/m2-design](screens/m2-design.zip) (as approved on 2026-11-24 with changes D1 to D7). Themes approved on 2026-11-24.
 
 ## Idea
 

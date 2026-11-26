@@ -1,0 +1,68 @@
+name: news_app
+description: The news app for Android and iOS.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.14.0
+  flutter: 3.50.1
+
+# Exact versions, each justified in support/docs/adr/0039.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  material_ui: 1.11.1
+  cupertino_ui: 1.1.7
+  news_design_tokens:
+    path: ../support/packages/design-tokens/dart
+  news_content:
+    path: ../support/packages/content-schema/dart
+  news_api_client:
+    path: ../support/generated/api-client-dart
+  flutter_riverpod: 3.5.0
+  riverpod_annotation: 4.0.8
+  go_router: 18.1.4
+  dio: 5.11.1
+  drift: 2.35.4
+  drift_flutter: 0.3.1
+  flutter_secure_storage: 11.2.0
+  flutter_cache_manager: 3.5.0
+  path_provider: 2.1.6
+  crypto: ^3.0.6
+  video_player: 2.14.1
+  webview_flutter: 4.14.1
+  share_plus: 13.3.1
+  url_launcher: 6.3.3
+  package_info_plus: 10.2.2
+  connectivity_plus: 7.3.2
+  sentry_flutter: 10.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  build_runner: 2.17.1
+  riverpod_generator: 4.0.10
+  go_router_builder: 4.5.3
+  drift_dev: 2.35.3
+  mocktail: 1.0.5
+  video_player_platform_interface: any
+  flutter_lints: ^6.0.0
+  flutter_native_splash: 2.4.8
+  flutter_launcher_icons: 0.14.4
+
+flutter:
+  uses-material-design: false
+  generate: true
+  assets:
+    - assets/
+  fonts:
+    # The same subsetted files the web uses; support/scripts/mobile-fonts.py makes them.
+    - family: Newsreader
+      fonts: [{ asset: assets/fonts/Newsreader.ttf }]
+    - family: Inter
+      fonts: [{ asset: assets/fonts/Inter.ttf }]

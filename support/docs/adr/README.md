@@ -37,3 +37,10 @@
 - [0035](0035-window-classes.md) Window classes
 - [0036](0036-repository-layout.md) Repository layout
 - [0037](0037-youtube-duration.md) Video cards always say how long
+- [0038](0038-mobile-architecture.md) Mobile architecture
+- [0039](0039-mobile-packages.md) Mobile packages
+- [0040](0040-mobile-offline.md) Offline first
+- [0041](0041-mobile-links.md) Links
+- [0042](0042-mobile-security.md) Mobile security
+- [0043](0043-mobile-design.md) A stronger design for the app
+- [0044](0044-space-and-native.md) Space and native conventions

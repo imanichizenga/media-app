@@ -1,3 +1,11 @@
+import 'package:news_api_client/src/model/app_config.dart';
+import 'package:news_api_client/src/model/app_flags.dart';
+import 'package:news_api_client/src/model/app_links.dart';
+import 'package:news_api_client/src/model/app_localization.dart';
+import 'package:news_api_client/src/model/app_maintenance.dart';
+import 'package:news_api_client/src/model/app_pinning.dart';
+import 'package:news_api_client/src/model/app_platform_versions.dart';
+import 'package:news_api_client/src/model/app_versions.dart';
 import 'package:news_api_client/src/model/article.dart';
 import 'package:news_api_client/src/model/author_page.dart';
 import 'package:news_api_client/src/model/card.dart';
@@ -54,6 +62,25 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
       return (valueString == 'true' || valueString == '1') as ReturnType;
     case 'double':
       return (value is double ? value : double.parse('$value')) as ReturnType;
+    case 'AppConfig':
+      return AppConfig.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'AppFlags':
+      return AppFlags.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'AppLinks':
+      return AppLinks.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'AppLocalization':
+      return AppLocalization.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'AppMaintenance':
+      return AppMaintenance.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'AppPinning':
+      return AppPinning.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'AppPlatformVersions':
+      return AppPlatformVersions.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'AppVersions':
+      return AppVersions.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'Article':
       return Article.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'AuthorPage':
