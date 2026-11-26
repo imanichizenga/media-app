@@ -23,7 +23,7 @@ jobs:
       runs: ${{ steps.runs.outputs.runs }}
     steps:
       - id: runs
-        env: { RUNS: "${{ inputs.runs || 6 }}" }
+        env: { RUNS: "${{ inputs.runs || 10 }}" }
         run: echo "runs=$(python3 -c 'import json, os; print(json.dumps([str(i) for i in range(1, int(os.environ["RUNS"]) + 1)]))')" >> "$GITHUB_OUTPUT"
   device:
     needs: plan
@@ -34,8 +34,8 @@ jobs:
     uses: ./.github/workflows/mobile-device.yml
     with:
       run: ${{ matrix.run }}
-      android: ${{ github.event_name == 'push' || inputs.android }}
-      ios: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
+      android: ${{ github.event_name == 'workflow_dispatch' && inputs.android }}
+      ios: ${{ github.event_name == 'push' || inputs.ios }}
       emulator-options: ${{ inputs.emulator-options || '-feature -Vulkan' }}
       keep-evidence: true
   result:
