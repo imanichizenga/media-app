@@ -94,7 +94,9 @@ describe("details", () => {
     ).toContain("<details"));
   it("loads nothing from YouTube before it is asked", () => {
     const html = one({ type: "youtube", videoId: "aqz-KE-bpKQ", title: "Filamu" });
-    expect(html).not.toContain("youtube");
+    // The video's id is in a data attribute for the island; nothing is fetched from YouTube: no frame, no address.
+    expect(html).not.toMatch(/(src|href|srcSet)="[^"]*youtube/);
+    expect(html).not.toContain("ytimg");
     expect(html).not.toContain("iframe");
   });
   it("keeps space for a picture before it loads", () =>

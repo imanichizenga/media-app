@@ -19,8 +19,11 @@ export type CardData = {
   type: string;
   path: string;
   headline: string;
+  /** For the live rail: the editor's, or the headline cut between words by the server (R3). */
+  rail_title?: string;
   standfirst: string;
-  category: { name: string; path: string };
+  /** short_name: the editor's short label, or the name (R2). */
+  category: { name: string; short_name?: string; path: string };
   authors: { name: string }[];
   image: ImageAsset | null;
   video: VideoAsset | null;
