@@ -1,4 +1,5 @@
 "use client";
+import type { Schemas } from "@news/api-client/admin";
 import type { ContentDocument } from "@news/content-schema";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -8,7 +9,6 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BodyEditor, RenderContext } from "@/components/editor/body-editor";
 import { Bone, Button, Card, cx, Dialog, ErrorState, Notice, TextField, useErrorText } from "@/components/ui";
-import type { Schemas } from "@news/api-client/admin";
 import { ApiError, call, client } from "@/lib/api";
 import { keys } from "@/lib/queries";
 
