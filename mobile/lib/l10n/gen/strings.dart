@@ -183,6 +183,18 @@ abstract class Strings {
   /// **'Zaidi'**
   String get more;
 
+  /// No description provided for @moreTabs.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sehemu zaidi'**
+  String get moreTabs;
+
+  /// No description provided for @earlierTabs.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sehemu za awali'**
+  String get earlierTabs;
+
   /// No description provided for @all.
   ///
   /// In sw, this message translates to:

@@ -55,6 +55,12 @@ class StringsSw extends Strings {
   String get more => 'Zaidi';
 
   @override
+  String get moreTabs => 'Sehemu zaidi';
+
+  @override
+  String get earlierTabs => 'Sehemu za awali';
+
+  @override
   String get all => 'Zote';
 
   @override

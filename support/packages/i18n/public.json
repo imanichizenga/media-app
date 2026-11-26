@@ -14,6 +14,8 @@
   "shorts": ["Fupi", "Shorts"],
   "longVideos": ["Ndefu", "Videos"],
   "more": ["Zaidi", "More"],
+  "moreTabs": ["Sehemu zaidi", "More sections"],
+  "earlierTabs": ["Sehemu za awali", "Earlier sections"],
   "all": ["Zote", "All"],
   "gallery": ["Picha", "Pictures"],
   "opinion": ["Maoni", "Opinion"],

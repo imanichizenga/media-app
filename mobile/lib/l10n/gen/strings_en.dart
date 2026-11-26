@@ -55,6 +55,12 @@ class StringsEn extends Strings {
   String get more => 'More';
 
   @override
+  String get moreTabs => 'More sections';
+
+  @override
+  String get earlierTabs => 'Earlier sections';
+
+  @override
   String get all => 'All';
 
   @override

@@ -9,6 +9,7 @@ import 'package:news_app/core/config/theme_choice.dart';
 import 'package:news_app/core/storage/prefs.dart';
 import 'package:news_app/features/explore/explore_screen.dart';
 import 'package:news_app/ui/adaptive/adaptive.dart';
+import 'package:news_app/ui/adaptive/tab_header.dart';
 import 'package:news_app/ui/components/cards.dart';
 import 'package:news_app/ui/components/picture.dart';
 import 'package:news_app/ui/components/signals.dart';
@@ -172,6 +173,35 @@ void main() {
     );
     final style = DefaultTextStyle.of(t.element(find.text('Nyumbani'))).style.merge(active.style);
     expect(style.color, c.textPrimary);
+  });
+
+  // More sections than the row shows: it says so (a fade and a chevron), and the chevron goes on.
+  testWidgets('a row of sections that goes on says so, and the chevron goes on', variant: both, (
+    t,
+  ) async {
+    final p = await start(t, size: const Size(360, 640), photographs: false);
+    final row = find.byType(MoreTabs);
+    expect(find.bySemanticsLabel('Sehemu za awali'), findsNothing);
+    final more = find.descendant(of: row, matching: find.bySemanticsLabel('Sehemu zaidi'));
+    expect(more, findsOneWidget);
+    expect(t.getSize(more).width, greaterThanOrEqualTo(44));
+    final bar = find.descendant(of: row, matching: find.byType(Scrollable)).first;
+    final before = t.state<ScrollableState>(bar).position.pixels;
+    await t.tap(more);
+    await p.settle(2);
+    expect(t.state<ScrollableState>(bar).position.pixels, greaterThan(before + 100));
+    expect(
+      find.descendant(of: row, matching: find.bySemanticsLabel('Sehemu za awali')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a row that fits shows no chevron', (t) async {
+    final nav = (FakeApi.data('sw')['navigation'] as List).take(1).toList();
+    final api = FakeApi()..replies['/api/v1/content/navigation'] = nav;
+    await start(t, size: const Size(1200, 900), api: api, photographs: false);
+    expect(find.bySemanticsLabel('Sehemu zaidi'), findsNothing);
+    expect(find.bySemanticsLabel('Sehemu za awali'), findsNothing);
   });
 
   // The red budget: no screen reads as a red screen (public-experience.md, rule 1).
