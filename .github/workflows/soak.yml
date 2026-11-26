@@ -23,19 +23,29 @@ jobs:
       runs: ${{ steps.runs.outputs.runs }}
     steps:
       - id: runs
-        run: echo "runs=$(python3 -c 'import json, sys; print(json.dumps([str(i) for i in range(1, int(sys.argv[1]) + 1)]))' '${{ inputs.runs || 6 }}')" >> "$GITHUB_OUTPUT"
+        run: echo "runs=$(python3 -c 'import json, sys; print(json.dumps([str(i) for i in range(1, int(sys.argv[1]) + 1)]))' '${{ inputs.runs || 8 }}')" >> "$GITHUB_OUTPUT"
   device:
     needs: plan
     strategy:
       fail-fast: false
       matrix:
         run: ${{ fromJSON(needs.plan.outputs.runs) }}
+        # Diagnosis only (this branch). The fault: SwiftShader on the host (gfxstream's RenderThread) crashes.
+        config:
+          - { name: host-impeller, gpu: swiftshader_indirect, target: google_apis, flags: "" }
+          - { name: guest-gpu, gpu: guest, target: google_apis, flags: "" }
+          - { name: host-skia, gpu: swiftshader_indirect, target: google_apis, flags: "--no-enable-impeller" }
+          - { name: atd-impeller, gpu: swiftshader_indirect, target: google_atd, flags: "" }
     uses: ./.github/workflows/mobile-device.yml
     with:
-      run: ${{ matrix.run }}
-      android: ${{ github.event_name == 'push' || inputs.android }}
-      ios: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
-      emulator-options: ${{ inputs.emulator-options || vars.SOAK_EMULATOR_OPTIONS || '' }}
+      run: ${{ matrix.config.name }}-${{ matrix.run }}
+      android: true
+      ios: false
+      emulator-options: "-feature -Vulkan"
+      emulator-gpu: ${{ matrix.config.gpu }}
+      emulator-target: ${{ matrix.config.target }}
+      engine-flags: ${{ matrix.config.flags }}
+      emulator-cores: "3"
       keep-evidence: true
   result:
     if: always()
