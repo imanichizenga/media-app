@@ -150,3 +150,30 @@
 .tabs-go.left-0 {
   background: linear-gradient(to right, var(--color-bg) 55%, transparent);
 }
+
+/* The bar along the top while the next page comes (islands/progress.ts): the brand's red, a soft glow. */
+#progress {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 3px;
+  pointer-events: none;
+  background: var(--color-brand);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand) 55%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition:
+    transform 200ms ease-out,
+    opacity 300ms ease;
+}
+#progress.on {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  #progress {
+    transition: none;
+  }
+}

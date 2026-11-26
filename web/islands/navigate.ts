@@ -2,6 +2,8 @@
  * Moving inside the site: the next document is fetched (the same one the CDN keeps) and put in place of this one, with
  * its skeleton meanwhile. Anything unusual is an ordinary navigation, so nothing depends on this.
  */
+import { finish, start } from "./progress";
+
 type Got = { url: URL; html: Document };
 
 /**
@@ -145,6 +147,7 @@ export async function go(url: URL, push = true, headline = ""): Promise<void> {
   if (push) history.pushState(null, "", url);
   here = keyOf(url);
   now.dataset.loading = url.pathname;
+  start();
   const timer = setTimeout(() => wear(kindOf(url.pathname), url.pathname, mine, headline), PATIENCE);
   try {
     const got = await ask(url);
@@ -153,7 +156,9 @@ export async function go(url: URL, push = true, headline = ""): Promise<void> {
     delete now.dataset.loading;
     if (keyOf(got.url) !== keyOf(url)) history.replaceState(null, "", got.url);
     here = keyOf(got.url);
+    // Another language, release or theme: the browser's own load, the bar creeping on until it replaces this page.
     if (!put(got.html, true)) return location.replace(got.url);
+    finish();
     const target = got.url.hash && document.getElementById(decodeURIComponent(got.url.hash.slice(1)));
     if (target) target.scrollIntoView();
     else scrollTo(0, 0);
@@ -187,6 +192,8 @@ export function begin(arrive: () => void, leave: () => void) {
     here = key;
     if (kept && Date.now() - kept.at < 300_000 && put(kept.html, true)) {
       visit++;
+      finish(); // a load that was under way is over: this page was kept
+
       delete page(document)?.dataset.loading;
       scrollTo(0, kept.scroll);
     } else go(new URL(location.href), false);

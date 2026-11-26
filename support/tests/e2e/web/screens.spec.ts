@@ -2,16 +2,19 @@ import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Page } from "@playwright/test";
+import { failurePage } from "../../../../web/lib/failure-page";
+import { manage } from "../helpers";
 import { DESK, fresh, PHONE, places, ready, test } from "./helpers";
 
 // The M2 gallery: SCREENS=m2 pnpm --filter @news/e2e web, then node contact-sheet.mjs m2.
-// Every page on phone and desk, light and dark, Swahili and English. Home, article and category in the three
-// themes. The app's own screens (from the M3.1 gallery) sit in the same rows, for support/docs/design/consistency.md.
+// Every page on phone and desk, light and dark, Swahili and English. Home, article, Shorts and category in the three
+// themes. Skeleton, empty, offline, 404 and 503. The app's own screens (as M3.2 left it) sit in the same rows, for
+// support/docs/design/consistency.md.
 const OUT = resolve(import.meta.dirname, "../../../docs/design/screens/m2");
 // The app as M3.2 left it: `flutter test --run-skipped --tags look test/screens/native_gallery_test.dart`, as JPEG.
 const APP = resolve(import.meta.dirname, "../../../docs/design/screens/m3-2-app/s");
 const SIZES = { phone: PHONE, desk: DESK };
-const KEY = ["home", "article", "category"];
+const KEY = ["home", "article", "shorts", "category"];
 const THEMES = ["signature", "bold", "quiet"] as const;
 // Web page → the app's screen of the same place.
 const SAME: Record<string, string> = {
@@ -112,6 +115,16 @@ test("the three themes on the key pages", async ({ browser }) => {
 
 test("skeletons and states", async ({ browser }) => {
   const at = await places("sw");
+  manage(
+    "shell",
+    "-v0",
+    "-c",
+    "from newsplatform.taxonomy.models import Category as C, CategoryText as T\n" +
+      "if not T.objects.filter(slug='kilimo-hai').exists():\n" +
+      " c = C.objects.create(depth=1, ancestors=[], position=99)\n" +
+      " T.objects.create(category=c, locale='sw', name='Kilimo hai', slug='kilimo-hai')\n" +
+      " T.objects.create(category=c, locale='en', name='Organic farming', slug='organic-farming')",
+  );
   for (const [device, size] of Object.entries(SIZES)) {
     const context = await browser.newContext({ viewport: size });
     const page = await context.newPage();
@@ -120,6 +133,16 @@ test("skeletons and states", async ({ browser }) => {
     await shoot(page, `home--skeleton--${device}-light-sw`);
     await ready(page, at.missing as string);
     await shoot(page, `missing--404--${device}-light-sw`);
+    // A section with nothing in it yet: designed, never blank.
+    await ready(page, "/kilimo-hai");
+    await shoot(page, `category--empty--${device}-light-sw`);
+    // The page readers get when a page cannot be made (the document layer's 503), as the server writes it.
+    await page.route("**/siasa", (r) =>
+      r.fulfill({ status: 503, contentType: "text/html", body: failurePage("/siasa", null) }),
+    );
+    await page.goto("/siasa");
+    await shoot(page, `siasa--503--${device}-light-sw`);
+    await page.unroute("**/siasa");
     await ready(page, "/");
     await context.setOffline(true);
     await page.locator("[data-offline]").waitFor();

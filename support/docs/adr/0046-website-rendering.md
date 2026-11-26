@@ -18,7 +18,7 @@ The specification asks for App Router and React Server Components, ISR, a strict
 
 **True statuses.** 404, 301 (a 308 of the framework is turned into 301) and 503 are decided before the first byte. A failed page is designed, needs nothing, says `no-store` and 503, so the CDN goes on showing what it has.
 
-**Moving inside the site** fetches the next document (the same one the CDN keeps) and puts it in place; after 90 ms its skeleton is shown. Skeletons are the server's own components without data, fetched once (`/skeletons`). Anything unusual (another language, release or theme, an error) is an ordinary navigation, so nothing depends on it. Without script every page is complete.
+**Moving inside the site** fetches the next document (the same one the CDN keeps) and puts it in place; after 90 ms its skeleton is shown. A bar in the brand's red runs along the top while a page is slower than 120 ms, creeping towards 90% and filling when the page is in (`islands/progress.ts`): no full reload, and no flash on a quick one. A page kept for Back is put back at once, with no bar. Skeletons are the server's own components without data, fetched once (`/skeletons`). Anything unusual (another language, release or theme, an error) is an ordinary navigation, so nothing depends on it. Without script every page is complete.
 
 ## Alternatives
 A nonce per page (unsafe once the CDN keeps the page); hashes for an inline early script (a file costs one cached request and keeps the policy free of inline code). Hydrating everything and asking for a larger budget (on a cheap phone and bought data, the reader pays for it). Pages Router with no runtime (no Server Components). Astro (a second framework beside the console's). `loading.tsx` (statuses).

@@ -280,6 +280,60 @@ test.describe("space is for news", () => {
     ).toHaveCount(1);
   });
 
+  test("moving inside the site: no full reload, and a red bar only while a page is slow", async ({
+    page,
+  }) => {
+    const { article, category } = await places("sw");
+    await ready(page, "/");
+    // A mark on this window: a full reload would wipe it.
+    await page.evaluate(() => {
+      (window as unknown as { kept: number }).kept = 1;
+      new MutationObserver(() => {
+        if (document.getElementById("progress")?.classList.contains("on"))
+          document.documentElement.dataset.barSeen = "";
+      }).observe(document.body, { subtree: true, attributes: true, childList: true });
+    });
+    // A slow page: the bar shows, in the brand's colour, and goes when the page is in.
+    let release = () => {};
+    const held = new Promise<void>((r) => {
+      release = r;
+    });
+    await page.route(`http://localhost:3000${category}`, async (route) => {
+      await held;
+      await route.continue();
+    });
+    await page.locator(`a[href="${category}"]`).first().click();
+    const bar = page.locator("#progress");
+    await expect(bar).toHaveClass(/\bon\b/);
+    const [colour, brand] = await bar.evaluate((b) => [
+      getComputedStyle(b).backgroundColor,
+      getComputedStyle(document.documentElement).getPropertyValue("--color-brand").trim(),
+    ]);
+    expect(colour).not.toBe("rgba(0, 0, 0, 0)");
+    expect(brand).not.toBe("");
+    release();
+    await expect(page).toHaveURL(new RegExp(`${category}$`));
+    await expect(bar).not.toHaveClass(/\bon\b/);
+    await page.unroute(`http://localhost:3000${category}`);
+    expect(await page.evaluate(() => (window as unknown as { kept?: number }).kept)).toBe(1);
+    // Another page, and the window is still the same one.
+    await page.evaluate((p) => {
+      const a = document.createElement("a");
+      a.href = p ?? "";
+      a.textContent = "x";
+      document.getElementById("main")?.append(a);
+    }, article);
+    await page.locator(`#main > a[href="${article}"]`).click();
+    await expect(page.locator("article h1")).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { kept?: number }).kept)).toBe(1);
+    // Back is a page kept: at once, no bar.
+    await page.evaluate(() => delete document.documentElement.dataset.barSeen);
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`${category}$`));
+    expect(await page.evaluate(() => "barSeen" in document.documentElement.dataset)).toBe(false);
+    expect(await page.evaluate(() => (window as unknown as { kept?: number }).kept)).toBe(1);
+  });
+
   test("a row of sections that goes on says so, and its chevron goes on", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 640 });
     await page.goto("/");
