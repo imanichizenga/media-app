@@ -8,7 +8,8 @@ import { DESK, fresh, PHONE, places, ready, test } from "./helpers";
 // Every page on phone and desk, light and dark, Swahili and English. Home, article and category in the three
 // themes. The app's own screens (from the M3.1 gallery) sit in the same rows, for support/docs/design/consistency.md.
 const OUT = resolve(import.meta.dirname, "../../../docs/design/screens/m2");
-const APP = resolve(import.meta.dirname, "../../../docs/design/screens/m3-1/s");
+// The app as M3.2 left it: `flutter test --run-skipped --tags look test/screens/native_gallery_test.dart`, as JPEG.
+const APP = resolve(import.meta.dirname, "../../../docs/design/screens/m3-2-app/s");
 const SIZES = { phone: PHONE, desk: DESK };
 const KEY = ["home", "article", "category"];
 const THEMES = ["signature", "bold", "quiet"] as const;
