@@ -26,6 +26,17 @@ on:
       emulator-cores:
         type: string
         default: "2"
+      emulator-gpu:
+        type: string
+        default: swiftshader_indirect
+      emulator-target:
+        description: System image (google_apis, google_atd)
+        type: string
+        default: google_apis
+      engine-flags:
+        description: Flutter engine flags for the integration tests and frames (e.g. --no-enable-impeller)
+        type: string
+        default: ""
       keep-evidence:
         description: Upload the evidence even when the run passes
         type: boolean
@@ -54,6 +65,9 @@ jobs:
       EMULATOR_OPTIONS: ${{ inputs.emulator-options }}
       EMULATOR_RAM: ${{ inputs.emulator-ram }}
       EMULATOR_CORES: ${{ inputs.emulator-cores }}
+      EMULATOR_GPU: ${{ inputs.emulator-gpu }}
+      EMULATOR_TARGET: ${{ inputs.emulator-target }}
+      FLUTTER_ENGINE_FLAGS: ${{ inputs.engine-flags }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with: { persist-credentials: false }

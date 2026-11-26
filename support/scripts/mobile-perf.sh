@@ -8,7 +8,8 @@ app="tz.mfano.news.dev"
 main="$app/tz.mfano.news_app.MainActivity"
 echo "== frames"; date -u
 # The test connects to the VM service from the device; the debug proxy (DDS) listens on the computer only.
-timeout 600 flutter drive --profile --flavor dev --no-dds --use-application-binary build/apk/perf.apk \
+# shellcheck disable=SC2086
+timeout 600 flutter drive --profile --flavor dev --no-dds ${FLUTTER_ENGINE_FLAGS:-} --use-application-binary build/apk/perf.apk \
   --driver test_driver/perf_driver.dart --target test_driver/perf.dart --keep-app-running
 echo "== cold starts"; date -u
 # The app itself over the measuring one; its storage stays.

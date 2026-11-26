@@ -12,6 +12,7 @@ target="${EMULATOR_TARGET:-google_apis}"
 ram="${EMULATOR_RAM:-3072}"
 heap="${EMULATOR_HEAP:-512}"
 cores="${EMULATOR_CORES:-2}"
+gpu="${EMULATOR_GPU:-swiftshader_indirect}"
 image="system-images;android-$api;$target;x86_64"
 sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
 export PATH="$sdk/emulator:$sdk/platform-tools:$sdk/cmdline-tools/latest/bin:$PATH"
@@ -41,16 +42,16 @@ hw.audioOutput=no
 hw.camera.back=none
 hw.camera.front=none
 hw.gpu.enabled=yes
-hw.gpu.mode=swiftshader_indirect
+hw.gpu.mode=$gpu
 CFG
     emulator -version | head -1 | tee "$dir/emulator-version.txt"
-    echo "$image ram=${ram}M heap=${heap}M cores=$cores ${EMULATOR_OPTIONS:-}" | tee "$dir/config.txt"
+    echo "$image ram=${ram}M heap=${heap}M cores=$cores gpu=$gpu ${EMULATOR_OPTIONS:-} ${FLUTTER_ENGINE_FLAGS:-}" | tee "$dir/config.txt"
     # shellcheck disable=SC2086
     # A crash leaves a core in /tmp/cores (read by `stop`, then deleted: it is as large as the emulator's memory).
     sudo mkdir -p /tmp/cores && sudo chmod 1777 /tmp/cores
     sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e.%p || true
     # How it ended is written last: 137 is a kill from outside (the OOM killer), 139 and 134 are its own crash.
-    nohup bash -c "ulimit -c unlimited; emulator -avd ci -port 5554 -no-window -no-snapshot -no-boot-anim -no-audio -gpu swiftshader_indirect \
+    nohup bash -c "ulimit -c unlimited; emulator -avd ci -port 5554 -no-window -no-snapshot -no-boot-anim -no-audio -gpu $gpu \
       -camera-back none -camera-front none -accel on ${EMULATOR_OPTIONS:-}; echo \"== emulator exited with status \$?\"" \
       > "$dir/emulator.log" 2>&1 &
     echo $! > "$dir/.emulator.pid"

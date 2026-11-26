@@ -4,7 +4,8 @@
 # is gone. Nothing is retried: why a run ended is android-verdict.sh's to say, from the evidence in $EVIDENCE.
 #   cd mobile && ../support/scripts/mobile-emulator.sh
 set -uo pipefail
-timeout 600 flutter drive --debug --flavor dev --no-dds --use-application-binary build/apk/test.apk \
+# shellcheck disable=SC2086 # FLUTTER_ENGINE_FLAGS is a list of flags (ADR-0048)
+timeout 600 flutter drive --debug --flavor dev --no-dds ${FLUTTER_ENGINE_FLAGS:-} --use-application-binary build/apk/test.apk \
   --driver test_driver/perf_driver.dart --target integration_test/app_test.dart
 status=$?
 [ "$status" = 0 ] && exit 0
