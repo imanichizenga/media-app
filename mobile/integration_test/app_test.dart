@@ -34,7 +34,12 @@ void main() {
       await t.pump(const Duration(milliseconds: 200));
       if (f.evaluate().isNotEmpty) return;
     }
-    final shown = find.byType(Text).evaluate().map((e) => (e.widget as Text).data).nonNulls.take(30);
+    final shown = find
+        .byType(Text)
+        .evaluate()
+        .map((e) => (e.widget as Text).data)
+        .nonNulls
+        .take(30);
     fail('never appeared: $f; on screen: ${shown.join(' | ')}');
   }
 
@@ -129,7 +134,7 @@ void main() {
     final db = await reader();
     await launch(t, db);
     await until(t, find.byType(CoverCard));
-    await until(t, find.textContaining('kusoma'));
+    await until(t, find.descendant(of: find.byType(CoverCard), matching: find.byType(MetaLine)));
     await openCover(t);
     await until(t, find.byType(ArticleBody));
     final path = await somePath(db);
@@ -143,7 +148,7 @@ void main() {
   testWidgets('what was saved is read without a network', (t) async {
     final db = await reader();
     await launch(t, db);
-    await until(t, find.textContaining('kusoma'));
+    await until(t, find.descendant(of: find.byType(CoverCard), matching: find.byType(MetaLine)));
     await openCover(t);
     await until(t, find.byType(ArticleBody));
     await t.tap(
@@ -206,7 +211,7 @@ void main() {
   testWidgets('cold start to cached news', (t) async {
     final db = await reader();
     await launch(t, db);
-    await until(t, find.textContaining('kusoma'));
+    await until(t, find.descendant(of: find.byType(CoverCard), matching: find.byType(MetaLine)));
     final watch = Stopwatch()..start();
     await launch(t, db, dead: 'http://127.0.0.1:9');
     while (find.textContaining('kusoma').evaluate().isEmpty) {

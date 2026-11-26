@@ -1,2 +1,4 @@
 # scripts/verify-otel.sh: a made-up header value that the script proves is never exported. Not a credential.
 531c57a8e3fe07b71090f86f069b7933daaa3b4d:scripts/verify-otel.sh:curl-auth-header:26
+# backend/newsplatform/site_config/schemas.py: the Swahili label "Kurasa za mchapishaji kwingine" beside a field named same_as. Not a credential.
+eca76c94d6cdba8a6268f6d786d80077e2df3df2:backend/newsplatform/site_config/schemas.py:generic-api-key:176

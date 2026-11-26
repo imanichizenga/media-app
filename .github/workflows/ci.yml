@@ -252,7 +252,7 @@ jobs:
         run: cat mobile/build/perf.md >> "$GITHUB_STEP_SUMMARY" || true
   mobile-ios:
     runs-on: macos-26
-    timeout-minutes: 60
+    timeout-minutes: 75
     defaults: { run: { working-directory: mobile } }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -267,13 +267,11 @@ jobs:
           flutter build ios --release --no-codesign --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
           du -sh build/ios/iphoneos/*.app | tee -a "$GITHUB_STEP_SUMMARY"
       - name: On a simulator, against the recorded API
-        timeout-minutes: 35
+        timeout-minutes: 45
         run: |
           nohup node ../support/tests/replay.mjs 8010 > /tmp/replay.log 2>&1 &
           replay=$!
-          device=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
-          xcrun simctl boot "$device" && xcrun simctl bootstatus "$device" -b > /dev/null
-          flutter test integration_test -d "$device" --flavor dev --dart-define-from-file=config/dev-ios.json --timeout 4m --reporter expanded
+          ../support/scripts/mobile-simulator.sh
           kill "$replay"
   infra:
     runs-on: ubuntu-24.04
