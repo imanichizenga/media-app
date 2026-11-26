@@ -38,6 +38,7 @@ LOCK_TTL = timedelta(seconds=60)
 KEEP_AUTOSAVES = 5
 _TEXT_FIELDS = (
     "headline",
+    "rail_title",
     "standfirst",
     "slug",
     "body",

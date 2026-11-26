@@ -111,7 +111,7 @@ class _Long extends ConsumerWidget {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),
-                    child: VideoCard(first, open: open, place: 'lead', large: true, lead: true),
+                    child: VideoCard(first, open: open, place: 'lead', large: true),
                   ),
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: NewsSpace.s4)),

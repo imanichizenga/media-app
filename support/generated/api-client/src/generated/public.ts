@@ -301,6 +301,8 @@ export interface components {
             path: string;
             slug: string;
             headline: string;
+            /** @description At most 24 characters, for the live rail */
+            rail_title: string;
             standfirst: string;
             category: components["schemas"]["PublicCategory"];
             authors: components["schemas"]["PublicByline"][];
@@ -358,6 +360,8 @@ export interface components {
             path: string;
             slug: string;
             headline: string;
+            /** @description At most 24 characters, for the live rail */
+            rail_title: string;
             standfirst: string;
             category: components["schemas"]["PublicCategory"];
             authors: components["schemas"]["CardByline"][];
@@ -438,6 +442,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /** @description The editor's short label, or the name */
+            short_name: string;
             slug: string;
             path: string;
             color: string;
@@ -483,6 +489,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /** @description The editor's short label, or the name */
+            short_name: string;
             slug: string;
             path: string;
             color: string;
@@ -491,6 +499,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             name: string;
+            /** @description The editor's short label, or the name */
+            short_name: string;
             slug: string;
             path: string;
             color: string;

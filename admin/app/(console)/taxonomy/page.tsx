@@ -301,6 +301,7 @@ function CategoryForm({
     const get = (k: string) => String(form.get(k) ?? "").trim();
     const text = (l: "sw" | "en") => ({
       name: get(`${l}.name`),
+      short_name: get(`${l}.short_name`),
       slug: get(`${l}.slug`),
       description: get(`${l}.description`),
       seo_title: get(`${l}.seo_title`),
@@ -352,6 +353,13 @@ function CategoryForm({
           defaultValue={v?.name}
           required={l === "sw"}
           maxLength={80}
+        />
+        <TextField
+          label={t("shortName")}
+          name={`${l}.short_name`}
+          defaultValue={v?.short_name}
+          maxLength={14}
+          help={t("shortNameHelp")}
         />
         <TextField
           label={t("slug")}

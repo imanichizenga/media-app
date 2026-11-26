@@ -175,6 +175,7 @@ Story storyOf(Article a) => api.Card(
   path: a.path,
   slug: a.slug,
   headline: a.headline,
+  railTitle: a.railTitle,
   standfirst: a.standfirst,
   category: a.category,
   authors: [

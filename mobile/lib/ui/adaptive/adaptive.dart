@@ -272,6 +272,8 @@ class PlacesBar extends StatelessWidget {
         ),
       );
     }
+    // Material 3's roles (R5): the active place's icon in the brand on a soft brand pill, every label in ink.
+    final roles = AndroidPlaces.of(c, dark: dark);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: ground,
@@ -282,7 +284,10 @@ class PlacesBar extends StatelessWidget {
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
             labelTextStyle: WidgetStateProperty.resolveWith(
-              (s) => label(s.contains(WidgetState.selected), 11.5),
+              (s) => label(
+                s.contains(WidgetState.selected),
+                11.5,
+              ).copyWith(color: s.contains(WidgetState.selected) ? roles.label : off),
             ),
           ),
           child: NavigationBar(
@@ -292,7 +297,7 @@ class PlacesBar extends StatelessWidget {
             elevation: 0,
             backgroundColor: OverMedia.clear,
             surfaceTintColor: OverMedia.clear,
-            indicatorColor: dark ? OverMedia.faint : on.withValues(alpha: 0.12),
+            indicatorColor: roles.indicator,
             animationDuration: context.still ? Duration.zero : NewsMotion.slow,
             destinations: [
               for (var i = 0; i < places.length; i++)
@@ -307,6 +312,30 @@ class PlacesBar extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The colours of Android's bar of places, from the theme's tokens. The active icon is the brand (`navActive`); its
+/// pill is the brand's soft container, or the brand over the bar where the bar is dark in a light theme (Bold Ink);
+/// the active label is ink, never red. Tested for contrast in every theme.
+class AndroidPlaces {
+  const AndroidPlaces({required this.indicator, required this.label});
+
+  factory AndroidPlaces.of(NewsColors c, {bool dark = false}) {
+    if (dark) {
+      return const AndroidPlaces(indicator: OverMedia.faint, label: OverMedia.ink);
+    }
+    final darkBar = c.navBg.computeLuminance() < 0.18;
+    final darkTheme = c.surface.computeLuminance() < 0.18;
+    return AndroidPlaces(
+      indicator: darkBar && !darkTheme
+          ? Color.alphaBlend(c.navActive.withValues(alpha: 0.24), c.navBg)
+          : c.brandSoft,
+      label: darkBar && !darkTheme ? OverMedia.ink : c.textPrimary,
+    );
+  }
+
+  final Color indicator;
+  final Color label;
 }
 
 /// The platform's switch, in ink.

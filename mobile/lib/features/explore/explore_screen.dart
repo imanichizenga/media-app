@@ -50,26 +50,30 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
     final home = ref.watch(homeFeedProvider).value?.value;
     final s = Strings.of(context);
     final items = nav.value?.value;
-    // A section shows its own newest picture.
-    PublicImage? face(NavigationItem? n) {
-      if (n == null || home == null) return null;
-      final ids = {n.id, for (final k in n.children) k.id};
-      return [
-            for (final x in home.sections)
-              if (x.category.id == n.id) ...x.results,
+    // A section shows its own newest picture that no tile before it shows (R4).
+    final faces = <String, PublicImage>{};
+    if (items != null && home != null) {
+      final used = <String>{};
+      for (final n in items) {
+        final ids = {n.id, for (final k in n.children) k.id};
+        final mine = [
+          for (final x in home.sections)
+            if (x.category.id == n.id) ...x.results,
+          ...[
             ...home.latest,
             ...home.videos,
             ...home.lead,
-          ]
-          .where(
-            (r) =>
-                r.image != null &&
-                !r.isSensitive &&
-                (ids.contains(r.category.id) ||
-                    home.sections.any((s) => s.category.id == n.id && s.results.contains(r))),
-          )
-          .firstOrNull
-          ?.image;
+          ].where((r) => ids.contains(r.category.id)),
+        ];
+        final image = mine
+            .where((r) => r.image != null && !r.isSensitive && !used.contains(r.image!.id))
+            .firstOrNull
+            ?.image;
+        if (image != null) {
+          faces[n.id] = image;
+          used.add(image.id);
+        }
+      }
     }
 
     final people = <String, CardByline>{
@@ -113,7 +117,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
                     mainAxisExtent: 112 + 24 * scale,
                   ),
                   itemCount: items?.length ?? 8,
-                  itemBuilder: (context, i) => CategoryTile(items?[i], image: face(items?[i])),
+                  itemBuilder: (context, i) => CategoryTile(items?[i], image: faces[items?[i].id]),
                 ),
               ),
               if (people.isNotEmpty) ...[

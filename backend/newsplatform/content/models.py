@@ -112,6 +112,8 @@ class PostText(BaseModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="texts")
     locale = models.CharField(max_length=5, choices=Locale)
     headline = models.CharField(max_length=200, blank=True, default="")
+    # Under a live story's ring in the rail, on two short lines (empty: the headline, cut between words).
+    rail_title = models.CharField(max_length=24, blank=True, default="")
     standfirst = models.CharField(max_length=400, blank=True, default="")
     slug = models.SlugField(max_length=100, blank=True, default="")
     body = models.JSONField(default=dict)

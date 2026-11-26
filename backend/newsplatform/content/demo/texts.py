@@ -50,7 +50,7 @@ BIO: T = (
 )
 
 # slug → (names, icon, colour, scenes, children)
-CATEGORIES: list[tuple[T, T, str, str, list[str], list[tuple[T, T]]]] = [
+CATEGORIES: list[tuple[T, T, str, str, list[str], list[tuple[T, T] | tuple[T, T, T]]]] = [
     (("Habari", "News"), ("habari", "news"), "newspaper", "#0b5cad", ["city", "road"], []),
     (
         ("Siasa", "Politics"),
@@ -69,7 +69,16 @@ CATEGORIES: list[tuple[T, T, str, str, list[str], list[tuple[T, T]]]] = [
         "trending-up",
         "#1f6b4a",
         ["chart", "market", "city"],
-        [(("Kilimo", "Farming"), ("kilimo", "farming")), (("Fedha", "Finance"), ("fedha", "finance"))],
+        [
+            (("Kilimo", "Farming"), ("kilimo", "farming")),
+            (("Fedha", "Finance"), ("fedha", "finance")),
+            # A long name with the short one an editor gives it (R2).
+            (
+                ("Masoko ya Mitaji na Uwekezaji", "Capital Markets and Investment"),
+                ("masoko-ya-mitaji", "capital-markets"),
+                ("Masoko", "Markets"),
+            ),
+        ],
     ),
     (
         ("Michezo", "Sport"),
@@ -329,4 +338,11 @@ YOUTUBE: list[tuple[str, str, int]] = [
     ("eRsGyueVLvQ", "Sintel", 888),
     ("R6MlUcmOul8", "Tears of Steel", 734),
     ("WhWc3b3KhnY", "Spring", 464),
+]
+
+# What an editor writes under a live story's ring: at most 24 characters, two short lines (R3).
+RAIL_TITLES: list[T] = [
+    ("Bunge: Bajeti ya Elimu", "Budget debate"),
+    ("Mafuriko Morogoro", "Morogoro floods"),
+    ("Kinachoendelea Bungeni", "Parliament, live"),
 ]

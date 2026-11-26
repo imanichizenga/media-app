@@ -8,6 +8,7 @@ from newsplatform.content import blocks
 
 _TEXT = (
     "headline",
+    "rail_title",
     "standfirst",
     "slug",
     "seo_title",

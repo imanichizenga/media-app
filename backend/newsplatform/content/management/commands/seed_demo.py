@@ -1,5 +1,6 @@
 """Realistic bilingual demo content: for development, screenshots and performance tests. Never in production."""
 
+import itertools
 import random
 import subprocess
 import tempfile
@@ -14,10 +15,10 @@ from django.core.management.base import BaseCommand, CommandError, CommandParser
 from django.utils import timezone
 
 from newsplatform.accounts.models import User
-from newsplatform.content import authors, services, tasks
+from newsplatform.content import authors, publishing, services, tasks
 from newsplatform.content.demo import scenes
 from newsplatform.content.demo import texts as t
-from newsplatform.content.models import Post, PostType
+from newsplatform.content.models import Listing, Post, PostType, Publication
 from newsplatform.media import services as media
 from newsplatform.media.models import Asset, AssetStatus
 from newsplatform.media.tasks import process
@@ -29,6 +30,8 @@ from newsplatform.taxonomy import services as taxonomy
 from newsplatform.taxonomy.models import Category, CategoryText, Region, Story, Tag
 
 LOCALES = ("sw", "en")
+# Enough that a picture never needs to stand beside itself in any list (see _picture).
+FEWEST_PICTURES = 10
 CREDIT = "Mchoro wa mfano / Demo illustration"
 # Of every hundred posts. The rest are articles.
 MIX: list[tuple[str, int]] = [
@@ -56,6 +59,8 @@ class Command(BaseCommand):
             raise CommandError("Demo content is never created in a deployed environment.")
         if Post.objects.exists():
             raise CommandError("There are posts already. Demo content needs an empty database.")
+        if options["images"] < FEWEST_PICTURES:
+            raise CommandError(f"At least {FEWEST_PICTURES} pictures, so that none stands beside itself.")
         # Drawn from one seed, so screenshots are comparable from run to run.
         self.rng = random.Random(20261123)  # noqa: S311
         sync_system_roles()
@@ -71,6 +76,7 @@ class Command(BaseCommand):
             self._people()
             self._brand()
             self._posts(options["posts"])
+            self._spread_pictures()
         finally:
             for task, delay in zip(queued, kept, strict=True):
                 task.delay = delay
@@ -130,8 +136,8 @@ class Command(BaseCommand):
         for position, (names, slugs, icon, color, drawn, children) in enumerate(t.CATEGORIES):
             root = self._category(names, slugs, None, position, icon, color)
             self.scenes[slugs[0]] = drawn
-            for i, (child_names, child_slugs) in enumerate(children):
-                self._category(child_names, child_slugs, root, i, "", color)
+            for i, (child_names, child_slugs, *short) in enumerate(children):
+                self._category(child_names, child_slugs, root, i, "", color, short[0] if short else None)
                 self.scenes[child_slugs[0]] = drawn
         for sw, en in t.PLACES:
             Region.objects.create(slug=slugify(sw), name_sw=sw, name_en=en)
@@ -141,7 +147,14 @@ class Command(BaseCommand):
             Story.objects.create(slug=slug, title_sw=sw, title_en=en, summary_sw=sw, summary_en=en)
 
     def _category(
-        self, names: t.T, slugs: t.T, parent: Category | None, position: int, icon: str, color: str
+        self,
+        names: t.T,
+        slugs: t.T,
+        parent: Category | None,
+        position: int,
+        icon: str,
+        color: str,
+        shorts: t.T | None = None,
     ) -> Category:
         row = Category.objects.create(
             parent=parent,
@@ -151,8 +164,9 @@ class Command(BaseCommand):
             icon=icon,
             color=color,
         )
-        for locale, name, slug in zip(LOCALES, names, slugs, strict=True):
-            CategoryText.objects.create(category=row, locale=locale, name=name, slug=slug)
+        for i, (locale, name, slug) in enumerate(zip(LOCALES, names, slugs, strict=True)):
+            short = shorts[i] if shorts else ""
+            CategoryText.objects.create(category=row, locale=locale, name=name, short_name=short, slug=slug)
         self.categories[slugs[0]] = row
         return row
 
@@ -199,6 +213,63 @@ class Command(BaseCommand):
         wanted = [a for n in self.scenes[slug] for a in self.pictures.get(n, [])]
         return self.rng.choice(wanted or [a for rows in self.pictures.values() for a in rows])
 
+    def _spread_pictures(self) -> None:
+        """No picture stands beside itself in a list readers scroll (R4).
+
+        Walked once everything is published, in each list's own order, because only then is it known who stands
+        beside whom (drafts are in no list; breaking news goes to the top). The lists that must hold: home's rows and
+        carousels (all), each type, each section, and the live rail, in each language. A tag's, a story's or a
+        writer's list holds too whenever the pictures allow. A post whose picture its neighbour already has gets
+        another and is published again."""
+        strict, lesser = self._neighbours()
+        everything = [a.pk for rows in self.pictures.values() for a in rows]
+        posts = Post.objects.filter(publications__isnull=False).distinct().order_by("-published_at", "-pk")
+        hero: dict[Any, Any] = {}
+        changed = []
+        for post in posts:
+            must = {hero[n] for n in strict.get(post.pk, ()) if n in hero}
+            rather = must | {hero[n] for n in lesser.get(post.pk, ()) if n in hero}
+            pick = post.hero_id
+            if pick in rather:
+                ours = [a.pk for n in self.scenes.get(self._slug(post), []) for a in self.pictures.get(n, [])]
+                for pool, avoid in ((ours, rather), (everything, rather), (ours, must), (everything, must)):
+                    free = [x for x in pool if x not in avoid]
+                    if free:
+                        pick = self.rng.choice(free)
+                        break
+                else:  # pragma: no cover - FEWEST_PICTURES is more than any post's neighbours
+                    raise CommandError("Too few pictures to keep neighbours apart.")
+            hero[post.pk] = pick
+            if pick != post.hero_id:
+                post.hero_id = pick
+                changed.append(post)
+        for post in changed:
+            post.save(update_fields=["hero"])
+            publishing.publish(post)
+
+    def _slug(self, post: Post) -> str:
+        return next((s for s, c in self.categories.items() if c.pk == post.category_id), "")
+
+    def _neighbours(self) -> tuple[dict[Any, set[Any]], dict[Any, set[Any]]]:
+        """For each post, the posts just before it in each list it is in: (lists that must hold, the others)."""
+        strict: dict[Any, set[Any]] = {}
+        lesser: dict[Any, set[Any]] = {}
+        post_of = dict(Publication.objects.values_list("pk", "post_id"))
+        lists: dict[tuple[str, str, str], list[Any]] = {}
+        rows = Listing.objects.order_by("-published_at", "-publication_id").values_list(
+            "locale", "feed", "key", "publication_id"
+        )
+        for locale, feed, key, publication in rows:
+            lists.setdefault((locale, feed, key), []).append(post_of[publication])
+        for locale in LOCALES:
+            rail = Publication.objects.filter(locale=locale, is_live=True).order_by("-published_at", "-pk")
+            lists[(locale, "rail", "")] = list(rail.values_list("post_id", flat=True))
+        for (_, feed, _), order in lists.items():
+            into = strict if feed in ("all", "type", "category", "rail") else lesser
+            for before, post in itertools.pairwise(order):
+                into.setdefault(post, set()).add(before)
+        return strict, lesser
+
     # ---- posts ------------------------------------------------------------
     def _posts(self, total: int) -> None:
         kinds = [k for k, share in MIX for _ in range(max(1, round(total * share / 100)))]
@@ -212,7 +283,7 @@ class Command(BaseCommand):
         desks = [slugs[0] for _, slugs, *_ in t.CATEGORIES]
         for n, kind in enumerate(kinds):
             desk = "maoni" if kind == PostType.OPINION else self.rng.choice(desks[:-1])
-            branch = [desk, *(c[0] for _, s, *_, kids in t.CATEGORIES if s[0] == desk for _, c in kids)]
+            branch = [desk, *(c[0] for _, s, *_, kids in t.CATEGORIES if s[0] == desk for _, c, *_ in kids)]
             slug, place = self.rng.choice(branch), self.rng.choice(t.PLACES)
             author = self.reporters.get(desk) or self.rng.choice(self.everyone)
             head = self.rng.choice(t.HEADLINES[desk])
@@ -233,6 +304,10 @@ class Command(BaseCommand):
                         "seo_description": standfirst,
                     }
             picked = {str(x.pk) for x in self.rng.sample(tags, k=self.rng.randint(1, 3))}
+            story = self.rng.choice(stories).pk if self.rng.random() < 0.18 else None
+            if kind == PostType.LIVE_BLOG:
+                for locale in texts:
+                    texts[locale]["rail_title"] = t.RAIL_TITLES[n % len(t.RAIL_TITLES)][LOCALES.index(locale)]
             data: dict[str, Any] = {
                 "type": kind,
                 "texts": texts,
@@ -240,7 +315,7 @@ class Command(BaseCommand):
                 "tags": sorted(picked),
                 "regions": [regions[place[0]].pk],
                 "is_evergreen": self.rng.random() < 0.1,
-                "story": self.rng.choice(stories).pk if self.rng.random() < 0.18 else None,
+                "story": story,
             }
             if kind in (PostType.VIDEO, PostType.SHORT) and self.clips[kind == PostType.SHORT]:
                 data["video"] = self.rng.choice(self.clips[kind == PostType.SHORT]).pk

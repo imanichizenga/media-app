@@ -1658,6 +1658,11 @@ export interface components {
         };
         CategoryText: {
             name: string;
+            /**
+             * @description On a card when the whole name does not fit. Empty: the name.
+             * @default
+             */
+            short_name: string;
             slug?: string;
             /** @default  */
             description: string;
@@ -1668,6 +1673,11 @@ export interface components {
         };
         CategoryTextRequest: {
             name: string;
+            /**
+             * @description On a card when the whole name does not fit. Empty: the name.
+             * @default
+             */
+            short_name: string;
             slug?: string;
             /** @default  */
             description: string;
@@ -2437,6 +2447,8 @@ export interface components {
         TestRunStatusEnum: "queued" | "running" | "passed" | "failed";
         Text: {
             headline?: string;
+            /** @description Live stories: under the ring in the rail. Empty: the headline, cut between words. */
+            rail_title?: string;
             standfirst?: string;
             slug?: string;
             body?: {
@@ -2455,6 +2467,8 @@ export interface components {
         };
         TextRequest: {
             headline?: string;
+            /** @description Live stories: under the ring in the rail. Empty: the headline, cut between words. */
+            rail_title?: string;
             standfirst?: string;
             slug?: string;
             body?: {

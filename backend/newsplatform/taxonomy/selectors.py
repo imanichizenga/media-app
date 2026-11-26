@@ -14,6 +14,10 @@ class Node:
         text = self.texts.get(locale) or next(iter(self.texts.values()))
         return str(text.name)
 
+    def short_name(self, locale: str) -> str:
+        text = self.texts.get(locale) or next(iter(self.texts.values()))
+        return str(text.short_name or text.name)
+
     def slug(self, locale: str) -> str:
         text = self.texts.get(locale) or next(iter(self.texts.values()))
         return str(text.slug)

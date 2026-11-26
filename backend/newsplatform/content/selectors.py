@@ -69,7 +69,26 @@ def feed(
 
 
 def card(row: Publication) -> dict[str, Any]:
-    return {**row.card, "modified_at": row.modified_at.isoformat()}
+    return {**current(row.card), "modified_at": row.modified_at.isoformat()}
+
+
+def current(shape: dict[str, Any]) -> dict[str, Any]:
+    """A card or article published before a field was added gets it here, until it is published again."""
+    if "rail_title" in shape and "short_name" in shape["category"]:
+        return shape
+    from newsplatform.content.publishing import rail_title
+
+    def short(category: dict[str, Any]) -> dict[str, Any]:
+        return {**category, "short_name": category.get("short_name") or category["name"]}
+
+    upgraded = {
+        **shape,
+        "rail_title": shape.get("rail_title") or rail_title(shape["headline"]),
+        "category": short(shape["category"]),
+    }
+    if "breadcrumbs" in shape:
+        upgraded["breadcrumbs"] = [short(c) for c in shape["breadcrumbs"]]
+    return upgraded
 
 
 def several(locale: str, wanted: list[tuple[str, str, int]]) -> list[list[dict[str, Any]]]:

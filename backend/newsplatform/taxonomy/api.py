@@ -22,6 +22,12 @@ _MANAGE = "taxonomy.manage"
 
 class CategoryTextSerializer(serializers.Serializer[Any]):
     name = serializers.CharField(max_length=80)
+    short_name = serializers.CharField(
+        max_length=14,
+        allow_blank=True,
+        default="",
+        help_text="On a card when the whole name does not fit. Empty: the name.",
+    )
     slug = serializers.SlugField(max_length=80, allow_blank=True, default="")
     description = serializers.CharField(max_length=500, allow_blank=True, default="")
     seo_title = serializers.CharField(max_length=120, allow_blank=True, default="")

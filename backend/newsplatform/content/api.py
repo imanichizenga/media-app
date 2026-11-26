@@ -41,6 +41,12 @@ def _any(*methods: str) -> dict[str, str | None]:
 # ---- shapes ------------------------------------------------------------
 class TextSerializer(serializers.Serializer[Any]):
     headline = serializers.CharField(max_length=200, allow_blank=True, required=False)
+    rail_title = serializers.CharField(
+        max_length=24,
+        allow_blank=True,
+        required=False,
+        help_text="Live stories: under the ring in the rail. Empty: the headline, cut between words.",
+    )
     standfirst = serializers.CharField(max_length=400, allow_blank=True, required=False)
     slug = serializers.CharField(max_length=100, allow_blank=True, required=False)
     body = serializers.DictField(required=False)

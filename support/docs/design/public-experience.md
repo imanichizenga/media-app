@@ -8,9 +8,9 @@ A reading room with a red name over the door. White, ink and one red, used with 
 
 ## Rules
 
-1. **Red is the brand, with discipline.** Only the wordmark, the masthead accent, the active place, primary buttons, article links, the liked heart, and breaking and live. Categories, metadata, headlines and body are ink. Errors are rust. **Red budget:** no screen reads as a red screen.
+1. **Red is the brand, with discipline.** Only the wordmark, the masthead accent, the active place, primary buttons, article links, the liked heart, and breaking and live. Categories, metadata, headlines and body are ink. Errors are rust. **Red budget:** no screen reads as a red screen: at most 7.5% of a screen's pixels are the brand's red, measured by `mobile/test/widget/residuals_test.dart` (the largest approved use, Bold Ink's breaking banner on Home, is about 5.6%).
    **Signals are shapes, not colours:** breaking is a full-width banner with an icon and an uppercase label; live is a filled pill with a pulsing dot, and a ring in the live rail. Reserved. Dark themes have their own softer red ([ADR-0029](../adr/0029-red-is-the-brand.md)).
-2. **One anatomy for every card:** picture, then *category · time*, then headline. Categories are named in ink, not coded by colour. Video pictures always show their length; live ones the pill instead.
+2. **One anatomy for every card:** picture, then *category · time*, then headline. The line of meta never cuts a word: when it is too long the reading time goes, then the category takes its short name, then the time goes ([ADR-0044](../adr/0044-space-and-native.md), R2). Categories are named in ink, not coded by colour. Video pictures always show their length, and never a play button (that is the player's); live ones the pill instead.
 3. **Serif speaks, sans works.** Newsreader for headlines and body headings, Inter for everything one reads past or presses.
 4. **Absent, never empty.** No live coverage, no rail. Comments off, no comment icon. No gap is left behind.
 5. **The whole card is one link**, one stop for a keyboard, one target for a thumb. Minimum 44 px.

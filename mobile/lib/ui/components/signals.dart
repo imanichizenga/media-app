@@ -145,10 +145,15 @@ class LiveRail extends ConsumerWidget {
   final List<Story>? stories;
   final ValueChanged<Story> onTap;
 
-  static const _width = 76.0;
+  static const _width = 80.0;
+  static const _ring = 54.0;
 
   /// Never more, whatever is live.
   static const extent = 96.0;
+
+  /// The label's two lines, in the rail's own type.
+  static TextStyle label(BuildContext context) =>
+      context.type.caption.copyWith(color: context.colors.textPrimary, height: 1.15, fontSize: 12);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -156,7 +161,7 @@ class LiveRail extends ConsumerWidget {
     final c = context.colors;
     final s = Strings.of(context);
     final List<Story?> shown = stories ?? List.filled(4, null);
-    final style = context.type.caption.copyWith(color: c.textPrimary, height: 1.2, fontSize: 12);
+    final style = label(context);
     return Semantics(
       container: true,
       label: s.liveNow,
@@ -166,13 +171,13 @@ class LiveRail extends ConsumerWidget {
           height: extent,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s2, NewsSpace.s4, 0),
+            padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s1, NewsSpace.s4, 0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (final story in shown)
                   Padding(
-                    padding: const EdgeInsets.only(right: NewsSpace.s2),
+                    padding: const EdgeInsets.only(right: NewsSpace.s1),
                     child: Pressable(
                       onTap: story == null ? null : () => onTap(story),
                       label: story == null ? null : '${s.live}: ${story.headline}',
@@ -183,8 +188,8 @@ class LiveRail extends ConsumerWidget {
                         child: Column(
                           children: [
                             Container(
-                              width: 58,
-                              height: 58,
+                              width: _ring,
+                              height: _ring,
                               padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
@@ -196,12 +201,10 @@ class LiveRail extends ConsumerWidget {
                               child: ClipOval(child: NewsPicture(story?.image)),
                             ),
                             const SizedBox(height: NewsSpace.s1),
-                            TextOrBone(
-                              story?.headline,
-                              style: style,
-                              maxLines: 1,
-                              align: TextAlign.center,
-                            ),
+                            if (story == null)
+                              TextOrBone(null, style: style, lines: 2, align: TextAlign.center)
+                            else
+                              RailLabel(story.railTitle, style: style),
                           ],
                         ),
                       ),
@@ -214,4 +217,59 @@ class LiveRail extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Two lines under a ring (R3): the editor's rail title, or the headline the server cut between words. A word is
+/// never split; one too long for the width makes the whole label a little smaller instead.
+class RailLabel extends StatelessWidget {
+  const RailLabel(this.text, {super.key, required this.style});
+
+  final String text;
+  final TextStyle style;
+
+  /// Smaller than this it is no longer read at a glance; the semantic label always has the whole headline.
+  static const smallest = 8.5;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      final scaler = MediaQuery.textScalerOf(context);
+      final direction = Directionality.of(context);
+      bool fits(double size) {
+        final sized = style.copyWith(fontSize: size);
+        for (final word in text.split(' ')) {
+          final painter = TextPainter(
+            text: TextSpan(text: word, style: sized),
+            textDirection: direction,
+            textScaler: scaler,
+            maxLines: 1,
+          )..layout();
+          final wide = painter.width > box.maxWidth;
+          painter.dispose();
+          if (wide) return false;
+        }
+        final painter = TextPainter(
+          text: TextSpan(text: text, style: sized),
+          textDirection: direction,
+          textScaler: scaler,
+          maxLines: 2,
+        )..layout(maxWidth: box.maxWidth);
+        final fit = !painter.didExceedMaxLines;
+        painter.dispose();
+        return fit;
+      }
+
+      var size = style.fontSize!;
+      while (size > smallest && !fits(size)) {
+        size -= 0.25;
+      }
+      return Text(
+        text,
+        style: style.copyWith(fontSize: size),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+      );
+    },
+  );
 }

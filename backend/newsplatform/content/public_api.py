@@ -69,6 +69,7 @@ def _brief(node: Node, locale: str) -> dict[str, Any]:
     return {
         "id": str(node.category.pk),
         "name": node.name(locale),
+        "short_name": node.short_name(locale),
         "slug": slug,
         "path": paths.category_path(locale, slug),
         "color": node.category.color,
@@ -265,7 +266,9 @@ class ArticleView(PublicView):
         row = selectors.article(locale_of(request), slug)
         tags = [f"post-{row.post_id}", f"category-{row.category_id}"]
         tags += [f"author-{a['id']}" for a in row.article["authors"]]
-        return self.cached({**row.article, "modified_at": row.modified_at.isoformat()}, tags)
+        return self.cached(
+            {**selectors.current(row.article), "modified_at": row.modified_at.isoformat()}, tags
+        )
 
 
 class RelatedView(PublicView):

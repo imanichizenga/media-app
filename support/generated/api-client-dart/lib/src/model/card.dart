@@ -29,6 +29,7 @@ class Card {
     required this.path,
     required this.slug,
     required this.headline,
+    required this.railTitle,
     required this.standfirst,
     required this.category,
     required this.authors,
@@ -85,6 +86,14 @@ class Card {
     includeIfNull: false,
   )
   final String headline;
+
+  /// At most 24 characters, for the live rail
+  @JsonKey(
+    name: r'rail_title',
+    required: true,
+    includeIfNull: false,
+  )
+  final String railTitle;
 
   @JsonKey(
     name: r'standfirst',
@@ -188,6 +197,7 @@ class Card {
           other.path == path &&
           other.slug == slug &&
           other.headline == headline &&
+          other.railTitle == railTitle &&
           other.standfirst == standfirst &&
           other.category == category &&
           other.authors == authors &&
@@ -210,6 +220,7 @@ class Card {
       path.hashCode +
       slug.hashCode +
       headline.hashCode +
+      railTitle.hashCode +
       standfirst.hashCode +
       category.hashCode +
       authors.hashCode +

@@ -20,6 +20,7 @@ class PublicCategory {
   PublicCategory({
     required this.id,
     required this.name,
+    required this.shortName,
     required this.slug,
     required this.path,
     required this.color,
@@ -38,6 +39,14 @@ class PublicCategory {
     includeIfNull: false,
   )
   final String name;
+
+  /// The editor's short label, or the name
+  @JsonKey(
+    name: r'short_name',
+    required: true,
+    includeIfNull: false,
+  )
+  final String shortName;
 
   @JsonKey(
     name: r'slug',
@@ -66,6 +75,7 @@ class PublicCategory {
       other is PublicCategory &&
           other.id == id &&
           other.name == name &&
+          other.shortName == shortName &&
           other.slug == slug &&
           other.path == path &&
           other.color == color;
@@ -74,6 +84,7 @@ class PublicCategory {
   int get hashCode =>
       id.hashCode +
       name.hashCode +
+      shortName.hashCode +
       slug.hashCode +
       path.hashCode +
       color.hashCode;

@@ -13,7 +13,7 @@ from newsplatform.seo import paths
 from newsplatform.seo.services import moved, moved_prefix
 from newsplatform.taxonomy.models import MAX_DEPTH, Category, CategoryText, Region, Story, Tag
 
-_TEXT = ("name", "slug", "description", "seo_title", "seo_description")
+_TEXT = ("name", "short_name", "slug", "description", "seo_title", "seo_description")
 
 
 def lock_tree() -> None:

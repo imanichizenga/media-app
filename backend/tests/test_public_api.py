@@ -372,3 +372,52 @@ def test_page_size_is_the_documented_default(editor, cat):
 def test_the_public_surface_has_no_editing_routes():
     for path in ("posts", "media", "categories", "redirects"):
         assert Client().get(f"/api/v1/{path}").status_code == 404
+
+
+# ---- short labels (M3.2: R2, R3) -------------------------------------------
+@pytest.mark.parametrize(
+    ("headline", "expected"),
+    [
+        ("Bunge", "Bunge"),
+        ("Bajeti ya elimu yapitishwa", "Bajeti ya elimu…"),
+        ("Wakulima wa Nyanda za Juu Kusini waiomba serikali", "Wakulima wa Nyanda za…"),
+        ("Mkutano, kesho: Dodoma na Arusha", "Mkutano, kesho: Dodoma…"),
+        ("Uwekezajinamasokoyamitajinchini leo", "Uwekezajinamasokoyamita…"),
+    ],
+)
+def test_a_rail_title_is_cut_between_words(headline, expected):
+    title = publishing.rail_title(headline)
+    assert title == expected
+    assert len(title) <= publishing.RAIL_TITLE
+    if len(headline) > publishing.RAIL_TITLE > len(headline.split()[0]):
+        assert headline.startswith(title.removesuffix("…"))
+        assert headline[len(title) - 1] in " ,:"  # the cut is at a word's end
+
+
+def test_cards_carry_the_short_labels(editor, cat):
+    cat.texts.filter(locale="sw").update(short_name="Hbr")
+    row = published(editor, cat, "Wakulima wa Nyanda za Juu Kusini waiomba serikali")
+    card = get("latest").json()["results"][0]
+    assert card["category"]["short_name"] == "Hbr"
+    assert card["rail_title"] == "Wakulima wa Nyanda za…"
+    text = row.texts.get(locale="sw")
+    text.rail_title = "Kilimo, moja kwa moja"
+    text.save()
+    publishing.publish(row)
+    assert get("latest").json()["results"][0]["rail_title"] == "Kilimo, moja kwa moja"
+    matches_contract("latest", get("latest").json())
+
+
+def test_a_card_published_before_the_short_labels_is_given_them(editor, cat):
+    row = published(editor, cat, "Wakulima wa Nyanda za Juu Kusini waiomba serikali")
+    publication = Publication.objects.get(post=row, locale="sw")
+    for shape in (publication.card, publication.article):
+        del shape["rail_title"]
+        del shape["category"]["short_name"]
+    publication.save()
+    card = get("latest").json()["results"][0]
+    assert card["rail_title"] == "Wakulima wa Nyanda za…"
+    assert card["category"]["short_name"] == card["category"]["name"]
+    matches_contract("latest", get("latest").json())
+    article = get(f"articles/{publication.slug}").json()
+    assert article["category"]["short_name"] == article["category"]["name"]

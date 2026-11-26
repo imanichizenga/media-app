@@ -5130,6 +5130,12 @@
                         "type": "string",
                         "maxLength": 80
                     },
+                    "short_name": {
+                        "type": "string",
+                        "default": "",
+                        "description": "On a card when the whole name does not fit. Empty: the name.",
+                        "maxLength": 14
+                    },
                     "slug": {
                         "oneOf": [
                             {
@@ -5171,6 +5177,12 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 80
+                    },
+                    "short_name": {
+                        "type": "string",
+                        "default": "",
+                        "description": "On a card when the whole name does not fit. Empty: the name.",
+                        "maxLength": 14
                     },
                     "slug": {
                         "oneOf": [
@@ -7977,6 +7989,11 @@
                         "type": "string",
                         "maxLength": 200
                     },
+                    "rail_title": {
+                        "type": "string",
+                        "description": "Live stories: under the ring in the rail. Empty: the headline, cut between words.",
+                        "maxLength": 24
+                    },
                     "standfirst": {
                         "type": "string",
                         "maxLength": 400
@@ -8042,6 +8059,11 @@
                     "headline": {
                         "type": "string",
                         "maxLength": 200
+                    },
+                    "rail_title": {
+                        "type": "string",
+                        "description": "Live stories: under the ring in the rail. Empty: the headline, cut between words.",
+                        "maxLength": 24
                     },
                     "standfirst": {
                         "type": "string",

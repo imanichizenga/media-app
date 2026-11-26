@@ -11,6 +11,8 @@ abstract class _$NavigationItemCWProxy {
 
   NavigationItem name(String name);
 
+  NavigationItem shortName(String shortName);
+
   NavigationItem slug(String slug);
 
   NavigationItem path(String path);
@@ -30,6 +32,7 @@ abstract class _$NavigationItemCWProxy {
   NavigationItem call({
     String id,
     String name,
+    String shortName,
     String slug,
     String path,
     String color,
@@ -49,6 +52,9 @@ class _$NavigationItemCWProxyImpl implements _$NavigationItemCWProxy {
 
   @override
   NavigationItem name(String name) => this(name: name);
+
+  @override
+  NavigationItem shortName(String shortName) => this(shortName: shortName);
 
   @override
   NavigationItem slug(String slug) => this(slug: slug);
@@ -77,6 +83,7 @@ class _$NavigationItemCWProxyImpl implements _$NavigationItemCWProxy {
   NavigationItem call({
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
+    Object? shortName = const $CopyWithPlaceholder(),
     Object? slug = const $CopyWithPlaceholder(),
     Object? path = const $CopyWithPlaceholder(),
     Object? color = const $CopyWithPlaceholder(),
@@ -92,6 +99,10 @@ class _$NavigationItemCWProxyImpl implements _$NavigationItemCWProxy {
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
+      shortName: shortName == const $CopyWithPlaceholder()
+          ? _value.shortName
+          // ignore: cast_nullable_to_non_nullable
+          : shortName as String,
       slug: slug == const $CopyWithPlaceholder()
           ? _value.slug
           // ignore: cast_nullable_to_non_nullable
@@ -136,6 +147,7 @@ NavigationItem _$NavigationItemFromJson(Map<String, dynamic> json) =>
           requiredKeys: const [
             'id',
             'name',
+            'short_name',
             'slug',
             'path',
             'color',
@@ -146,6 +158,7 @@ NavigationItem _$NavigationItemFromJson(Map<String, dynamic> json) =>
         final val = NavigationItem(
           id: $checkedConvert('id', (v) => v as String),
           name: $checkedConvert('name', (v) => v as String),
+          shortName: $checkedConvert('short_name', (v) => v as String),
           slug: $checkedConvert('slug', (v) => v as String),
           path: $checkedConvert('path', (v) => v as String),
           color: $checkedConvert('color', (v) => v as String),
@@ -159,12 +172,14 @@ NavigationItem _$NavigationItemFromJson(Map<String, dynamic> json) =>
         );
         return val;
       },
+      fieldKeyMap: const {'shortName': 'short_name'},
     );
 
 Map<String, dynamic> _$NavigationItemToJson(NavigationItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'short_name': instance.shortName,
       'slug': instance.slug,
       'path': instance.path,
       'color': instance.color,

@@ -50,57 +50,124 @@ class Kicker extends ConsumerWidget {
     final s = Strings.of(context);
     final now = ref.watch(clockNowProvider)();
     final soft = context.type.caption.copyWith(color: onMedia ? OverMedia.soft : c.textSecondary);
-    final when = [
-      ago(story.publishedAt, s, now),
-      if (reading) s.minutesRead(story.readingMinutes < 1 ? 1 : story.readingMinutes),
-    ].join('  ·  ');
-    final live = story.isLive && !quiet;
+    final breaking = story.isBreaking(now);
+    final short = story.category.shortName;
     return MetaLine(
-      lead: live
-          ? const LivePill()
-          : Text.rich(
-              TextSpan(
-                text: story.isBreaking(now) ? s.breaking : story.category.name,
-                style: strong,
-                children: [TextSpan(text: '  ·', style: soft)],
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textWidthBasis: TextWidthBasis.longestLine,
-            ),
-      // The time is said whole; what it belongs to gives way.
-      rest: Text(when, style: soft, maxLines: 1, softWrap: false),
+      live: story.isLive && !quiet,
+      names: [
+        if (breaking) s.breaking else story.category.name,
+        if (!breaking && short.isNotEmpty && short != story.category.name) short,
+      ],
+      time: ago(story.publishedAt, s, now),
+      reading: reading ? s.minutesRead(story.readingMinutes < 1 ? 1 : story.readingMinutes) : null,
+      strong: strong,
+      soft: soft,
     );
   }
 }
 
-/// One line, always. What leads gives way to what follows, which shrinks only when it alone is too long.
+/// One line, always, and nothing in it cut (R2). What it says, in order of what matters: the category, whole; the
+/// time; how long it takes to read. When it does not fit, the reading time goes first, then the category takes
+/// the short name its editor gave it, then the time goes. Only a short name too long for the line on its own is
+/// made smaller, never cut.
 class MetaLine extends StatelessWidget {
-  const MetaLine({super.key, required this.lead, required this.rest});
+  const MetaLine({
+    super.key,
+    required this.names,
+    required this.time,
+    required this.strong,
+    required this.soft,
+    this.reading,
+    this.live = false,
+  });
 
-  final Widget lead;
-  final Widget rest;
+  /// The category's name, then its short name if it has one. A live story shows its pill instead.
+  final List<String> names;
+  final String time;
+  final String? reading;
+  final bool live;
+  final TextStyle strong;
+  final TextStyle soft;
 
   static const _gap = 7.0;
+  static const _dot = '  ·  ';
+
+  /// What is said, from the most to the least: each a label and what follows it.
+  List<(String?, String)> get choices {
+    final rest = [if (reading != null) '$time$_dot$reading', time];
+    if (live) return [for (final r in rest) (null, r), (null, '')];
+    return [
+      for (final r in rest) (names.first, r),
+      for (final name in names.skip(1)) (name, time),
+      (names.last, ''),
+    ];
+  }
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, box) => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.only(right: _gap),
-            child: lead,
-          ),
-        ),
-        ConstrainedBox(
+  Widget build(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+    double width(String text, TextStyle style) {
+      if (text.isEmpty) return 0;
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: direction,
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      final w = painter.width;
+      painter.dispose();
+      return w;
+    }
+
+    return LayoutBuilder(
+      builder: (context, box) {
+        // The pill: its padding, dot and gap around its word (LivePill).
+        final pill = live
+            ? width(
+                    Strings.of(context).live.toUpperCase(),
+                    context.type.eyebrow.copyWith(fontSize: 11, height: 1.4),
+                  ) +
+                  30
+            : 0.0;
+        final pick = choices.firstWhere((x) {
+          final (label, rest) = x;
+          final lead = label == null ? pill : width('$label  ·', strong);
+          return lead + (rest.isEmpty ? 0 : _gap + width(rest, soft)) <= box.maxWidth;
+        }, orElse: () => choices.last);
+        final (label, rest) = pick;
+        final line = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (label == null)
+              const LivePill()
+            else
+              Text.rich(
+                TextSpan(
+                  text: label,
+                  style: strong,
+                  children: [if (rest.isNotEmpty) TextSpan(text: '  ·', style: soft)],
+                ),
+                maxLines: 1,
+                softWrap: false,
+              ),
+            if (rest.isNotEmpty) ...[
+              const SizedBox(width: _gap),
+              Text(rest, style: soft, maxLines: 1, softWrap: false),
+            ],
+          ],
+        );
+        return ConstrainedBox(
           constraints: BoxConstraints(maxWidth: box.maxWidth),
-          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: rest),
-        ),
-      ],
-    ),
-  );
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: line,
+          ),
+        );
+      },
+    );
+  }
 }
 
 /// In a corner of the picture: how long a video is, how many pictures there are.
@@ -671,23 +738,8 @@ class LiveBlogCard extends StatelessWidget {
   }
 }
 
-/// Says that a picture plays: on the lead video only, the others say how long they are (V1).
-class PlayDisc extends StatelessWidget {
-  const PlayDisc({super.key});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 60,
-    height: 60,
-    alignment: Alignment.center,
-    decoration: const BoxDecoration(color: OverMedia.chip, shape: BoxShape.circle),
-    child: const Padding(
-      padding: EdgeInsets.only(left: 3),
-      child: NewsIcon(NewsIcons.play, size: 24, filled: true, color: OverMedia.ink),
-    ),
-  );
-}
-
+/// A video in a list: its picture says how long it is in a corner, and nothing in the middle. The only play
+/// mark is the player's own (R1, ADR-0044 V1).
 class VideoCard extends StatelessWidget {
   const VideoCard(
     this.story, {
@@ -695,14 +747,25 @@ class VideoCard extends StatelessWidget {
     required this.open,
     this.place = 'video',
     this.large = false,
-    this.lead = false,
   });
 
   final Story? story;
   final OpenStory open;
   final String place;
   final bool large;
-  final bool lead;
+
+  static const _headline = 17.0;
+  static const _leading = 1.24;
+
+  /// Room for a small card of this width at the reader's text size, its headline at its longest (three lines).
+  /// Each line is scaled as the text is, so a non-linear text scale (Android 14 on) is right too.
+  static double stripHeight(BuildContext context, double width) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final caption = context.type.caption;
+    final meta = scaler.scale(caption.fontSize!) * (caption.height ?? 1.3);
+    final line = scaler.scale(_headline) * _leading;
+    return (width * 9 / 16).ceilToDouble() + NewsSpace.s3 + meta + NewsSpace.s1 + 3 * line + 2;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -715,13 +778,7 @@ class VideoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              StoryFrame(story, ratio: 16 / 9, heroTag: tag),
-              if (lead && story != null && !story!.isSensitive) const PlayDisc(),
-            ],
-          ),
+          StoryFrame(story, ratio: 16 / 9, heroTag: tag),
           const SizedBox(height: NewsSpace.s3),
           Kicker(story, quiet: true),
           const SizedBox(height: NewsSpace.s1),
@@ -731,8 +788,8 @@ class VideoCard extends StatelessWidget {
             maxLines: large ? null : 3,
             style: (large ? type.headlineM : type.headlineS).copyWith(
               color: context.colors.textPrimary,
-              fontSize: large ? null : 17,
-              height: 1.24,
+              fontSize: large ? null : _headline,
+              height: _leading,
             ),
           ),
         ],

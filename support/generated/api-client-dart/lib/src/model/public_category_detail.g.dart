@@ -11,6 +11,8 @@ abstract class _$PublicCategoryDetailCWProxy {
 
   PublicCategoryDetail name(String name);
 
+  PublicCategoryDetail shortName(String shortName);
+
   PublicCategoryDetail slug(String slug);
 
   PublicCategoryDetail path(String path);
@@ -40,6 +42,7 @@ abstract class _$PublicCategoryDetailCWProxy {
   PublicCategoryDetail call({
     String id,
     String name,
+    String shortName,
     String slug,
     String path,
     String color,
@@ -65,6 +68,10 @@ class _$PublicCategoryDetailCWProxyImpl
 
   @override
   PublicCategoryDetail name(String name) => this(name: name);
+
+  @override
+  PublicCategoryDetail shortName(String shortName) =>
+      this(shortName: shortName);
 
   @override
   PublicCategoryDetail slug(String slug) => this(slug: slug);
@@ -112,6 +119,7 @@ class _$PublicCategoryDetailCWProxyImpl
   PublicCategoryDetail call({
     Object? id = const $CopyWithPlaceholder(),
     Object? name = const $CopyWithPlaceholder(),
+    Object? shortName = const $CopyWithPlaceholder(),
     Object? slug = const $CopyWithPlaceholder(),
     Object? path = const $CopyWithPlaceholder(),
     Object? color = const $CopyWithPlaceholder(),
@@ -132,6 +140,10 @@ class _$PublicCategoryDetailCWProxyImpl
           ? _value.name
           // ignore: cast_nullable_to_non_nullable
           : name as String,
+      shortName: shortName == const $CopyWithPlaceholder()
+          ? _value.shortName
+          // ignore: cast_nullable_to_non_nullable
+          : shortName as String,
       slug: slug == const $CopyWithPlaceholder()
           ? _value.slug
           // ignore: cast_nullable_to_non_nullable
@@ -198,6 +210,7 @@ PublicCategoryDetail _$PublicCategoryDetailFromJson(
           requiredKeys: const [
             'id',
             'name',
+            'short_name',
             'slug',
             'path',
             'color',
@@ -213,6 +226,7 @@ PublicCategoryDetail _$PublicCategoryDetailFromJson(
         final val = PublicCategoryDetail(
           id: $checkedConvert('id', (v) => v as String),
           name: $checkedConvert('name', (v) => v as String),
+          shortName: $checkedConvert('short_name', (v) => v as String),
           slug: $checkedConvert('slug', (v) => v as String),
           path: $checkedConvert('path', (v) => v as String),
           color: $checkedConvert('color', (v) => v as String),
@@ -243,6 +257,7 @@ PublicCategoryDetail _$PublicCategoryDetailFromJson(
         return val;
       },
       fieldKeyMap: const {
+        'shortName': 'short_name',
         'seoTitle': 'seo_title',
         'seoDescription': 'seo_description'
       },
@@ -253,6 +268,7 @@ Map<String, dynamic> _$PublicCategoryDetailToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'short_name': instance.shortName,
       'slug': instance.slug,
       'path': instance.path,
       'color': instance.color,

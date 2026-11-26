@@ -54,6 +54,7 @@ class PublicVideoSerializer(serializers.Serializer[Any]):
 class PublicCategorySerializer(serializers.Serializer[Any]):
     id = serializers.UUIDField()
     name = serializers.CharField()
+    short_name = serializers.CharField(help_text="The editor's short label, or the name")
     slug = serializers.CharField()
     path = serializers.CharField()
     color = _text()
@@ -78,6 +79,7 @@ class CardSerializer(serializers.Serializer[Any]):
     path = serializers.CharField()
     slug = serializers.CharField()
     headline = serializers.CharField()
+    rail_title = serializers.CharField(help_text="At most 24 characters, for the live rail")
     standfirst = _text()
     category = PublicCategorySerializer()
     authors = CardBylineSerializer(many=True)

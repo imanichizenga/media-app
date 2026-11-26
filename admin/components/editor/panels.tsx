@@ -663,6 +663,16 @@ export function DetailsPanel({ draft, snap, locale, disabled }: Props) {
           onChange={(x) => draft.change({ content_warning: x.target.value })}
         />
       )}
+      {["live_blog", "live_stream"].includes(data.type ?? "") && (
+        <TextField
+          label={t("railTitle")}
+          help={t("railTitleHelp")}
+          value={data.texts?.[locale]?.rail_title ?? ""}
+          maxLength={24}
+          disabled={disabled}
+          onChange={(x) => draft.changeText(locale, { rail_title: x.target.value })}
+        />
+      )}
       <TextField
         label={t("updateNote")}
         help={t("updateNoteHelp")}

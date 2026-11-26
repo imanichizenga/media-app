@@ -19,6 +19,8 @@ abstract class _$CardCWProxy {
 
   Card headline(String headline);
 
+  Card railTitle(String railTitle);
+
   Card standfirst(String standfirst);
 
   Card category(PublicCategory category);
@@ -58,6 +60,7 @@ abstract class _$CardCWProxy {
     String path,
     String slug,
     String headline,
+    String railTitle,
     String standfirst,
     PublicCategory category,
     List<CardByline> authors,
@@ -97,6 +100,9 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
 
   @override
   Card headline(String headline) => this(headline: headline);
+
+  @override
+  Card railTitle(String railTitle) => this(railTitle: railTitle);
 
   @override
   Card standfirst(String standfirst) => this(standfirst: standfirst);
@@ -154,6 +160,7 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
     Object? path = const $CopyWithPlaceholder(),
     Object? slug = const $CopyWithPlaceholder(),
     Object? headline = const $CopyWithPlaceholder(),
+    Object? railTitle = const $CopyWithPlaceholder(),
     Object? standfirst = const $CopyWithPlaceholder(),
     Object? category = const $CopyWithPlaceholder(),
     Object? authors = const $CopyWithPlaceholder(),
@@ -193,6 +200,10 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
           ? _value.headline
           // ignore: cast_nullable_to_non_nullable
           : headline as String,
+      railTitle: railTitle == const $CopyWithPlaceholder()
+          ? _value.railTitle
+          // ignore: cast_nullable_to_non_nullable
+          : railTitle as String,
       standfirst: standfirst == const $CopyWithPlaceholder()
           ? _value.standfirst
           // ignore: cast_nullable_to_non_nullable
@@ -272,6 +283,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
             'path',
             'slug',
             'headline',
+            'rail_title',
             'standfirst',
             'category',
             'authors',
@@ -295,6 +307,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
           path: $checkedConvert('path', (v) => v as String),
           slug: $checkedConvert('slug', (v) => v as String),
           headline: $checkedConvert('headline', (v) => v as String),
+          railTitle: $checkedConvert('rail_title', (v) => v as String),
           standfirst: $checkedConvert('standfirst', (v) => v as String),
           category: $checkedConvert('category',
               (v) => PublicCategory.fromJson(v as Map<String, dynamic>)),
@@ -330,6 +343,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
         return val;
       },
       fieldKeyMap: const {
+        'railTitle': 'rail_title',
         'youtubeId': 'youtube_id',
         'durationMs': 'duration_ms',
         'readingMinutes': 'reading_minutes',
@@ -348,6 +362,7 @@ Map<String, dynamic> _$CardToJson(Card instance) => <String, dynamic>{
       'path': instance.path,
       'slug': instance.slug,
       'headline': instance.headline,
+      'rail_title': instance.railTitle,
       'standfirst': instance.standfirst,
       'category': instance.category.toJson(),
       'authors': instance.authors.map((e) => e.toJson()).toList(),

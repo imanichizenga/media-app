@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **path** | **String** |  | 
 **slug** | **String** |  | 
 **headline** | **String** |  | 
+**railTitle** | **String** | At most 24 characters, for the live rail | 
 **standfirst** | **String** |  | 
 **category** | [**PublicCategory**](PublicCategory.md) |  | 
 **authors** | [**List&lt;CardByline&gt;**](CardByline.md) |  | 

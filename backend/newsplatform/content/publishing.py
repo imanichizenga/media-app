@@ -151,6 +151,7 @@ def _category(node: Any, locale: str) -> dict[str, Any]:
     return {
         "id": str(node.category.pk),
         "name": node.name(locale),
+        "short_name": node.short_name(locale),
         "slug": node.slug(locale),
         "path": paths.category_path(locale, node.slug(locale)),
         "color": node.category.color,
@@ -172,6 +173,7 @@ def build(
         "path": path,
         "slug": text.slug,
         "headline": text.headline,
+        "rail_title": text.rail_title or rail_title(text.headline),
         "standfirst": text.standfirst,
         "category": _category(node, locale),
         "authors": [named(a, locale) for a in ctx["authors"]],
@@ -222,6 +224,23 @@ def _links(text: PostText) -> dict[str, dict[str, str]]:
     ids = {b["post"] for _, b in blocks.walk(text.body) if b["type"] == "related_link" and b.get("post")}
     rows = Publication.objects.filter(post_id__in=ids, locale=text.locale) if ids else []
     return {str(r.post_id): {"path": r.path, "headline": r.card["headline"]} for r in rows}
+
+
+RAIL_TITLE = 24
+
+
+def rail_title(headline: str) -> str:
+    """The headline cut between words to the rail's length, never inside one (unless the first is longer)."""
+    if len(headline) <= RAIL_TITLE:
+        return headline
+    words, kept = headline.split(), ""
+    for word in words:
+        joined = f"{kept} {word}" if kept else word
+        if len(joined) + 1 > RAIL_TITLE:
+            break
+        kept = joined
+    kept = kept.rstrip(" ,.;:\u2013\u2014-") or headline[: RAIL_TITLE - 1].rstrip()
+    return f"{kept}…"
 
 
 def is_live(post: Post) -> bool:

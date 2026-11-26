@@ -358,7 +358,6 @@ class VideoBand extends ConsumerWidget {
       const VideoRoute().go(context);
     }
 
-    final scale = (MediaQuery.textScalerOf(context).scale(10) / 10).clamp(1.0, 2.0);
     return Container(
       color: context.colors.surfaceSunken,
       padding: const EdgeInsets.symmetric(vertical: NewsSpace.s8),
@@ -368,7 +367,7 @@ class VideoBand extends ConsumerWidget {
           SectionHead(s.videos, more: s.more, onMore: () => toVideo(1)),
           const SizedBox(height: NewsSpace.s1),
           SizedBox(
-            height: 168 + 92 * scale,
+            height: VideoCard.stripHeight(context, 296),
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: NewsSpace.s5),

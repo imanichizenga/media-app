@@ -174,10 +174,13 @@ void main() {
     expect(t.getSize(find.byType(ActionBar)).height, 0);
   });
 
-  // S4
+  // S4 and R2: one line, nothing in it cut. The category is said whole (or as its editor's short name), then the
+  // time, then the reading time; the reading time gives way first, then the name shortens, then the time goes.
+  const longName = 'Uwekezaji, viwanda na biashara za kimataifa';
+  const shortName = 'Uwekezaji';
   for (final width in [320.0, 360.0, 390.0]) {
-    for (final scale in [1.0, 2.0]) {
-      testWidgets('meta is one line at $width, text ×$scale', (t) async {
+    for (final scale in [1.0, 1.5, 2.0]) {
+      testWidgets('meta is one line at $width, text ×$scale, and no category is cut', (t) async {
         final api = FakeApi()
           ..replies['/api/v1/content/home'] = home('sw', (h) {
             for (final list in ['lead', 'latest', 'videos']) {
@@ -185,7 +188,8 @@ void main() {
                 final story = x as Map<String, dynamic>;
                 story['category'] = {
                   ...story['category'] as Map<String, dynamic>,
-                  'name': 'Uwekezaji, viwanda na biashara za kimataifa',
+                  'name': longName,
+                  'short_name': shortName,
                 };
                 story['breaking_until'] = null;
                 story['reading_minutes'] = 12;
@@ -194,30 +198,49 @@ void main() {
           });
         final p = await start(t, size: Size(width, 844), textScale: scale, api: api);
         var seen = 0;
+        final said = <String>{};
         for (var i = 0; i < 5; i++) {
           for (final e in find.byType(Kicker).evaluate()) {
-            final line = find.descendant(
+            final meta = find.descendant(
               of: find.byElementPredicate((x) => x == e),
-              matching: find.byType(RichText),
+              matching: find.byType(MetaLine),
             );
-            final texts = line.evaluate().toList();
-            for (final r in texts) {
-              final box = r.renderObject! as RenderParagraph;
+            if (meta.evaluate().isEmpty) continue;
+            final texts = find
+                .descendant(of: meta, matching: find.byType(RichText))
+                .evaluate()
+                .map((r) => r.renderObject! as RenderParagraph)
+                .toList();
+            final whole = texts.map((b) => b.text.toPlainText()).join(' ');
+            for (final box in texts) {
               final lines = box.getBoxesForSelection(
                 TextSelection(baseOffset: 0, extentOffset: box.text.toPlainText().length),
               );
               expect(lines.map((b) => b.top.round()).toSet().length, lessThanOrEqualTo(1));
-              if (r == texts.last) {
-                expect(box.didExceedMaxLines, isFalse, reason: 'the time is said whole');
-                expect(box.text.toPlainText(), matches(RegExp(r'\d')));
-                seen++;
-              }
+              expect(box.didExceedMaxLines, isFalse, reason: whole);
             }
+            expect(whole, isNot(contains('…')), reason: 'nothing is cut: $whole');
+            final label = texts.first.text.toPlainText().replaceAll('  ·', '');
+            if (label != 'MUBASHARA' && label != 'LIVE') {
+              expect([longName, shortName], contains(label), reason: 'the category, whole: $whole');
+            }
+            final time = RegExp(r'\d').hasMatch(whole);
+            final reading = whole.contains('kusoma');
+            if (reading) expect(label, longName, reason: 'reading time only beside the whole name');
+            if (!time) {
+              expect(label, shortName, reason: 'the time goes only after the name shortens');
+            }
+            said.add(
+              reading ? 'all' : (label == longName ? 'name+time' : (time ? 'short+time' : 'short')),
+            );
+            seen++;
           }
           await t.drag(find.byType(CustomScrollView).first, const Offset(0, -600));
           await p.settle(1);
         }
         expect(seen, greaterThan(5));
+        if (width == 320 && scale == 2.0) expect(said, isNot(contains('all')));
+        if (width == 390 && scale == 1.0) expect(said, contains('short+time'));
         expect(t.takeException(), isNull);
       });
     }

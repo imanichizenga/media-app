@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **String** |  | 
 **name** | **String** |  | 
+**shortName** | **String** | The editor's short label, or the name | 
 **slug** | **String** |  | 
 **path** | **String** |  | 
 **color** | **String** |  | 

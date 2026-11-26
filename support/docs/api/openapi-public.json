@@ -835,6 +835,10 @@
                     "headline": {
                         "type": "string"
                     },
+                    "rail_title": {
+                        "type": "string",
+                        "description": "At most 24 characters, for the live rail"
+                    },
                     "standfirst": {
                         "type": "string"
                     },
@@ -1008,6 +1012,7 @@
                     "modified_at",
                     "path",
                     "published_at",
+                    "rail_title",
                     "reading_minutes",
                     "regions",
                     "seo",
@@ -1069,6 +1074,10 @@
                     },
                     "headline": {
                         "type": "string"
+                    },
+                    "rail_title": {
+                        "type": "string",
+                        "description": "At most 24 characters, for the live rail"
                     },
                     "standfirst": {
                         "type": "string"
@@ -1151,6 +1160,7 @@
                     "modified_at",
                     "path",
                     "published_at",
+                    "rail_title",
                     "reading_minutes",
                     "slug",
                     "standfirst",
@@ -1381,6 +1391,10 @@
                     "name": {
                         "type": "string"
                     },
+                    "short_name": {
+                        "type": "string",
+                        "description": "The editor's short label, or the name"
+                    },
                     "slug": {
                         "type": "string"
                     },
@@ -1407,6 +1421,7 @@
                     "id",
                     "name",
                     "path",
+                    "short_name",
                     "slug"
                 ]
             },
@@ -1532,6 +1547,10 @@
                     "name": {
                         "type": "string"
                     },
+                    "short_name": {
+                        "type": "string",
+                        "description": "The editor's short label, or the name"
+                    },
                     "slug": {
                         "type": "string"
                     },
@@ -1547,6 +1566,7 @@
                     "id",
                     "name",
                     "path",
+                    "short_name",
                     "slug"
                 ]
             },
@@ -1559,6 +1579,10 @@
                     },
                     "name": {
                         "type": "string"
+                    },
+                    "short_name": {
+                        "type": "string",
+                        "description": "The editor's short label, or the name"
                     },
                     "slug": {
                         "type": "string"
@@ -1611,6 +1635,7 @@
                     "path",
                     "seo_description",
                     "seo_title",
+                    "short_name",
                     "slug",
                     "translations"
                 ]

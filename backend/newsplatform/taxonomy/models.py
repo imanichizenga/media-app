@@ -57,6 +57,8 @@ class CategoryText(BaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="texts")
     locale = models.CharField(max_length=5, choices=Locale)
     name = models.CharField(max_length=80)
+    # On a card's one line of meta when the whole name does not fit (empty: the name).
+    short_name = models.CharField(max_length=14, blank=True, default="")
     slug = models.SlugField(max_length=80)
     description = models.CharField(max_length=500, blank=True, default="")
     seo_title = models.CharField(max_length=120, blank=True, default="")
