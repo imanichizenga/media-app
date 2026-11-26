@@ -38,7 +38,16 @@ jobs:
       - run: uv run mypy newsplatform config
       - name: Migrations are complete
         run: uv run python manage.py makemigrations --check --dry-run
+      - name: OpenSearch 3.7, the version AWS runs (ADR-0049)
+        working-directory: .
+        run: |
+          docker run -d --name opensearch -p 9200:9200 -e discovery.type=single-node \
+            -e DISABLE_SECURITY_PLUGIN=true -e DISABLE_INSTALL_DEMO_CONFIG=true \
+            -e OPENSEARCH_JAVA_OPTS="-Xms512m -Xmx512m" opensearchproject/opensearch:3.7.0
+          for _ in $(seq 90); do curl -sf http://127.0.0.1:9200/_cluster/health > /dev/null && break; sleep 2; done
+          curl -sf http://127.0.0.1:9200 | grep '"number"'
       - name: Tests (coverage gate 85%)
+        env: { TEST_OPENSEARCH_URL: "http://127.0.0.1:9200" }
         run: uv run pytest --cov --cov-report=xml --cov-fail-under=85
       - name: Tracing works end to end
         run: ../support/scripts/verify-otel.sh

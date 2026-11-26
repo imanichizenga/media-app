@@ -35,6 +35,7 @@ urlpatterns = [
     path(CONTENT + "articles/<slug:slug>/related", content.RelatedView.as_view()),
     path(CONTENT + "navigation", content.NavigationView.as_view()),
     path(CONTENT + "search", content.SearchView.as_view()),
+    path(CONTENT + "search/suggest", content.SuggestView.as_view()),
     path(CONTENT + "pages", pages.PublicPageListView.as_view()),
     path(CONTENT + "pages/<slug:key>", pages.PublicPageView.as_view()),
     path(CONTENT + "sitemap", seo.SitemapIndexView.as_view()),

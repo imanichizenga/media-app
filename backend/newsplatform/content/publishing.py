@@ -17,6 +17,7 @@ from newsplatform.content.models import Feed, Listing, Post, PostText, PostType,
 from newsplatform.engagement.services import resolved
 from newsplatform.media.models import Asset, AssetStatus
 from newsplatform.media.presenters import image, video
+from newsplatform.search import vectors
 from newsplatform.seo import paths
 from newsplatform.seo.services import moved
 from newsplatform.taxonomy.models import Visibility
@@ -291,6 +292,9 @@ def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
     if previous and previous.path != path:
         moved(previous.path, path)
     _relist(row, post, ctx)
+    vectors.write(
+        [row]
+    )  # in this transaction: Postgres's search is right even if the queue is not (ADR-0049)
     return row
 
 
@@ -344,6 +348,7 @@ def withdraw(post: Post) -> None:
 def changed(post: Post, rows: list[Publication]) -> None:
     """Tells the CDN and the website, after commit."""
     from newsplatform.content.tasks import announce
+    from newsplatform.search.tasks import index_post
 
     tags = sorted(
         {f"post-{post.pk}", f"category-{post.category_id}", "latest"}
@@ -354,3 +359,6 @@ def changed(post: Post, rows: list[Publication]) -> None:
     )
     pages = sorted({r.path for r in rows})
     transaction.on_commit(lambda: announce.delay(tags, pages), robust=True)
+    # Search reads the publications as they are after commit, so it is told the post, not the rows (ADR-0049).
+    post_id = str(post.pk)
+    transaction.on_commit(lambda: index_post.delay(post_id), robust=True)

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "newsplatform.seo",
     "newsplatform.pages",
     "newsplatform.engagement",
+    "newsplatform.search",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -235,6 +236,19 @@ CELERY_BEAT_SCHEDULE: dict[str, Any] = {
     "approvals-expire": {"task": "newsplatform.approvals.tasks.expire_requests", "schedule": 900},
     "sessions-prune": {"task": "newsplatform.staff_security.tasks.prune", "schedule": 3600},
     "waf-sync": {"task": "newsplatform.staff_security.tasks.sync_waf_allowlist", "schedule": 3600},
+}
+
+# Search (ADR-0049). Required where deployed; empty locally, where Postgres is the engine.
+OPENSEARCH_URL = env_str("OPENSEARCH_URL", None if IS_DEPLOYED else "")
+OPENSEARCH_SIGV4 = env_bool("OPENSEARCH_SIGV4", IS_DEPLOYED)  # IAM-signed requests to the AWS domain
+OPENSEARCH_PREFIX = env_str("OPENSEARCH_PREFIX", "news")
+OPENSEARCH_SHARDS = env_int("OPENSEARCH_SHARDS", 2 if IS_DEPLOYED else 1)
+OPENSEARCH_REPLICAS = env_int("OPENSEARCH_REPLICAS", 1 if IS_DEPLOYED else 0)
+CELERY_TASK_ROUTES["newsplatform.search.tasks.*"] = {"queue": "default"}
+CELERY_BEAT_SCHEDULE["search-reconcile"] = {
+    "task": "newsplatform.search.tasks.reconcile",
+    "schedule": 3600,
+    "options": {"expires": 3000},
 }
 
 LOGGING_CONFIG = None

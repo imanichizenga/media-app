@@ -463,7 +463,98 @@
         "/api/v1/content/search": {
             "get": {
                 "operationId": "search",
-                "description": "GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).",
+                "description": "ADR-0049: words, typing mistakes and first letters, in Swahili and English; newest first on a tie.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "category",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "A section's slug; its subsections are included"
+                    },
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ],
+                            "default": "sw"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "since",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1y",
+                                "24h",
+                                "30d",
+                                "7d"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "relevance"
+                            ],
+                            "default": "relevance"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Comma-separated post types"
+                    }
+                ],
+                "tags": [
+                    "content"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Search"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/content/search/suggest": {
+            "get": {
+                "operationId": "search_suggest",
+                "description": "Headlines as the reader types (ADR-0049).",
                 "parameters": [
                     {
                         "in": "query",
@@ -482,7 +573,8 @@
                         "name": "q",
                         "schema": {
                             "type": "string"
-                        }
+                        },
+                        "required": true
                     }
                 ],
                 "tags": [
@@ -493,7 +585,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Search"
+                                    "$ref": "#/components/schemas/Suggest"
                                 }
                             }
                         },
@@ -1402,6 +1494,14 @@
                 "type": "string",
                 "description": "* `sw` - sw\n* `en` - en"
             },
+            "EngineEnum": {
+                "enum": [
+                    "opensearch",
+                    "fallback"
+                ],
+                "type": "string",
+                "description": "* `opensearch` - opensearch\n* `fallback` - fallback"
+            },
             "FeedPage": {
                 "type": "object",
                 "properties": {
@@ -2236,8 +2336,23 @@
             },
             "Search": {
                 "type": "object",
-                "description": "Until search is connected (M8), `available` is false and nothing is found.",
+                "description": "ADR-0049. `engine` is \"fallback\" while OpenSearch does not answer; clients show both the same way.",
                 "properties": {
+                    "available": {
+                        "type": "boolean"
+                    },
+                    "query": {
+                        "type": "string"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "total_is_exact": {
+                        "type": "boolean"
+                    },
+                    "engine": {
+                        "$ref": "#/components/schemas/EngineEnum"
+                    },
                     "next_cursor": {
                         "type": [
                             "string",
@@ -2247,17 +2362,52 @@
                     "results": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Card"
+                            "$ref": "#/components/schemas/SearchHit"
                         }
-                    },
-                    "available": {
-                        "type": "boolean"
                     }
                 },
                 "required": [
                     "available",
+                    "engine",
                     "next_cursor",
-                    "results"
+                    "query",
+                    "results",
+                    "total",
+                    "total_is_exact"
+                ]
+            },
+            "SearchHit": {
+                "type": "object",
+                "properties": {
+                    "card": {
+                        "$ref": "#/components/schemas/Card"
+                    },
+                    "snippet": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Segment"
+                        }
+                    }
+                },
+                "required": [
+                    "card",
+                    "snippet"
+                ]
+            },
+            "Segment": {
+                "type": "object",
+                "description": "A piece of the snippet; `hit` marks the words that matched. Text, never markup.",
+                "properties": {
+                    "text": {
+                        "type": "string"
+                    },
+                    "hit": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "hit",
+                    "text"
                 ]
             },
             "SiteApps": {
@@ -2634,6 +2784,47 @@
                     "next_cursor",
                     "results",
                     "story"
+                ]
+            },
+            "Suggest": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Suggestion"
+                        }
+                    }
+                },
+                "required": [
+                    "query",
+                    "results"
+                ]
+            },
+            "Suggestion": {
+                "type": "object",
+                "properties": {
+                    "headline": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "category",
+                    "headline",
+                    "path",
+                    "type"
                 ]
             },
             "TagPage": {

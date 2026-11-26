@@ -1,7 +1,10 @@
 """What readers get. Identical for everyone, so every response can live in the CDN (ADR-0026)."""
 
 from collections.abc import Iterable
+from datetime import timedelta
 from typing import Any, ClassVar
+
+from django.utils import timezone
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.request import Request
@@ -14,6 +17,7 @@ from newsplatform.content import authors, selectors
 from newsplatform.content import public_shapes as shapes
 from newsplatform.content.models import AuthorProfile, Feed, PostType
 from newsplatform.rbac.permissions import PublicEndpoint
+from newsplatform.search import engine
 from newsplatform.seo import paths
 from newsplatform.seo.services import resolve
 from newsplatform.taxonomy.models import Story, Tag
@@ -310,16 +314,92 @@ class NavigationView(PublicView):
         )
 
 
+_SINCE = {"24h": timedelta(hours=24), "7d": timedelta(days=7), "30d": timedelta(days=30), "1y": timedelta(days=365)}
+
+
+def _search_params(request: Request, locale: str) -> engine.Params:
+    q = request.query_params
+    types = tuple(t for t in q.get("type", "").split(",") if t)
+    if any(t not in PostType.values for t in types):
+        raise DomainError("Unknown type", code="validation_error")
+    categories: tuple[str, ...] = ()
+    if slug := q.get("category", ""):
+        node = next((n for n in tree(public_only=True).values() if n.slug(locale) == slug), None)
+        if node is None:
+            raise DomainError("Unknown category", code="validation_error")
+        categories = (str(node.category.pk),)
+    since = q.get("since", "")
+    if since and since not in _SINCE:
+        raise DomainError("Unknown period", code="validation_error")
+    sort = q.get("sort", "relevance")
+    if sort not in ("relevance", "newest"):
+        raise DomainError("Unknown order", code="validation_error")
+    return engine.Params(
+        q=engine.normalise(q.get("q", "")),
+        locale=locale,
+        types=types,
+        categories=categories,
+        since=timezone.now() - _SINCE[since] if since else None,
+        sort=sort,  # type: ignore[arg-type]
+        cursor=q.get("cursor", "")[:500] or None,
+    )
+
+
 class SearchView(PublicView):
+    """ADR-0049: words, typing mistakes and first letters, in Swahili and English; newest first on a tie."""
+
+    browser_seconds = 30
+    edge_seconds = 60
+
     @extend_schema(
         operation_id="search",
         auth=[],
-        parameters=[_LOCALE, OpenApiParameter("q", str)],
+        parameters=[
+            _LOCALE,
+            OpenApiParameter("q", str, required=True),
+            OpenApiParameter("type", str, description="Comma-separated post types"),
+            OpenApiParameter("category", str, description="A section's slug; its subsections are included"),
+            OpenApiParameter("since", str, enum=list(_SINCE)),
+            OpenApiParameter("sort", str, enum=["relevance", "newest"], default="relevance"),
+            OpenApiParameter("cursor", str),
+        ],
         responses=shapes.SearchSerializer,
     )
     def get(self, request: Request) -> Response:
-        locale_of(request)
-        return self.cached({"available": False, "results": [], "next_cursor": None}, ["search"])
+        params = _search_params(request, locale_of(request))
+        if not params.q:
+            empty = {"available": True, "query": "", "total": 0, "total_is_exact": True, "engine": "opensearch"}
+            return self.cached({**empty, "next_cursor": None, "results": []}, ["search"])
+        page = engine.search(params)
+        data = {
+            "available": True,
+            "query": params.q,
+            "total": page.total,
+            "total_is_exact": page.total_is_exact,
+            "engine": page.engine,
+            "next_cursor": page.next_cursor,
+            "results": [{"card": h.card, "snippet": h.snippet} for h in page.results],
+        }
+        return self.cached(data, ["search", "latest"])
+
+
+class SuggestView(PublicView):
+    """Headlines as the reader types (ADR-0049)."""
+
+    browser_seconds = 30
+    edge_seconds = 60
+
+    @extend_schema(
+        operation_id="search_suggest",
+        auth=[],
+        parameters=[_LOCALE, OpenApiParameter("q", str, required=True)],
+        responses=shapes.SuggestSerializer,
+    )
+    def get(self, request: Request) -> Response:
+        locale = locale_of(request)
+        q = engine.normalise(request.query_params.get("q", ""))
+        results = engine.suggest(q, locale) if len(q) >= 2 else []
+        return self.cached({"query": q, "results": results}, ["search", "latest"])
 
 
 class ResolveView(PublicView):

@@ -215,10 +215,40 @@ class RelatedSerializer(serializers.Serializer[Any]):
     results = CardSerializer(many=True)
 
 
-class SearchSerializer(FeedPageSerializer):
-    """Until search is connected (M8), `available` is false and nothing is found."""
+class SegmentSerializer(serializers.Serializer[Any]):
+    """A piece of the snippet; `hit` marks the words that matched. Text, never markup."""
+
+    text = serializers.CharField()
+    hit = serializers.BooleanField()
+
+
+class SearchHitSerializer(serializers.Serializer[Any]):
+    card = CardSerializer()
+    snippet = SegmentSerializer(many=True)
+
+
+class SearchSerializer(serializers.Serializer[Any]):
+    """ADR-0049. `engine` is "fallback" while OpenSearch does not answer; clients show both the same way."""
 
     available = serializers.BooleanField()
+    query = serializers.CharField()
+    total = serializers.IntegerField()
+    total_is_exact = serializers.BooleanField()
+    engine = serializers.ChoiceField(choices=["opensearch", "fallback"])
+    next_cursor = serializers.CharField(allow_null=True)
+    results = SearchHitSerializer(many=True)
+
+
+class SuggestionSerializer(serializers.Serializer[Any]):
+    headline = serializers.CharField()
+    path = serializers.CharField()
+    type = serializers.CharField()
+    category = serializers.CharField()
+
+
+class SuggestSerializer(serializers.Serializer[Any]):
+    query = serializers.CharField()
+    results = SuggestionSerializer(many=True)
 
 
 class ResolveSerializer(serializers.Serializer[Any]):

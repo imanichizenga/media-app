@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex, OpClass
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.db.models import F, Q
+from django.db.models.fields.json import KeyTextTransform
 
 from newsplatform.common.locales import Locale
 from newsplatform.common.models import BaseModel
@@ -204,6 +207,9 @@ class Publication(BaseModel):
     article = models.JSONField()
     etag = models.CharField(max_length=64)
     asset_ids = ArrayField(models.UUIDField(), default=list)
+    # Postgres's own search, used when OpenSearch does not answer (ADR-0049). Written by
+    # newsplatform.search.vectors.
+    search_vector = SearchVectorField(null=True, editable=False)
 
     class Meta:
         constraints = [
@@ -220,6 +226,11 @@ class Publication(BaseModel):
             ),
             models.Index(
                 fields=["locale", "-published_at"], condition=Q(is_live=True), name="publication_live"
+            ),
+            GinIndex(fields=["search_vector"], name="publication_search"),
+            GinIndex(
+                OpClass(KeyTextTransform("headline", "card"), name="gin_trgm_ops"),
+                name="publication_headline_trgm",
             ),
         ]
 
