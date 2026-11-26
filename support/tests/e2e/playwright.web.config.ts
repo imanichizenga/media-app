@@ -9,7 +9,7 @@ export default defineConfig({
   testDir: "./web",
   testMatch: process.env.SCREENS
     ? "screens.spec.ts"
-    : ["site.spec.ts", "seo.spec.ts", "states.spec.ts", "publish.spec.ts"],
+    : ["site.spec.ts", "seo.spec.ts", "states.spec.ts", "publish.spec.ts", "perf.spec.ts"],
   use: { ...base.use, baseURL: "http://localhost:3000", locale: "sw-TZ", timezoneId: "Africa/Dar_es_Salaam" },
   webServer: [
     ...servers,

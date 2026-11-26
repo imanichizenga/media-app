@@ -11,7 +11,7 @@ const PARTS: Record<string, string[]> = {
   search: ['[data-page="explore"] li'],
   cluster: ["h1", '[data-card="lead"]'],
   tag: ["h1"],
-  author: ["main span.rounded-full"],
+  author: ["main [data-face]"],
   page: ["h1"],
   shorts: ["[data-bar]"],
   home: ["header", "main"],

@@ -239,7 +239,7 @@ test.describe("space is for news", () => {
     const { article } = await places("sw");
     await page.goto(article ?? "");
     expect(
-      await page.locator("article").evaluate((e) => e.getBoundingClientRect().width),
+      await page.locator('article[data-page="article"]').evaluate((e) => e.getBoundingClientRect().width),
     ).toBeLessThanOrEqual(704);
     await expect(page.locator("aside [data-card]").first()).toBeVisible();
   });

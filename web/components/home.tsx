@@ -8,12 +8,24 @@ import { Frame, Wide } from "./frame";
 import { JsonLd } from "./json-ld";
 import { type Maybe, none, River, Rows, Strip } from "./parts";
 
-/** Without data it is its own skeleton: what cannot be known, breaking and live, is absent (V2). */
-export async function HomeView({ locale, h }: { locale: Locale; h?: Home }) {
+/**
+ * Without data it is its own skeleton. Breaking news and the live rail are never bones: the skeleton is told them
+ * (`known`), from the same cached answer as Home, so nothing is put above the news when it arrives (V2).
+ */
+export async function HomeView({
+  locale,
+  h,
+  known,
+}: {
+  locale: Locale;
+  h?: Home;
+  known?: Pick<Home, "breaking" | "live">;
+}) {
   const site = await readSite();
   const view = viewOf(locale, site);
   const t = words(locale);
-  const hot = h?.breaking.find((c) => isBreaking(c, view.now));
+  const told = h ?? known;
+  const hot = told?.breaking.find((c) => isBreaking(c, view.now));
   const lead: Maybe[] = h ? cards(h.lead.filter((c) => c.id !== hot?.id)) : none(5);
   const latest: Maybe[] = h ? cards(h.latest.filter((c) => c.id !== hot?.id)) : none(7);
   const path = at(locale, "/");
@@ -29,7 +41,7 @@ export async function HomeView({ locale, h }: { locale: Locale; h?: Home }) {
       <JsonLd data={graph(organization(site), website(site, locale))} />
       <h1 className="sr-only">{site.identity.brand_name}</h1>
       <Wide className="lg:pt-4">
-        {h && <LiveRail cards={cards(h.live)} env={view} title={t("liveNow")} />}
+        {told && <LiveRail cards={cards(told.live)} env={view} title={t("liveNow")} />}
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12 lg:pt-4">
           <LeadCard card={lead[0]} env={view} priority className="lg:col-span-6" />
           <div className="lg:col-span-3">

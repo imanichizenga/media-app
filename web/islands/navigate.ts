@@ -15,7 +15,7 @@ let here = "";
 
 const keyOf = (u: URL | Location) => u.pathname + u.search;
 const english = () => document.documentElement.lang === "en";
-const PLACES = new Set(["tag", "story"]);
+const PLACES = new Set(["tag"]);
 const STILL = /^(about|editorial-policy|corrections|contact|privacy|terms)$/;
 
 /** Which skeleton an address wears, known before its page is. */
@@ -26,6 +26,7 @@ export function kindOf(path: string): string | null {
     .filter(Boolean);
   const [first = "", second] = parts;
   if (parts.length === 0) return "home";
+  if (first === "story") return "story"; // a story opens on its summary
   if (PLACES.has(first)) return "list";
   if (first === "author") return "author";
   if (second) return parts.length === 2 ? "article" : null;
@@ -93,7 +94,9 @@ function wear(kind: string | null, path: string, mine: number, headline = "") {
   if (!kind || !skeletons) return;
   skeletons.then((d) => {
     const now = page(document);
-    const part = d?.querySelector<HTMLTemplateElement>(`template[data-skeleton="${kind}"]`);
+    const section = d?.querySelector<HTMLTemplateElement>('template[data-skeleton="section"]');
+    const own = kind === "front" && section?.dataset.paths?.split(" ").includes(path) ? "section" : kind;
+    const part = d?.querySelector<HTMLTemplateElement>(`template[data-skeleton="${own}"]`);
     if (!part || !now || visit !== mine || now.dataset.loading !== path) return;
     onLeave();
     now.replaceChildren(document.importNode(part.content, true));

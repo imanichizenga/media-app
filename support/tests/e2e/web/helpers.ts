@@ -43,6 +43,16 @@ export async function places(locale: "sw" | "en") {
   } as Record<string, string | undefined>;
 }
 
+/**
+ * Pages are cached with stale-while-revalidate. Chrome answers a repeat fetch from its cache and revalidates in the
+ * background, and Playwright never sees that request end, so "networkidle" would never come. Every page of a
+ * context made by hand needs this too.
+ */
+export async function fresh(page: Page) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
+}
 /** Violations of the policy are errors too, with their place. */
 export const test = base.extend<{ policy: undefined }>({
   policy: [
@@ -52,6 +62,7 @@ export const test = base.extend<{ policy: undefined }>({
           console.error(`CSP ${location.pathname} ${e.violatedDirective} ${e.blockedURI} ${e.sample}`),
         ),
       );
+      await fresh(page);
       await use(undefined);
     },
     { auto: true },

@@ -82,7 +82,8 @@ export async function ListPage(l: List) {
           list={cards(l.found.results)}
           env={view}
           t={t}
-          lead={(l.lead ?? true) && l.first && l.found.results.length > 3}
+          // The skeleton cannot know how many stories come, so a first page always leads: it never moves on arrival.
+          lead={(l.lead ?? true) && l.first}
           next={l.found.next_cursor ? `${l.path}?cursor=${l.found.next_cursor}` : undefined}
           empty={<Nothing t={t} home={at(l.locale, "/")} />}
         />

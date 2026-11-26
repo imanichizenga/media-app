@@ -1,9 +1,8 @@
-import { cx } from "@news/ui/base";
 import { ArticleBody } from "@news/ui/content";
 import type { Metadata } from "next";
 import { Frame, Wide } from "@/components/frame";
 import { JsonLd } from "@/components/json-ld";
-import { PageHead } from "@/components/parts";
+import { PageHead, Subsections } from "@/components/parts";
 import { category, orNull, page, site as readSite } from "@/lib/api";
 import { words } from "@/lib/i18n";
 import { ListPage, listMeta, pagingOf, type Query } from "@/lib/lists";
@@ -37,23 +36,7 @@ async function load({ params, searchParams }: Props) {
     rss: `/rss${locale === "en" ? "/en" : ""}/${c.slug}`,
     head: (
       <PageHead title={c.name} text={c.description} hidden={c.parents.length === 0}>
-        {c.children.length > 0 && (
-          <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pt-1 scrollbar-none">
-            {c.children.map((child) => (
-              <li key={child.id} className="shrink-0">
-                <a
-                  href={child.path}
-                  className={cx(
-                    "tap inline-flex items-center rounded-full border border-border px-4 text-label",
-                    "hover:bg-surface-sunken",
-                  )}
-                >
-                  {child.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
+        {c.children.length > 0 && <Subsections items={c.children} />}
       </PageHead>
     ),
   };

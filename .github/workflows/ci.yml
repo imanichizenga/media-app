@@ -97,6 +97,38 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with: { name: playwright, path: "support/tests/e2e/playwright-report", retention-days: 7 }
+  # The website as readers get it: guest browsing, SEO, revalidation from the admin, axe, layout, Lighthouse.
+  e2e-web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services: *services
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with: { version: "0.13.9" }
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with: { node-version: 24, cache: pnpm }
+      - run: uv sync --locked
+        working-directory: backend
+      - run: pnpm install --frozen-lockfile
+      - name: FFmpeg and storage (the local media pipeline)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          docker compose --profile storage up -d --wait seaweedfs
+      - run: pnpm --filter @news/admin... build
+        env: { API_PROXY_TARGET: "http://127.0.0.1:8001", REALTIME_PROXY_TARGET: "http://127.0.0.1:8002" }
+      - run: pnpm --filter @news/web... build
+        env: { WEB_LOCAL: "1", API_PROXY_TARGET: "http://127.0.0.1:8010" }
+      - run: pnpm --filter @news/e2e exec playwright install --with-deps chromium
+      - run: pnpm --filter @news/e2e web | tee /tmp/web.log
+      - name: What was measured
+        if: always()
+        run: grep -E "^\| |INP" /tmp/web.log >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with: { name: playwright-web, path: "support/tests/e2e/playwright-report", retention-days: 7 }
   dart:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -338,7 +370,7 @@ jobs:
         with: { scan-type: config, scan-ref: support/infra, severity: "HIGH,CRITICAL", exit-code: "1" }
   required:
     if: always()
-    needs: [api, web, e2e, dart, mobile, mobile-android, mobile-ios, infra, images, security]
+    needs: [api, web, e2e, e2e-web, dart, mobile, mobile-android, mobile-ios, infra, images, security]
     runs-on: ubuntu-24.04
     steps:
       - run: test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

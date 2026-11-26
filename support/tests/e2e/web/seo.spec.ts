@@ -71,7 +71,8 @@ test("security headers and a fresh nonce on every page", async ({ request }) => 
   expect(a.headers()["set-cookie"]).toBeUndefined();
   // Nothing of the framework's own is sent, and nobody else's anything.
   const html = await a.text();
-  expect(html).not.toContain("/_next/static/chunks");
+  // The stylesheet is the framework's file; no script of its is.
+  expect(html).not.toMatch(/<script[^>]*src="\/_next\//);
   expect(html.match(/<script[^>]*src="([^"]+)"/g)).toHaveLength(1);
   expect(html).not.toMatch(
     /<(script|link|img|iframe)[^>]+(src|href)="https?:\/\/(?!localhost)[^"]*\.(js|css)/,

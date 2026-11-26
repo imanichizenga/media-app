@@ -1,4 +1,4 @@
-import { Bone } from "@news/ui/base";
+import { Bone, cx } from "@news/ui/base";
 import { ChevronRight } from "@news/ui/icons";
 import { Picture } from "@news/ui/media";
 import {
@@ -144,6 +144,27 @@ export const Nothing = ({ t, home }: { t: T; home: string }) => (
       </a>
     }
   />
+);
+const CHIP = "tap inline-flex items-center rounded-full border border-border px-4 text-label";
+/** A section's own sections, as chips. Without items: the same row, in bones, for its skeleton. */
+export const Subsections = ({ items }: { items?: { id: string | number; name: string; path: string }[] }) => (
+  <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pt-1 scrollbar-none">
+    {items
+      ? items.map((child) => (
+          <li key={child.id} className="shrink-0">
+            <a href={child.path} className={cx(CHIP, "hover:bg-surface-sunken")}>
+              {child.name}
+            </a>
+          </li>
+        ))
+      : [0, 1, 2].map((i) => (
+          <li key={i} className="shrink-0">
+            <span className={CHIP}>
+              <Bone className="w-16" />
+            </span>
+          </li>
+        ))}
+  </ul>
 );
 /** On a phone the bar already says the name of a place: there the heading is for those who listen (S2). */
 export const PageHead = ({
