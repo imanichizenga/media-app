@@ -15,6 +15,9 @@ cores="${EMULATOR_CORES:-2}"
 image="system-images;android-$api;$target;x86_64"
 sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
 export PATH="$sdk/emulator:$sdk/platform-tools:$sdk/cmdline-tools/latest/bin:$PATH"
+# One place for the AVD, whatever the tools' version thinks the default is.
+export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+mkdir -p "$ANDROID_AVD_HOME"
 adb() { timeout 60 "$(type -P adb)" "$@"; }
 
 case "$cmd" in
@@ -22,7 +25,7 @@ case "$cmd" in
     yes | sdkmanager --licenses > /dev/null 2>&1 || true
     sdkmanager --install emulator platform-tools "$image" > /dev/null
     echo "no" | avdmanager create avd --force -n ci --abi "$target/x86_64" --package "$image" > /dev/null
-    cfg="$HOME/.android/avd/ci.avd/config.ini"
+    cfg="$ANDROID_AVD_HOME/ci.avd/config.ini"
     # Fixed, so that a run is the same as the last: screen 320×640 at 160 dpi (what the tests were written on).
     cat >> "$cfg" << CFG
 hw.ramSize=$ram
