@@ -107,6 +107,8 @@ jobs:
           API_SURFACE=public nohup uv run uvicorn config.asgi:application --port 8010 --log-level warning > "$EVIDENCE/api.log" 2>&1 &
           for _ in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
           curl -sf http://127.0.0.1:8010/api/v1/app-config | head -c 200
+      - name: Google's copy of Maven Central first, for Flutter's plugin build too (ADR-0048)
+        run: mkdir -p ~/.gradle/init.d && cp support/scripts/gradle-mirror.init.gradle.kts ~/.gradle/init.d/
       - name: Build the three apps
         working-directory: mobile
         run: ../support/scripts/ci-retry-network.sh ../support/scripts/mobile-build.sh
