@@ -198,6 +198,29 @@ addEventListener("storage", () => {
   savedList();
 });
 
+// ---- the line of meta (R2) ----
+// Its parts wrap whole onto a hidden second line, so the reading time and then the time go by themselves. When the
+// time has gone and the category has a short name, the short name is worn and the time comes back.
+function fitMeta() {
+  for (const line of all("[data-meta]") as NodeListOf<HTMLElement>) {
+    const name = line.querySelector<HTMLElement>("[data-name]");
+    const short = line.querySelector<HTMLElement>("[data-short]");
+    const time = line.querySelector<HTMLElement>("[data-time]");
+    if (!name || !short || !time) continue;
+    name.hidden = false;
+    short.hidden = true;
+    if (time.offsetTop > name.offsetTop + 1) {
+      name.hidden = true;
+      short.hidden = false;
+    }
+  }
+}
+let fitting = 0;
+addEventListener("resize", () => {
+  cancelAnimationFrame(fitting);
+  fitting = requestAnimationFrame(fitMeta);
+});
+
 // ---- each page ----
 let stopShorts: (() => void)[] = [];
 function arrive() {
@@ -216,6 +239,7 @@ function arrive() {
     if (ul) ul.scrollLeft = a.offsetLeft - ul.clientWidth / 2 + a.offsetWidth / 2;
   }
   stopShorts = [...all("[data-shorts]")].map(shorts);
+  fitMeta();
 }
 function leave() {
   for (const stop of stopShorts) stop();

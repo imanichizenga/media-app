@@ -60,3 +60,15 @@
     aspect-ratio: 4 / 3;
   }
 }
+
+/* A live rail title (R3): two lines at most, wrapped only between words. */
+.rail-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}

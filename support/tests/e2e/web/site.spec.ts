@@ -215,14 +215,31 @@ test.describe("space is for news", () => {
           await page.goto(path);
           const found = await page.evaluate(() => ({
             wide: document.documentElement.scrollWidth - innerWidth,
-            tall: [...document.querySelectorAll("[data-card] p:has(> time)")].filter(
+            // One line: the parts that do not fit are on a second line that is not shown.
+            tall: [...document.querySelectorAll("[data-meta]")].filter(
               (p) => p.getBoundingClientRect().height > 30,
             ).length,
-            cut: [...document.querySelectorAll("[data-card] p > time")].filter(
-              (t) => t.scrollWidth > t.clientWidth + 1 && getComputedStyle(t).display !== "inline",
-            ).length,
+            // Nothing shown is cut: every visible part of a meta line is whole (R2).
+            cut: [...document.querySelectorAll("[data-meta] > span")].filter((part) => {
+              const line = part.parentElement?.getBoundingClientRect();
+              const r = part.getBoundingClientRect();
+              const shown = line && r.top < line.bottom - 1 && r.width > 0;
+              return shown && line && (r.right > line.right + 1 || part.scrollWidth > part.clientWidth + 1);
+            }).length,
+            // If the time is not shown, the category wears its short name when it has one.
+            unshort: [...document.querySelectorAll("[data-meta]")].filter((p) => {
+              const time = p.querySelector("[data-time]")?.getBoundingClientRect();
+              const hidden = time && time.top >= p.getBoundingClientRect().bottom - 1;
+              const short = p.querySelector<HTMLElement>("[data-short]");
+              return hidden && short?.hidden;
+            }).length,
           }));
-          expect(found, `${name} at ${width}`).toEqual({ wide: expect.any(Number), tall: 0, cut: 0 });
+          expect(found, `${name} at ${width}`).toEqual({
+            wide: expect.any(Number),
+            tall: 0,
+            cut: 0,
+            unshort: 0,
+          });
           expect(found.wide, `${name} at ${width}`).toBeLessThanOrEqual(0);
         }
       }
@@ -246,9 +263,34 @@ test.describe("space is for news", () => {
     await expect(page.locator("aside [data-card]").first()).toBeVisible();
   });
 
-  test("a video list has its play mark on the lead only", async ({ page }) => {
+  test("no card shows a play button: the length in a corner says it is a video (R1)", async ({ page }) => {
+    for (const path of ["/video", "/"]) {
+      await page.goto(path);
+      expect(await page.locator("[data-card] .rounded-full svg").count(), path).toBe(0);
+      expect(await page.locator("[data-card] .size-16").count(), path).toBe(0);
+    }
     await page.goto("/video");
-    expect(await page.locator("[data-card] .rounded-full svg").count()).toBe(1);
+    await expect(
+      page
+        .locator("[data-card]")
+        .first()
+        .getByText(/^\d+:\d\d$/),
+    ).toBeVisible();
+  });
+
+  test("the live rail: two lines under each ring, within 96 (R3)", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.goto("/");
+    const rail = page.locator("section:has(.rail-title)").first();
+    if (!(await rail.count())) test.skip(true, "nothing live");
+    expect((await rail.boundingBox())?.height ?? 0).toBeLessThanOrEqual(96);
+    for (const title of await rail.locator(".rail-title").all()) {
+      const lines = await title.evaluate((e) =>
+        Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)),
+      );
+      expect(lines).toBeLessThanOrEqual(2);
+      expect(await title.evaluate((e) => e.scrollWidth <= e.clientWidth + 1)).toBe(true);
+    }
   });
 });
 
