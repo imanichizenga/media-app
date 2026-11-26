@@ -24,10 +24,19 @@ export async function places(locale: "sw" | "en") {
   const tagged = await Promise.all(
     stories.slice(0, 12).map((c: { slug: string }) => api(`articles/${c.slug}?locale=${locale}`)),
   );
+  // A section with a page of stories (lead, cards and rows), whichever the seed filled.
+  let category = nav[1].path;
+  for (const n of nav as { slug: string; path: string }[]) {
+    const found = await api(`categories/${n.slug}?locale=${locale}`);
+    if ((found.results?.length ?? 0) >= 6) {
+      category = n.path;
+      break;
+    }
+  }
   return {
     home: at("/"),
     latest: at("/latest"),
-    category: nav[1].path,
+    category,
     article: story.path,
     live: live.results[0]?.path,
     tag: tagged.find((a) => a.tags?.length)?.tags[0].path,

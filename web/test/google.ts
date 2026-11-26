@@ -50,9 +50,13 @@ export const GOOGLE: Record<string, Fields> = {
  * Recommended fields we do not give, each for a reason: a placeholder would be worse than nothing.
  *   ProfilePage mainEntity.image: a journalist without a photograph has none (Google: no placeholder images).
  *   ProfilePage mainEntity.description: a journalist without a biography has none.
+ *   NewsMediaOrganization logo: below.
  */
 export const NOT_OURS: Record<string, string[]> = {
   ProfilePage: ["mainEntity.image", "mainEntity.description"],
+  //   NewsMediaOrganization logo: none until the client uploads the real logos in the admin (G6). The unit test
+  //   (strict) proves that a brand with a logo gives it.
+  NewsMediaOrganization: ["logo"],
 };
 
 const at = (o: unknown, path: string): unknown =>

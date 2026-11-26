@@ -270,12 +270,14 @@ test.describe("space is for news", () => {
       expect(await page.locator("[data-card] .size-16").count(), path).toBe(0);
     }
     await page.goto("/video");
+    // One badge per width (the phone's in the top corner, the desk's at the foot): exactly one is shown.
     await expect(
       page
         .locator("[data-card]")
         .first()
-        .getByText(/^\d+:\d\d$/),
-    ).toBeVisible();
+        .getByText(/^\s*\d+:\d\d$/)
+        .filter({ visible: true }),
+    ).toHaveCount(1);
   });
 
   test("the live rail: two lines under each ring, within 96 (R3)", async ({ page }) => {

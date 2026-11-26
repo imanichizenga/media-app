@@ -204,7 +204,7 @@ export function ArticleView({
       bottom={<Tools a={a} t={t} />}
       reading
     >
-      <div className="mx-auto grid max-w-7xl gap-x-8 px-4 pt-4 lg:grid-cols-[4rem_minmax(0,44rem)_minmax(0,1fr)] lg:pt-10">
+      <div className="mx-auto grid max-w-7xl gap-x-8 px-4 pt-4 lg:grid-cols-[4rem_minmax(0,44rem)] lg:justify-center lg:pt-10 xl:grid-cols-[4rem_minmax(0,44rem)_minmax(0,1fr)]">
         <aside className="hidden lg:block">
           <div className="sticky top-8">
             <Tools a={a} t={t} column />
@@ -276,14 +276,15 @@ export function ArticleView({
             <ArticleBody.Skeleton />
           )}
           {list.length > 0 && (
-            <section aria-label={t("readAlso")} className="pt-4 lg:hidden">
+            <section aria-label={t("readAlso")} className="pt-4 xl:hidden">
               <SectionHeading title={t("readAlso")} env={env} />
               <Related list={list} env={env} />
             </section>
           )}
         </article>
         {list.length > 0 && (
-          <aside aria-label={t("readAlso")} className="hidden lg:block lg:pl-8">
+          // Beside the story only where there is room for a row card (from 1280); under it before that.
+          <aside aria-label={t("readAlso")} className="hidden xl:block xl:pl-8">
             <SectionHeading title={t("readAlso")} env={env} />
             <Related list={list} env={env} />
           </aside>

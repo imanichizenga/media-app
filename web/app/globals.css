@@ -4,17 +4,17 @@
 @import "@news/ui/styles.css";
 @source "../../support/packages/ui/src";
 
+/* Subsetted to the weights and characters the site uses (support/scripts/web-fonts.py): 65 KB instead of 106. */
 @font-face {
   font-family: "Inter Variable";
-  src: url("../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2");
-  font-weight: 100 900;
+  src: url("../fonts/inter-latin.woff2") format("woff2");
+  font-weight: 400 700;
   font-display: swap;
 }
 @font-face {
   font-family: "Newsreader Variable";
-  src: url("../node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2")
-    format("woff2");
-  font-weight: 200 800;
+  src: url("../fonts/newsreader-latin.woff2") format("woff2");
+  font-weight: 400 700;
   font-display: swap;
 }
 /* The fallbacks have the same metrics, so nothing moves when the fonts arrive. */

@@ -97,7 +97,7 @@ def test_every_derivative_is_stripped_of_metadata(tmp_path):
     out = tmp_path / "out"
     out.mkdir()
     made = images.process(photo(tmp_path), out)
-    assert len(made.files) == 5 * 3 + 3
+    assert len(made.files) == len(images.WIDTHS) * 3 + 3
     for path, _, _ in made.files:
         raw = path.read_bytes()
         for secret in (b"SecretCam", b"Jina la", b"SecretXmp", b"GPS", b"Exif\x00"):

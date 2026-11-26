@@ -170,7 +170,7 @@ export function Kicker({
   return (
     <p
       data-meta=""
-      className="meta flex h-[1lh] min-w-0 flex-wrap items-center gap-x-1.5 overflow-hidden text-caption text-text-secondary"
+      className="meta flex h-[1lh] w-full min-w-0 flex-wrap items-center gap-x-1.5 self-stretch overflow-hidden text-caption text-text-secondary"
     >
       {pill && <LivePill label={env.t.live} className={cx("shrink-0", cover ? "lg:hidden" : "")} />}
       {named && (
@@ -324,6 +324,10 @@ export function LeadCard({ card, env, priority, play = false, className }: CardP
         covered
         className="max-lg:rounded-none"
       />
+      {play && card && (
+        // A video's length, in the top corner on a phone, where the headline is not (R1: no play button).
+        <Mark card={card} env={env} className="top-2 bottom-auto! lg:hidden" />
+      )}
       <div
         className={cx(
           "flex flex-col gap-1 lg:gap-3",

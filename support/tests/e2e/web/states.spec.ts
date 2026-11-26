@@ -47,8 +47,10 @@ for (const size of [PHONE, DESK])
         ([p, h]) => {
           const card = document.createElement("div");
           card.dataset.card = "test";
-          card.innerHTML = `<h3><a href="${p}"></a></h3>`;
-          const a = card.querySelector("a") as HTMLAnchorElement;
+          // Built node by node: the page requires Trusted Types, so no HTML is parsed here.
+          const heading = card.appendChild(document.createElement("h3"));
+          const a = heading.appendChild(document.createElement("a"));
+          a.href = p ?? "";
           a.textContent = h ?? "";
           document.getElementById("main")?.append(card);
           a.click();

@@ -75,7 +75,7 @@ test("one strict policy, the same for every reader, and nothing inline runs on a
   const [a, b] = [await request.get("/"), await request.get("/")];
   const csp = a.headers()["content-security-policy"] ?? "";
   // The policy a reader gets is exactly the one lib/csp.ts writes; no nonce, so a cached page gives nothing away.
-  expect(csp).toBe(policy({ media: process.env.MEDIA_ORIGIN, local: true }));
+  expect(csp).toBe(policy({ local: true }));
   expect(csp).toBe(b.headers()["content-security-policy"]);
   expect(csp).not.toContain("nonce");
   expect(a.headers()["reporting-endpoints"]).toBe('csp="/api/csp-report"');

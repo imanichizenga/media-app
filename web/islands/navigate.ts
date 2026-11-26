@@ -91,6 +91,9 @@ function put(html: Document, moveFocus: boolean): boolean {
   onLeave();
   for (const el of document.head.querySelectorAll(HEAD)) el.remove();
   for (const el of html.head.querySelectorAll(HEAD)) document.head.append(document.importNode(el, true));
+  // No script crosses into the page: the islands are already here, and JSON-LD is for crawlers, which read whole
+  // documents. Under Trusted Types an imported script would also be refused (lib/csp.ts).
+  for (const script of next.querySelectorAll("script")) script.remove();
   now.replaceChildren(...[...next.childNodes].map((n) => document.importNode(n, true)));
   if (moveFocus) {
     const main = document.getElementById("main");
@@ -111,6 +114,8 @@ function wear(kind: string | null, path: string, mine: number, headline = "") {
     const part = d?.querySelector<HTMLTemplateElement>(`template[data-skeleton="${own}"]`);
     if (!part || !now || visit !== mine || now.dataset.loading !== path) return;
     onLeave();
+    // A skeleton has no use for scripts (its JSON-LD included), and cloning one is refused under Trusted Types.
+    for (const script of part.content.querySelectorAll("script")) script.remove();
     now.replaceChildren(document.importNode(part.content, true));
     // The card one pressed already said it.
     const h1 = kind === "article" && headline ? now.querySelector("article h1") : null;
@@ -126,7 +131,9 @@ function wear(kind: string | null, path: string, mine: number, headline = "") {
 function keepPlace() {
   const now = page(document);
   if (!now || now.dataset.loading) return;
-  const copy = document.cloneNode(true) as Document;
+  // Kept as text and parsed through the policy: cloning the document would clone its JSON-LD script, which Trusted
+  // Types refuses (lib/csp.ts). Parsed, nothing in it runs.
+  const copy = parse(`<!doctype html>${document.documentElement.outerHTML}`);
   seen.set(here, { html: copy, scroll: scrollY, at: Date.now() });
   if (seen.size > 12) seen.delete(seen.keys().next().value as string);
 }
