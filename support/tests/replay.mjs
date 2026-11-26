@@ -53,8 +53,16 @@ function answer(url) {
   if (path.startsWith("content/articles/")) return d.article;
   return null;
 }
+// Every request, its answer and how long it took: the evidence of a run (mobile-device.yml keeps it).
+const started = Date.now();
 createServer((req, res) => {
   const url = new URL(req.url, "http://x");
+  const at = Date.now();
+  res.on("finish", () =>
+    console.log(
+      `${((at - started) / 1000).toFixed(1)}s ${req.method} ${url.pathname}${url.search} ${res.statusCode} ${Date.now() - at}ms`,
+    ),
+  );
   const media = url.pathname.match(/^\/media\/[iv]\/([0-9a-f]+)\//);
   if (media) {
     const file = `${root}media/${media[1]}.jpg`;
