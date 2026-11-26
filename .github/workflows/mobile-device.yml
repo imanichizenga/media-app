@@ -19,13 +19,13 @@ on:
       emulator-options:
         description: Extra emulator options (ADR-0048 says which are allowed)
         type: string
-        default: ""
+        default: "-feature -Vulkan"
       emulator-ram:
         type: string
         default: "3072"
       emulator-cores:
         type: string
-        default: "2"
+        default: "3"
       emulator-gpu:
         type: string
         default: swiftshader_indirect
@@ -34,9 +34,11 @@ on:
         type: string
         default: google_apis
       engine-flags:
-        description: Flutter engine flags for the integration tests and frames (e.g. --no-enable-impeller)
+        description: >-
+          Flutter engine flags for the integration tests and frames. Impeller is off there: the emulator's software
+          GPU (SwiftShader on the host) crashes under it (ADR-0048). The cold starts and iOS run with Impeller.
         type: string
-        default: ""
+        default: "--no-enable-impeller"
       keep-evidence:
         description: Upload the evidence even when the run passes
         type: boolean

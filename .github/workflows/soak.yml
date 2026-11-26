@@ -8,7 +8,7 @@ on:
       runs: { description: How many runs of each, type: number, default: 10 }
       android: { type: boolean, default: true }
       ios: { type: boolean, default: true }
-      emulator-options: { description: Extra emulator options, type: string, default: "" }
+      emulator-options: { description: Extra emulator options, type: string, default: "-feature -Vulkan" }
   push:
     branches: ["soak/**"]
 permissions:
@@ -35,7 +35,7 @@ jobs:
       run: ${{ matrix.run }}
       android: ${{ github.event_name == 'push' || inputs.android }}
       ios: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
-      emulator-options: ${{ inputs.emulator-options || vars.SOAK_EMULATOR_OPTIONS || '' }}
+      emulator-options: ${{ inputs.emulator-options || '-feature -Vulkan' }}
       keep-evidence: true
   result:
     if: always()

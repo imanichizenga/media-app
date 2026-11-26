@@ -44,3 +44,4 @@
 - [0042](0042-mobile-security.md) Mobile security
 - [0043](0043-mobile-design.md) A stronger design for the app
 - [0044](0044-space-and-native.md) Space and native conventions
+- [0048](0048-device-tests.md) The app's device tests: evidence first, then a stable emulator
