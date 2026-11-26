@@ -9,8 +9,8 @@ import pyvips
 
 from newsplatform.media.sniff import IMAGE_TYPES, sniff
 
-# 800 is what most phones need for a full-width picture (390 to 412 wide at 1.75x to 2x): smaller than 960 by a
-# third, so the lead story arrives in one round trip on a slow line (M2 Lighthouse, ADR-0025).
+# 800 is what most phones need for a full-width picture (390 to 412 wide at 1.75x to 2x): smaller than 960 by
+# a third, so the lead story arrives in one round trip on a slow line (M2 Lighthouse, ADR-0025).
 WIDTHS = (320, 640, 800, 960, 1280, 1920)
 # Google asks for 1200px in these shapes; social cards use the first.
 CROPS = {"16x9": (1200, 675), "4x3": (1200, 900), "1x1": (1200, 1200)}
