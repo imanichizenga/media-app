@@ -9,7 +9,7 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
-| **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
+| **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Measured on the **emulator, not a phone**: cold start to cached news 1242 ms median (901 to 1810 over 7 runs), feed build p90 1.8 ms, raster p90 19 ms (software GPU). **G3 on a real phone still open** | Needs C1, D1, G3 |
 | **M3.1 Mobile polish** | Done on `m3-mobile` (ADR-0044): every test G2 asked for, platform goldens, gallery `m3-1.zip`. CI green on iOS 2026-11-26 after the simulator was bounded; PR 11 merges when the whole run is green | n/a |
 | M2 to M11 | Not started | Not started |
 
@@ -22,7 +22,7 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
 6. Open risks:
    - **Never run against real AWS:** MediaConvert, GuardDuty, CloudFront purge, every IAM and bucket policy, and the load balancer rule for `/theme/*`. Plan-tested only.
-   - The hosted Android emulator sometimes goes `offline` in the middle of a test (2026-11-26: twice in one job, in different tests, with the same commit green before). The job retries once. If it keeps happening: a larger runner, or fewer services beside the emulator.
+   - **Main went red after PR 11 (2026-11-26) and was stopped.** Root cause, from cores and logs ([ADR-0048](adr/0048-device-tests.md)): the emulator's software GPU (SwiftShader on the host) crashes under Impeller, in 19 runs of every Impeller configuration tried and in 0 of 7 with Skia. Not the app, not memory. The emulator job now runs Skia; cold starts and iOS run Impeller. No step retries a test.
    - `uv` could not reach PyPI from this Codespace on 2026-11-24 (`curl` could). `UV_OFFLINE=1` works with the lockfile.
 7. Waiting for a person: an AWS environment (A1 to A3); a dedicated test bucket (A8); a native Swahili editor (G1, 1007 strings); the real name and logos (G6).
 
@@ -80,7 +80,7 @@ The full text of the task these come from is summarised in [design/public-experi
 | M3 Every content fixture renders | Met, except `long-article` as a picture (its blocks are covered by the others) | n/a |
 | M3 Offline, saved articles, forced update, kill switches, theme at next cold start | Met: `app_test.dart`; on an emulator and a simulator in CI | Needs a published app |
 | M3 iOS | Built without a signature; integration tests on a simulator against **recorded** answers (macOS runners cannot run the API's services) | Needs C1 |
-| M3 Cold start < 1.5 s, 60 fps | **Not measured on a phone** | G3 |
+| M3 Cold start < 1.5 s, 60 fps | **Not measured on a phone.** Emulator, not a phone: 1242 ms median cold start to cached news; frame build p90 1.8 ms (feed), 0.4 ms (Shorts); raster p90 19 ms on a software GPU, reported only | G3 |
 | M3 Certificate pinning | Met against a test certificate | Needs A1 and real pins |
 | M3 App and universal links | Files served and tested; warm and cold opening tested | Needs real ids and a domain |
 

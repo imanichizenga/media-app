@@ -1,0 +1,196 @@
+# The app on an Android emulator and an iOS simulator. Called by CI on every change, and by Soak to prove it is stable.
+# Nothing here retries a test. A step is tried again only after a fault proven to be the infrastructure's
+# (a download that the network dropped), and every such retry is written in the job's summary.
+# Configuration and its reasons: ADR-0048.
+name: Mobile devices
+on:
+  workflow_call:
+    inputs:
+      run:
+        description: Which run of a soak this is (only names the evidence)
+        type: string
+        default: ci
+      android:
+        type: boolean
+        default: true
+      ios:
+        type: boolean
+        default: true
+      emulator-options:
+        description: Extra emulator options (ADR-0048 says which are allowed)
+        type: string
+        default: "-feature -Vulkan"
+      emulator-ram:
+        type: string
+        default: "3072"
+      emulator-cores:
+        type: string
+        default: "3"
+      emulator-gpu:
+        type: string
+        default: swiftshader_indirect
+      emulator-target:
+        description: System image (google_apis, google_atd)
+        type: string
+        default: google_apis
+      engine-flags:
+        description: >-
+          Flutter engine flags for the integration tests and frames. Impeller is off there: the emulator's software
+          GPU (SwiftShader on the host) crashes under it (ADR-0048). The cold starts and iOS run with Impeller.
+        type: string
+        default: "--no-enable-impeller"
+      keep-evidence:
+        description: Upload the evidence even when the run passes
+        type: boolean
+        default: false
+permissions:
+  contents: read
+env:
+  API_SURFACE: admin
+jobs:
+  mobile-android:
+    if: inputs.android
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: news_owner, POSTGRES_PASSWORD: local-dev-only, POSTGRES_DB: news }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U news_owner -d news" --health-interval 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 3s --health-retries 20
+    env:
+      EVIDENCE: ${{ github.workspace }}/evidence
+      EMULATOR_OPTIONS: ${{ inputs.emulator-options }}
+      EMULATOR_RAM: ${{ inputs.emulator-ram }}
+      EMULATOR_CORES: ${{ inputs.emulator-cores }}
+      EMULATOR_GPU: ${{ inputs.emulator-gpu }}
+      EMULATOR_TARGET: ${{ inputs.emulator-target }}
+      FLUTTER_ENGINE_FLAGS: ${{ inputs.engine-flags }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - name: Watch the runner (memory every 5 s, the kernel's log)
+        run: support/scripts/ci-watch.sh start "$EVIDENCE"
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with: { version: "0.13.9" }
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with: { distribution: temurin, java-version: "21", cache: gradle }
+      - id: flutter
+        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
+      - name: The API, filled by the demo seed
+        working-directory: backend
+        env:
+          {
+            ALLOWED_HOSTS: "localhost,127.0.0.1,10.0.2.2",
+            STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
+            LOCAL_TRANSCODER: "1",
+            LOCAL_SCANNER: "eicar",
+            AWS_ACCESS_KEY_ID: test,
+            AWS_SECRET_ACCESS_KEY: test,
+          }
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          (cd .. && docker compose --profile storage up -d --wait seaweedfs)
+          uv sync --locked
+          uv run python manage.py migrate -v0
+          uv run python manage.py seed_demo --posts=60 --images=10 --videos=2
+          uv run python manage.py shell -v0 -c "
+          from newsplatform.site_config.models import SettingsSection as S
+          S.objects.update_or_create(key='app', defaults={'data': {'min_android': '0.1.0', 'store_android': 'https://example.com'}})
+          b = S.objects.get(key='brand'); b.data['appearance'] = {'theme': 'bold'}; b.save()"
+          API_SURFACE=public nohup uv run uvicorn config.asgi:application --port 8010 --log-level warning > "$EVIDENCE/api.log" 2>&1 &
+          for _ in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:8010/api/v1/app-config | head -c 200
+      - name: Google's copy of Maven Central first, for Flutter's plugin build too (ADR-0048)
+        run: mkdir -p ~/.gradle/init.d && cp support/scripts/gradle-mirror.init.gradle.kts ~/.gradle/init.d/
+      - name: Build the three apps
+        working-directory: mobile
+        run: ../support/scripts/ci-retry-network.sh ../support/scripts/mobile-build.sh
+      - name: Free the memory the build held
+        working-directory: mobile
+        run: |
+          (cd android && ./gradlew --stop)
+          pkill -f KotlinCompileDaemon || true
+          free -m
+      - name: Virtualisation for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Start the emulator
+        timeout-minutes: 8
+        run: |
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
+          support/scripts/android-emulator.sh start "$EVIDENCE"
+      - name: Integration tests
+        timeout-minutes: 15
+        working-directory: mobile
+        run: ../support/scripts/mobile-emulator.sh
+      - name: Frames and cold starts
+        timeout-minutes: 15
+        working-directory: mobile
+        run: ../support/scripts/mobile-perf.sh
+      - name: What happened to the device
+        if: always()
+        run: |
+          support/scripts/android-emulator.sh stop "$EVIDENCE" || true
+          support/scripts/ci-watch.sh stop "$EVIDENCE" > /dev/null || true
+          support/scripts/android-verdict.sh "$EVIDENCE" >> "$GITHUB_STEP_SUMMARY"
+          cat "$EVIDENCE/retries.md" >> "$GITHUB_STEP_SUMMARY" 2> /dev/null || true
+          cat mobile/build/perf.md >> "$GITHUB_STEP_SUMMARY" 2> /dev/null || true
+          cp mobile/build/perf.json "$EVIDENCE/" 2> /dev/null || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure() || inputs.keep-evidence
+        with:
+          {
+            name: "android-evidence-${{ inputs.run }}",
+            path: "${{ env.EVIDENCE }}",
+            retention-days: 14,
+            include-hidden-files: false,
+          }
+  mobile-ios:
+    if: inputs.ios
+    runs-on: macos-26
+    timeout-minutes: 75
+    env:
+      EVIDENCE: ${{ github.workspace }}/evidence
+    defaults: { run: { working-directory: mobile } }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - name: Watch the runner (memory every 5 s)
+        run: ../support/scripts/ci-watch.sh start "$EVIDENCE"
+      - id: flutter
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
+      - run: ../support/scripts/ci-retry-network.sh flutter pub get --enforce-lockfile
+      - name: A release that only lacks a signature
+        run: |
+          flutter build ios --release --no-codesign --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
+          du -sh build/ios/iphoneos/*.app | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: On a simulator, against the recorded API
+        timeout-minutes: 45
+        run: |
+          nohup node ../support/tests/replay.mjs 8010 > "$EVIDENCE/replay.log" 2>&1 &
+          replay=$!
+          status=0
+          ../support/scripts/mobile-simulator.sh || status=$?
+          kill "$replay"
+          exit $status
+      - name: What happened to the simulator
+        if: always()
+        run: |
+          ../support/scripts/ci-watch.sh stop "$EVIDENCE" >> "$GITHUB_STEP_SUMMARY" || true
+          cat "$EVIDENCE/retries.md" >> "$GITHUB_STEP_SUMMARY" 2> /dev/null || true
+          xcrun simctl spawn booted log show --last 30m --style compact \
+            --predicate 'process CONTAINS "Runner" OR eventMessage CONTAINS[c] "crash"' > "$EVIDENCE/simulator.log" 2> /dev/null || true
+          cp -R ~/Library/Logs/DiagnosticReports "$EVIDENCE/" 2> /dev/null || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure() || inputs.keep-evidence
+        with: { name: "ios-evidence-${{ inputs.run }}", path: "${{ env.EVIDENCE }}", retention-days: 14 }

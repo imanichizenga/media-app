@@ -53,8 +53,23 @@ function answer(url) {
   if (path.startsWith("content/articles/")) return d.article;
   return null;
 }
-createServer((req, res) => {
+// Every request, its answer and how long it took: the evidence of a run (mobile-device.yml keeps it).
+// Each line: seconds since start, the wall clock (UTC), and the client's port to match the app's NET lines.
+const started = Date.now();
+const stamp = (t = Date.now()) => `${((t - started) / 1000).toFixed(1)}s ${new Date(t).toISOString().slice(11, 23)}`;
+const server = createServer((req, res) => {
   const url = new URL(req.url, "http://x");
+  const at = Date.now();
+  const port = req.socket.remotePort;
+  console.log(`${stamp(at)} :${port} > ${req.method} ${url.pathname}${url.search}`);
+  res.on("finish", () =>
+    console.log(
+      `${stamp()} :${port} ${req.method} ${url.pathname}${url.search} ${res.statusCode} ${Date.now() - at}ms`,
+    ),
+  );
+  res.on("close", () => {
+    if (!res.writableFinished) console.log(`${stamp()} :${port} closed before the answer: ${url.pathname}`);
+  });
   const media = url.pathname.match(/^\/media\/[iv]\/([0-9a-f]+)\//);
   if (media) {
     const file = `${root}media/${media[1]}.jpg`;
@@ -65,4 +80,6 @@ createServer((req, res) => {
   const body = answer(url);
   res.writeHead(body ? 200 : 404, { "content-type": "application/json" });
   res.end(JSON.stringify(body ?? { code: "not_found" }));
-}).listen(Number(process.argv[2] ?? 8010), "127.0.0.1");
+});
+server.on("connection", (socket) => console.log(`${stamp()} :${socket.remotePort} accepted`));
+server.listen(Number(process.argv[2] ?? 8010), "127.0.0.1", () => console.log(`${stamp()} listening`));

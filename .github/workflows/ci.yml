@@ -151,6 +151,9 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with: { name: golden-failures, path: "mobile/test/**/failures", retention-days: 7 }
+      - name: Google's copy of Maven Central first, for Flutter's plugin build too (ADR-0048)
+        working-directory: .
+        run: mkdir -p ~/.gradle/init.d && cp support/scripts/gradle-mirror.init.gradle.kts ~/.gradle/init.d/
       - name: App bundle and an APK per processor
         run: |
           flutter build appbundle --release --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
@@ -168,111 +171,9 @@ jobs:
             path: "mobile/build/app/outputs/flutter-apk/*-prod-release.apk",
             retention-days: 7,
           }
-  mobile-android:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 90
-    services: *services
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with: { persist-credentials: false }
-      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
-        with: { version: "0.13.9" }
-      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
-        with: { distribution: temurin, java-version: "21", cache: gradle }
-      - id: flutter
-        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
-      - name: The API, filled by the demo seed
-        working-directory: backend
-        env:
-          {
-            ALLOWED_HOSTS: "localhost,127.0.0.1,10.0.2.2",
-            STORAGE_ENDPOINT_URL: "http://127.0.0.1:8333",
-            LOCAL_TRANSCODER: "1",
-            LOCAL_SCANNER: "eicar",
-            AWS_ACCESS_KEY_ID: test,
-            AWS_SECRET_ACCESS_KEY: test,
-          }
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
-          (cd .. && docker compose --profile storage up -d --wait seaweedfs)
-          uv sync --locked
-          uv run python manage.py migrate -v0
-          uv run python manage.py seed_demo --posts=60 --images=8 --videos=2
-          uv run python manage.py shell -v0 -c "
-          from newsplatform.site_config.models import SettingsSection as S
-          S.objects.update_or_create(key='app', defaults={'data': {'min_android': '0.1.0', 'store_android': 'https://example.com'}})
-          b = S.objects.get(key='brand'); b.data['appearance'] = {'theme': 'bold'}; b.save()"
-          API_SURFACE=public nohup uv run uvicorn config.asgi:application --port 8010 --log-level warning > /tmp/api.log 2>&1 &
-          for _ in $(seq 30); do curl -sf http://127.0.0.1:8010/health/live > /dev/null && break; sleep 1; done
-          curl -sf http://127.0.0.1:8010/api/v1/app-config | head -c 200
-      # Everything is built before the emulator starts: the two together do not fit in the runner's memory.
-      - name: Build (once more if a download fails)
-        working-directory: mobile
-        run: |
-          ../support/scripts/mobile-build.sh || { sleep 30; ../support/scripts/mobile-build.sh; }
-          (cd android && ./gradlew --stop)
-          free -m
-      - name: Virtualisation for the emulator
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
-      - id: device
-        continue-on-error: true
-        timeout-minutes: 25
-        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
-        with: &emulator
-          api-level: 34
-          arch: x86_64
-          target: google_apis
-          cores: 3
-          ram-size: 3072M
-          disable-animations: false
-          emulator-options: -no-window -gpu swiftshader_indirect -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
-          working-directory: mobile
-          script: |
-            ../support/scripts/mobile-emulator.sh
-            ../support/scripts/mobile-perf.sh
-      # A test that failed is a failure. An emulator that died is another emulator.
-      - name: Did the emulator die?
-        if: steps.device.outcome == 'failure'
-        run: |
-          [ -e mobile/build/emulator-lost ] || { echo "The tests failed"; exit 1; }
-          echo "::warning title=Emulator::The emulator was lost; trying once on a new one"
-          rm mobile/build/emulator-lost
-          pkill -9 -f qemu-system || true
-          adb kill-server
-      - if: steps.device.outcome == 'failure'
-        timeout-minutes: 25
-        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
-        with: *emulator
-      - name: What was measured
-        if: always()
-        run: cat mobile/build/perf.md >> "$GITHUB_STEP_SUMMARY" || true
-  mobile-ios:
-    runs-on: macos-26
-    timeout-minutes: 75
-    defaults: { run: { working-directory: mobile } }
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with: { persist-credentials: false }
-      - id: flutter
-        run: echo "version=$(jq -r .flutter mobile/.fvmrc)" >> "$GITHUB_OUTPUT"
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with: { flutter-version: "${{ steps.flutter.outputs.version }}", channel: stable, cache: true }
-      - run: flutter pub get --enforce-lockfile
-      - name: A release that only lacks a signature
-        run: |
-          flutter build ios --release --no-codesign --flavor prod --dart-define-from-file=config/prod.json --obfuscate --split-debug-info=build/symbols
-          du -sh build/ios/iphoneos/*.app | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: On a simulator, against the recorded API
-        timeout-minutes: 45
-        run: |
-          nohup node ../support/tests/replay.mjs 8010 > /tmp/replay.log 2>&1 &
-          replay=$!
-          ../support/scripts/mobile-simulator.sh
-          kill "$replay"
+  # The app on an Android emulator and an iOS simulator: support/docs/adr/0048-device-tests.md
+  mobile-devices:
+    uses: ./.github/workflows/mobile-device.yml
   infra:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -337,7 +238,11 @@ jobs:
         with: { scan-type: config, scan-ref: support/infra, severity: "HIGH,CRITICAL", exit-code: "1" }
   required:
     if: always()
-    needs: [api, web, e2e, dart, mobile, mobile-android, mobile-ios, infra, images, security]
+    needs: [api, web, e2e, dart, mobile, mobile-devices, infra, images, security]
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - name: Every job is waited for
+        run: python3 support/scripts/ci-required.py
       - run: test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

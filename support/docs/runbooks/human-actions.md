@@ -24,13 +24,31 @@ Lead times marked † come from user reports or other vendors' guides, not from 
 | A1 | Accounts for staging and prod (dev optional), MFA on root, billing alarm, af-south-1 enabled | AWS Organizations | Everything in `support/docs/runbooks/first-deploy.md` | Deploy workflow succeeds (the `not-deployed` job no longer runs) |
 | A2 | Domain and a Route 53 hosted zone per environment, for `api.`, `admin.`, `media.` and the website | Registrar, Route 53 | TLS, WebAuthn RP ID, links | `https://<admin host>/healthz` |
 | A3 | GitHub environments `staging` and `prod` (required reviewers on prod) and the variables in step 5 of first-deploy | GitHub → Settings | OIDC deploys, no stored keys | Deploy workflow |
-| A4 | Branch protection on `main`: require the `required` check | GitHub → Settings | Rule "main stays green" | A red pull request cannot merge |
+| A4 | Branch protection on `main`: require the `required` check (steps below). Could not be checked from CI: its token may not read the settings (403, 2026-11-26) | GitHub → Settings | Rule "main stays green" | A red pull request cannot merge |
 | A5 | SES: verify the domain (DKIM, SPF, DMARC) and leave the sandbox | SES console | Invitations, resets, alerts | Admin → Integrations → **Email (SES)** → Test |
 | A6 | Quotas before load tests: Fargate vCPU, CloudFront, MediaConvert, IVS | Service Quotas | M11 targets | `support/docs/perf/` |
 | A7 | Two people enrolled as Super Admin with passkeys | Admin console | Four-eyes approvals need two | An approval completes |
 | A8 | A **dedicated empty test bucket** with all four Block Public Access settings on, an OAC CloudFront distribution, and an IAM user limited to them | AWS | Real-AWS S3 test without touching live media | Admin → Integrations → **S3** → Test |
 | A10 | GuardDuty Malware Protection for S3 and MediaConvert available in the region (both are in af-south-1); MediaConvert service quota for concurrent jobs | AWS | Uploads are refused unscanned | Admin → Integrations → **AWS MediaConvert** → Test; one upload becomes Ready |
 | A9 | Vendor accounts for Sentry, OpenSearch and ClickHouse Cloud, or agreement to self-manage | Vendors | Errors, M8, M9 | Each provider's Test button |
+
+### A4, step by step
+
+`required` waits for every job of CI, the device jobs on Android and iOS included, and fails if any of them failed,
+was cancelled or was skipped; CI also fails if a job is ever left out of its list (`support/scripts/ci-required.py`).
+So one rule protects everything:
+
+1. GitHub → the repository → **Settings → Rules → Rulesets → New ruleset → New branch ruleset**.
+2. Name: `main stays green`. Enforcement status: **Active**. Bypass list: empty (no one, not even admins).
+3. Target branches: **Add target → Include default branch**.
+4. Tick **Restrict deletions**, **Block force pushes**, **Require a pull request before merging** (required
+   approvals: 0 while there is one developer; 1 when there are two), and **Require status checks to pass**:
+   - tick **Require branches to be up to date before merging**;
+   - **Add checks** → type `required` → choose the one from **GitHub Actions**.
+5. **Create**. Then check: on any open pull request, the merge box lists `required` as *Required*.
+
+Proven by: a pull request whose CI is red shows "Merging is blocked". Tell the developer when it is done; it is
+recorded in PROGRESS.md.
 
 ## B. SMS (M4)
 

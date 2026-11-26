@@ -1,0 +1,48 @@
+# The device jobs N times side by side, on separate runners, to prove they are stable (ADR-0048) or to catch a fault
+# with its evidence. Every run keeps its evidence. Started by hand (Actions → Soak → Run workflow), or by a push to a
+# soak/* branch while a fault is being found.
+name: Soak
+on:
+  workflow_dispatch:
+    inputs:
+      runs: { description: How many runs of each, type: number, default: 10 }
+      android: { type: boolean, default: true }
+      ios: { type: boolean, default: true }
+      emulator-options: { description: Extra emulator options, type: string, default: "-feature -Vulkan" }
+  push:
+    branches: ["soak/**"]
+permissions:
+  contents: read
+concurrency:
+  group: soak-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    outputs:
+      runs: ${{ steps.runs.outputs.runs }}
+    steps:
+      - id: runs
+        env: { RUNS: "${{ inputs.runs || 6 }}" }
+        run: echo "runs=$(python3 -c 'import json, os; print(json.dumps([str(i) for i in range(1, int(os.environ["RUNS"]) + 1)]))')" >> "$GITHUB_OUTPUT"
+  device:
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        run: ${{ fromJSON(needs.plan.outputs.runs) }}
+    uses: ./.github/workflows/mobile-device.yml
+    with:
+      run: ${{ matrix.run }}
+      android: ${{ github.event_name == 'push' || inputs.android }}
+      ios: ${{ github.event_name == 'workflow_dispatch' && inputs.ios }}
+      emulator-options: ${{ inputs.emulator-options || '-feature -Vulkan' }}
+      keep-evidence: true
+  result:
+    if: always()
+    needs: device
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          echo "### Soak: ${{ needs.device.result }}" >> "$GITHUB_STEP_SUMMARY"
+          test "${{ needs.device.result }}" = success
