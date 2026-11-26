@@ -42,7 +42,10 @@ async function load({ params, searchParams }: Props) {
     ],
     head: (
       <header className="flex flex-col gap-4 border-border border-b pt-6 pb-6 sm:flex-row sm:items-start lg:pt-10">
-        <span data-face className="grid size-24 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-sunken font-serif text-headline-l text-text-secondary">
+        <span
+          data-face
+          className="grid size-24 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-sunken font-serif text-headline-l text-text-secondary"
+        >
           {a.avatar ? (
             <Picture
               image={a.avatar as never}

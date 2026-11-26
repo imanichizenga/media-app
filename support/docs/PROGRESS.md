@@ -9,15 +9,16 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M1 Content core** | Done, pull request 8 (merged) | Blocked: no AWS environment |
 | **M2-DESIGN** | Approved with changes D1 to D7 on 2026-11-24 (see Human decisions) | n/a |
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
-| **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
-| **M3.1 Mobile polish** | Done on `m3-mobile` (ADR-0044): every test G2 asked for, platform goldens, gallery `m3-1.zip`. CI green on iOS 2026-11-26 after the simulator was bounded; PR 11 merges when the whole run is green | n/a |
-| M2 to M11 | Not started | Not started |
+| **M3 Mobile app** | Done, pull request 11 (merged 2026-11-26). **G2: approved with changes** 2026-11-25. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
+| **M3.1 Mobile polish** | Done (ADR-0044), merged with pull request 11: every test G2 asked for, platform goldens, gallery `m3-1.zip` | n/a |
+| **M2 Website** | Done on `m2-website` (ADR-0045 to 0047): 49 E2E tests, Lighthouse in budget, gallery `m2.zip` (204 screens). **Waiting for G2** on the M3.1 and M2 galleries | Needs A1 to A3: Rich Results Test, real CDN purge, Search Console |
+| M4 to M11 | Not started | Not started |
 
 ## Next session starts here
 
-1. **M3.1 is done.** PR 11 merges as soon as one CI run is green end to end. Since 2026-11-26 the iOS simulator run is bounded and retried once if it never attaches (`support/scripts/mobile-simulator.sh`).
+1. **M2 is done on `m2-website`** (pull request open). **Do not start M4** until the human confirms the M3.1 and M2 galleries. Then M4 Identity & engagement as a vertical slice (plan in the M2 pull request).
 2. The toolchain lives in `/tmp/toolchain`, which is emptied when the Codespace stops. `support/scripts/mobile-toolchain.sh` makes it again in a minute. **All source is in `/workspaces` and pushed**; only SDKs, caches and builds are in `/tmp`.
-3. **M2 Website is under way on `m2-website`** (branched from `m3-mobile`; rebase it on `main` after PR 11 merges).
+3. Website checks: build admin (both proxy targets), then `WEB_LOCAL=1 API_PROXY_TARGET=http://127.0.0.1:8010 pnpm --filter @news/web... build`, then `pnpm --filter @news/e2e web`. Gallery: `SCREENS=m2 pnpm --filter @news/e2e web`, then `node contact-sheet.mjs m2` in `support/tests/e2e`.
 4. Contract migration `site_config/0003`: delete the old `identity` row. Ship it in the release **after** this one.
 5. Commands: `docker compose --profile storage up -d --wait`, then the checks in [README](../../README.md#check). E2E needs FFmpeg and the storage profile, and its seeding takes minutes. Build admin with **both** `API_PROXY_TARGET` and `REALTIME_PROXY_TARGET` immediately before e2e: `turbo run test` rebuilds it without them. Backend tests share one Redis: never run them in parallel.
 6. Open risks:
@@ -65,7 +66,7 @@ The full text of the task these come from is summarised in [design/public-experi
 | M1 Public read: query counts and cache headers | Met: `test_public_api.py` | CDN hit rate and purge delay unobserved |
 | M1 Transcoding provider | FFmpeg end to end; MediaConvert against stubs | Needs A10: **AWS MediaConvert** → Test |
 | M1 Malware scan | ClamAV protocol and GuardDuty verdicts against stubs; bucket policy plan-tested | Needs A10 |
-| M1 Purge and revalidation sender | Met: `test_delivery.py` | Receiver in M2 |
+| M1 Purge and revalidation sender | Met: `test_delivery.py`; receiver in M2 | Real purge unobserved |
 | M1 Seed data | Met: `test_seed_demo.py`, 300 posts | n/a |
 | M1 Category-scoped roles | Met: `test_taxonomy.py`, E2E | n/a |
 | M1 Screenshot gallery | Met: `support/docs/design/screens/m1.zip` | n/a |
@@ -75,6 +76,14 @@ The full text of the task these come from is summarised in [design/public-experi
 | M2-THEMES SVG logos cleaned | Met: `test_brand.py`, 14 malicious samples | n/a |
 | M2-THEMES Publish, four eyes, rollback, hashed stylesheet, no flash | Met: `test_brand.py`, E2E | CDN behaviour of `/theme/*` unobserved |
 | M2-THEMES Gallery, axe, no sideways scroll | Met: 320 prototype screens, 0 findings | n/a |
+
+| M2 Every public page server-rendered with ISR; signed, single-use revalidation | Met: `web/test`, `publish.spec.ts` (publish in admin → page updates) | Real CloudFront purge unobserved |
+| M2 Strict nonce CSP, HSTS, no third-party scripts | Met: `seo.spec.ts` | n/a |
+| M2 Structured data, sitemaps (News, image, video), RSS, hreflang, redirects | Met: schema validator and XSDs in `web/test`, `seo.spec.ts` | Rich Results Test, Search Console |
+| M2 axe in both schemes, no sideways scroll at 320 px, skeleton matches the page (8 px, CLS < 0.05) | Met: `site.spec.ts`, `states.spec.ts` | n/a |
+| M2 Space rule: lead headline above the bottom bar at 360×640 | Met: `site.spec.ts` | n/a |
+| M2 Lighthouse (phone, slow 4G, median of 3): LCP < 2.0 s, CLS < 0.05, article JS < 120 KB | Met 2026-11-26: Home 1911 ms, Article 1900, Category 1679, Video 1994 (close to the line); CLS ≤ 0.010; TBT ≤ 6 ms; 5.5 KB script; lab INP 16 ms | Field data needs real readers |
+| M2 Gallery | Met: `support/docs/design/screens/m2.zip`, app screens beside web | Waiting for G2 |
 
 | M3 Every screen a guest needs, sw and en, light and dark, three themes | Met: 128 goldens and checks | n/a |
 | M3 Every content fixture renders | Met, except `long-article` as a picture (its blocks are covered by the others) | n/a |
@@ -88,7 +97,6 @@ The full text of the task these come from is summarised in [design/public-experi
 
 | Item | Where |
 |---|---|
-| Share images use the theme and logo | M2 website |
 | Notification visuals use the theme and logo | M6 |
 | Old `identity` settings row deleted (contract) | Next release |
 | Ads approvals | M10 |

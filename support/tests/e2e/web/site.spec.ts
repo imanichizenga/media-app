@@ -9,6 +9,7 @@ test.describe("guest browsing", () => {
     page.on("request", (r) => r.isNavigationRequest() && documents++);
     await page.evaluate(() => scrollTo(0, 400));
     const card = page.locator('[data-card="row"] a').nth(1);
+    // biome-ignore lint/performance/useDomNodeTextContent: Playwright's Locator.innerText, the text a reader sees
     const headline = await card.innerText();
     await card.click();
     await expect(page.locator("article h1")).toHaveText(headline);
@@ -49,6 +50,7 @@ test.describe("guest browsing", () => {
     const { article } = await places("sw");
     await page.setViewportSize(PHONE);
     await ready(page, article ?? "");
+    // biome-ignore lint/performance/useDomNodeTextContent: Playwright's Locator.innerText, the text a reader sees
     const headline = await page.locator("article h1").innerText();
     await page.locator('[data-bar] [data-do="save"]').click();
     await expect(page.locator('[data-bar] [data-do="save"]')).toHaveAttribute("aria-pressed", "true");
