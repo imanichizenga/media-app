@@ -11,6 +11,7 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M2-THEMES** | Done, pull request 9 (merged 2026-11-24). Themes **approved (G2) 2026-11-24** | n/a |
 | **M3 Mobile app** | Built, pull request 11. **G2: approved with changes** 2026-11-25; merges after M3.1. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
 | **M3.1 Mobile polish** | Done on `m3-mobile` (ADR-0044): every test G2 asked for, platform goldens, gallery `m3-1.zip`. CI green on iOS 2026-11-26 after the simulator was bounded; PR 11 merges when the whole run is green | n/a |
+| **M3.2 Mobile residuals** | Done on `m3-2` (ADR-0044 amended): R1 no play button on cards; R2 meta keeps the category whole (editor `short_name`); R3 two-line rail titles (`rail_title`); R4 no picture beside itself (seed, Explore tiles); R5 Android bar roles; N5 verified; a row of sections that goes on says so; red budget a test. 441 app tests, backend 92%. Gallery `m3-2.zip` (102 pairs). **Waiting for G2** | n/a |
 | M2 to M11 | Not started | Not started |
 
 ## Next session starts here
