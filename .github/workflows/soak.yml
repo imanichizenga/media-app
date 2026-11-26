@@ -23,7 +23,8 @@ jobs:
       runs: ${{ steps.runs.outputs.runs }}
     steps:
       - id: runs
-        run: echo "runs=$(python3 -c 'import json, sys; print(json.dumps([str(i) for i in range(1, int(sys.argv[1]) + 1)]))' '${{ inputs.runs || 6 }}')" >> "$GITHUB_OUTPUT"
+        env: { RUNS: "${{ inputs.runs || 6 }}" }
+        run: echo "runs=$(python3 -c 'import json, os; print(json.dumps([str(i) for i in range(1, int(os.environ["RUNS"]) + 1)]))')" >> "$GITHUB_OUTPUT"
   device:
     needs: plan
     strategy:

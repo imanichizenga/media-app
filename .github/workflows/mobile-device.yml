@@ -144,7 +144,13 @@ jobs:
           cp mobile/build/perf.json "$EVIDENCE/" 2> /dev/null || true
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure() || inputs.keep-evidence
-        with: { name: "android-evidence-${{ inputs.run }}", path: "${{ env.EVIDENCE }}", retention-days: 14, include-hidden-files: false }
+        with:
+          {
+            name: "android-evidence-${{ inputs.run }}",
+            path: "${{ env.EVIDENCE }}",
+            retention-days: 14,
+            include-hidden-files: false,
+          }
   mobile-ios:
     if: inputs.ios
     runs-on: macos-26
