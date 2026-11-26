@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
@@ -23,23 +24,22 @@ import 'package:news_app/ui/tokens/theme.dart';
 import 'package:news_design_tokens/news_design_tokens.dart' show ThemeScheme;
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'net_log.dart';
+
 /// On a device, against an API filled by `seed_demo` whose app settings say: oldest version 0.1.0, theme Bold Ink.
 /// flutter test integration_test --flavor dev --dart-define-from-file=config/dev.json
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
+  final net = NetLog();
+  HttpOverrides.global = net;
 
   Future<void> until(WidgetTester t, Finder f, {int seconds = 30}) async {
     for (var i = 0; i < seconds * 5; i++) {
       await t.pump(const Duration(milliseconds: 200));
       if (f.evaluate().isNotEmpty) return;
     }
-    final shown = find
-        .byType(Text)
-        .evaluate()
-        .map((e) => (e.widget as Text).data)
-        .nonNulls
-        .take(30);
+    final shown = find.byType(Text).evaluate().map((e) => (e.widget as Text).data).nonNulls.take(30);
     fail('never appeared: $f; on screen: ${shown.join(' | ')}');
   }
 
@@ -51,6 +51,8 @@ void main() {
     ThemeChoice? theme,
     String? dead,
   }) async {
+    // ignore: avoid_print
+    print('NET ${net.at} s launch');
     await t.pumpWidget(const SizedBox());
     final raw = await db.allPrefs();
     final settings = Settings.read(raw);
@@ -84,11 +86,7 @@ void main() {
   /// Brought clear of the bars first: how much of it shows depends on the phone.
   Future<void> openCover(WidgetTester t) async {
     final cover = find.byType(CoverCard).first;
-    for (
-      var i = 0;
-      i < 6 && t.getCenter(cover).dy > t.view.physicalSize.height / t.view.devicePixelRatio * 0.6;
-      i++
-    ) {
+    for (var i = 0; i < 6 && t.getCenter(cover).dy > t.view.physicalSize.height / t.view.devicePixelRatio * 0.6; i++) {
       await t.drag(find.byType(CustomScrollView).first, const Offset(0, -200));
       await t.pump(const Duration(milliseconds: 600));
     }
@@ -105,9 +103,7 @@ void main() {
       // ignore: deprecated_member_use
       ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
         'flutter/navigation',
-        const JSONMethodCodec().encodeMethodCall(
-          MethodCall('pushRouteInformation', {'location': path, 'state': null}),
-        ),
+        const JSONMethodCodec().encodeMethodCall(MethodCall('pushRouteInformation', {'location': path, 'state': null})),
         (_) {},
       );
 
@@ -151,9 +147,7 @@ void main() {
     await until(t, find.descendant(of: find.byType(CoverCard), matching: find.byType(MetaLine)));
     await openCover(t);
     await until(t, find.byType(ArticleBody));
-    await t.tap(
-      find.descendant(of: find.byType(ActionBar), matching: find.bySemanticsLabel('Hifadhi')),
-    );
+    await t.tap(find.descendant(of: find.byType(ActionBar), matching: find.bySemanticsLabel('Hifadhi')));
     for (var i = 0; i < 100; i++) {
       await t.pump(const Duration(milliseconds: 200));
       final rows = await db.select(db.savedArticles).get();
