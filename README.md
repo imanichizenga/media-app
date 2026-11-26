@@ -4,8 +4,8 @@
 | ------------------ | -------------------------------------------------- |
 | [backend](backend) | The API: Django, Celery, Channels                  |
 | [admin](admin)     | The administration console: Next.js                |
-| [web](web)         | The public website: Next.js (M2, not started)      |
-| [mobile](mobile)   | The Android and iOS app: Flutter (M3, not started) |
+| [web](web)         | The public website: Next.js                        |
+| [mobile](mobile)   | The Android and iOS app: Flutter                   |
 | [support](support) | Everything the four share or need                  |
 
 Inside `support`:
@@ -47,6 +47,9 @@ API_PROXY_TARGET=http://127.0.0.1:8001 pnpm --filter @news/admin dev   # http://
 | Web            | `pnpm lint && pnpm typecheck && pnpm test`                                                              |
 | End to end     | `API_PROXY_TARGET=http://127.0.0.1:8001 pnpm --filter @news/admin build && pnpm --filter @news/e2e e2e` |
 | Infrastructure | `terraform -chdir=support/infra/terraform/modules/platform test`                                        |
+| Website        | Build admin as above, then `WEB_LOCAL=1 API_PROXY_TARGET=http://127.0.0.1:8010 pnpm --filter @news/web... build && pnpm --filter @news/e2e web` |
+| App            | `support/scripts/mobile-toolchain.sh && . /tmp/toolchain/env && cd mobile && flutter test`             |
+| Devices        | CI only: `mobile-device.yml`; Actions → **Soak** runs them N times side by side ([ADR-0048](support/docs/adr/0048-device-tests.md)) |
 
 After changing the API: `manage.py spectacular` (see CI), `pnpm --filter @news/api-client generate`, `support/scripts/generate-dart-client.sh`.
 
