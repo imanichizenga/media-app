@@ -174,6 +174,23 @@ def test_snippets_are_segments_not_markup():
     ]
 
 
+def test_a_word_spelled_right_does_not_mark_its_look_alikes():
+    parts = engine.segments(
+        f"Mpaka {engine.HIT}wakati{engine.END} huo, {engine.HIT}wakazi{engine.END} wanasema"
+    )
+    assert engine.plain_marks(parts, "Wakazi Mbeya") == [
+        {"text": "Mpaka wakati huo, ", "hit": False},
+        {"text": "wakazi", "hit": True},
+        {"text": " wanasema", "hit": False},
+    ]
+    # A mistake of the reader's own: the look-alike is all there is, so it stays marked.
+    typo = engine.segments(f"Kampeni ya {engine.HIT}chanjo{engine.END}")
+    assert engine.plain_marks(typo, "chamjo") == typo
+    # First letters and accents count as the word.
+    assert engine.plain_marks(engine.segments(f"{engine.HIT}Mwanza{engine.END}"), "mwan")[0]["hit"]
+    assert engine.plain_marks(engine.segments(f"{engine.HIT}Ufaransa{engine.END}"), "ufaránsa")[0]["hit"]
+
+
 def test_a_broken_cursor_starts_again():
     assert engine._decode("not-a-cursor") == (None, 1)
 
@@ -212,7 +229,9 @@ engine_only = pytest.mark.skipif(
 
 
 @pytest.fixture
-def opensearch(settings):
+def opensearch(settings, monkeypatch):
+    # The test's transaction never commits, so what publishing queues after commit runs at once, as it would.
+    monkeypatch.setattr(publishing.transaction, "on_commit", lambda fn, robust=False: fn())
     settings.OPENSEARCH_URL = OPENSEARCH
     settings.OPENSEARCH_SIGV4 = False
     settings.OPENSEARCH_PREFIX = f"test-{os.getpid()}"
@@ -267,8 +286,7 @@ def test_opensearch_follows_publishing_and_withdrawing(editor, cat, opensearch):
     refresh()
     assert headlines(find("bandari")) == ["Bandari mpya yafunguliwa"]
     assert headlines(find("port", "en")) == ["New port opens"]
-    publishing.withdraw(row)
-    indexing.sync_post(row.pk)  # on_commit does not run inside the test's transaction
+    f.go(editor, row, "unpublish")
     refresh()
     assert headlines(find("bandari")) == [] and headlines(find("port", "en")) == []
 

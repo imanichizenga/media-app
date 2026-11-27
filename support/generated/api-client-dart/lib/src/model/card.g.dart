@@ -146,7 +146,6 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
   Card isLive(bool isLive) => this(isLive: isLive);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Card(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -271,112 +270,124 @@ extension $CardCopyWith on Card {
 // **************************************************************************
 
 Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Card',
+  'Card',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'type',
-            'locale',
-            'path',
-            'slug',
-            'headline',
-            'rail_title',
-            'standfirst',
-            'category',
-            'authors',
-            'image',
-            'video',
-            'youtube_id',
-            'duration_ms',
-            'reading_minutes',
-            'published_at',
-            'modified_at',
-            'is_sensitive',
-            'breaking_until',
-            'is_live'
-          ],
-        );
-        final val = Card(
-          id: $checkedConvert('id', (v) => v as String),
-          type: $checkedConvert(
-              'type', (v) => $enumDecode(_$PostTypeEnumEnumMap, v)),
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          headline: $checkedConvert('headline', (v) => v as String),
-          railTitle: $checkedConvert('rail_title', (v) => v as String),
-          standfirst: $checkedConvert('standfirst', (v) => v as String),
-          category: $checkedConvert('category',
-              (v) => PublicCategory.fromJson(v as Map<String, dynamic>)),
-          authors: $checkedConvert(
-              'authors',
-              (v) => (v as List<dynamic>)
-                  .map((e) => CardByline.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          image: $checkedConvert(
-              'image',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          video: $checkedConvert(
-              'video',
-              (v) => v == null
-                  ? null
-                  : PublicVideo.fromJson(v as Map<String, dynamic>)),
-          youtubeId: $checkedConvert('youtube_id', (v) => v as String),
-          durationMs:
-              $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
-          readingMinutes:
-              $checkedConvert('reading_minutes', (v) => (v as num).toInt()),
-          publishedAt: $checkedConvert(
-              'published_at', (v) => DateTime.parse(v as String)),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-          isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
-          breakingUntil: $checkedConvert('breaking_until',
-              (v) => v == null ? null : DateTime.parse(v as String)),
-          isLive: $checkedConvert('is_live', (v) => v as bool),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'railTitle': 'rail_title',
-        'youtubeId': 'youtube_id',
-        'durationMs': 'duration_ms',
-        'readingMinutes': 'reading_minutes',
-        'publishedAt': 'published_at',
-        'modifiedAt': 'modified_at',
-        'isSensitive': 'is_sensitive',
-        'breakingUntil': 'breaking_until',
-        'isLive': 'is_live'
-      },
+      requiredKeys: const [
+        'id',
+        'type',
+        'locale',
+        'path',
+        'slug',
+        'headline',
+        'rail_title',
+        'standfirst',
+        'category',
+        'authors',
+        'image',
+        'video',
+        'youtube_id',
+        'duration_ms',
+        'reading_minutes',
+        'published_at',
+        'modified_at',
+        'is_sensitive',
+        'breaking_until',
+        'is_live',
+      ],
     );
+    final val = Card(
+      id: $checkedConvert('id', (v) => v as String),
+      type: $checkedConvert(
+        'type',
+        (v) => $enumDecode(_$PostTypeEnumEnumMap, v),
+      ),
+      locale: $checkedConvert('locale', (v) => v as String),
+      path: $checkedConvert('path', (v) => v as String),
+      slug: $checkedConvert('slug', (v) => v as String),
+      headline: $checkedConvert('headline', (v) => v as String),
+      railTitle: $checkedConvert('rail_title', (v) => v as String),
+      standfirst: $checkedConvert('standfirst', (v) => v as String),
+      category: $checkedConvert(
+        'category',
+        (v) => PublicCategory.fromJson(v as Map<String, dynamic>),
+      ),
+      authors: $checkedConvert(
+        'authors',
+        (v) => (v as List<dynamic>)
+            .map((e) => CardByline.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      image: $checkedConvert(
+        'image',
+        (v) =>
+            v == null ? null : PublicImage.fromJson(v as Map<String, dynamic>),
+      ),
+      video: $checkedConvert(
+        'video',
+        (v) =>
+            v == null ? null : PublicVideo.fromJson(v as Map<String, dynamic>),
+      ),
+      youtubeId: $checkedConvert('youtube_id', (v) => v as String),
+      durationMs: $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
+      readingMinutes: $checkedConvert(
+        'reading_minutes',
+        (v) => (v as num).toInt(),
+      ),
+      publishedAt: $checkedConvert(
+        'published_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      modifiedAt: $checkedConvert(
+        'modified_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
+      breakingUntil: $checkedConvert(
+        'breaking_until',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      isLive: $checkedConvert('is_live', (v) => v as bool),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'railTitle': 'rail_title',
+    'youtubeId': 'youtube_id',
+    'durationMs': 'duration_ms',
+    'readingMinutes': 'reading_minutes',
+    'publishedAt': 'published_at',
+    'modifiedAt': 'modified_at',
+    'isSensitive': 'is_sensitive',
+    'breakingUntil': 'breaking_until',
+    'isLive': 'is_live',
+  },
+);
 
 Map<String, dynamic> _$CardToJson(Card instance) => <String, dynamic>{
-      'id': instance.id,
-      'type': _$PostTypeEnumEnumMap[instance.type]!,
-      'locale': instance.locale,
-      'path': instance.path,
-      'slug': instance.slug,
-      'headline': instance.headline,
-      'rail_title': instance.railTitle,
-      'standfirst': instance.standfirst,
-      'category': instance.category.toJson(),
-      'authors': instance.authors.map((e) => e.toJson()).toList(),
-      'image': instance.image?.toJson(),
-      'video': instance.video?.toJson(),
-      'youtube_id': instance.youtubeId,
-      'duration_ms': instance.durationMs,
-      'reading_minutes': instance.readingMinutes,
-      'published_at': instance.publishedAt.toIso8601String(),
-      'modified_at': instance.modifiedAt.toIso8601String(),
-      'is_sensitive': instance.isSensitive,
-      'breaking_until': instance.breakingUntil?.toIso8601String(),
-      'is_live': instance.isLive,
-    };
+  'id': instance.id,
+  'type': _$PostTypeEnumEnumMap[instance.type]!,
+  'locale': instance.locale,
+  'path': instance.path,
+  'slug': instance.slug,
+  'headline': instance.headline,
+  'rail_title': instance.railTitle,
+  'standfirst': instance.standfirst,
+  'category': instance.category.toJson(),
+  'authors': instance.authors.map((e) => e.toJson()).toList(),
+  'image': instance.image?.toJson(),
+  'video': instance.video?.toJson(),
+  'youtube_id': instance.youtubeId,
+  'duration_ms': instance.durationMs,
+  'reading_minutes': instance.readingMinutes,
+  'published_at': instance.publishedAt.toIso8601String(),
+  'modified_at': instance.modifiedAt.toIso8601String(),
+  'is_sensitive': instance.isSensitive,
+  'breaking_until': instance.breakingUntil?.toIso8601String(),
+  'is_live': instance.isLive,
+};
 
 const _$PostTypeEnumEnumMap = {
   PostTypeEnum.article: 'article',

@@ -11,7 +11,7 @@ class FakeApi implements HttpClientAdapter {
 
   bool offline;
 
-  /// path → status, or a body.
+  /// path → status, a body, a status with its body (`(422, {...})`), or a function of the request giving one.
   final replies = <String, Object>{};
   final asked = <RequestOptions>[];
 
@@ -43,7 +43,7 @@ class FakeApi implements HttpClientAdapter {
       'ios': {'minimum': '', 'recommended': '', 'store': ''},
     },
     'maintenance': {'on': false, 'sw': '', 'en': ''},
-    'flags': {'shorts': true, 'youtube': true, 'offline_saving': true},
+    'flags': {'shorts': true, 'youtube': true, 'offline_saving': true, 'card_counts': true},
     'links': {
       'about': 'https://www.test/about',
       'editorial': 'https://www.test/editorial',
@@ -82,7 +82,9 @@ class FakeApi implements HttpClientAdapter {
 
   Object? _answer(RequestOptions o) {
     final path = o.uri.path;
-    if (replies[path] case final reply?) return reply;
+    if (replies[path] case final reply?) {
+      return reply is Object? Function(RequestOptions) ? reply(o) : reply;
+    }
     final d = data(o.uri.queryParameters['locale'] ?? 'sw');
     if (path.endsWith('/app-config')) return config();
     if (path.endsWith('/content/home')) return d['home'];
@@ -138,6 +140,7 @@ class FakeApi implements HttpClientAdapter {
           },
         );
     if (answer is int) return json({'code': 'x'}, answer);
+    if (answer case (final int status, final Object body)) return json(body, status);
     if (answer == null) return json({'code': 'not_found'}, 404);
     final etag = '"${jsonEncode(answer).hashCode}"';
     if (options.headers['If-None-Match'] == etag) return ResponseBody.fromString('', 304);

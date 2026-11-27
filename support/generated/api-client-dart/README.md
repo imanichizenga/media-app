@@ -66,6 +66,13 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 [*AppConfigApi*](doc/AppConfigApi.md) | [**appConfig**](doc/AppConfigApi.md#appconfig) | **GET** /api/v1/app-config | 
+[*AuthApi*](doc/AuthApi.md) | [**authApple**](doc/AuthApi.md#authapple) | **POST** /api/v1/auth/apple | 
+[*AuthApi*](doc/AuthApi.md) | [**authCode**](doc/AuthApi.md#authcode) | **POST** /api/v1/auth/code | 
+[*AuthApi*](doc/AuthApi.md) | [**authCodeVerify**](doc/AuthApi.md#authcodeverify) | **POST** /api/v1/auth/code/verify | 
+[*AuthApi*](doc/AuthApi.md) | [**authGoogle**](doc/AuthApi.md#authgoogle) | **POST** /api/v1/auth/google | 
+[*AuthApi*](doc/AuthApi.md) | [**authMethods**](doc/AuthApi.md#authmethods) | **GET** /api/v1/auth/methods | 
+[*AuthApi*](doc/AuthApi.md) | [**authRefresh**](doc/AuthApi.md#authrefresh) | **POST** /api/v1/auth/refresh | 
+[*AuthApi*](doc/AuthApi.md) | [**authSignOut**](doc/AuthApi.md#authsignout) | **POST** /api/v1/auth/sign-out | 
 [*ContentApi*](doc/ContentApi.md) | [**article**](doc/ContentApi.md#article) | **GET** /api/v1/content/articles/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**author**](doc/ContentApi.md#author) | **GET** /api/v1/content/authors/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**byType**](doc/ContentApi.md#bytype) | **GET** /api/v1/content/types/{kind} | 
@@ -78,11 +85,31 @@ Class | Method | HTTP request | Description
 [*ContentApi*](doc/ContentApi.md) | [**related**](doc/ContentApi.md#related) | **GET** /api/v1/content/articles/{slug}/related | 
 [*ContentApi*](doc/ContentApi.md) | [**resolve**](doc/ContentApi.md#resolve) | **GET** /api/v1/content/resolve | 
 [*ContentApi*](doc/ContentApi.md) | [**search**](doc/ContentApi.md#search) | **GET** /api/v1/content/search | 
+[*ContentApi*](doc/ContentApi.md) | [**searchSuggest**](doc/ContentApi.md#searchsuggest) | **GET** /api/v1/content/search/suggest | 
 [*ContentApi*](doc/ContentApi.md) | [**sitemapIndex**](doc/ContentApi.md#sitemapindex) | **GET** /api/v1/content/sitemap | 
 [*ContentApi*](doc/ContentApi.md) | [**sitemapMonth**](doc/ContentApi.md#sitemapmonth) | **GET** /api/v1/content/sitemap/{month} | 
 [*ContentApi*](doc/ContentApi.md) | [**sitemapNews**](doc/ContentApi.md#sitemapnews) | **GET** /api/v1/content/sitemap/news | 
 [*ContentApi*](doc/ContentApi.md) | [**story**](doc/ContentApi.md#story) | **GET** /api/v1/content/stories/{slug} | 
 [*ContentApi*](doc/ContentApi.md) | [**tag**](doc/ContentApi.md#tag) | **GET** /api/v1/content/tags/{slug} | 
+[*EngagementApi*](doc/EngagementApi.md) | [**bookmark**](doc/EngagementApi.md#bookmark) | **PUT** /api/v1/engagement/posts/{post_id}/bookmark | 
+[*EngagementApi*](doc/EngagementApi.md) | [**commentCreate**](doc/EngagementApi.md#commentcreate) | **POST** /api/v1/engagement/posts/{post_id}/comments | 
+[*EngagementApi*](doc/EngagementApi.md) | [**commentDelete**](doc/EngagementApi.md#commentdelete) | **DELETE** /api/v1/engagement/comments/{comment_id} | 
+[*EngagementApi*](doc/EngagementApi.md) | [**commentLike**](doc/EngagementApi.md#commentlike) | **PUT** /api/v1/engagement/comments/{comment_id}/like | 
+[*EngagementApi*](doc/EngagementApi.md) | [**commentUnlike**](doc/EngagementApi.md#commentunlike) | **DELETE** /api/v1/engagement/comments/{comment_id}/like | 
+[*EngagementApi*](doc/EngagementApi.md) | [**comments**](doc/EngagementApi.md#comments) | **GET** /api/v1/engagement/posts/{post_id}/comments | 
+[*EngagementApi*](doc/EngagementApi.md) | [**engagementState**](doc/EngagementApi.md#engagementstate) | **GET** /api/v1/engagement/state | 
+[*EngagementApi*](doc/EngagementApi.md) | [**follow**](doc/EngagementApi.md#follow) | **PUT** /api/v1/engagement/follows/{kind}/{target} | 
+[*EngagementApi*](doc/EngagementApi.md) | [**like**](doc/EngagementApi.md#like) | **PUT** /api/v1/engagement/posts/{post_id}/like | 
+[*EngagementApi*](doc/EngagementApi.md) | [**opened**](doc/EngagementApi.md#opened) | **POST** /api/v1/engagement/posts/{post_id}/opened | 
+[*EngagementApi*](doc/EngagementApi.md) | [**readers**](doc/EngagementApi.md#readers) | **GET** /api/v1/engagement/posts/{post_id}/readers | 
+[*EngagementApi*](doc/EngagementApi.md) | [**unbookmark**](doc/EngagementApi.md#unbookmark) | **DELETE** /api/v1/engagement/posts/{post_id}/bookmark | 
+[*EngagementApi*](doc/EngagementApi.md) | [**unfollow**](doc/EngagementApi.md#unfollow) | **DELETE** /api/v1/engagement/follows/{kind}/{target} | 
+[*EngagementApi*](doc/EngagementApi.md) | [**unlike**](doc/EngagementApi.md#unlike) | **DELETE** /api/v1/engagement/posts/{post_id}/like | 
+[*MeApi*](doc/MeApi.md) | [**me**](doc/MeApi.md#me) | **GET** /api/v1/me | 
+[*MeApi*](doc/MeApi.md) | [**meDelete**](doc/MeApi.md#medelete) | **DELETE** /api/v1/me | 
+[*MeApi*](doc/MeApi.md) | [**meExport**](doc/MeApi.md#meexport) | **GET** /api/v1/me/export | 
+[*MeApi*](doc/MeApi.md) | [**meUpdate**](doc/MeApi.md#meupdate) | **PATCH** /api/v1/me | 
+[*MeApi*](doc/MeApi.md) | [**myList**](doc/MeApi.md#mylist) | **GET** /api/v1/me/{what} | 
 [*SiteConfigApi*](doc/SiteConfigApi.md) | [**siteConfig**](doc/SiteConfigApi.md#siteconfig) | **GET** /api/v1/site-config | 
 
 
@@ -98,19 +125,41 @@ Class | Method | HTTP request | Description
  - [AppVersions](doc/AppVersions.md)
  - [Article](doc/Article.md)
  - [AuthorPage](doc/AuthorPage.md)
+ - [Bookmarked](doc/Bookmarked.md)
  - [Card](doc/Card.md)
  - [CardByline](doc/CardByline.md)
+ - [CardList](doc/CardList.md)
  - [CategoryPage](doc/CategoryPage.md)
  - [CategoryTranslation](doc/CategoryTranslation.md)
+ - [CodeRequestRequest](doc/CodeRequestRequest.md)
+ - [CodeSent](doc/CodeSent.md)
+ - [CodeVerifyRequest](doc/CodeVerifyRequest.md)
+ - [Comment](doc/Comment.md)
+ - [CommentAuthor](doc/CommentAuthor.md)
+ - [CommentLiked](doc/CommentLiked.md)
+ - [CommentPage](doc/CommentPage.md)
  - [CommentsEnum](doc/CommentsEnum.md)
  - [DefaultLocaleEnum](doc/DefaultLocaleEnum.md)
+ - [Deletion](doc/Deletion.md)
+ - [EngineEnum](doc/EngineEnum.md)
  - [FeedPage](doc/FeedPage.md)
+ - [Following](doc/Following.md)
  - [Home](doc/Home.md)
  - [HomeSection](doc/HomeSection.md)
+ - [Liked](doc/Liked.md)
+ - [LocaleEnum](doc/LocaleEnum.md)
  - [Logo](doc/Logo.md)
+ - [Methods](doc/Methods.md)
+ - [MethodsEnum](doc/MethodsEnum.md)
+ - [ModelExport](doc/ModelExport.md)
  - [NavigationItem](doc/NavigationItem.md)
+ - [NewCommentRequest](doc/NewCommentRequest.md)
+ - [OpenedRequest](doc/OpenedRequest.md)
  - [PageTranslation](doc/PageTranslation.md)
+ - [PatchedProfileRequest](doc/PatchedProfileRequest.md)
+ - [PostState](doc/PostState.md)
  - [PostTypeEnum](doc/PostTypeEnum.md)
+ - [ProviderSignInRequest](doc/ProviderSignInRequest.md)
  - [PublicAuthor](doc/PublicAuthor.md)
  - [PublicByline](doc/PublicByline.md)
  - [PublicCategory](doc/PublicCategory.md)
@@ -128,13 +177,21 @@ Class | Method | HTTP request | Description
  - [PublicStoryRef](doc/PublicStoryRef.md)
  - [PublicVideo](doc/PublicVideo.md)
  - [PublicVideoKindEnum](doc/PublicVideoKindEnum.md)
+ - [Reader](doc/Reader.md)
+ - [ReaderEntry](doc/ReaderEntry.md)
+ - [Readers](doc/Readers.md)
+ - [RefreshRequest](doc/RefreshRequest.md)
  - [Related](doc/Related.md)
  - [RelatedTarget](doc/RelatedTarget.md)
  - [Resolve](doc/Resolve.md)
  - [Schemes](doc/Schemes.md)
  - [Search](doc/Search.md)
+ - [SearchHit](doc/SearchHit.md)
+ - [Segment](doc/Segment.md)
+ - [SignedIn](doc/SignedIn.md)
  - [SiteApps](doc/SiteApps.md)
  - [SiteConfig](doc/SiteConfig.md)
+ - [SiteEngagement](doc/SiteEngagement.md)
  - [SiteIdentity](doc/SiteIdentity.md)
  - [SiteLocalization](doc/SiteLocalization.md)
  - [SiteSeo](doc/SiteSeo.md)
@@ -146,6 +203,8 @@ Class | Method | HTTP request | Description
  - [SitemapMonth](doc/SitemapMonth.md)
  - [SitemapTranslation](doc/SitemapTranslation.md)
  - [StoryPage](doc/StoryPage.md)
+ - [Suggest](doc/Suggest.md)
+ - [Suggestion](doc/Suggestion.md)
  - [TagPage](doc/TagPage.md)
  - [ThemeKeyEnum](doc/ThemeKeyEnum.md)
  - [Translation](doc/Translation.md)
@@ -153,7 +212,11 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+### readerBearer
+
+- **Type**: HTTP Bearer Token authentication (JWT)
 
 
 ## Author

@@ -17,10 +17,7 @@ abstract class _$PublicRegionCWProxy {
   /// ```dart
   /// PublicRegion(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicRegion call({
-    String slug,
-    String name,
-  });
+  PublicRegion call({String slug, String name});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPublicRegion.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPublicRegion.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$PublicRegionCWProxyImpl implements _$PublicRegionCWProxy {
   PublicRegion name(String name) => this(name: name);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicRegion(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -71,24 +67,14 @@ extension $PublicRegionCopyWith on PublicRegion {
 // **************************************************************************
 
 PublicRegion _$PublicRegionFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicRegion',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['slug', 'name'],
-        );
-        final val = PublicRegion(
-          slug: $checkedConvert('slug', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('PublicRegion', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['slug', 'name']);
+      final val = PublicRegion(
+        slug: $checkedConvert('slug', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicRegionToJson(PublicRegion instance) =>
-    <String, dynamic>{
-      'slug': instance.slug,
-      'name': instance.name,
-    };
+    <String, dynamic>{'slug': instance.slug, 'name': instance.name};

@@ -6,6 +6,7 @@ import base64
 import json
 import logging
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Literal
@@ -76,6 +77,32 @@ def segments(marked: str) -> list[dict[str, Any]]:
             out[-1]["text"] += text
         else:
             out.append({"text": text, "hit": hit})
+    return out
+
+
+def _fold(text: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFKD", text.lower()) if not unicodedata.combining(c))
+
+
+def plain_marks(parts: list[dict[str, Any]], q: str) -> list[dict[str, Any]]:
+    """Typing mistakes find stories, but a word the reader spelled right is the only one marked:
+    "wakazi" does not mark "wakati". Look-alikes stay marked only when nothing matches as typed,
+    which is the reader's own mistake."""
+    words = [w for w in re.findall(r"\w+", _fold(q)) if w]
+
+    def plain(text: str) -> bool:
+        folded = _fold(text)
+        return any(folded.startswith(w) or (len(folded) >= 2 and w.startswith(folded)) for w in words)
+
+    if not any(part["hit"] and plain(part["text"]) for part in parts):
+        return parts
+    out: list[dict[str, Any]] = []
+    for part in parts:
+        hit = part["hit"] and plain(part["text"])
+        if out and out[-1]["hit"] == hit:
+            out[-1]["text"] += part["text"]
+        else:
+            out.append({"text": part["text"], "hit": hit})
     return out
 
 
@@ -202,7 +229,7 @@ def _opensearch(p: Params) -> Page:
         card = selectors.current(h["_source"]["card"])
         light = h.get("highlight", {})
         marked = (light.get("body") or light.get("standfirst") or [""])[0]
-        results.append(Hit(card=card, snippet=segments(marked) if HIT in marked else []))
+        results.append(Hit(card=card, snippet=plain_marks(segments(marked), p.q) if HIT in marked else []))
     more = len(hits) == PAGE and page < MAX_PAGES
     return Page(
         results=results,

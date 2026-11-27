@@ -36,8 +36,14 @@
 }
 
 @layer base {
+  /* Anchors land below the fixed top: the masthead and the row of sections. */
   html {
     scroll-padding-top: 7rem;
+  }
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 9rem;
+    }
   }
   body {
     background: var(--color-bg);
@@ -72,6 +78,409 @@
     color: var(--color-text-primary);
   }
 }
+/* ---- The fixed top (components/frame.tsx) ----
+   Sticky, so it keeps its own room: nothing below it ever moves. Once the page moves, a shadow under whatever is shown
+   (drop-shadow follows the row as it slides). On a phone, reading down slides the row of sections behind the
+   masthead and gives its room to the news; any step back up brings it again. Only transform and filter change. */
+[data-top] {
+  transition: filter 250ms ease;
+}
+:root[data-scrolled] [data-top] {
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.12));
+}
+[data-row] {
+  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (max-width: 1023px) {
+  :root[data-down] [data-row] {
+    transform: translateY(-100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-top],
+  [data-row] {
+    transition: none;
+  }
+}
+
+/* ---- Moving through the news ----
+   Where the browser can tie an animation to the scroll (no script, no work on the main thread), a story rises into
+   place as it comes into view. What is already on the first screen is at its end state from the start, so the
+   largest paint is never delayed; where the browser cannot, or the reader asked for less motion, nothing moves. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes read {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main [data-card]:not([data-card="lead"]),
+    main [data-rise],
+    [data-page="explore"] > li {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+/* How far down the page one is: a line of the brand's colours under the top, on every page. The browser ties it to
+   the scroll where it can; elsewhere islands/site.ts sets --scrolled once a frame. On a phone it rides up with the
+   row of sections when that slides away. It is information, not decoration, so it stays for reduced motion too. */
+[data-top]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -3px;
+  height: 3px;
+  pointer-events: none;
+  /* WCAG 2.2 1.4.11 asks 3:1 of a graphic that informs. Brand to brand-text clears it in both schemes (light 6.9:1
+     all along; dark 3.7 to 5.7:1), where brand-strong in the dark scheme would not (2.9:1). */
+  background: linear-gradient(90deg, var(--color-brand), var(--color-brand-text));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-brand) 45%, transparent);
+  transform-origin: left;
+  transform: scaleX(var(--scrolled, 0));
+  transition: translate 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@supports (animation-timeline: scroll()) {
+  [data-top]::after {
+    animation: read linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@media (max-width: 1023px) {
+  :root[data-down] [data-top]:has([data-row]:not([data-quiet]))::after {
+    translate: 0 calc(-3rem - 1px);
+  }
+}
+
+/* Kept: the count on the places' bookmark, and the button pressed, give a short pop. */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  70% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .saved-count.pop,
+  [data-do="save"].pop > svg {
+    animation: pop 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+}
+
+/* A section's row one slides through (components/parts.tsx Rail): its arrows, shown where there is more. */
+@media (min-width: 1024px) {
+  .rail-go:not([hidden]) {
+    display: grid;
+  }
+}
+
+/* ---- Breaking news (components/breaking.tsx) ---- */
+[data-breaking] .slide {
+  transition:
+    opacity 400ms ease,
+    transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 400ms;
+}
+[data-breaking] .slide:not([data-on]) {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+}
+[data-breaking] .when-paused,
+[data-breaking][data-paused] .when-playing {
+  display: none;
+}
+[data-breaking][data-paused] .when-paused {
+  display: block;
+}
+@keyframes beat {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .beat::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: currentColor;
+    animation: beat 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .breaking > div {
+    animation: arrive 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .breaking-shine {
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in srgb, var(--color-signal-breaking-label) 30%, transparent) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: shine 1.4s 300ms ease-out 1 both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-breaking] .slide {
+    transition: none;
+  }
+}
+
+/* ---- Accounts and engagement (components/account.tsx) ---- */
+/* Likes and comments at the end of a card's meta line, shown once the island knows them and someone did them. */
+.card-counts:not([hidden]),
+.card-count:not([hidden]) {
+  display: inline-flex;
+}
+/* A sheet rises from the foot on a phone and settles in the middle at a desk; the page dims behind. */
+dialog.sheet {
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.97);
+  }
+}
+@keyframes dim {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  dialog.sheet[open] {
+    animation: sheet-up 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (min-width: 640px) {
+    dialog.sheet[open] {
+      animation: sheet-in 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+  }
+  dialog.sheet[open]::backdrop {
+    animation: dim 240ms ease;
+  }
+}
+/* A heart pressed: it beats once, filled with the theme's liked colour. */
+[data-like][aria-pressed="true"] .like-heart,
+[data-comment-like][aria-pressed="true"] svg {
+  fill: currentColor;
+}
+@keyframes beat-heart {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.35);
+  }
+  60% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pop .like-heart,
+  [data-comment-like].pop svg {
+    animation: beat-heart 450ms cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .comment.fresh {
+    animation: arrive 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+/* The reader's initial over the You place. */
+[data-me-badge]:not([hidden]) {
+  display: grid;
+}
+
+/* A picture leans in under the pointer. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-card] img {
+    transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  [data-card]:hover img {
+    transform: scale(1.04);
+  }
+}
+
+/* ---- The name of the site (support/packages/ui Wordmark, when the brand has no logo file) ----
+   The words stand still; colour flows through them, one word after the other. Every colour comes from the published
+   theme (the database): the wordmark's own, the brand's, and two neighbours of the brand's hue at the wordmark's
+   lightness, so the name keeps its contrast on the masthead whatever the brand is. Without the newest colour syntax
+   the flow keeps to the brand's own reds; asked for less motion, or in forced colours, the name is simply its colour. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+    [data-wordmark] [data-word] {
+      --warm: var(--color-brand-strong);
+      --cool: var(--color-brand);
+      background-image: linear-gradient(
+        100deg,
+        var(--color-wordmark) 0%,
+        var(--color-wordmark) 20%,
+        var(--warm) 35%,
+        var(--color-brand-text) 50%,
+        var(--cool) 65%,
+        var(--color-wordmark) 80%,
+        var(--color-wordmark) 100%
+      );
+      background-size: 300% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: flow 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      /* One word after the other, as a wave through the name. */
+      animation-delay: calc(var(--i, 0) * 450ms);
+    }
+    @supports (color: oklch(from red l c h)) {
+      [data-wordmark] [data-word] {
+        --warm: oklch(from var(--color-wordmark) l c calc(h + 50));
+        --cool: oklch(from var(--color-wordmark) l c calc(h - 40));
+      }
+    }
+  }
+}
+@keyframes flow {
+  0%,
+  15% {
+    background-position: 100% 0;
+  }
+  85%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* The brand's monogram (components/frame.tsx BrandMark), until a symbol is uploaded: the brand's colours, deepened
+   and turned a little round the hue, with a slow light passing over it. All from the published theme. */
+.brand-mark {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-strong),
+    var(--color-brand) 60%,
+    var(--color-brand-text)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 1px 3px color-mix(in srgb, var(--color-brand) 40%, transparent);
+  line-height: 1;
+}
+@supports (color: oklch(from red l c h)) {
+  .brand-mark {
+    background: linear-gradient(
+      135deg,
+      var(--color-brand-strong),
+      var(--color-brand) 55%,
+      oklch(from var(--color-brand) calc(l + 0.08) c calc(h + 35))
+    );
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.35) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: mark-shine 7s ease-in-out 1.5s infinite;
+  }
+}
+@keyframes mark-shine {
+  0%,
+  70% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* ---- Search as one types (islands/search.ts) ----
+   The magnifier turns while results come, and the results there are dim a little: what is shown is about to change. */
+.search-spin {
+  display: none;
+}
+form[aria-busy="true"] .search-idle {
+  display: none;
+}
+form[aria-busy="true"] .search-spin {
+  display: block;
+  animation: turn 700ms linear infinite;
+}
+[data-search-body] {
+  transition: opacity 200ms ease;
+}
+[data-search-body][aria-busy="true"] {
+  opacity: 0.55;
+}
+@keyframes turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes breathe {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  form[aria-busy="true"] .search-spin {
+    animation: breathe 1.2s ease-in-out infinite;
+  }
+  [data-search-body] {
+    transition: none;
+  }
+}
+
 /* The bar steps aside while one reads down (N2, S3); the page always keeps its room. */
 .hides {
   transition: transform 200ms ease;

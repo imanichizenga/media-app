@@ -542,4 +542,379 @@ class StringsSw extends Strings {
 
   @override
   String get offlineNote => 'Huna mtandao.';
+
+  @override
+  String get searchLabel => 'Tafuta habari';
+
+  @override
+  String get searchPlaceholder => 'Habari, mahali, mtu au mwandishi';
+
+  @override
+  String get searchGo => 'Tafuta';
+
+  @override
+  String get searchClear => 'Futa maneno';
+
+  @override
+  String searchResultsFor(String v) {
+    return 'Matokeo ya “$v”';
+  }
+
+  @override
+  String searchCount(int n) {
+    return 'Habari $n zimepatikana';
+  }
+
+  @override
+  String searchCountMany(int n) {
+    return 'Zaidi ya habari $n zimepatikana';
+  }
+
+  @override
+  String get searchNoneTitle => 'Hakuna habari zinazolingana';
+
+  @override
+  String get searchNoneBody => 'Jaribu neno jingine, angalia tahajia, au ondoa vichujio.';
+
+  @override
+  String get searchRecent => 'Ulizotafuta karibuni';
+
+  @override
+  String get searchClearRecent => 'Futa ulizotafuta';
+
+  @override
+  String get searchFilters => 'Vichujio';
+
+  @override
+  String get searchSort => 'Mpangilio';
+
+  @override
+  String get searchSortBest => 'Zinazolingana zaidi';
+
+  @override
+  String get searchSortNewest => 'Mpya kwanza';
+
+  @override
+  String get searchType => 'Aina';
+
+  @override
+  String get searchTypeAll => 'Zote';
+
+  @override
+  String get searchTypeStories => 'Habari';
+
+  @override
+  String get searchTypeVideos => 'Video';
+
+  @override
+  String get searchTypeLive => 'Mubashara';
+
+  @override
+  String get searchTypeGalleries => 'Picha';
+
+  @override
+  String get searchWhen => 'Lini';
+
+  @override
+  String get searchAnyTime => 'Wakati wowote';
+
+  @override
+  String get searchPastDay => 'Saa 24 zilizopita';
+
+  @override
+  String get searchPastWeek => 'Wiki iliyopita';
+
+  @override
+  String get searchPastMonth => 'Mwezi uliopita';
+
+  @override
+  String get searchPastYear => 'Mwaka uliopita';
+
+  @override
+  String get searchMore => 'Matokeo zaidi';
+
+  @override
+  String get searchUnavailable =>
+      'Utafutaji haupatikani kwa sasa. Jaribu tena baada ya muda mfupi.';
+
+  @override
+  String get searchSections => 'Au chagua kundi';
+
+  @override
+  String seeAllIn(String name) {
+    return 'Habari zote za $name';
+  }
+
+  @override
+  String get seeAll => 'Ona zote';
+
+  @override
+  String get earlierStories => 'Habari zilizotangulia';
+
+  @override
+  String get moreStories => 'Habari zaidi';
+
+  @override
+  String savedCount(int n) {
+    return 'Habari $n zimehifadhiwa';
+  }
+
+  @override
+  String breakingOf(String at, String total) {
+    return '$at kati ya $total';
+  }
+
+  @override
+  String get breakingPause => 'Simamisha habari za dharura';
+
+  @override
+  String get breakingPlay => 'Endelea na habari za dharura';
+
+  @override
+  String get savedDoneWeb => 'Imewekwa kwenye Hifadhi.';
+
+  @override
+  String get savedUndone => 'Imeondolewa kwenye Hifadhi.';
+
+  @override
+  String get signIn => 'Ingia';
+
+  @override
+  String get signInTitle => 'Ingia au jisajili';
+
+  @override
+  String get signInLead =>
+      'Akaunti moja kwa tovuti na programu: penda, toa maoni na hifadhi habari zako popote.';
+
+  @override
+  String get signInToLike => 'Ingia ili kupenda habari hii';
+
+  @override
+  String get signInToComment => 'Ingia ili kutoa maoni';
+
+  @override
+  String get signInToSave => 'Ingia ili kuhifadhi kwenye akaunti yako';
+
+  @override
+  String get signInToFollow => 'Ingia ili kufuatilia';
+
+  @override
+  String get phoneLabel => 'Namba ya simu';
+
+  @override
+  String get phoneHint => 'Tutakutumia msimbo wa tarakimu 6 kwa SMS.';
+
+  @override
+  String get sendCode => 'Tuma msimbo';
+
+  @override
+  String get orWith => 'au endelea na';
+
+  @override
+  String get withGoogle => 'Endelea na Google';
+
+  @override
+  String get withApple => 'Endelea na Apple';
+
+  @override
+  String get codeTitle => 'Weka msimbo';
+
+  @override
+  String codeLead(String v) {
+    return 'Tumetuma msimbo kwa $v.';
+  }
+
+  @override
+  String get codeLabel => 'Msimbo wa tarakimu 6';
+
+  @override
+  String codeResendIn(int n) {
+    return 'Tuma tena baada ya sekunde $n';
+  }
+
+  @override
+  String get codeResend => 'Tuma msimbo tena';
+
+  @override
+  String get codeChangePhone => 'Badilisha namba';
+
+  @override
+  String codeLocal(String v) {
+    return 'Majaribio: msimbo wako ni $v';
+  }
+
+  @override
+  String get verify => 'Thibitisha';
+
+  @override
+  String get welcomeName => 'Karibu! Tukuiteje?';
+
+  @override
+  String get nameLabel => 'Jina lako';
+
+  @override
+  String get nameHint =>
+      'Litaonekana kwenye maoni yako na kwenye orodha za waliosoma habari (unaweza kulificha).';
+
+  @override
+  String get acceptTerms => 'Nakubali miongozo ya jumuiya na sera ya faragha';
+
+  @override
+  String get continueOn => 'Endelea';
+
+  @override
+  String get signOut => 'Toka';
+
+  @override
+  String get accountTitle => 'Akaunti yangu';
+
+  @override
+  String get editName => 'Badilisha jina';
+
+  @override
+  String get saveChanges => 'Hifadhi mabadiliko';
+
+  @override
+  String get downloadData => 'Pakua data yangu';
+
+  @override
+  String get deleteAccount => 'Futa akaunti';
+
+  @override
+  String get deleteConfirm =>
+      'Akaunti itafutwa baada ya siku 30. Ukiingia tena kabla ya hapo, itabaki. Endelea?';
+
+  @override
+  String get joinTitle => 'Jiunge na wasomaji wetu';
+
+  @override
+  String get joinPoints => 'Penda habari · Toa maoni · Hifadhi kwenye vifaa vyote';
+
+  @override
+  String get likeStory => 'Penda';
+
+  @override
+  String likesCount(int n) {
+    return 'Wamependa $n';
+  }
+
+  @override
+  String commentsCount(int n) {
+    return 'Maoni $n';
+  }
+
+  @override
+  String get comments => 'Maoni';
+
+  @override
+  String get commentsNone => 'Bado hakuna maoni. Kuwa wa kwanza.';
+
+  @override
+  String get commentsClosed => 'Maoni yamefungwa kwa habari hii.';
+
+  @override
+  String get commentPlaceholder => 'Andika maoni yako…';
+
+  @override
+  String commentReplyTo(String name) {
+    return 'Jibu $name';
+  }
+
+  @override
+  String get commentSend => 'Tuma';
+
+  @override
+  String get commentReply => 'Jibu';
+
+  @override
+  String get commentDelete => 'Futa';
+
+  @override
+  String get commentHeld => 'Inasubiri idhini';
+
+  @override
+  String get commentWriter => 'Mwandishi';
+
+  @override
+  String commentReplies(int n) {
+    return 'Ona majibu $n';
+  }
+
+  @override
+  String get commentsMore => 'Maoni zaidi';
+
+  @override
+  String get commentSlow => 'Subiri kidogo kabla ya maoni mengine.';
+
+  @override
+  String get commentFailed => 'Maoni hayakutumwa. Jaribu tena.';
+
+  @override
+  String get followTopic => 'Fuatilia';
+
+  @override
+  String get followingTopic => 'Unafuatilia';
+
+  @override
+  String get errorTryAgain => 'Kuna tatizo. Jaribu tena.';
+
+  @override
+  String get errorPhone => 'Namba hii si sahihi. Mfano: 0712 345 678';
+
+  @override
+  String get errorCountry => 'Hatuwezi kutuma SMS kwa nchi hii.';
+
+  @override
+  String get errorWait => 'Subiri kidogo kisha ujaribu tena.';
+
+  @override
+  String errorCodeWrong(int n) {
+    return 'Msimbo si sahihi. Majaribio $n yamebaki.';
+  }
+
+  @override
+  String get errorCodeExpired => 'Msimbo umeisha muda. Omba mpya.';
+
+  @override
+  String get errorSmsDown => 'SMS haziwezi kutumwa sasa. Jaribu baadaye.';
+
+  @override
+  String signedInToast(String name) {
+    return 'Karibu, $name!';
+  }
+
+  @override
+  String get signedOutToast => 'Umetoka.';
+
+  @override
+  String get signInFailed => 'Kuingia hakukufaulu. Jaribu tena.';
+
+  @override
+  String logoAlt(String name) {
+    return 'Nembo ya $name';
+  }
+
+  @override
+  String viewsCount(int n) {
+    return 'Imesomwa mara $n';
+  }
+
+  @override
+  String readersCount(int n) {
+    return 'Wasomaji $n';
+  }
+
+  @override
+  String get readersTitle => 'Waliosoma habari hii';
+
+  @override
+  String readersGuests(int n) {
+    return 'na wageni $n wasiojisajili';
+  }
+
+  @override
+  String get readersNone => 'Bado hakuna msomaji aliyejisajili.';
+
+  @override
+  String get readersPrivate => 'Ficha jina langu kwenye orodha za wasomaji';
 }

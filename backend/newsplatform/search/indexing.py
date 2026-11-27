@@ -118,7 +118,7 @@ def _indexed(locale: str, since: Any) -> dict[str, str]:
     try:
         while True:
             body: dict[str, Any] = {
-                "size": 5000,
+                "size": mapping.MAX_RESULT_WINDOW,  # a page may not go past the window
                 "_source": ["etag"],
                 "pit": {"id": pit, "keep_alive": "2m"},
                 "sort": [{"post_id": "asc"}],

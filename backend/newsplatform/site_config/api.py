@@ -40,6 +40,7 @@ class PublicConfigView(APIView):
                 indexnow_key=serializers.CharField(allow_blank=True),
                 same_as=serializers.ListField(child=serializers.CharField()),
             ),
+            engagement=schema("SiteEngagement", card_counts=serializers.BooleanField()),
             apps=schema(
                 "SiteApps",
                 android=serializers.CharField(allow_blank=True),
@@ -82,7 +83,10 @@ class AppConfigView(APIView):
                 sw=serializers.CharField(allow_blank=True),
                 en=serializers.CharField(allow_blank=True),
             ),
-            flags=schema("AppFlags", **{n: serializers.BooleanField() for n in services._FLAGS}),
+            flags=schema(
+                "AppFlags",
+                **{n: serializers.BooleanField() for n in (*services._FLAGS, "card_counts")},
+            ),
             links=schema("AppLinks", **{n: serializers.CharField(allow_blank=True) for n in services._LINKS}),
             pinning=schema(
                 "AppPinning",

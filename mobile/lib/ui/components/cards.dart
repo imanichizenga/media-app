@@ -10,6 +10,7 @@ import '../tokens/news_icon.dart';
 import '../tokens/news_icons.g.dart';
 import '../tokens/theme.dart';
 import 'basics.dart';
+import 'card_counts.dart';
 import 'picture.dart';
 import 'signals.dart';
 import 'skeleton.dart';
@@ -52,7 +53,7 @@ class Kicker extends ConsumerWidget {
     final soft = context.type.caption.copyWith(color: onMedia ? OverMedia.soft : c.textSecondary);
     final breaking = story.isBreaking(now);
     final short = story.category.shortName;
-    return MetaLine(
+    final line = MetaLine(
       live: story.isLive && !quiet,
       names: [
         if (breaking) s.breaking else story.category.name,
@@ -62,6 +63,14 @@ class Kicker extends ConsumerWidget {
       reading: reading ? s.minutesRead(story.readingMinutes < 1 ? 1 : story.readingMinutes) : null,
       strong: strong,
       soft: soft,
+    );
+    if (!cardCountsOn(ref)) return line;
+    // The counts take what they need at the end; the line makes itself shorter as it always does (R2).
+    return Row(
+      children: [
+        Flexible(child: line),
+        CardCounts(story.id, onMedia: onMedia),
+      ],
     );
   }
 }

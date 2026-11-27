@@ -19,29 +19,19 @@ class AppPlatformVersions {
   /// Returns a new [AppPlatformVersions] instance.
   AppPlatformVersions({
     required this.minimum,
+
     required this.recommended,
+
     required this.store,
   });
 
-  @JsonKey(
-    name: r'minimum',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'minimum', required: true, includeIfNull: false)
   final String minimum;
 
-  @JsonKey(
-    name: r'recommended',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'recommended', required: true, includeIfNull: false)
   final String recommended;
 
-  @JsonKey(
-    name: r'store',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'store', required: true, includeIfNull: false)
   final String store;
 
   @override

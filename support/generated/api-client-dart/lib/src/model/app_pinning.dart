@@ -17,23 +17,12 @@ part 'app_pinning.g.dart';
 )
 class AppPinning {
   /// Returns a new [AppPinning] instance.
-  AppPinning({
-    required this.enabled,
-    required this.pins,
-  });
+  AppPinning({required this.enabled, required this.pins});
 
-  @JsonKey(
-    name: r'enabled',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'enabled', required: true, includeIfNull: false)
   final bool enabled;
 
-  @JsonKey(
-    name: r'pins',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'pins', required: true, includeIfNull: false)
   final List<String> pins;
 
   @override

@@ -60,7 +60,6 @@ class _$LogoCWProxyImpl implements _$LogoCWProxy {
   Logo png(Map<String, String> png) => this(png: png);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Logo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -114,39 +113,28 @@ extension $LogoCopyWith on Logo {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Logo _$LogoFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Logo',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'width',
-            'height',
-            'derived',
-            'svg',
-            'png'
-          ],
-        );
-        final val = Logo(
-          id: $checkedConvert('id', (v) => v as String),
-          width: $checkedConvert('width', (v) => (v as num).toInt()),
-          height: $checkedConvert('height', (v) => (v as num).toInt()),
-          derived: $checkedConvert('derived', (v) => v as bool),
-          svg: $checkedConvert('svg', (v) => v as String),
-          png:
-              $checkedConvert('png', (v) => Map<String, String>.from(v as Map)),
-        );
-        return val;
-      },
-    );
+Logo _$LogoFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Logo', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['id', 'width', 'height', 'derived', 'svg', 'png'],
+      );
+      final val = Logo(
+        id: $checkedConvert('id', (v) => v as String),
+        width: $checkedConvert('width', (v) => (v as num).toInt()),
+        height: $checkedConvert('height', (v) => (v as num).toInt()),
+        derived: $checkedConvert('derived', (v) => v as bool),
+        svg: $checkedConvert('svg', (v) => v as String),
+        png: $checkedConvert('png', (v) => Map<String, String>.from(v as Map)),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$LogoToJson(Logo instance) => <String, dynamic>{
-      'id': instance.id,
-      'width': instance.width,
-      'height': instance.height,
-      'derived': instance.derived,
-      'svg': instance.svg,
-      'png': instance.png,
-    };
+  'id': instance.id,
+  'width': instance.width,
+  'height': instance.height,
+  'derived': instance.derived,
+  'svg': instance.svg,
+  'png': instance.png,
+};

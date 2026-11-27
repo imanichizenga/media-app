@@ -17,15 +17,9 @@ part 'resolve.g.dart';
 )
 class Resolve {
   /// Returns a new [Resolve] instance.
-  Resolve({
-    required this.path,
-  });
+  Resolve({required this.path});
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

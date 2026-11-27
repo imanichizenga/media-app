@@ -18,23 +18,12 @@ part 'app_localization.g.dart';
 )
 class AppLocalization {
   /// Returns a new [AppLocalization] instance.
-  AppLocalization({
-    required this.defaultLocale,
-    required this.timezone,
-  });
+  AppLocalization({required this.defaultLocale, required this.timezone});
 
-  @JsonKey(
-    name: r'default_locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'default_locale', required: true, includeIfNull: false)
   final DefaultLocaleEnum defaultLocale;
 
-  @JsonKey(
-    name: r'timezone',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'timezone', required: true, includeIfNull: false)
   final String timezone;
 
   @override

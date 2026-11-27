@@ -7,6 +7,8 @@ import 'package:cupertino_ui/cupertino_ui.dart'
         CupertinoActionSheetAction,
         CupertinoAlertDialog,
         CupertinoDialogAction,
+        CupertinoSearchTextField,
+        OverlayVisibilityMode,
         CupertinoSliverNavigationBar,
         CupertinoSliverRefreshControl,
         CupertinoTabBar,
@@ -203,13 +205,93 @@ class PlaceBar extends StatelessWidget {
 
 /// One of the five places.
 class Place {
-  const Place(this.icon, this.name, {this.solid = false});
+  const Place(this.icon, this.name, {this.solid = false, this.count = 0, this.initial});
 
   final NewsIconData icon;
   final String name;
 
   /// Whether its filled form is still the icon.
   final bool solid;
+
+  /// A number on its corner (stories saved), so one remembers there is something there; 0 shows nothing.
+  final int count;
+
+  /// The signed-in reader's initial, in place of the icon (You).
+  final String? initial;
+}
+
+/// A place's icon with what it carries: the reader's initial, or a count on its corner. Sized as the icon, so nothing
+/// moves when either arrives; the count pops when it changes.
+class PlaceIcon extends StatelessWidget {
+  const PlaceIcon({super.key, required this.place, required this.icon, required this.active});
+
+  final Place place;
+  final Widget icon;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final base = place.initial == null
+        ? icon
+        : Container(
+            width: 24,
+            height: 24,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: c.brand,
+              shape: BoxShape.circle,
+              border: active ? Border.all(color: c.navActive, width: 2) : null,
+            ),
+            child: Text(
+              place.initial!,
+              style: context.type.caption.copyWith(
+                color: c.onBrand,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
+            ),
+          );
+    if (place.count == 0) return base;
+    final n = place.count > 99 ? '99+' : '${place.count}';
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        base,
+        Positioned(
+          top: -4,
+          right: -8,
+          child: TweenAnimationBuilder<double>(
+            key: ValueKey(place.count),
+            tween: Tween(begin: context.still ? 1 : 1.4, end: 1),
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.elasticOut,
+            builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+            child: Container(
+              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: c.brand,
+                borderRadius: BorderRadius.circular(9),
+                border: Border.all(color: c.navBg, width: 2),
+              ),
+              child: Text(
+                n,
+                style: context.type.caption.copyWith(
+                  color: c.onBrand,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 /// The five places at the foot: Material's bar with its pill, or iOS's translucent one with a filled icon.
@@ -236,12 +318,16 @@ class PlacesBar extends StatelessWidget {
     final on = dark ? OverMedia.ink : c.navActive;
     final off = dark ? OverMedia.soft : c.navFg;
     final edge = BorderSide(color: dark ? OverMedia.faint : c.border, width: 0.5);
-    NewsIcon icon(int i, bool active) => NewsIcon(
-      places[i].icon,
-      size: 24,
-      color: active ? on : off,
-      stroke: active ? 2.1 : 1.7,
-      filled: active && places[i].solid,
+    Widget icon(int i, bool active) => PlaceIcon(
+      place: places[i],
+      active: active,
+      icon: NewsIcon(
+        places[i].icon,
+        size: 24,
+        color: active ? on : off,
+        stroke: active ? 2.1 : 1.7,
+        filled: active && places[i].solid,
+      ),
     );
     TextStyle label(bool active, double size) => context.type.caption.copyWith(
       color: active ? on : off,
@@ -762,4 +848,103 @@ class _Float extends StatelessWidget {
       child: Material(color: context.colors.surfaceRaised, child: child),
     ),
   );
+}
+
+/// The search field: iOS's own, or Material's rounded one with the same parts (a magnifier, the words, a clear button).
+class NativeSearchField extends StatelessWidget {
+  const NativeSearchField({
+    super.key,
+    required this.controller,
+    required this.focus,
+    required this.onChanged,
+    required this.onSubmitted,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focus;
+  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = Strings.of(context);
+    final c = context.colors;
+    final style = context.type.bodyL.copyWith(color: c.textPrimary);
+    void clear() {
+      controller.clear();
+      onChanged('');
+      focus.requestFocus();
+    }
+
+    final field = context.isApple
+        // The app carries no icon font: the magnifier and the clear mark are its own drawings.
+        ? ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) => Stack(
+              alignment: Alignment.centerRight,
+              children: [
+                CupertinoSearchTextField(
+                  controller: controller,
+                  focusNode: focus,
+                  placeholder: s.searchPlaceholder,
+                  style: style,
+                  prefixIcon: NewsIcon(NewsIcons.search, size: 18, color: c.textSecondary),
+                  suffixMode: OverlayVisibilityMode.never,
+                  padding: EdgeInsetsDirectional.fromSTEB(
+                    6,
+                    10,
+                    controller.text.isEmpty ? 6 : 40,
+                    10,
+                  ),
+                  onChanged: onChanged,
+                  onSubmitted: onSubmitted,
+                ),
+                if (controller.text.isNotEmpty)
+                  Pressable(
+                    label: s.searchClear,
+                    onTap: clear,
+                    child: SizedBox.square(
+                      dimension: 40,
+                      child: Center(child: NewsIcon(NewsIcons.x, size: 18, color: c.textSecondary)),
+                    ),
+                  ),
+              ],
+            ),
+          )
+        : ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) => TextField(
+              controller: controller,
+              focusNode: focus,
+              style: style,
+              textInputAction: TextInputAction.search,
+              onChanged: onChanged,
+              onSubmitted: onSubmitted,
+              decoration: InputDecoration(
+                hintText: s.searchPlaceholder,
+                filled: true,
+                fillColor: c.surfaceSunken,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: NewsIcon(NewsIcons.search, size: 20, color: c.textSecondary),
+                ),
+                prefixIconConstraints: const BoxConstraints(minWidth: 48),
+                suffixIcon: controller.text.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: s.searchClear,
+                        onPressed: clear,
+                        icon: NewsIcon(NewsIcons.x, size: 20, color: c.textSecondary),
+                      ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          );
+    return Semantics(textField: true, label: s.searchLabel, child: field);
+  }
 }

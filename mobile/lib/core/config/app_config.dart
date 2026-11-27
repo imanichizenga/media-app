@@ -121,4 +121,4 @@ Brand brand(Ref ref) {
 @Riverpod(keepAlive: true)
 AppFlags flags(Ref ref) =>
     ref.watch(appConfigControllerProvider).value?.flags ??
-    AppFlags(shorts: true, youtube: true, offlineSaving: true);
+    AppFlags(shorts: true, youtube: true, offlineSaving: true, cardCounts: true);

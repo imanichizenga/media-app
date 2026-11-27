@@ -60,7 +60,6 @@ class _$AppLinksCWProxyImpl implements _$AppLinksCWProxy {
   AppLinks terms(String terms) => this(terms: terms);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppLinks(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -114,38 +113,35 @@ extension $AppLinksCopyWith on AppLinks {
 // JsonSerializableGenerator
 // **************************************************************************
 
-AppLinks _$AppLinksFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'AppLinks',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'about',
-            'editorial',
-            'corrections',
-            'contact',
-            'privacy',
-            'terms'
-          ],
-        );
-        final val = AppLinks(
-          about: $checkedConvert('about', (v) => v as String),
-          editorial: $checkedConvert('editorial', (v) => v as String),
-          corrections: $checkedConvert('corrections', (v) => v as String),
-          contact: $checkedConvert('contact', (v) => v as String),
-          privacy: $checkedConvert('privacy', (v) => v as String),
-          terms: $checkedConvert('terms', (v) => v as String),
-        );
-        return val;
-      },
-    );
+AppLinks _$AppLinksFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('AppLinks', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'about',
+          'editorial',
+          'corrections',
+          'contact',
+          'privacy',
+          'terms',
+        ],
+      );
+      final val = AppLinks(
+        about: $checkedConvert('about', (v) => v as String),
+        editorial: $checkedConvert('editorial', (v) => v as String),
+        corrections: $checkedConvert('corrections', (v) => v as String),
+        contact: $checkedConvert('contact', (v) => v as String),
+        privacy: $checkedConvert('privacy', (v) => v as String),
+        terms: $checkedConvert('terms', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$AppLinksToJson(AppLinks instance) => <String, dynamic>{
-      'about': instance.about,
-      'editorial': instance.editorial,
-      'corrections': instance.corrections,
-      'contact': instance.contact,
-      'privacy': instance.privacy,
-      'terms': instance.terms,
-    };
+  'about': instance.about,
+  'editorial': instance.editorial,
+  'corrections': instance.corrections,
+  'contact': instance.contact,
+  'privacy': instance.privacy,
+  'terms': instance.terms,
+};

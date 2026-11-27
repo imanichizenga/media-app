@@ -17,10 +17,7 @@ abstract class _$SiteLocalizationCWProxy {
   /// ```dart
   /// SiteLocalization(...).copyWith(id: 12, name: "My name")
   /// ````
-  SiteLocalization call({
-    DefaultLocaleEnum defaultLocale,
-    String timezone,
-  });
+  SiteLocalization call({DefaultLocaleEnum defaultLocale, String timezone});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSiteLocalization.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSiteLocalization.copyWith.fieldName(...)`
@@ -37,7 +34,6 @@ class _$SiteLocalizationCWProxyImpl implements _$SiteLocalizationCWProxy {
   SiteLocalization timezone(String timezone) => this(timezone: timezone);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteLocalization(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -72,23 +68,17 @@ extension $SiteLocalizationCopyWith on SiteLocalization {
 // **************************************************************************
 
 SiteLocalization _$SiteLocalizationFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'SiteLocalization',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['default_locale', 'timezone'],
-        );
-        final val = SiteLocalization(
-          defaultLocale: $checkedConvert('default_locale',
-              (v) => $enumDecode(_$DefaultLocaleEnumEnumMap, v)),
-          timezone: $checkedConvert('timezone', (v) => v as String),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'defaultLocale': 'default_locale'},
-    );
+    $checkedCreate('SiteLocalization', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['default_locale', 'timezone']);
+      final val = SiteLocalization(
+        defaultLocale: $checkedConvert(
+          'default_locale',
+          (v) => $enumDecode(_$DefaultLocaleEnumEnumMap, v),
+        ),
+        timezone: $checkedConvert('timezone', (v) => v as String),
+      );
+      return val;
+    }, fieldKeyMap: const {'defaultLocale': 'default_locale'});
 
 Map<String, dynamic> _$SiteLocalizationToJson(SiteLocalization instance) =>
     <String, dynamic>{

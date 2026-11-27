@@ -20,70 +20,45 @@ class NavigationItem {
   /// Returns a new [NavigationItem] instance.
   NavigationItem({
     required this.id,
+
     required this.name,
+
     required this.shortName,
+
     required this.slug,
+
     required this.path,
+
     required this.color,
+
     required this.icon,
+
     required this.children,
   });
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'name', required: true, includeIfNull: false)
   final String name;
 
   /// The editor's short label, or the name
-  @JsonKey(
-    name: r'short_name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'short_name', required: true, includeIfNull: false)
   final String shortName;
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'color', required: true, includeIfNull: false)
   final String color;
 
-  @JsonKey(
-    name: r'icon',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'icon', required: true, includeIfNull: false)
   final String icon;
 
-  @JsonKey(
-    name: r'children',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'children', required: true, includeIfNull: false)
   final List<PublicCategory> children;
 
   @override

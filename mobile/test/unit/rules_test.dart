@@ -27,9 +27,11 @@ void main() {
         for (final (i, line) in f.readAsLinesSync().indexed)
           if (RegExp(r'(Circular|Linear)ProgressIndicator\(').hasMatch(line)) '${f.path}:${i + 1}',
     ];
-    // The pending state of the play button.
-    expect(found, hasLength(1));
-    expect(found.single, startsWith('lib/ui/components/player.dart'));
+    // Pending states of buttons: the play button, and the sign-in step's button.
+    expect(found.map((f) => f.split(':').first).toList()..sort(), [
+      'lib/features/account/sign_in.dart',
+      'lib/ui/components/player.dart',
+    ]);
   });
   test('no text is written in the code', () {
     final found = <String>[];

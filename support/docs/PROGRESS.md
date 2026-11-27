@@ -12,7 +12,8 @@ Source of truth for what to build: [SPEC.md](SPEC.md). Two-tier acceptance: **LO
 | **M3 Mobile app** | Done, pull request 11 (merged 2026-11-26). **G2: approved with changes** 2026-11-25. Cold start and frames on the emulator: being measured (they were missing when this row said Done) | Needs C1, D1, G3 |
 | **M3.1 Mobile polish** | Done (ADR-0044), merged with pull request 11: every test G2 asked for, platform goldens, gallery `m3-1.zip` | n/a |
 | **M2 Website** | Done on `m2-website` (ADR-0045 to 0047), 2026-11-26: 58 website E2E tests in CI (`e2e-web`), all green locally; strict CSP without a nonce; Lighthouse every score 100, LCP 1.52 to 1.70 s; inside navigation with a red loading bar, no reloads; gallery `m2.zip` (214 screens). PR open; merges after **G2** on the M3.2 and M2 galleries | Needs A1 to A3, A8: Rich Results Test, real CDN purge, Search Console, ECS deploy |
-| M4 to M11 | Not started | Not started |
+| **M4 Identity & engagement** | In progress on `search` (ADR-0050), 2026-11-27: backend (Beem, Google, Apple providers with Test buttons; SMS codes with fraud limits; rotating tokens; likes, saves, comments, follows; views and readers), website (sign-in sheet, engagement, account) and seeded readers done and tested. App, 2026-11-27: sign-in by phone and SMS code, likes, comments, readers, account; `account_test.dart` (sign-in resumes the like, wrong code, SMS off, refused like goes back). Still to do: Google and Apple buttons in the app (their SDK packages), web challenge and app attestation before SMS, 5k likes/s load test | Needs real Beem, Google, Apple settings (runbooks/reader-sign-in.md) |
+| M5 to M11 | Not started | Not started |
 
 ## Next session starts here
 
@@ -107,7 +108,7 @@ The full text of the task these come from is summarised in [design/public-experi
 | Details of a failed integration test stay in the vendor's English; hints are bilingual | Decided |
 | Content renderer in Flutter over all fixtures | M3 |
 | Notifications on workflow transitions (the signal exists) | M6 |
-| Search endpoint answers `available: false` | M8 |
+| Search (ADR-0049) on branch `search`: API, OpenSearch + Postgres fallback, website page done; app field on Explore done 2026-11-27 (headlines while typing, results with filters, recent searches on the phone; `search_test.dart` on Android and iOS); Terraform for the domain and the million-story load test still to do | `search` |
 
 ## Defects found in M1 and fixed
 

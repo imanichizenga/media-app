@@ -17,10 +17,7 @@ abstract class _$SchemesCWProxy {
   /// ```dart
   /// Schemes(...).copyWith(id: 12, name: "My name")
   /// ````
-  Schemes call({
-    String light,
-    String dark,
-  });
+  Schemes call({String light, String dark});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSchemes.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSchemes.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$SchemesCWProxyImpl implements _$SchemesCWProxy {
   Schemes dark(String dark) => this(dark: dark);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Schemes(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,23 +66,17 @@ extension $SchemesCopyWith on Schemes {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Schemes _$SchemesFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Schemes',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['light', 'dark'],
-        );
-        final val = Schemes(
-          light: $checkedConvert('light', (v) => v as String),
-          dark: $checkedConvert('dark', (v) => v as String),
-        );
-        return val;
-      },
-    );
+Schemes _$SchemesFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Schemes', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['light', 'dark']);
+      final val = Schemes(
+        light: $checkedConvert('light', (v) => v as String),
+        dark: $checkedConvert('dark', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$SchemesToJson(Schemes instance) => <String, dynamic>{
-      'light': instance.light,
-      'dark': instance.dark,
-    };
+  'light': instance.light,
+  'dark': instance.dark,
+};

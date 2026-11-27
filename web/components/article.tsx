@@ -7,30 +7,45 @@ import type { ReactNode } from "react";
 import type { Article } from "@/lib/api";
 import { type T, words } from "@/lib/i18n";
 import { contentOf, dateOf } from "@/lib/view";
-import { SaveButton, ShareButton, TextSizeButton } from "./client";
+import { Comments, CommentsButton, LikeButton, StoryStats } from "./account";
+import { SaveButton, ShareButton } from "./client";
 import { Frame } from "./frame";
 import { type Maybe, none } from "./parts";
 
 const bones = (widths: string[]) => widths.map((w) => <Bone key={w} className={w} />);
 const isVideo = (a: Article) => Boolean(a.video || a.youtube_id);
 
-/** What a guest can do with a story. Absent, never disabled: the rest comes with accounts (M4). */
+/** What a reader can do with a story: only what its rules allow is drawn (SPEC 9.6), never disabled. */
 function Tools({ a, t, column = false }: { a?: Article; t: T; column?: boolean }) {
   const each = `tap grid place-items-center text-text-secondary ${
     column ? "w-11 rounded-full hover:bg-surface-sunken" : "h-14 w-full"
   }`;
+  const likes = !a || a.engagement.likes;
+  const talk = a?.engagement.comments !== "closed";
+  const keep = !a || a.engagement.bookmarks;
+  const share = !a || a.engagement.shares;
+  // Text size is the reader's own setting (You), not a tool of each story.
+  const n = Number(likes) + Number(talk) + Number(keep) + Number(share);
+  const grid = [
+    "grid grid-cols-1",
+    "grid grid-cols-1",
+    "grid grid-cols-2",
+    "grid grid-cols-3",
+    "grid grid-cols-4",
+  ];
   return (
-    <ul className={column ? "flex flex-col items-center gap-2" : "grid grid-cols-3"}>
-      <li>
-        <TextSizeButton label={t("textSize")} className={each} />
-      </li>
-      {(!a || a.engagement.bookmarks) && (
+    <ul className={column ? "flex flex-col items-center gap-2" : grid[n]}>
+      {likes && <li>{a ? <LikeButton post={a.id} t={t} className={each} /> : <span className={each} />}</li>}
+      {talk && <li>{a ? <CommentsButton t={t} className={each} /> : <span className={each} />}</li>}
+      {keep && (
         <li>
           {a ? (
             <SaveButton
-              story={{ path: a.path, headline: a.headline, category: a.category.name }}
+              story={{ path: a.path, headline: a.headline, category: a.category.name, post: a.id }}
               save={t("save")}
               unsave={t("unsave")}
+              done={t("savedDoneWeb")}
+              undone={t("savedUndone")}
               className={each}
             />
           ) : (
@@ -38,7 +53,7 @@ function Tools({ a, t, column = false }: { a?: Article; t: T; column?: boolean }
           )}
         </li>
       )}
-      {(!a || a.engagement.shares) && (
+      {share && (
         <li>
           {a ? (
             <ShareButton label={t("share")} done={t("linkCopied")} title={a.headline} className={each} />
@@ -94,6 +109,7 @@ function Byline({ a, env, t, zone }: { a?: Article; env: NewsEnv; t: T; zone: st
             bones(["w-48"])
           )}
         </p>
+        {a && <StoryStats post={a.id} t={t} />}
         {a && Date.parse(a.modified_at) - Date.parse(a.published_at) > 60_000 && (
           <p className="text-caption text-text-secondary">
             {t("updatedAt")} <time dateTime={a.modified_at}>{dateOf(a.modified_at, env.locale, zone)}</time>
@@ -206,7 +222,7 @@ export function ArticleView({
     >
       <div className="mx-auto grid max-w-7xl gap-x-8 px-4 pt-4 lg:grid-cols-[4rem_minmax(0,44rem)] lg:justify-center lg:pt-10 xl:grid-cols-[4rem_minmax(0,44rem)_minmax(0,1fr)]">
         <aside className="hidden lg:block">
-          <div className="sticky top-8">
+          <div className="sticky top-36">
             <Tools a={a} t={t} column />
           </div>
         </aside>
@@ -271,6 +287,7 @@ export function ArticleView({
                   ))}
                 </ul>
               )}
+              <Comments post={a.id} t={t} mode={a.engagement.comments} />
             </>
           ) : (
             <ArticleBody.Skeleton />

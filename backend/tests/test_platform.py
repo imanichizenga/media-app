@@ -64,7 +64,36 @@ def test_public_surface_has_no_admin_routes():
     theme = {p.strip("^").split("theme/")[1].split("(")[0] for p in rest if "theme/" in p}
     assert theme == {"", "current.css", "logo/", "manifest-"}
     other = {p for p in rest if "theme/" not in p and "well-known" not in p}
-    assert other == {"health/live", "health/ready", "api/v1/site-config", "api/v1/app-config"}
+    readers = {p for p in other if p.startswith(("api/v1/auth/", "api/v1/me", "api/v1/engagement/"))}
+    assert other - readers == {"health/live", "health/ready", "api/v1/site-config", "api/v1/app-config"}
+    # Readers' own addresses (ADR-0050): each listed on purpose, each a ReaderView (bearer token, rate limit,
+    # never cached unless the same for everyone). None of them reaches anything of the newsroom's.
+    assert readers == {
+        "api/v1/auth/methods",
+        "api/v1/auth/code",
+        "api/v1/auth/code/verify",
+        "api/v1/auth/google",
+        "api/v1/auth/apple",
+        "api/v1/auth/refresh",
+        "api/v1/auth/sign-out",
+        "api/v1/me",
+        "api/v1/me/export",
+        "api/v1/me/<slug:what>",
+        "api/v1/engagement/state",
+        "api/v1/engagement/posts/<uuid:post_id>/like",
+        "api/v1/engagement/posts/<uuid:post_id>/bookmark",
+        "api/v1/engagement/posts/<uuid:post_id>/comments",
+        "api/v1/engagement/posts/<uuid:post_id>/opened",
+        "api/v1/engagement/posts/<uuid:post_id>/readers",
+        "api/v1/engagement/comments/<uuid:comment_id>",
+        "api/v1/engagement/comments/<uuid:comment_id>/like",
+        "api/v1/engagement/follows/<slug:kind>/<uuid:target>",
+    }
+    from newsplatform.accounts.reader_api import ReaderView
+
+    for p in patterns:
+        if str(p.pattern) in readers:
+            assert issubclass(p.callback.view_class, ReaderView), p.pattern
     assert content == {
         "home",
         "latest",
@@ -77,6 +106,7 @@ def test_public_surface_has_no_admin_routes():
         "articles/<slug:slug>/related",
         "navigation",
         "search",
+        "search/suggest",
         "resolve",
         # M2: the publisher's own pages and the sitemaps the website serves.
         "pages",

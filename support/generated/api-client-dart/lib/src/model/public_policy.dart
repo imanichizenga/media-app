@@ -20,53 +20,34 @@ class PublicPolicy {
   /// Returns a new [PublicPolicy] instance.
   PublicPolicy({
     required this.likes,
+
     required this.comments,
+
     required this.bookmarks,
+
     required this.shares,
+
     required this.reposts,
+
     required this.liveChat,
   });
 
-  @JsonKey(
-    name: r'likes',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'likes', required: true, includeIfNull: false)
   final bool likes;
 
-  @JsonKey(
-    name: r'comments',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'comments', required: true, includeIfNull: false)
   final CommentsEnum comments;
 
-  @JsonKey(
-    name: r'bookmarks',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'bookmarks', required: true, includeIfNull: false)
   final bool bookmarks;
 
-  @JsonKey(
-    name: r'shares',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'shares', required: true, includeIfNull: false)
   final bool shares;
 
-  @JsonKey(
-    name: r'reposts',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'reposts', required: true, includeIfNull: false)
   final bool reposts;
 
-  @JsonKey(
-    name: r'live_chat',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'live_chat', required: true, includeIfNull: false)
   final bool liveChat;
 
   @override

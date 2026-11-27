@@ -18,15 +18,9 @@ part 'sitemap_index.g.dart';
 )
 class SitemapIndex {
   /// Returns a new [SitemapIndex] instance.
-  SitemapIndex({
-    required this.months,
-  });
+  SitemapIndex({required this.months});
 
-  @JsonKey(
-    name: r'months',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'months', required: true, includeIfNull: false)
   final List<SitemapMonth> months;
 
   @override

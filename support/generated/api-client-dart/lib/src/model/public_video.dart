@@ -20,109 +20,69 @@ class PublicVideo {
   /// Returns a new [PublicVideo] instance.
   PublicVideo({
     required this.kind,
+
     required this.id,
+
     required this.alt,
+
     required this.credit,
+
     required this.width,
+
     required this.height,
+
     required this.blurhash,
+
     required this.color,
+
     required this.durationMs,
+
     required this.hls,
+
     required this.poster,
+
     required this.sprite,
+
     required this.spriteVtt,
   });
 
-  @JsonKey(
-    name: r'kind',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'kind', required: true, includeIfNull: false)
   final PublicVideoKindEnum kind;
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'alt',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'alt', required: true, includeIfNull: false)
   final String alt;
 
-  @JsonKey(
-    name: r'credit',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'credit', required: true, includeIfNull: false)
   final String credit;
 
-  @JsonKey(
-    name: r'width',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'width', required: true, includeIfNull: true)
   final int? width;
 
-  @JsonKey(
-    name: r'height',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'height', required: true, includeIfNull: true)
   final int? height;
 
-  @JsonKey(
-    name: r'blurhash',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'blurhash', required: true, includeIfNull: false)
   final String blurhash;
 
-  @JsonKey(
-    name: r'color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'color', required: true, includeIfNull: false)
   final String color;
 
-  @JsonKey(
-    name: r'duration_ms',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'duration_ms', required: true, includeIfNull: true)
   final int? durationMs;
 
-  @JsonKey(
-    name: r'hls',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'hls', required: true, includeIfNull: false)
   final String hls;
 
-  @JsonKey(
-    name: r'poster',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'poster', required: true, includeIfNull: false)
   final String poster;
 
-  @JsonKey(
-    name: r'sprite',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'sprite', required: true, includeIfNull: false)
   final String sprite;
 
-  @JsonKey(
-    name: r'sprite_vtt',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'sprite_vtt', required: true, includeIfNull: false)
   final String spriteVtt;
 
   @override

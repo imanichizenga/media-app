@@ -78,7 +78,6 @@ class _$PublicAuthorCWProxyImpl implements _$PublicAuthorCWProxy {
   PublicAuthor links(List<String> links) => this(links: links);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicAuthor(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -148,44 +147,45 @@ extension $PublicAuthorCopyWith on PublicAuthor {
 // **************************************************************************
 
 PublicAuthor _$PublicAuthorFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicAuthor',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'name',
-            'slug',
-            'path',
-            'title',
-            'avatar',
-            'bio',
-            'expertise',
-            'links'
-          ],
-        );
-        final val = PublicAuthor(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          avatar: $checkedConvert(
-              'avatar',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          bio: $checkedConvert('bio', (v) => v as String),
-          expertise: $checkedConvert('expertise',
-              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
-          links: $checkedConvert('links',
-              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('PublicAuthor', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'id',
+          'name',
+          'slug',
+          'path',
+          'title',
+          'avatar',
+          'bio',
+          'expertise',
+          'links',
+        ],
+      );
+      final val = PublicAuthor(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        slug: $checkedConvert('slug', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        title: $checkedConvert('title', (v) => v as String),
+        avatar: $checkedConvert(
+          'avatar',
+          (v) => v == null
+              ? null
+              : PublicImage.fromJson(v as Map<String, dynamic>),
+        ),
+        bio: $checkedConvert('bio', (v) => v as String),
+        expertise: $checkedConvert(
+          'expertise',
+          (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+        ),
+        links: $checkedConvert(
+          'links',
+          (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicAuthorToJson(PublicAuthor instance) =>
     <String, dynamic>{

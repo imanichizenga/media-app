@@ -24,4 +24,12 @@ SW = {
     "Check the bucket policy allows this distribution and the domain is deployed.": "Hakiki kwamba sera ya ndoo inaruhusu usambazaji huu na kikoa kimewekwa.",
     "The bucket may be public. Remove public policies immediately.": "Huenda ndoo iko wazi kwa umma. Ondoa sera za umma mara moja.",
     "Run this test against real AWS.": "Endesha jaribio hili kwenye AWS halisi.",
+    "The number is not valid.": "Namba hii si sahihi.",
+    "The Beem account has no credit left. Top it up.": "Akaunti ya Beem haina salio. Iongezee salio.",
+    "Beem had an internal error. Try again shortly.": "Beem imepata hitilafu ya ndani. Jaribu tena baada ya muda mfupi.",
+    "The sender ID is not registered or not active on this Beem account.": "Jina la mtumaji halijasajiliwa au halitumiki kwenye akaunti hii ya Beem.",
+    "The API key or secret is wrong.": "Ufunguo wa API au ufunguo wa siri si sahihi.",
+    "Check the web client ID and secret in Google Cloud → Credentials.": "Hakiki kitambulisho na siri ya mteja wa wavuti kwenye Google Cloud → Credentials.",
+    "Apple refused the client: check the Team ID, key ID, Services ID and the .p8 key.": "Apple imemkataa mteja: hakiki Team ID, Key ID, Services ID na ufunguo wa .p8.",
+    "This Services ID may not use Sign in with Apple: enable it in Apple's developer account.": "Services ID hii haijaruhusiwa kutumia Sign in with Apple: iwashe kwenye akaunti ya msanidi ya Apple.",
 }

@@ -11,6 +11,7 @@ VERSION = (
     1  # raise with every change to SETTINGS or the fields; search_reindex builds `<alias>-v<VERSION>-<time>`
 )
 LOCALES = ("sw", "en")
+MAX_RESULT_WINDOW = 1000  # 50 pages of 20 for readers; reconcile walks ids 1000 at a time
 
 # Words that carry no meaning on their own in Swahili news text. Phrase matches still see them.
 SWAHILI_STOP = [
@@ -95,14 +96,17 @@ def definition(locale: str) -> dict[str, Any]:
             "number_of_shards": settings.OPENSEARCH_SHARDS,
             "number_of_replicas": settings.OPENSEARCH_REPLICAS,
             "refresh_interval": "5s",
-            "max_result_window": 1000,
+            "max_result_window": MAX_RESULT_WINDOW,
             "analysis": {
                 "filter": {
                     "sw_stop": {"type": "stop", "stopwords": SWAHILI_STOP},
                     "edge": {"type": "edge_ngram", "min_gram": 2, "max_gram": 15},
                     "english_possessive": {"type": "stemmer", "language": "possessive_english"},
                     "english_stop": {"type": "stop", "stopwords": "_english_"},
-                    "english_stem": {"type": "stemmer", "language": "light_english"},
+                    "english_stem": {
+                        "type": "stemmer",
+                        "language": "english",
+                    },  # Porter, as the `english` analyzer
                 },
                 "analyzer": {
                     "sw_text": {"tokenizer": "standard", "filter": ["lowercase", "asciifolding", "sw_stop"]},
@@ -138,7 +142,8 @@ def definition(locale: str) -> dict[str, Any]:
                     "fields": {"prefix": prefix, "exact": _text("exact")},
                 },
                 "standfirst": _text(words),
-                "body": _text(words),
+                # Stored apart from _source, so answers do not carry it but snippets can be cut from it.
+                "body": {**_text(words), "store": True, "index_options": "offsets"},
                 "tags": {**_text(words), "fields": {"prefix": prefix}},
                 "tag_slugs": {"type": "keyword"},
                 "authors": {**_text("exact"), "fields": {"prefix": prefix}},

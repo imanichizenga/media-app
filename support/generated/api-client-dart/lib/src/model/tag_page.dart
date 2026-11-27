@@ -19,31 +19,15 @@ part 'tag_page.g.dart';
 )
 class TagPage {
   /// Returns a new [TagPage] instance.
-  TagPage({
-    required this.nextCursor,
-    required this.results,
-    required this.tag,
-  });
+  TagPage({required this.nextCursor, required this.results, required this.tag});
 
-  @JsonKey(
-    name: r'next_cursor',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'next_cursor', required: true, includeIfNull: true)
   final String? nextCursor;
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<Card> results;
 
-  @JsonKey(
-    name: r'tag',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'tag', required: true, includeIfNull: false)
   final PublicLabel tag;
 
   @override

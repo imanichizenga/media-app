@@ -17,10 +17,7 @@ abstract class _$CategoryTranslationCWProxy {
   /// ```dart
   /// CategoryTranslation(...).copyWith(id: 12, name: "My name")
   /// ````
-  CategoryTranslation call({
-    String locale,
-    String path,
-  });
+  CategoryTranslation call({String locale, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCategoryTranslation.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCategoryTranslation.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$CategoryTranslationCWProxyImpl implements _$CategoryTranslationCWProxy {
   CategoryTranslation path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CategoryTranslation(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -72,25 +68,15 @@ extension $CategoryTranslationCopyWith on CategoryTranslation {
 // **************************************************************************
 
 CategoryTranslation _$CategoryTranslationFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'CategoryTranslation',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['locale', 'path'],
-        );
-        final val = CategoryTranslation(
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('CategoryTranslation', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['locale', 'path']);
+      final val = CategoryTranslation(
+        locale: $checkedConvert('locale', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$CategoryTranslationToJson(
-        CategoryTranslation instance) =>
-    <String, dynamic>{
-      'locale': instance.locale,
-      'path': instance.path,
-    };
+  CategoryTranslation instance,
+) => <String, dynamic>{'locale': instance.locale, 'path': instance.path};

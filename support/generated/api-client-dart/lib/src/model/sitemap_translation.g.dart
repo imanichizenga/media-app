@@ -17,10 +17,7 @@ abstract class _$SitemapTranslationCWProxy {
   /// ```dart
   /// SitemapTranslation(...).copyWith(id: 12, name: "My name")
   /// ````
-  SitemapTranslation call({
-    String locale,
-    String path,
-  });
+  SitemapTranslation call({String locale, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSitemapTranslation.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSitemapTranslation.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$SitemapTranslationCWProxyImpl implements _$SitemapTranslationCWProxy {
   SitemapTranslation path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SitemapTranslation(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -72,24 +68,14 @@ extension $SitemapTranslationCopyWith on SitemapTranslation {
 // **************************************************************************
 
 SitemapTranslation _$SitemapTranslationFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'SitemapTranslation',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['locale', 'path'],
-        );
-        final val = SitemapTranslation(
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('SitemapTranslation', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['locale', 'path']);
+      final val = SitemapTranslation(
+        locale: $checkedConvert('locale', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$SitemapTranslationToJson(SitemapTranslation instance) =>
-    <String, dynamic>{
-      'locale': instance.locale,
-      'path': instance.path,
-    };
+    <String, dynamic>{'locale': instance.locale, 'path': instance.path};

@@ -19,11 +19,7 @@ abstract class _$AppMaintenanceCWProxy {
   /// ```dart
   /// AppMaintenance(...).copyWith(id: 12, name: "My name")
   /// ````
-  AppMaintenance call({
-    bool on_,
-    String sw,
-    String en,
-  });
+  AppMaintenance call({bool on_, String sw, String en});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppMaintenance.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAppMaintenance.copyWith.fieldName(...)`
@@ -42,7 +38,6 @@ class _$AppMaintenanceCWProxyImpl implements _$AppMaintenanceCWProxy {
   AppMaintenance en(String en) => this(en: en);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppMaintenance(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -82,27 +77,15 @@ extension $AppMaintenanceCopyWith on AppMaintenance {
 // **************************************************************************
 
 AppMaintenance _$AppMaintenanceFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'AppMaintenance',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['on', 'sw', 'en'],
-        );
-        final val = AppMaintenance(
-          on_: $checkedConvert('on', (v) => v as bool),
-          sw: $checkedConvert('sw', (v) => v as String),
-          en: $checkedConvert('en', (v) => v as String),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'on_': 'on'},
-    );
+    $checkedCreate('AppMaintenance', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['on', 'sw', 'en']);
+      final val = AppMaintenance(
+        on_: $checkedConvert('on', (v) => v as bool),
+        sw: $checkedConvert('sw', (v) => v as String),
+        en: $checkedConvert('en', (v) => v as String),
+      );
+      return val;
+    }, fieldKeyMap: const {'on_': 'on'});
 
 Map<String, dynamic> _$AppMaintenanceToJson(AppMaintenance instance) =>
-    <String, dynamic>{
-      'on': instance.on_,
-      'sw': instance.sw,
-      'en': instance.en,
-    };
+    <String, dynamic>{'on': instance.on_, 'sw': instance.sw, 'en': instance.en};

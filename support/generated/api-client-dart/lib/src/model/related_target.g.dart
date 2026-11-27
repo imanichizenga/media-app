@@ -17,10 +17,7 @@ abstract class _$RelatedTargetCWProxy {
   /// ```dart
   /// RelatedTarget(...).copyWith(id: 12, name: "My name")
   /// ````
-  RelatedTarget call({
-    String path,
-    String headline,
-  });
+  RelatedTarget call({String path, String headline});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelatedTarget.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelatedTarget.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$RelatedTargetCWProxyImpl implements _$RelatedTargetCWProxy {
   RelatedTarget headline(String headline) => this(headline: headline);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `RelatedTarget(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -71,24 +67,14 @@ extension $RelatedTargetCopyWith on RelatedTarget {
 // **************************************************************************
 
 RelatedTarget _$RelatedTargetFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'RelatedTarget',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['path', 'headline'],
-        );
-        final val = RelatedTarget(
-          path: $checkedConvert('path', (v) => v as String),
-          headline: $checkedConvert('headline', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('RelatedTarget', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['path', 'headline']);
+      final val = RelatedTarget(
+        path: $checkedConvert('path', (v) => v as String),
+        headline: $checkedConvert('headline', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$RelatedTargetToJson(RelatedTarget instance) =>
-    <String, dynamic>{
-      'path': instance.path,
-      'headline': instance.headline,
-    };
+    <String, dynamic>{'path': instance.path, 'headline': instance.headline};

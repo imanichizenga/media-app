@@ -20,7 +20,7 @@ for (const locale of ["sw", "en"] as const)
       ]);
       expect(said(/<meta name="description" content="([^"]+)"/g), name).toHaveLength(1);
       const robots = said(/<meta name="robots" content="([^"]+)"/g)[0] ?? "";
-      if (["search", "saved", "profile"].includes(name)) expect(robots, name).toContain("noindex");
+      if (["search", "results", "saved", "profile"].includes(name)) expect(robots, name).toContain("noindex");
       else {
         expect(robots, name).toContain("max-image-preview:large");
         const langs = said(/<link rel="alternate" hrefLang="([^"]+)"/gi);
@@ -28,6 +28,8 @@ for (const locale of ["sw", "en"] as const)
         expect(langs, name).toContain("x-default");
       }
       expect(said(/<meta property="og:image" content="([^"]+)"/g), name).toHaveLength(1);
+      for (const author of said(/<meta property="article:author" content="([^"]+)"/g))
+        expect(author, `${name} article:author`).toMatch(/^https?:\/\//);
       for (const json of html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)) {
         const data = JSON.parse(json[1] ?? "");
         expect(() => structured.parse(data), `${name} JSON-LD`).not.toThrow();

@@ -19,11 +19,7 @@ abstract class _$TagPageCWProxy {
   /// ```dart
   /// TagPage(...).copyWith(id: 12, name: "My name")
   /// ````
-  TagPage call({
-    String? nextCursor,
-    List<Card> results,
-    PublicLabel tag,
-  });
+  TagPage call({String? nextCursor, List<Card> results, PublicLabel tag});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTagPage.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTagPage.copyWith.fieldName(...)`
@@ -42,7 +38,6 @@ class _$TagPageCWProxyImpl implements _$TagPageCWProxy {
   TagPage tag(PublicLabel tag) => this(tag: tag);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TagPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -81,31 +76,27 @@ extension $TagPageCopyWith on TagPage {
 // JsonSerializableGenerator
 // **************************************************************************
 
-TagPage _$TagPageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'TagPage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['next_cursor', 'results', 'tag'],
-        );
-        final val = TagPage(
-          nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          tag: $checkedConvert(
-              'tag', (v) => PublicLabel.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'nextCursor': 'next_cursor'},
-    );
+TagPage _$TagPageFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('TagPage', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['next_cursor', 'results', 'tag']);
+      final val = TagPage(
+        nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        tag: $checkedConvert(
+          'tag',
+          (v) => PublicLabel.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'nextCursor': 'next_cursor'});
 
 Map<String, dynamic> _$TagPageToJson(TagPage instance) => <String, dynamic>{
-      'next_cursor': instance.nextCursor,
-      'results': instance.results.map((e) => e.toJson()).toList(),
-      'tag': instance.tag.toJson(),
-    };
+  'next_cursor': instance.nextCursor,
+  'results': instance.results.map((e) => e.toJson()).toList(),
+  'tag': instance.tag.toJson(),
+};

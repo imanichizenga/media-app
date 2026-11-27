@@ -20,77 +20,49 @@ class PublicAuthor {
   /// Returns a new [PublicAuthor] instance.
   PublicAuthor({
     required this.id,
+
     required this.name,
+
     required this.slug,
+
     required this.path,
+
     required this.title,
+
     required this.avatar,
+
     required this.bio,
+
     required this.expertise,
+
     required this.links,
   });
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'name', required: true, includeIfNull: false)
   final String name;
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-  @JsonKey(
-    name: r'avatar',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'avatar', required: true, includeIfNull: true)
   final PublicImage? avatar;
 
-  @JsonKey(
-    name: r'bio',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'bio', required: true, includeIfNull: false)
   final String bio;
 
-  @JsonKey(
-    name: r'expertise',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'expertise', required: true, includeIfNull: false)
   final List<String> expertise;
 
-  @JsonKey(
-    name: r'links',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'links', required: true, includeIfNull: false)
   final List<String> links;
 
   @override

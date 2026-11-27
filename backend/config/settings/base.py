@@ -114,6 +114,9 @@ AWS_ENDPOINT_URL = env_str("AWS_ENDPOINT_URL", "")
 STORAGE_ENDPOINT_URL = env_str("STORAGE_ENDPOINT_URL", "")  # SeaweedFS
 LOCAL_TRANSCODER = env_bool("LOCAL_TRANSCODER")  # FFmpeg in place of MediaConvert
 LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
+# Sign-in codes go to the log and back in the answer instead of by SMS (ADR-0050). Refused in deployed
+# environments.
+LOCAL_SMS = env_bool("LOCAL_SMS")
 LOCAL_WEB_ORIGIN = env_str(
     "LOCAL_WEB_ORIGIN", ""
 )  # a website on this machine, told like the real one (ADR-0046)
@@ -245,6 +248,18 @@ OPENSEARCH_PREFIX = env_str("OPENSEARCH_PREFIX", "news")
 OPENSEARCH_SHARDS = env_int("OPENSEARCH_SHARDS", 2 if IS_DEPLOYED else 1)
 OPENSEARCH_REPLICAS = env_int("OPENSEARCH_REPLICAS", 1 if IS_DEPLOYED else 0)
 CELERY_TASK_ROUTES["newsplatform.search.tasks.*"] = {"queue": "default"}
+CELERY_BEAT_SCHEDULE["readers-erase"] = {
+    "task": "newsplatform.accounts.tasks.erase_due_readers",
+    "schedule": 86400,
+}
+CELERY_BEAT_SCHEDULE["engagement-views"] = {
+    "task": "newsplatform.engagement.tasks.persist_views",
+    "schedule": 300,
+}
+CELERY_BEAT_SCHEDULE["engagement-reconcile"] = {
+    "task": "newsplatform.engagement.tasks.reconcile_counts",
+    "schedule": 3600,
+}
 CELERY_BEAT_SCHEDULE["search-reconcile"] = {
     "task": "newsplatform.search.tasks.reconcile",
     "schedule": 3600,

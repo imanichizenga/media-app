@@ -96,7 +96,6 @@ class _$PublicImageCWProxyImpl implements _$PublicImageCWProxy {
   PublicImage crops(String crops) => this(crops: crops);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicImage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -180,52 +179,50 @@ extension $PublicImageCopyWith on PublicImage {
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicImage _$PublicImageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicImage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'kind',
-            'id',
-            'alt',
-            'credit',
-            'width',
-            'height',
-            'blurhash',
-            'color',
-            'focal',
-            'base',
-            'widths',
-            'crops'
-          ],
-        );
-        final val = PublicImage(
-          kind: $checkedConvert(
-              'kind', (v) => $enumDecode(_$PublicImageKindEnumEnumMap, v)),
-          id: $checkedConvert('id', (v) => v as String),
-          alt: $checkedConvert('alt', (v) => v as String),
-          credit: $checkedConvert('credit', (v) => v as String),
-          width: $checkedConvert('width', (v) => (v as num?)?.toInt()),
-          height: $checkedConvert('height', (v) => (v as num?)?.toInt()),
-          blurhash: $checkedConvert('blurhash', (v) => v as String),
-          color: $checkedConvert('color', (v) => v as String),
-          focal: $checkedConvert(
-              'focal',
-              (v) =>
-                  (v as List<dynamic>).map((e) => (e as num).toInt()).toList()),
-          base_: $checkedConvert('base', (v) => v as String),
-          widths: $checkedConvert(
-              'widths',
-              (v) =>
-                  (v as List<dynamic>).map((e) => (e as num).toInt()).toList()),
-          crops: $checkedConvert('crops', (v) => v as String),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'base_': 'base'},
-    );
+PublicImage _$PublicImageFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('PublicImage', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'kind',
+          'id',
+          'alt',
+          'credit',
+          'width',
+          'height',
+          'blurhash',
+          'color',
+          'focal',
+          'base',
+          'widths',
+          'crops',
+        ],
+      );
+      final val = PublicImage(
+        kind: $checkedConvert(
+          'kind',
+          (v) => $enumDecode(_$PublicImageKindEnumEnumMap, v),
+        ),
+        id: $checkedConvert('id', (v) => v as String),
+        alt: $checkedConvert('alt', (v) => v as String),
+        credit: $checkedConvert('credit', (v) => v as String),
+        width: $checkedConvert('width', (v) => (v as num?)?.toInt()),
+        height: $checkedConvert('height', (v) => (v as num?)?.toInt()),
+        blurhash: $checkedConvert('blurhash', (v) => v as String),
+        color: $checkedConvert('color', (v) => v as String),
+        focal: $checkedConvert(
+          'focal',
+          (v) => (v as List<dynamic>).map((e) => (e as num).toInt()).toList(),
+        ),
+        base_: $checkedConvert('base', (v) => v as String),
+        widths: $checkedConvert(
+          'widths',
+          (v) => (v as List<dynamic>).map((e) => (e as num).toInt()).toList(),
+        ),
+        crops: $checkedConvert('crops', (v) => v as String),
+      );
+      return val;
+    }, fieldKeyMap: const {'base_': 'base'});
 
 Map<String, dynamic> _$PublicImageToJson(PublicImage instance) =>
     <String, dynamic>{
@@ -243,6 +240,4 @@ Map<String, dynamic> _$PublicImageToJson(PublicImage instance) =>
       'crops': instance.crops,
     };
 
-const _$PublicImageKindEnumEnumMap = {
-  PublicImageKindEnum.image: 'image',
-};
+const _$PublicImageKindEnumEnumMap = {PublicImageKindEnum.image: 'image'};

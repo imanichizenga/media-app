@@ -21,6 +21,7 @@ Method | HTTP request | Description
 [**related**](ContentApi.md#related) | **GET** /api/v1/content/articles/{slug}/related | 
 [**resolve**](ContentApi.md#resolve) | **GET** /api/v1/content/resolve | 
 [**search**](ContentApi.md#search) | **GET** /api/v1/content/search | 
+[**searchSuggest**](ContentApi.md#searchsuggest) | **GET** /api/v1/content/search/suggest | 
 [**sitemapIndex**](ContentApi.md#sitemapindex) | **GET** /api/v1/content/sitemap | 
 [**sitemapMonth**](ContentApi.md#sitemapmonth) | **GET** /api/v1/content/sitemap/{month} | 
 [**sitemapNews**](ContentApi.md#sitemapnews) | **GET** /api/v1/content/sitemap/news | 
@@ -530,22 +531,27 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **search**
-> Search search(locale, q)
+> Search search(q, category, cursor, locale, since, sort, type)
 
 
 
-GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+ADR-0049: words, typing mistakes and first letters, in Swahili and English; newest first on a tie.
 
 ### Example
 ```dart
 import 'package:news_api_client/api.dart';
 
 final api = NewsApiClient().getContentApi();
-final String locale = locale_example; // String | 
 final String q = q_example; // String | 
+final String category = category_example; // String | A section's slug; its subsections are included
+final String cursor = cursor_example; // String | 
+final String locale = locale_example; // String | 
+final String since = since_example; // String | 
+final String sort = sort_example; // String | 
+final String type = type_example; // String | Comma-separated post types
 
 try {
-    final response = api.search(locale, q);
+    final response = api.search(q, category, cursor, locale, since, sort, type);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling ContentApi->search: $e\n');
@@ -556,12 +562,62 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **q** | **String**|  | 
+ **category** | **String**| A section's slug; its subsections are included | [optional] 
+ **cursor** | **String**|  | [optional] 
  **locale** | **String**|  | [optional] [default to 'sw']
- **q** | **String**|  | [optional] 
+ **since** | **String**|  | [optional] 
+ **sort** | **String**|  | [optional] [default to 'relevance']
+ **type** | **String**| Comma-separated post types | [optional] 
 
 ### Return type
 
 [**Search**](Search.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **searchSuggest**
+> Suggest searchSuggest(q, locale)
+
+
+
+Headlines as the reader types (ADR-0049).
+
+### Example
+```dart
+import 'package:news_api_client/api.dart';
+
+final api = NewsApiClient().getContentApi();
+final String q = q_example; // String | 
+final String locale = locale_example; // String | 
+
+try {
+    final response = api.searchSuggest(q, locale);
+    print(response);
+} on DioException catch (e) {
+    print('Exception when calling ContentApi->searchSuggest: $e\n');
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **q** | **String**|  | 
+ **locale** | **String**|  | [optional] [default to 'sw']
+
+### Return type
+
+[**Suggest**](Suggest.md)
 
 ### Authorization
 

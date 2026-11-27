@@ -62,7 +62,11 @@ class CacheInterceptor extends Interceptor {
           ..statusCode = 200
           ..data = await decodeJson(entry.body)
           ..extra['unchanged'] = true;
-      } else if (response.statusCode == 200 && response.data is Object) {
+      } else if (response.statusCode == 200 &&
+          response.data is Object &&
+          // A reader's own answers say no-store (ADR-0050): never kept on the phone.
+          !(response.headers.value('cache-control') ?? '').contains('no-store') &&
+          options.headers['Authorization'] == null) {
         dropUnknown(response.data as Object?);
         unawaited(db.store(key, response.headers.value('etag') ?? '', jsonEncode(response.data)));
       }

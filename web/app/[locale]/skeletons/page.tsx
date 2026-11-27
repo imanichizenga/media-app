@@ -7,6 +7,7 @@ import { ExploreView } from "@/components/explore";
 import { Frame, Wide } from "@/components/frame";
 import { HomeView } from "@/components/home";
 import { Feed, none, PageHead, Subsections } from "@/components/parts";
+import { Filters, ResultsBones, SearchTop } from "@/components/search";
 import { ShortsBones, ShortsFrame } from "@/components/shorts";
 import { VideoView } from "@/components/video";
 import { home, navigation, orNull, site as readSite } from "@/lib/api";
@@ -102,7 +103,30 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
         <VideoView locale={locale} list={none(12)} />
       </Part>
       <Part kind="explore">
-        <ExploreView locale={locale} view={view} nav={none(8)} faces={[]} />
+        <ExploreView
+          locale={locale}
+          view={view}
+          nav={none(8)}
+          faces={[]}
+          top={<SearchTop base={at(locale, "/search")} wanted={{ q: "" }} t={t} />}
+        />
+      </Part>
+      <Part kind="results">
+        <Frame
+          locale={locale}
+          path={at(locale, "/search")}
+          place="explore"
+          view={view}
+          title={t("navExplore")}
+        >
+          <Wide>
+            <SearchTop base={at(locale, "/search")} wanted={{ q: "" }} t={t} />
+            <div data-search-body="">
+              <Filters base={at(locale, "/search")} wanted={{ q: "" }} t={t} />
+              <ResultsBones env={view} />
+            </div>
+          </Wide>
+        </Frame>
       </Part>
       <Part kind="shorts">
         <ShortsFrame locale={locale}>

@@ -19,37 +19,24 @@ class SiteSeo {
   /// Returns a new [SiteSeo] instance.
   SiteSeo({
     required this.googleVerification,
+
     required this.bingVerification,
+
     required this.indexnowKey,
+
     required this.sameAs,
   });
 
-  @JsonKey(
-    name: r'google_verification',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'google_verification', required: true, includeIfNull: false)
   final String googleVerification;
 
-  @JsonKey(
-    name: r'bing_verification',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'bing_verification', required: true, includeIfNull: false)
   final String bingVerification;
 
-  @JsonKey(
-    name: r'indexnow_key',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'indexnow_key', required: true, includeIfNull: false)
   final String indexnowKey;
 
-  @JsonKey(
-    name: r'same_as',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'same_as', required: true, includeIfNull: false)
   final List<String> sameAs;
 
   @override

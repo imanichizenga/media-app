@@ -54,7 +54,6 @@ class _$PublicStoryCWProxyImpl implements _$PublicStoryCWProxy {
   PublicStory isActive(bool isActive) => this(isActive: isActive);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicStory(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -103,25 +102,21 @@ extension $PublicStoryCopyWith on PublicStory {
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicStory _$PublicStoryFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicStory',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['slug', 'title', 'path', 'summary', 'is_active'],
-        );
-        final val = PublicStory(
-          slug: $checkedConvert('slug', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          summary: $checkedConvert('summary', (v) => v as String),
-          isActive: $checkedConvert('is_active', (v) => v as bool),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'isActive': 'is_active'},
-    );
+PublicStory _$PublicStoryFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('PublicStory', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['slug', 'title', 'path', 'summary', 'is_active'],
+      );
+      final val = PublicStory(
+        slug: $checkedConvert('slug', (v) => v as String),
+        title: $checkedConvert('title', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        summary: $checkedConvert('summary', (v) => v as String),
+        isActive: $checkedConvert('is_active', (v) => v as bool),
+      );
+      return val;
+    }, fieldKeyMap: const {'isActive': 'is_active'});
 
 Map<String, dynamic> _$PublicStoryToJson(PublicStory instance) =>
     <String, dynamic>{

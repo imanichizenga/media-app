@@ -18,6 +18,8 @@ import { keys, useSettings } from "@/lib/queries";
 
 type Spec = {
   name: string;
+  /** Its label's key, when the name alone would say too little. */
+  label?: string;
   kind: "text" | "number" | "check" | "list" | "select";
   options?: string[];
 };
@@ -59,6 +61,22 @@ const SECTIONS: Record<string, Spec[]> = {
     { name: "same_as", kind: "list" },
     { name: "app_banner", kind: "check" },
   ],
+  engagement: [{ name: "card_counts", kind: "check" }],
+  sign_in: [
+    { name: "phone", label: "signin_phone", kind: "check" },
+    { name: "google", label: "signin_google", kind: "check" },
+    { name: "apple", label: "signin_apple", kind: "check" },
+    { name: "countries", kind: "list" },
+    { name: "code_minutes", kind: "number" },
+    { name: "attempts", kind: "number" },
+    { name: "resend_seconds", kind: "number" },
+    { name: "per_phone_daily", kind: "number" },
+    { name: "per_ip_hourly", kind: "number" },
+    { name: "per_prefix_hourly", kind: "number" },
+    { name: "sms_hourly_budget", kind: "number" },
+    { name: "android_app_hash", kind: "text" },
+    { name: "terms_version", kind: "text" },
+  ],
   security: [
     { name: "idle_timeout_minutes", kind: "number" },
     { name: "absolute_timeout_hours", kind: "number" },
@@ -86,7 +104,8 @@ function Section({ name, specs }: { name: string; specs: Spec[] }) {
     e.preventDefault();
     if (!data) return;
     const form = new FormData(e.currentTarget);
-    const next: Record<string, unknown> = {};
+    // A section is saved whole: what this form does not show (the engagement defaults and kill switches) is kept.
+    const next: Record<string, unknown> = { ...values };
     for (const s of specs) {
       const raw = String(form.get(s.name) ?? "");
       next[s.name] =
@@ -139,7 +158,7 @@ function Section({ name, specs }: { name: string; specs: Spec[] }) {
                   <span className={s.kind === "list" ? "bone h-27 w-full" : "tap bone w-full"} />
                 </div>
               );
-            const label = t(`field.${s.name}` as never);
+            const label = t(`field.${s.label ?? s.name}` as never);
             const value = values[s.name];
             const disabled = !data?.can_edit || pending;
             if (s.kind === "check")

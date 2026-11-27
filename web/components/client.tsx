@@ -1,5 +1,5 @@
 import { Bone } from "@news/ui/base";
-import { ALargeSmall, Bookmark, Share2, Smartphone, SunMoon, X } from "@news/ui/icons";
+import { Bookmark, Share2, Smartphone, SunMoon, X } from "@news/ui/icons";
 import type { ReactNode } from "react";
 
 // What the reader presses. Plain elements: web/islands makes them work, and no framework is sent (ADR-0046).
@@ -28,11 +28,6 @@ export const SchemeChoice = ({ legend, names }: { legend: string; names: [string
   </fieldset>
 );
 
-export const TextSizeButton = ({ label, className = ICON }: { label: string; className?: string }) => (
-  <button type="button" aria-label={label} className={className} data-do="text">
-    <ALargeSmall size={22} />
-  </button>
-);
 export const TextSizeChoice = ({ label, sample }: { label: string; sample: string }) => (
   <div className="flex flex-col gap-3">
     <input
@@ -81,12 +76,17 @@ export const SaveButton = ({
   story,
   save,
   unsave,
+  done,
+  undone,
   className = ICON,
   on = "aria-pressed:text-liked",
 }: {
-  story: { path: string; headline: string; category: string };
+  story: { path: string; headline: string; category: string; post?: string };
   save: string;
   unsave: string;
+  /** Said when it is kept, and when it is let go. */
+  done?: string;
+  undone?: string;
   className?: string;
   on?: string;
 }) => (
@@ -99,8 +99,11 @@ export const SaveButton = ({
     data-path={story.path}
     data-headline={story.headline}
     data-category={story.category}
+    data-post={story.post}
     data-save={save}
     data-unsave={unsave}
+    data-done={done}
+    data-undone={undone}
   >
     <Bookmark size={21} />
   </button>

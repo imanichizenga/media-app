@@ -18,15 +18,9 @@ part 'sitemap_entries.g.dart';
 )
 class SitemapEntries {
   /// Returns a new [SitemapEntries] instance.
-  SitemapEntries({
-    required this.results,
-  });
+  SitemapEntries({required this.results});
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<SitemapEntry> results;
 
   @override

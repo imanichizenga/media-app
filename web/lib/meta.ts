@@ -73,7 +73,8 @@ export function metaOf({
             publishedTime: article.published,
             modifiedTime: article.modified,
             section: article.section,
-            authors: article.authors,
+            // Link readers (Facebook, LinkedIn) follow a whole address, never a path.
+            authors: article.authors.map((a) => (/^https?:/.test(a) ? a : absolute(a))),
           }
         : { type: "website" as const }),
     },

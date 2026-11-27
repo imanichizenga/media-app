@@ -21,6 +21,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/apple": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_apple"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_code"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/code/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_code_verify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_google"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_methods"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/sign-out": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_sign_out"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/content/articles/{slug}": {
         parameters: {
             query?: never;
@@ -198,8 +310,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description GET only, no cookies, no user. Anything about a person is a separate endpoint (M4). */
+        /** @description ADR-0049: words, typing mistakes and first letters, in Swahili and English; newest first on a tie. */
         get: operations["search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/content/search/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Headlines as the reader types (ADR-0049). */
+        get: operations["search_suggest"];
         put?: never;
         post?: never;
         delete?: never;
@@ -310,6 +439,213 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/engagement/comments/{comment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["comment_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/comments/{comment_id}/like": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["comment_like"];
+        post?: never;
+        delete: operations["comment_unlike"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/follows/{kind}/{target}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["follow"];
+        post?: never;
+        delete: operations["unfollow"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/posts/{post_id}/bookmark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["bookmark"];
+        post?: never;
+        delete: operations["unbookmark"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/posts/{post_id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description GET: a page of comments (or one comment's replies). POST: a new one. Signed-in readers also see their
+         *     own
+         *     held comments and which they liked, so their answers are private; everyone else's may be kept 15 s.
+         */
+        get: operations["comments"];
+        put?: never;
+        /**
+         * @description GET: a page of comments (or one comment's replies). POST: a new one. Signed-in readers also see their
+         *     own
+         *     held comments and which they liked, so their answers are private; everyone else's may be kept 15 s.
+         */
+        post: operations["comment_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/posts/{post_id}/like": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["like"];
+        post?: never;
+        delete: operations["unlike"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/posts/{post_id}/opened": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description A story was opened: counted (views, readers) and its counts given back. Guests too. */
+        post: operations["opened"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/posts/{post_id}/readers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Who read the story: signed-in readers who did not choose to be left out, and how many guests. */
+        get: operations["readers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engagement/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Counts and this reader's marks for up to 50 posts: `?posts=id,id`. Guests get the counts alone. */
+        get: operations["engagement_state"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["me"];
+        put?: never;
+        post?: never;
+        delete: operations["me_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["me_update"];
+        trace?: never;
+    };
+    "/api/v1/me/{what}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description `what`: saved, liked (cards) or follows (FollowList). */
+        get: operations["my_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Everything kept about the reader, as JSON (PDPA Tanzania 2022). */
+        get: operations["me_export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/site-config": {
         parameters: {
             query?: never;
@@ -346,6 +682,7 @@ export interface components {
             shorts: boolean;
             youtube: boolean;
             offline_saving: boolean;
+            card_counts: boolean;
         };
         AppLinks: {
             about: string;
@@ -437,6 +774,14 @@ export interface components {
             results: components["schemas"]["Card"][];
             author: components["schemas"]["PublicAuthor"];
         };
+        Bookmarked: {
+            /** @description Openings; one device counts once in 30 minutes. */
+            views: number;
+            likes: number;
+            comments: number;
+            bookmarks: number;
+            bookmarked: boolean;
+        };
         Card: {
             /** Format: uuid */
             id: string;
@@ -472,6 +817,9 @@ export interface components {
             slug: string;
             path: string;
         };
+        CardList: {
+            results: components["schemas"]["Card"][];
+        };
         CategoryPage: {
             next_cursor: string | null;
             results: components["schemas"]["Card"][];
@@ -480,6 +828,59 @@ export interface components {
         CategoryTranslation: {
             locale: string;
             path: string;
+        };
+        CodeRequestRequest: {
+            /** @description As the reader typed it; 0712 345 678 is +255712345678. */
+            phone: string;
+            locale?: components["schemas"]["LocaleEnum"];
+        };
+        CodeSent: {
+            /** Format: uuid */
+            challenge: string;
+            phone: string;
+            resend_in: number;
+            expires_in: number;
+            local_code?: string;
+        };
+        CodeVerifyRequest: {
+            /** Format: uuid */
+            challenge: string;
+            code: string;
+            device?: string;
+        };
+        Comment: {
+            /** Format: uuid */
+            id: string;
+            body: string;
+            /** Format: date-time */
+            created_at: string;
+            author: components["schemas"]["CommentAuthor"];
+            like_count: number;
+            reply_count: number;
+            liked: boolean;
+            mine: boolean;
+            pinned: boolean;
+            /** @description Waiting for a moderator; only its writer sees it. */
+            held: boolean;
+            /** Format: uuid */
+            parent: string | null;
+        };
+        CommentAuthor: {
+            name: string;
+            username: string;
+            initial: string;
+            /** @description Wrote the story: a badge. */
+            is_writer: boolean;
+        };
+        CommentLiked: {
+            liked: boolean;
+            like_count: number;
+        };
+        CommentPage: {
+            policy: components["schemas"]["PublicPolicy"];
+            count: number;
+            results: components["schemas"]["Comment"][];
+            next_cursor: string | null;
         };
         /**
          * @description * `open` - open
@@ -495,9 +896,42 @@ export interface components {
          * @enum {string}
          */
         DefaultLocaleEnum: "sw" | "en";
+        Deletion: {
+            grace_days: number;
+        };
+        /**
+         * @description * `opensearch` - opensearch
+         *     * `fallback` - fallback
+         * @enum {string}
+         */
+        EngineEnum: "opensearch" | "fallback";
+        Export: {
+            account: components["schemas"]["Reader"];
+            identities: {
+                [key: string]: unknown;
+            }[];
+            consents: {
+                [key: string]: unknown;
+            }[];
+            likes: {
+                [key: string]: unknown;
+            }[];
+            bookmarks: {
+                [key: string]: unknown;
+            }[];
+            comments: {
+                [key: string]: unknown;
+            }[];
+            follows: {
+                [key: string]: unknown;
+            }[];
+        };
         FeedPage: {
             next_cursor: string | null;
             results: components["schemas"]["Card"][];
+        };
+        Following: {
+            following: boolean;
         };
         Home: {
             breaking: components["schemas"]["Card"][];
@@ -512,6 +946,20 @@ export interface components {
             category: components["schemas"]["PublicCategory"];
             results: components["schemas"]["Card"][];
         };
+        Liked: {
+            /** @description Openings; one device counts once in 30 minutes. */
+            views: number;
+            likes: number;
+            comments: number;
+            bookmarks: number;
+            liked: boolean;
+        };
+        /**
+         * @description * `sw` - Sw
+         *     * `en` - En
+         * @enum {string}
+         */
+        LocaleEnum: "sw" | "en";
         Logo: {
             /** Format: uuid */
             id: string;
@@ -523,6 +971,26 @@ export interface components {
                 [key: string]: string;
             };
         };
+        Methods: {
+            phone: boolean;
+            google: boolean;
+            google_client_id: string;
+            apple: boolean;
+            apple_services_id: string;
+            countries: string[];
+            code_length: number;
+            resend_seconds: number;
+            terms_version: string;
+            /** @description Development only: the code comes back in the answer, never by SMS. */
+            local_sms: boolean;
+        };
+        /**
+         * @description * `phone` - phone
+         *     * `google` - google
+         *     * `apple` - apple
+         * @enum {string}
+         */
+        MethodsEnum: "phone" | "google" | "apple";
         NavigationItem: {
             /** Format: uuid */
             id: string;
@@ -535,9 +1003,40 @@ export interface components {
             icon: string;
             children: components["schemas"]["PublicCategory"][];
         };
+        NewCommentRequest: {
+            body: string;
+            /** Format: uuid */
+            parent?: string | null;
+        };
+        OpenedRequest: {
+            /** @description A guest's random id, kept by the browser or app. */
+            device?: string;
+        };
         PageTranslation: {
             locale: string;
             path: string;
+        };
+        PatchedProfileRequest: {
+            display_name?: string;
+            username?: string;
+            locale?: components["schemas"]["LocaleEnum"];
+            accept_terms?: boolean;
+            hide_from_readers?: boolean;
+        };
+        PostState: {
+            /** @description Openings; one device counts once in 30 minutes. */
+            views: number;
+            likes: number;
+            comments: number;
+            bookmarks: number;
+            /** @description Distinct people who opened it. */
+            readers: number;
+            liked: boolean;
+            bookmarked: boolean;
+            /** @description The story allows likes now: a count it does not allow is not shown. */
+            likes_on: boolean;
+            /** @description The story's comments are not closed. */
+            comments_on: boolean;
         };
         /**
          * @description * `article` - Article
@@ -553,6 +1052,18 @@ export interface components {
          * @enum {string}
          */
         PostTypeEnum: "article" | "breaking" | "video" | "gallery" | "live_blog" | "live_stream" | "opinion" | "short" | "youtube" | "instagram_import";
+        ProviderSignInRequest: {
+            /** @description From the app's SDK. */
+            id_token?: string;
+            /** @description From the website's redirect. */
+            code?: string;
+            redirect_uri?: string;
+            code_verifier?: string;
+            nonce?: string;
+            /** @description Apple sends the name once, outside the token. */
+            name?: string;
+            device?: string;
+        };
         PublicAuthor: {
             /** Format: uuid */
             id: string;
@@ -709,6 +1220,41 @@ export interface components {
          * @enum {string}
          */
         PublicVideoKindEnum: "video";
+        Reader: {
+            /** Format: uuid */
+            id: string;
+            display_name: string;
+            username: string;
+            initial: string;
+            phone: string;
+            email: string;
+            locale: components["schemas"]["LocaleEnum"];
+            methods: components["schemas"]["MethodsEnum"][];
+            /** @description A name and the terms are still to come. */
+            onboarding: boolean;
+            hide_from_readers: boolean;
+            /** Format: date */
+            joined: string;
+        };
+        ReaderEntry: {
+            name: string;
+            username: string;
+            initial: string;
+            /** Format: date-time */
+            at: string;
+        };
+        Readers: {
+            readers: number;
+            views: number;
+            /** @description Readers without an account, counted but never named. */
+            guests: number;
+            results: components["schemas"]["ReaderEntry"][];
+            next_cursor: string | null;
+        };
+        RefreshRequest: {
+            refresh: string;
+            device?: string;
+        };
         Related: {
             results: components["schemas"]["Card"][];
         };
@@ -723,11 +1269,31 @@ export interface components {
             light: string;
             dark: string;
         };
-        /** @description Until search is connected (M8), `available` is false and nothing is found. */
+        /** @description ADR-0049. `engine` is "fallback" while OpenSearch does not answer; clients show both the same way. */
         Search: {
-            next_cursor: string | null;
-            results: components["schemas"]["Card"][];
             available: boolean;
+            query: string;
+            total: number;
+            total_is_exact: boolean;
+            engine: components["schemas"]["EngineEnum"];
+            next_cursor: string | null;
+            results: components["schemas"]["SearchHit"][];
+        };
+        SearchHit: {
+            card: components["schemas"]["Card"];
+            snippet: components["schemas"]["Segment"][];
+        };
+        /** @description A piece of the snippet; `hit` marks the words that matched. Text, never markup. */
+        Segment: {
+            text: string;
+            hit: boolean;
+        };
+        SignedIn: {
+            access: string;
+            refresh: string;
+            expires_in: number;
+            created?: boolean;
+            user: components["schemas"]["Reader"];
         };
         SiteApps: {
             android: string;
@@ -740,7 +1306,11 @@ export interface components {
             media_base_url: string;
             localization: components["schemas"]["SiteLocalization"];
             seo: components["schemas"]["SiteSeo"];
+            engagement: components["schemas"]["SiteEngagement"];
             apps: components["schemas"]["SiteApps"];
+        };
+        SiteEngagement: {
+            card_counts: boolean;
         };
         SiteIdentity: {
             brand_name: string;
@@ -817,6 +1387,16 @@ export interface components {
             results: components["schemas"]["Card"][];
             story: components["schemas"]["PublicStory"];
         };
+        Suggest: {
+            query: string;
+            results: components["schemas"]["Suggestion"][];
+        };
+        Suggestion: {
+            headline: string;
+            path: string;
+            type: string;
+            category: string;
+        };
         TagPage: {
             next_cursor: string | null;
             results: components["schemas"]["Card"][];
@@ -858,6 +1438,162 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AppConfig"];
                 };
+            };
+        };
+    };
+    auth_apple: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProviderSignInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedIn"];
+                };
+            };
+        };
+    };
+    auth_code: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeRequestRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSent"];
+                };
+            };
+        };
+    };
+    auth_code_verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeVerifyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedIn"];
+                };
+            };
+        };
+    };
+    auth_google: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProviderSignInRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedIn"];
+                };
+            };
+        };
+    };
+    auth_methods: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Methods"];
+                };
+            };
+        };
+    };
+    auth_refresh: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignedIn"];
+                };
+            };
+        };
+    };
+    auth_sign_out: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefreshRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1089,9 +1825,16 @@ export interface operations {
     };
     search: {
         parameters: {
-            query?: {
+            query: {
+                /** @description A section's slug; its subsections are included */
+                category?: string;
+                cursor?: string;
                 locale?: "en" | "sw";
-                q?: string;
+                q: string;
+                since?: "1y" | "24h" | "30d" | "7d";
+                sort?: "newest" | "relevance";
+                /** @description Comma-separated post types */
+                type?: string;
             };
             header?: never;
             path?: never;
@@ -1105,6 +1848,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Search"];
+                };
+            };
+        };
+    };
+    search_suggest: {
+        parameters: {
+            query: {
+                locale?: "en" | "sw";
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Suggest"];
                 };
             };
         };
@@ -1239,6 +2004,416 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FeedPage"];
+                };
+            };
+        };
+    };
+    comment_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    comment_like: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentLiked"];
+                };
+            };
+        };
+    };
+    comment_unlike: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    follow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: string;
+                target: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Following"];
+                };
+            };
+        };
+    };
+    unfollow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: string;
+                target: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bookmark: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Bookmarked"];
+                };
+            };
+        };
+    };
+    unbookmark: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    comments: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                parent?: string;
+            };
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentPage"];
+                };
+            };
+        };
+    };
+    comment_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewCommentRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Comment"];
+                };
+            };
+        };
+    };
+    like: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Liked"];
+                };
+            };
+        };
+    };
+    unlike: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    opened: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["OpenedRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PostState"];
+                };
+            };
+        };
+    };
+    readers: {
+        parameters: {
+            query?: {
+                cursor?: string;
+            };
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Readers"];
+                };
+            };
+        };
+    };
+    engagement_state: {
+        parameters: {
+            query: {
+                /** @description Comma-separated post ids, at most 50 */
+                posts: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: components["schemas"]["PostState"];
+                    };
+                };
+            };
+        };
+    };
+    me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reader"];
+                };
+            };
+        };
+    };
+    me_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Deletion"];
+                };
+            };
+        };
+    };
+    me_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Reader"];
+                };
+            };
+        };
+    };
+    my_list: {
+        parameters: {
+            query?: {
+                locale?: string;
+            };
+            header?: never;
+            path: {
+                what: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardList"];
+                };
+            };
+        };
+    };
+    me_export: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Export"];
                 };
             };
         };

@@ -27,85 +27,54 @@ class AppConfig {
   /// Returns a new [AppConfig] instance.
   AppConfig({
     required this.theme,
+
     required this.identity,
+
     required this.version,
+
     required this.mediaBaseUrl,
+
     required this.versions,
+
     required this.maintenance,
+
     required this.flags,
+
     required this.links,
+
     required this.pinning,
+
     required this.localization,
   });
 
-  @JsonKey(
-    name: r'theme',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'theme', required: true, includeIfNull: false)
   final SiteTheme theme;
 
-  @JsonKey(
-    name: r'identity',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'identity', required: true, includeIfNull: false)
   final SiteIdentity identity;
 
-  @JsonKey(
-    name: r'version',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'version', required: true, includeIfNull: false)
   final String version;
 
-  @JsonKey(
-    name: r'media_base_url',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'media_base_url', required: true, includeIfNull: false)
   final String mediaBaseUrl;
 
-  @JsonKey(
-    name: r'versions',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'versions', required: true, includeIfNull: false)
   final AppVersions versions;
 
-  @JsonKey(
-    name: r'maintenance',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'maintenance', required: true, includeIfNull: false)
   final AppMaintenance maintenance;
 
-  @JsonKey(
-    name: r'flags',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'flags', required: true, includeIfNull: false)
   final AppFlags flags;
 
-  @JsonKey(
-    name: r'links',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'links', required: true, includeIfNull: false)
   final AppLinks links;
 
-  @JsonKey(
-    name: r'pinning',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'pinning', required: true, includeIfNull: false)
   final AppPinning pinning;
 
-  @JsonKey(
-    name: r'localization',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'localization', required: true, includeIfNull: false)
   final AppLocalization localization;
 
   @override

@@ -532,4 +532,378 @@ class StringsEn extends Strings {
 
   @override
   String get offlineNote => 'You are offline.';
+
+  @override
+  String get searchLabel => 'Search the news';
+
+  @override
+  String get searchPlaceholder => 'Stories, places, people or writers';
+
+  @override
+  String get searchGo => 'Search';
+
+  @override
+  String get searchClear => 'Clear the words';
+
+  @override
+  String searchResultsFor(String v) {
+    return 'Results for “$v”';
+  }
+
+  @override
+  String searchCount(int n) {
+    return '$n stories found';
+  }
+
+  @override
+  String searchCountMany(int n) {
+    return 'More than $n stories found';
+  }
+
+  @override
+  String get searchNoneTitle => 'No stories match';
+
+  @override
+  String get searchNoneBody => 'Try another word, check the spelling, or remove the filters.';
+
+  @override
+  String get searchRecent => 'Recent searches';
+
+  @override
+  String get searchClearRecent => 'Clear recent searches';
+
+  @override
+  String get searchFilters => 'Filters';
+
+  @override
+  String get searchSort => 'Order';
+
+  @override
+  String get searchSortBest => 'Best match';
+
+  @override
+  String get searchSortNewest => 'Newest first';
+
+  @override
+  String get searchType => 'Type';
+
+  @override
+  String get searchTypeAll => 'All';
+
+  @override
+  String get searchTypeStories => 'Stories';
+
+  @override
+  String get searchTypeVideos => 'Videos';
+
+  @override
+  String get searchTypeLive => 'Live';
+
+  @override
+  String get searchTypeGalleries => 'Galleries';
+
+  @override
+  String get searchWhen => 'When';
+
+  @override
+  String get searchAnyTime => 'Any time';
+
+  @override
+  String get searchPastDay => 'Past 24 hours';
+
+  @override
+  String get searchPastWeek => 'Past week';
+
+  @override
+  String get searchPastMonth => 'Past month';
+
+  @override
+  String get searchPastYear => 'Past year';
+
+  @override
+  String get searchMore => 'More results';
+
+  @override
+  String get searchUnavailable => 'Search is not available right now. Try again in a moment.';
+
+  @override
+  String get searchSections => 'Or choose a section';
+
+  @override
+  String seeAllIn(String name) {
+    return 'All $name stories';
+  }
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get earlierStories => 'Earlier stories';
+
+  @override
+  String get moreStories => 'More stories';
+
+  @override
+  String savedCount(int n) {
+    return '$n saved stories';
+  }
+
+  @override
+  String breakingOf(String at, String total) {
+    return '$at of $total';
+  }
+
+  @override
+  String get breakingPause => 'Pause breaking news';
+
+  @override
+  String get breakingPlay => 'Play breaking news';
+
+  @override
+  String get savedDoneWeb => 'Added to Saved.';
+
+  @override
+  String get savedUndone => 'Removed from Saved.';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get signInTitle => 'Sign in or sign up';
+
+  @override
+  String get signInLead =>
+      'One account for the website and the app: like, comment and keep your stories everywhere.';
+
+  @override
+  String get signInToLike => 'Sign in to like this story';
+
+  @override
+  String get signInToComment => 'Sign in to comment';
+
+  @override
+  String get signInToSave => 'Sign in to save to your account';
+
+  @override
+  String get signInToFollow => 'Sign in to follow';
+
+  @override
+  String get phoneLabel => 'Phone number';
+
+  @override
+  String get phoneHint => 'We will send you a 6-digit code by SMS.';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String get orWith => 'or continue with';
+
+  @override
+  String get withGoogle => 'Continue with Google';
+
+  @override
+  String get withApple => 'Continue with Apple';
+
+  @override
+  String get codeTitle => 'Enter the code';
+
+  @override
+  String codeLead(String v) {
+    return 'We sent a code to $v.';
+  }
+
+  @override
+  String get codeLabel => '6-digit code';
+
+  @override
+  String codeResendIn(int n) {
+    return 'Send again in $n s';
+  }
+
+  @override
+  String get codeResend => 'Send the code again';
+
+  @override
+  String get codeChangePhone => 'Change number';
+
+  @override
+  String codeLocal(String v) {
+    return 'Testing: your code is $v';
+  }
+
+  @override
+  String get verify => 'Verify';
+
+  @override
+  String get welcomeName => 'Welcome! What should we call you?';
+
+  @override
+  String get nameLabel => 'Your name';
+
+  @override
+  String get nameHint =>
+      'It shows on your comments and in the lists of who read a story (you can hide it).';
+
+  @override
+  String get acceptTerms => 'I accept the community guidelines and the privacy policy';
+
+  @override
+  String get continueOn => 'Continue';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get accountTitle => 'My account';
+
+  @override
+  String get editName => 'Change name';
+
+  @override
+  String get saveChanges => 'Save changes';
+
+  @override
+  String get downloadData => 'Download my data';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteConfirm =>
+      'The account is deleted after 30 days. Signing in again before then keeps it. Continue?';
+
+  @override
+  String get joinTitle => 'Join our readers';
+
+  @override
+  String get joinPoints => 'Like stories · Comment · Saved on all your devices';
+
+  @override
+  String get likeStory => 'Like';
+
+  @override
+  String likesCount(int n) {
+    return '$n likes';
+  }
+
+  @override
+  String commentsCount(int n) {
+    return '$n comments';
+  }
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String get commentsNone => 'No comments yet. Be the first.';
+
+  @override
+  String get commentsClosed => 'Comments are closed for this story.';
+
+  @override
+  String get commentPlaceholder => 'Write a comment…';
+
+  @override
+  String commentReplyTo(String name) {
+    return 'Reply to $name';
+  }
+
+  @override
+  String get commentSend => 'Post';
+
+  @override
+  String get commentReply => 'Reply';
+
+  @override
+  String get commentDelete => 'Delete';
+
+  @override
+  String get commentHeld => 'Waiting for approval';
+
+  @override
+  String get commentWriter => 'Writer';
+
+  @override
+  String commentReplies(int n) {
+    return 'View $n replies';
+  }
+
+  @override
+  String get commentsMore => 'More comments';
+
+  @override
+  String get commentSlow => 'Wait a moment before another comment.';
+
+  @override
+  String get commentFailed => 'The comment was not posted. Try again.';
+
+  @override
+  String get followTopic => 'Follow';
+
+  @override
+  String get followingTopic => 'Following';
+
+  @override
+  String get errorTryAgain => 'Something went wrong. Try again.';
+
+  @override
+  String get errorPhone => 'This number is not right. For example: 0712 345 678';
+
+  @override
+  String get errorCountry => 'We cannot send SMS to this country.';
+
+  @override
+  String get errorWait => 'Wait a little, then try again.';
+
+  @override
+  String errorCodeWrong(int n) {
+    return 'The code is not right. $n tries left.';
+  }
+
+  @override
+  String get errorCodeExpired => 'The code has expired. Ask for a new one.';
+
+  @override
+  String get errorSmsDown => 'SMS cannot be sent right now. Try later.';
+
+  @override
+  String signedInToast(String name) {
+    return 'Welcome, $name!';
+  }
+
+  @override
+  String get signedOutToast => 'You are signed out.';
+
+  @override
+  String get signInFailed => 'Signing in did not work. Try again.';
+
+  @override
+  String logoAlt(String name) {
+    return '$name logo';
+  }
+
+  @override
+  String viewsCount(int n) {
+    return '$n views';
+  }
+
+  @override
+  String readersCount(int n) {
+    return '$n readers';
+  }
+
+  @override
+  String get readersTitle => 'Who read this story';
+
+  @override
+  String readersGuests(int n) {
+    return 'and $n guests without an account';
+  }
+
+  @override
+  String get readersNone => 'No signed-in reader yet.';
+
+  @override
+  String get readersPrivate => 'Hide my name from reader lists';
 }

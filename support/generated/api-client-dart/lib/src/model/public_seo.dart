@@ -17,23 +17,12 @@ part 'public_seo.g.dart';
 )
 class PublicSeo {
   /// Returns a new [PublicSeo] instance.
-  PublicSeo({
-    required this.title,
-    required this.description,
-  });
+  PublicSeo({required this.title, required this.description});
 
-  @JsonKey(
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-  @JsonKey(
-    name: r'description',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'description', required: true, includeIfNull: false)
   final String description;
 
   @override

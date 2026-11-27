@@ -18,23 +18,12 @@ part 'app_versions.g.dart';
 )
 class AppVersions {
   /// Returns a new [AppVersions] instance.
-  AppVersions({
-    required this.android,
-    required this.ios,
-  });
+  AppVersions({required this.android, required this.ios});
 
-  @JsonKey(
-    name: r'android',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'android', required: true, includeIfNull: false)
   final AppPlatformVersions android;
 
-  @JsonKey(
-    name: r'ios',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'ios', required: true, includeIfNull: false)
   final AppPlatformVersions ios;
 
   @override

@@ -18,15 +18,9 @@ part 'related.g.dart';
 )
 class Related {
   /// Returns a new [Related] instance.
-  Related({
-    required this.results,
-  });
+  Related({required this.results});
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<Card> results;
 
   @override

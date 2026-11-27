@@ -19,7 +19,8 @@ change by building a new index and swapping the alias, never in place.
 **What is indexed.** Every `Publication` (the reader's copy of a story, one per language): headline, standfirst, the
 text of the body blocks, tags, writers, category and its parents, regions, type, published and modified times, the
 etag, and the card readers see (stored, not indexed), so a search answers without touching the database. The body is
-indexed but not stored. Document id: the post's id, in its language's index.
+indexed and stored as a field of its own (with offsets, for the snippet), but not in `_source`, so answers do not
+carry it. Document id: the post's id, in its language's index.
 
 **Analysis.**
 - Swahili: OpenSearch has no Swahili stemmer, so lowercase, ASCII folding and a Swahili stop list; partial words are
@@ -71,8 +72,23 @@ fills an index with synthetic stories and reports p50/p95 of real queries (suppo
 
 ## Consequences
 
-- Search works on the website (a server-rendered form that works without JavaScript, suggestions from a small island)
-  and in the app (a native search field on Explore, debounced suggestions, filters, recent searches on the phone).
+- Search works on the website: `/search` is Explore with the field on top; with words it is the results page. The form
+  is a GET form and the filters are links, so all of it works without JavaScript and every question has one address
+  the CDN keeps. With script, the page searches as one types: 300 ms after the last key (two letters at least) it asks
+  for its own address with the new words, the same document the CDN keeps, and puts only the results in place, so
+  the field keeps its focus, caret and keyboard. The magnifier turns while they come, the old results dim, a status
+  line tells screen readers the count, and only the last words typed are ever shown. The first words make a history
+  step, the words after it replace that step. An empty field brings the sections back and offers the searches made on
+  this device. The website shows no headline suggestions: results that come as one types do that work, without a
+  list covering them. The suggestions endpoint stays for the app.
+  Results pages are `noindex, follow`, their filter links `nofollow`, and none is in a sitemap: Google asks that a
+  site's own search results stay out of its index. Typing mistakes find stories, but only the words spelled as typed
+  are marked in the snippet.
+- In the app: a native search field on top of Explore (iOS's own; Material's rounded one on Android, both drawn with
+  the app's icons). Typing (two letters at least, 300 ms after the last key) lists headlines from the suggestions
+  endpoint, one tap opens the story; the keyboard's search key shows results with their count, the matched words in
+  bold in the snippet, more as one scrolls, and three filters (order, kind, time) as chips. The last eight searches are
+  kept on the phone only, offered when the field is empty, and can be cleared. Results are never cached on the phone.
 - A new AWS resource (A1–A3 must exist first): OpenSearch domain in the VPC, IAM-signed requests (SigV4), encrypted
   at rest and in transit, in Terraform with plan tests. Its cost is in the human-actions runbook.
 - Synonyms an editor can change (e.g. "Dar" → "Dar es Salaam") and "did you mean" are the next steps (M8).

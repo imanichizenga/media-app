@@ -13,6 +13,8 @@ abstract class _$AppFlagsCWProxy {
 
   AppFlags offlineSaving(bool offlineSaving);
 
+  AppFlags cardCounts(bool cardCounts);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppFlags(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -23,6 +25,7 @@ abstract class _$AppFlagsCWProxy {
     bool shorts,
     bool youtube,
     bool offlineSaving,
+    bool cardCounts,
   });
 }
 
@@ -43,7 +46,9 @@ class _$AppFlagsCWProxyImpl implements _$AppFlagsCWProxy {
       this(offlineSaving: offlineSaving);
 
   @override
+  AppFlags cardCounts(bool cardCounts) => this(cardCounts: cardCounts);
 
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppFlags(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -54,6 +59,7 @@ class _$AppFlagsCWProxyImpl implements _$AppFlagsCWProxy {
     Object? shorts = const $CopyWithPlaceholder(),
     Object? youtube = const $CopyWithPlaceholder(),
     Object? offlineSaving = const $CopyWithPlaceholder(),
+    Object? cardCounts = const $CopyWithPlaceholder(),
   }) {
     return AppFlags(
       shorts: shorts == const $CopyWithPlaceholder()
@@ -68,6 +74,10 @@ class _$AppFlagsCWProxyImpl implements _$AppFlagsCWProxy {
           ? _value.offlineSaving
           // ignore: cast_nullable_to_non_nullable
           : offlineSaving as bool,
+      cardCounts: cardCounts == const $CopyWithPlaceholder()
+          ? _value.cardCounts
+          // ignore: cast_nullable_to_non_nullable
+          : cardCounts as bool,
     );
   }
 }
@@ -83,25 +93,35 @@ extension $AppFlagsCopyWith on AppFlags {
 // **************************************************************************
 
 AppFlags _$AppFlagsFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'AppFlags',
+  'AppFlags',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['shorts', 'youtube', 'offline_saving'],
-        );
-        final val = AppFlags(
-          shorts: $checkedConvert('shorts', (v) => v as bool),
-          youtube: $checkedConvert('youtube', (v) => v as bool),
-          offlineSaving: $checkedConvert('offline_saving', (v) => v as bool),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'offlineSaving': 'offline_saving'},
+      requiredKeys: const [
+        'shorts',
+        'youtube',
+        'offline_saving',
+        'card_counts',
+      ],
     );
+    final val = AppFlags(
+      shorts: $checkedConvert('shorts', (v) => v as bool),
+      youtube: $checkedConvert('youtube', (v) => v as bool),
+      offlineSaving: $checkedConvert('offline_saving', (v) => v as bool),
+      cardCounts: $checkedConvert('card_counts', (v) => v as bool),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'offlineSaving': 'offline_saving',
+    'cardCounts': 'card_counts',
+  },
+);
 
 Map<String, dynamic> _$AppFlagsToJson(AppFlags instance) => <String, dynamic>{
-      'shorts': instance.shorts,
-      'youtube': instance.youtube,
-      'offline_saving': instance.offlineSaving,
-    };
+  'shorts': instance.shorts,
+  'youtube': instance.youtube,
+  'offline_saving': instance.offlineSaving,
+  'card_counts': instance.cardCounts,
+};

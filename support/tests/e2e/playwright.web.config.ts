@@ -11,6 +11,9 @@ export default defineConfig({
     ? "screens.spec.ts"
     : [
         "site.spec.ts",
+        "search.spec.ts",
+        "experience.spec.ts",
+        "accounts.spec.ts",
         "seo.spec.ts",
         "contract.spec.ts",
         "states.spec.ts",
@@ -23,7 +26,8 @@ export default defineConfig({
     {
       command:
         "cd ../../../backend && .venv/bin/uvicorn config.asgi:application --port 8010 --log-level warning",
-      env: { ...env, API_SURFACE: "public" },
+      // LOCAL_SMS: sign-in codes come back on screen (refused in deployed environments, ADR-0050).
+      env: { ...env, API_SURFACE: "public", LOCAL_SMS: "1" },
       url: "http://127.0.0.1:8010/health/live",
       timeout: 60_000,
     },

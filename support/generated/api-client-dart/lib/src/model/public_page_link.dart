@@ -19,37 +19,24 @@ class PublicPageLink {
   /// Returns a new [PublicPageLink] instance.
   PublicPageLink({
     required this.key,
+
     required this.title,
+
     required this.path,
+
     required this.modifiedAt,
   });
 
-  @JsonKey(
-    name: r'key',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'key', required: true, includeIfNull: false)
   final String key;
 
-  @JsonKey(
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'modified_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'modified_at', required: true, includeIfNull: false)
   final DateTime modifiedAt;
 
   @override

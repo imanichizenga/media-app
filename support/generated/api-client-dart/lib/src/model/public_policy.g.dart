@@ -60,7 +60,6 @@ class _$PublicPolicyCWProxyImpl implements _$PublicPolicyCWProxy {
   PublicPolicy liveChat(bool liveChat) => this(liveChat: liveChat);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicPolicy(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -115,34 +114,31 @@ extension $PublicPolicyCopyWith on PublicPolicy {
 // **************************************************************************
 
 PublicPolicy _$PublicPolicyFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicPolicy',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'likes',
-            'comments',
-            'bookmarks',
-            'shares',
-            'reposts',
-            'live_chat'
-          ],
-        );
-        final val = PublicPolicy(
-          likes: $checkedConvert('likes', (v) => v as bool),
-          comments: $checkedConvert(
-              'comments', (v) => $enumDecode(_$CommentsEnumEnumMap, v)),
-          bookmarks: $checkedConvert('bookmarks', (v) => v as bool),
-          shares: $checkedConvert('shares', (v) => v as bool),
-          reposts: $checkedConvert('reposts', (v) => v as bool),
-          liveChat: $checkedConvert('live_chat', (v) => v as bool),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'liveChat': 'live_chat'},
-    );
+    $checkedCreate('PublicPolicy', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'likes',
+          'comments',
+          'bookmarks',
+          'shares',
+          'reposts',
+          'live_chat',
+        ],
+      );
+      final val = PublicPolicy(
+        likes: $checkedConvert('likes', (v) => v as bool),
+        comments: $checkedConvert(
+          'comments',
+          (v) => $enumDecode(_$CommentsEnumEnumMap, v),
+        ),
+        bookmarks: $checkedConvert('bookmarks', (v) => v as bool),
+        shares: $checkedConvert('shares', (v) => v as bool),
+        reposts: $checkedConvert('reposts', (v) => v as bool),
+        liveChat: $checkedConvert('live_chat', (v) => v as bool),
+      );
+      return val;
+    }, fieldKeyMap: const {'liveChat': 'live_chat'});
 
 Map<String, dynamic> _$PublicPolicyToJson(PublicPolicy instance) =>
     <String, dynamic>{

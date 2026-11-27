@@ -17,10 +17,7 @@ abstract class _$PublicSeoCWProxy {
   /// ```dart
   /// PublicSeo(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicSeo call({
-    String title,
-    String description,
-  });
+  PublicSeo call({String title, String description});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPublicSeo.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPublicSeo.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$PublicSeoCWProxyImpl implements _$PublicSeoCWProxy {
   PublicSeo description(String description) => this(description: description);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicSeo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,23 +66,17 @@ extension $PublicSeoCopyWith on PublicSeo {
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicSeo _$PublicSeoFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicSeo',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['title', 'description'],
-        );
-        final val = PublicSeo(
-          title: $checkedConvert('title', (v) => v as String),
-          description: $checkedConvert('description', (v) => v as String),
-        );
-        return val;
-      },
-    );
+PublicSeo _$PublicSeoFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('PublicSeo', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['title', 'description']);
+      final val = PublicSeo(
+        title: $checkedConvert('title', (v) => v as String),
+        description: $checkedConvert('description', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicSeoToJson(PublicSeo instance) => <String, dynamic>{
-      'title': instance.title,
-      'description': instance.description,
-    };
+  'title': instance.title,
+  'description': instance.description,
+};

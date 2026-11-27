@@ -21,61 +21,39 @@ class Home {
   /// Returns a new [Home] instance.
   Home({
     required this.breaking,
+
     required this.live,
+
     required this.lead,
+
     required this.latest,
+
     required this.videos,
+
     required this.shorts,
+
     required this.sections,
   });
 
-  @JsonKey(
-    name: r'breaking',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'breaking', required: true, includeIfNull: false)
   final List<Card> breaking;
 
-  @JsonKey(
-    name: r'live',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'live', required: true, includeIfNull: false)
   final List<Card> live;
 
-  @JsonKey(
-    name: r'lead',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'lead', required: true, includeIfNull: false)
   final List<Card> lead;
 
-  @JsonKey(
-    name: r'latest',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'latest', required: true, includeIfNull: false)
   final List<Card> latest;
 
-  @JsonKey(
-    name: r'videos',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'videos', required: true, includeIfNull: false)
   final List<Card> videos;
 
-  @JsonKey(
-    name: r'shorts',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'shorts', required: true, includeIfNull: false)
   final List<Card> shorts;
 
-  @JsonKey(
-    name: r'sections',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'sections', required: true, includeIfNull: false)
   final List<HomeSection> sections;
 
   @override

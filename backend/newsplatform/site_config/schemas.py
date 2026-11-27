@@ -189,6 +189,50 @@ class Engagement(Section):
 
     defaults: Policy = Policy()
     kill: KillSwitches = KillSwitches()
+    # Views, likes and comments on the cards of lists, before a story is opened. A count a story does not
+    # allow (likes off, comments closed) is never shown, whatever this says.
+    card_counts: bool = _field(True, "Show counts on story cards", "Onyesha idadi kwenye kadi za habari")
+
+
+CallingCode = Annotated[str, Field(pattern=r"^[1-9][0-9]{0,3}$")]
+
+
+class SignIn(Section):
+    """How readers sign in (ADR-0050). The vendors' keys are in Integrations; these are the rules around
+    them."""
+
+    phone: bool = _field(True, "Phone and SMS code", "Simu na msimbo wa SMS")
+    google: bool = _field(True, "Google", "Google")
+    apple: bool = _field(True, "Apple", "Apple")
+    countries: list[CallingCode] = _field(
+        ["255"], "Countries SMS codes may go to (calling codes)", "Nchi zinazoweza kupokea SMS", max_length=60
+    )
+    code_minutes: int = _field(5, "A code lasts (minutes)", "Msimbo unadumu (dakika)", ge=2, le=15)
+    attempts: int = _field(5, "Tries for one code", "Majaribio kwa msimbo mmoja", ge=3, le=10)
+    resend_seconds: int = _field(
+        60, "Wait before another code (seconds)", "Subiri kabla ya msimbo mwingine", ge=30, le=600
+    )
+    per_phone_daily: int = _field(
+        8, "Codes to one number a day", "Misimbo kwa namba moja kwa siku", ge=3, le=50
+    )
+    per_ip_hourly: int = _field(
+        20, "Codes from one network an hour", "Misimbo kutoka mtandao mmoja kwa saa", ge=5, le=500
+    )
+    per_prefix_hourly: int = _field(
+        200, "Codes to one number range an hour", "Misimbo kwa kundi la namba kwa saa", ge=10, le=5000
+    )
+    sms_hourly_budget: int = _field(
+        3000, "All SMS codes an hour (budget)", "SMS zote kwa saa (bajeti)", ge=10, le=500000
+    )
+    android_app_hash: str = _field(
+        "",
+        "Android app hash (SMS autofill)",
+        "Hash ya programu ya Android",
+        pattern=r"^([A-Za-z0-9+/]{11})?$",
+    )
+    terms_version: str = _field(
+        "2026-11", "Terms version readers accept", "Toleo la masharti", pattern=r"^[0-9A-Za-z._-]{1,20}$"
+    )
 
 
 SECTIONS: dict[str, type[Section]] = {
@@ -198,4 +242,5 @@ SECTIONS: dict[str, type[Section]] = {
     "seo": Seo,
     "security": Security,
     "engagement": Engagement,
+    "sign_in": SignIn,
 }

@@ -17,10 +17,7 @@ abstract class _$AppPinningCWProxy {
   /// ```dart
   /// AppPinning(...).copyWith(id: 12, name: "My name")
   /// ````
-  AppPinning call({
-    bool enabled,
-    List<String> pins,
-  });
+  AppPinning call({bool enabled, List<String> pins});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppPinning.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAppPinning.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$AppPinningCWProxyImpl implements _$AppPinningCWProxy {
   AppPinning pins(List<String> pins) => this(pins: pins);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppPinning(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,25 +66,18 @@ extension $AppPinningCopyWith on AppPinning {
 // JsonSerializableGenerator
 // **************************************************************************
 
-AppPinning _$AppPinningFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'AppPinning',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['enabled', 'pins'],
-        );
-        final val = AppPinning(
-          enabled: $checkedConvert('enabled', (v) => v as bool),
-          pins: $checkedConvert('pins',
-              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
-        );
-        return val;
-      },
-    );
+AppPinning _$AppPinningFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('AppPinning', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['enabled', 'pins']);
+      final val = AppPinning(
+        enabled: $checkedConvert('enabled', (v) => v as bool),
+        pins: $checkedConvert(
+          'pins',
+          (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$AppPinningToJson(AppPinning instance) =>
-    <String, dynamic>{
-      'enabled': instance.enabled,
-      'pins': instance.pins,
-    };
+    <String, dynamic>{'enabled': instance.enabled, 'pins': instance.pins};

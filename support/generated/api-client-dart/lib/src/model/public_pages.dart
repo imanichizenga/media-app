@@ -18,15 +18,9 @@ part 'public_pages.g.dart';
 )
 class PublicPages {
   /// Returns a new [PublicPages] instance.
-  PublicPages({
-    required this.results,
-  });
+  PublicPages({required this.results});
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<PublicPageLink> results;
 
   @override

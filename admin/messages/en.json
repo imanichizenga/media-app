@@ -230,7 +230,8 @@
     "history": "Test history",
     "noHistory": "No tests yet.",
     "param": {
-      "to": "Send the test email to"
+      "to": "Send the test email to",
+      "phone": "Send the test SMS to (e.g. 0712 345 678)"
     }
   },
   "approvals": {
@@ -363,7 +364,9 @@
       "localization": "Language and time",
       "security": "Security",
       "app": "Mobile app",
-      "seo": "Search engines"
+      "seo": "Search engines",
+      "engagement": "Engagement",
+      "sign_in": "Readers' sign-in"
     },
     "field": {
       "default_locale": "Default language",
@@ -405,7 +408,21 @@
       "indexnow": "Tell search engines at once (IndexNow)",
       "indexnow_key": "IndexNow key (32 hexadecimal characters)",
       "same_as": "The publisher's profiles elsewhere",
-      "app_banner": "Offer the app on phones"
+      "app_banner": "Offer the app on phones",
+      "signin_phone": "Phone and SMS code",
+      "signin_google": "Google",
+      "signin_apple": "Apple",
+      "countries": "Countries SMS codes may go to (calling codes, e.g. 255)",
+      "code_minutes": "A code lasts (minutes)",
+      "attempts": "Tries for one code",
+      "resend_seconds": "Wait before another code (seconds)",
+      "per_phone_daily": "Codes to one number a day",
+      "per_ip_hourly": "Codes from one network an hour",
+      "per_prefix_hourly": "Codes to one number range an hour",
+      "sms_hourly_budget": "All SMS codes an hour (budget)",
+      "android_app_hash": "Android app hash (SMS autofill)",
+      "terms_version": "Terms version readers accept",
+      "card_counts": "Show views, likes and comments on story cards"
     },
     "option": {
       "sw": "Kiswahili",

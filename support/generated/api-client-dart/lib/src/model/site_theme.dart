@@ -22,69 +22,44 @@ class SiteTheme {
   /// Returns a new [SiteTheme] instance.
   SiteTheme({
     required this.schemaVersion,
+
     required this.hash,
+
     required this.key,
+
     required this.color,
+
     required this.darkColor,
+
     required this.css,
+
     required this.themeColor,
+
     required this.tokens,
   });
 
-  @JsonKey(
-    name: r'schema_version',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'schema_version', required: true, includeIfNull: false)
   final int schemaVersion;
 
-  @JsonKey(
-    name: r'hash',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'hash', required: true, includeIfNull: false)
   final String hash;
 
-  @JsonKey(
-    name: r'key',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'key', required: true, includeIfNull: false)
   final ThemeKeyEnum key;
 
-  @JsonKey(
-    name: r'color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'color', required: true, includeIfNull: false)
   final String color;
 
-  @JsonKey(
-    name: r'dark_color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'dark_color', required: true, includeIfNull: false)
   final String darkColor;
 
-  @JsonKey(
-    name: r'css',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'css', required: true, includeIfNull: false)
   final String css;
 
-  @JsonKey(
-    name: r'theme_color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'theme_color', required: true, includeIfNull: false)
   final Schemes themeColor;
 
-  @JsonKey(
-    name: r'tokens',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'tokens', required: true, includeIfNull: false)
   final SiteThemeTokens tokens;
 
   @override

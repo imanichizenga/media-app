@@ -17,10 +17,7 @@ abstract class _$SiteThemeTokensCWProxy {
   /// ```dart
   /// SiteThemeTokens(...).copyWith(id: 12, name: "My name")
   /// ````
-  SiteThemeTokens call({
-    Map<String, String> light,
-    Map<String, String> dark,
-  });
+  SiteThemeTokens call({Map<String, String> light, Map<String, String> dark});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSiteThemeTokens.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSiteThemeTokens.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$SiteThemeTokensCWProxyImpl implements _$SiteThemeTokensCWProxy {
   SiteThemeTokens dark(Map<String, String> dark) => this(dark: dark);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteThemeTokens(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,27 +66,16 @@ extension $SiteThemeTokensCopyWith on SiteThemeTokens {
 // JsonSerializableGenerator
 // **************************************************************************
 
-SiteThemeTokens _$SiteThemeTokensFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'SiteThemeTokens',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['light', 'dark'],
-        );
-        final val = SiteThemeTokens(
-          light: $checkedConvert(
-              'light', (v) => Map<String, String>.from(v as Map)),
-          dark: $checkedConvert(
-              'dark', (v) => Map<String, String>.from(v as Map)),
-        );
-        return val;
-      },
-    );
+SiteThemeTokens _$SiteThemeTokensFromJson(
+  Map<String, dynamic> json,
+) => $checkedCreate('SiteThemeTokens', json, ($checkedConvert) {
+  $checkKeys(json, requiredKeys: const ['light', 'dark']);
+  final val = SiteThemeTokens(
+    light: $checkedConvert('light', (v) => Map<String, String>.from(v as Map)),
+    dark: $checkedConvert('dark', (v) => Map<String, String>.from(v as Map)),
+  );
+  return val;
+});
 
 Map<String, dynamic> _$SiteThemeTokensToJson(SiteThemeTokens instance) =>
-    <String, dynamic>{
-      'light': instance.light,
-      'dark': instance.dark,
-    };
+    <String, dynamic>{'light': instance.light, 'dark': instance.dark};

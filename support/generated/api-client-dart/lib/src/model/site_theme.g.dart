@@ -73,7 +73,6 @@ class _$SiteThemeCWProxyImpl implements _$SiteThemeCWProxy {
   SiteTheme tokens(SiteThemeTokens tokens) => this(tokens: tokens);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteTheme(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -138,55 +137,60 @@ extension $SiteThemeCopyWith on SiteTheme {
 // **************************************************************************
 
 SiteTheme _$SiteThemeFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'SiteTheme',
+  'SiteTheme',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'schema_version',
-            'hash',
-            'key',
-            'color',
-            'dark_color',
-            'css',
-            'theme_color',
-            'tokens'
-          ],
-        );
-        final val = SiteTheme(
-          schemaVersion:
-              $checkedConvert('schema_version', (v) => (v as num).toInt()),
-          hash: $checkedConvert('hash', (v) => v as String),
-          key: $checkedConvert(
-              'key', (v) => $enumDecode(_$ThemeKeyEnumEnumMap, v)),
-          color: $checkedConvert('color', (v) => v as String),
-          darkColor: $checkedConvert('dark_color', (v) => v as String),
-          css: $checkedConvert('css', (v) => v as String),
-          themeColor: $checkedConvert('theme_color',
-              (v) => Schemes.fromJson(v as Map<String, dynamic>)),
-          tokens: $checkedConvert('tokens',
-              (v) => SiteThemeTokens.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'schemaVersion': 'schema_version',
-        'darkColor': 'dark_color',
-        'themeColor': 'theme_color'
-      },
+      requiredKeys: const [
+        'schema_version',
+        'hash',
+        'key',
+        'color',
+        'dark_color',
+        'css',
+        'theme_color',
+        'tokens',
+      ],
     );
+    final val = SiteTheme(
+      schemaVersion: $checkedConvert(
+        'schema_version',
+        (v) => (v as num).toInt(),
+      ),
+      hash: $checkedConvert('hash', (v) => v as String),
+      key: $checkedConvert('key', (v) => $enumDecode(_$ThemeKeyEnumEnumMap, v)),
+      color: $checkedConvert('color', (v) => v as String),
+      darkColor: $checkedConvert('dark_color', (v) => v as String),
+      css: $checkedConvert('css', (v) => v as String),
+      themeColor: $checkedConvert(
+        'theme_color',
+        (v) => Schemes.fromJson(v as Map<String, dynamic>),
+      ),
+      tokens: $checkedConvert(
+        'tokens',
+        (v) => SiteThemeTokens.fromJson(v as Map<String, dynamic>),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'schemaVersion': 'schema_version',
+    'darkColor': 'dark_color',
+    'themeColor': 'theme_color',
+  },
+);
 
 Map<String, dynamic> _$SiteThemeToJson(SiteTheme instance) => <String, dynamic>{
-      'schema_version': instance.schemaVersion,
-      'hash': instance.hash,
-      'key': _$ThemeKeyEnumEnumMap[instance.key]!,
-      'color': instance.color,
-      'dark_color': instance.darkColor,
-      'css': instance.css,
-      'theme_color': instance.themeColor.toJson(),
-      'tokens': instance.tokens.toJson(),
-    };
+  'schema_version': instance.schemaVersion,
+  'hash': instance.hash,
+  'key': _$ThemeKeyEnumEnumMap[instance.key]!,
+  'color': instance.color,
+  'dark_color': instance.darkColor,
+  'css': instance.css,
+  'theme_color': instance.themeColor.toJson(),
+  'tokens': instance.tokens.toJson(),
+};
 
 const _$ThemeKeyEnumEnumMap = {
   ThemeKeyEnum.signature: 'signature',

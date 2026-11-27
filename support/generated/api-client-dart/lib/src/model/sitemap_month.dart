@@ -19,37 +19,24 @@ class SitemapMonth {
   /// Returns a new [SitemapMonth] instance.
   SitemapMonth({
     required this.month,
+
     required this.count,
+
     required this.modifiedAt,
+
     required this.videos,
   });
 
-  @JsonKey(
-    name: r'month',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'month', required: true, includeIfNull: false)
   final String month;
 
-  @JsonKey(
-    name: r'count',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'count', required: true, includeIfNull: false)
   final int count;
 
-  @JsonKey(
-    name: r'modified_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'modified_at', required: true, includeIfNull: false)
   final DateTime modifiedAt;
 
-  @JsonKey(
-    name: r'videos',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'videos', required: true, includeIfNull: false)
   final int videos;
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_api_client/news_api_client.dart' hide Card;
@@ -19,6 +21,7 @@ import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
 import '../content/feeds.dart';
 import '../content/list_screen.dart' show Initial;
+import 'search.dart';
 
 const categoryIcons = <String, NewsIconData>{
   'newspaper': NewsIcons.newspaper,
@@ -35,7 +38,8 @@ const categoryIcons = <String, NewsIconData>{
   'message-square-quote': NewsIcons.messageSquareQuote,
 };
 
-/// Everything there is, by section and by writer. Searching arrives in M8, and its field with it.
+/// Everything there is, by section and by writer, under the search field (ADR-0049). Typing shows headlines; the
+/// keyboard's search key shows results with filters and keeps the words among the recent searches on this phone.
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({super.key});
 
@@ -44,8 +48,63 @@ class ExploreScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
+  final _words = TextEditingController();
+  final _focus = FocusNode();
+  var _typed = '';
+
+  /// The question whose results are shown; null shows the sections.
+  SearchAsk? _ask;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _words.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  void _search(String words) {
+    final q = words.trim();
+    if (q.length < searchMinimum) return;
+    _words.text = q;
+    _focus.unfocus();
+    unawaited(ref.read(recentSearchesProvider.notifier).add(q));
+    setState(() {
+      _typed = q;
+      _ask = (_ask ?? SearchAsk(q)).copyWith(q: q);
+    });
+  }
+
+  void _typing(String words) => setState(() {
+    _typed = words.trim();
+    if (_typed.isEmpty) _ask = null;
+  });
+
+  List<Widget> _searching() {
+    final ask = _ask;
+    if (ask != null && ask.q == _typed && !_focus.hasFocus) {
+      return [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: NewsSpace.s2),
+            child: SearchFilters(ask: ask, change: (a) => setState(() => _ask = a)),
+          ),
+        ),
+        SearchResultsList(ask: ask, clearFilters: () => setState(() => _ask = SearchAsk(ask.q))),
+      ];
+    }
+    if (_typed.length >= searchMinimum) return [SuggestList(_typed)];
+    return [RecentList(pick: _search)];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final searching = _typed.isNotEmpty || _focus.hasFocus;
     final nav = ref.watch(navigationProvider);
     final home = ref.watch(homeFeedProvider).value?.value;
     final s = Strings.of(context);
@@ -97,7 +156,26 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
           ]),
           header: [PlaceBar(s.navExplore)],
           slivers: [
-            if (nav.hasError && items == null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  NewsSpace.s5,
+                  NewsSpace.s2,
+                  NewsSpace.s5,
+                  NewsSpace.s4,
+                ),
+                child: NativeSearchField(
+                  controller: _words,
+                  focus: _focus,
+                  onChanged: _typing,
+                  onSubmitted: _search,
+                ),
+              ),
+            ),
+            if (searching) ..._searching(),
+            if (searching && _typed.isNotEmpty)
+              const SliverToBoxAdapter(child: SizedBox.shrink())
+            else if (nav.hasError && items == null)
               SliverToBoxAdapter(
                 child: Designed.failure(
                   context,

@@ -2,6 +2,7 @@ import { Bone } from "@news/ui/base";
 import { Newspaper } from "@news/ui/icons";
 import { Picture } from "@news/ui/media";
 import { type NewsEnv, SectionHeading } from "@news/ui/news";
+import type { ReactNode } from "react";
 import type { Card, Nav } from "@/lib/api";
 import { words } from "@/lib/i18n";
 import { at, type Locale } from "@/lib/locale";
@@ -57,12 +58,15 @@ export function ExploreView({
   nav,
   faces,
   people,
+  top,
 }: {
   locale: Locale;
   view: NewsEnv;
   nav: (Nav | undefined)[];
   faces: Face[];
   people?: Person[];
+  /** The search field, above the sections. */
+  top?: ReactNode;
 }) {
   const t = words(locale);
   const other: Locale = locale === "sw" ? "en" : "sw";
@@ -76,40 +80,49 @@ export function ExploreView({
       other={at(other, "/search")}
     >
       <Wide>
-        <PageHead title={t("navExplore")} hidden />
-        <ul
-          className="grid grid-cols-2 gap-3 pt-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
-          data-page="explore"
-        >
-          {nav.map((n, i) => (
-            <li key={n?.id ?? i}>
-              <Tile n={n} face={faces[i]} view={view} />
-            </li>
-          ))}
-        </ul>
-        {people?.length !== 0 && (
-          <section aria-label={t("journalists")} className="pt-12">
-            <SectionHeading title={t("journalists")} env={view} />
-            <ul className="-mx-4 flex gap-4 overflow-x-auto px-4 scrollbar-none">
-              {(people ?? none(6)).map((p, i) => (
-                <li key={p?.path ?? i} className="relative w-24 shrink-0 text-center">
-                  <span className="mx-auto grid size-18 place-items-center overflow-hidden rounded-full bg-surface-sunken font-serif text-headline-m text-text-secondary">
-                    {p ? p.name.slice(0, 1) : <span aria-hidden className="bone block! size-full" />}
-                  </span>
-                  <span className="mt-2 line-clamp-2 text-label">
-                    {p ? (
-                      <a href={p.path} className="after:absolute after:inset-0">
-                        {p.name}
-                      </a>
-                    ) : (
-                      <Bone className="w-full" />
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {top ?? <PageHead title={t("navExplore")} hidden />}
+        {/* Under the search field, what typing replaces with results (islands/search.ts). */}
+        <div data-search-body={top ? "" : undefined}>
+          {top && (
+            <>
+              <h1 className="sr-only">{t("navExplore")}</h1>
+              <h2 className="pt-8 text-title">{t("searchSections")}</h2>
+            </>
+          )}
+          <ul
+            className="grid grid-cols-2 gap-3 pt-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
+            data-page="explore"
+          >
+            {nav.map((n, i) => (
+              <li key={n?.id ?? i}>
+                <Tile n={n} face={faces[i]} view={view} />
+              </li>
+            ))}
+          </ul>
+          {people?.length !== 0 && (
+            <section aria-label={t("journalists")} className="pt-12">
+              <SectionHeading title={t("journalists")} env={view} />
+              <ul className="-mx-4 flex gap-4 overflow-x-auto px-4 scrollbar-none">
+                {(people ?? none(6)).map((p, i) => (
+                  <li key={p?.path ?? i} className="relative w-24 shrink-0 text-center">
+                    <span className="mx-auto grid size-18 place-items-center overflow-hidden rounded-full bg-surface-sunken font-serif text-headline-m text-text-secondary">
+                      {p ? p.name.slice(0, 1) : <span aria-hidden className="bone block! size-full" />}
+                    </span>
+                    <span className="mt-2 line-clamp-2 text-label">
+                      {p ? (
+                        <a href={p.path} className="after:absolute after:inset-0">
+                          {p.name}
+                        </a>
+                      ) : (
+                        <Bone className="w-full" />
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
       </Wide>
     </Frame>
   );

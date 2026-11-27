@@ -26,7 +26,7 @@ def test_shape_cache_and_etag(public):
         "version", "media_base_url", "versions", "maintenance", "flags", "links", "pinning", "identity",
         "theme", "localization",
     }  # fmt: skip
-    assert body["flags"] == {"shorts": True, "youtube": True, "offline_saving": True}
+    assert body["flags"] == {"shorts": True, "youtube": True, "offline_saving": True, "card_counts": True}
     assert body["theme"]["key"] == "signature"
     assert "s-maxage=120" in res["Cache-Control"]
     again = public.get("/api/v1/app-config", headers={"if-none-match": res["ETag"]})

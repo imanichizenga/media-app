@@ -17,23 +17,12 @@ part 'public_region.g.dart';
 )
 class PublicRegion {
   /// Returns a new [PublicRegion] instance.
-  PublicRegion({
-    required this.slug,
-    required this.name,
-  });
+  PublicRegion({required this.slug, required this.name});
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'name', required: true, includeIfNull: false)
   final String name;
 
   @override

@@ -19,23 +19,12 @@ part 'home_section.g.dart';
 )
 class HomeSection {
   /// Returns a new [HomeSection] instance.
-  HomeSection({
-    required this.category,
-    required this.results,
-  });
+  HomeSection({required this.category, required this.results});
 
-  @JsonKey(
-    name: r'category',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'category', required: true, includeIfNull: false)
   final PublicCategory category;
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<Card> results;
 
   @override

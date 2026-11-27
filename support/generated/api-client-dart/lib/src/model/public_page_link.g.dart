@@ -49,7 +49,6 @@ class _$PublicPageLinkCWProxyImpl implements _$PublicPageLinkCWProxy {
       this(modifiedAt: modifiedAt);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicPageLink(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -94,25 +93,22 @@ extension $PublicPageLinkCopyWith on PublicPageLink {
 // **************************************************************************
 
 PublicPageLink _$PublicPageLinkFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicPageLink',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['key', 'title', 'path', 'modified_at'],
-        );
-        final val = PublicPageLink(
-          key: $checkedConvert('key', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'modifiedAt': 'modified_at'},
-    );
+    $checkedCreate('PublicPageLink', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['key', 'title', 'path', 'modified_at'],
+      );
+      final val = PublicPageLink(
+        key: $checkedConvert('key', (v) => v as String),
+        title: $checkedConvert('title', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        modifiedAt: $checkedConvert(
+          'modified_at',
+          (v) => DateTime.parse(v as String),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'modifiedAt': 'modified_at'});
 
 Map<String, dynamic> _$PublicPageLinkToJson(PublicPageLink instance) =>
     <String, dynamic>{

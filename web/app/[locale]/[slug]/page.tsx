@@ -53,7 +53,15 @@ async function Still(props: Props) {
   const view = viewOf(locale, site);
   const t = words(locale);
   return (
-    <Frame locale={locale} path={p.path} view={view} title={p.title} other={p.translations[0]?.path}>
+    <Frame
+      locale={locale}
+      path={p.path}
+      view={view}
+      title={p.title}
+      other={p.translations[0]?.path}
+      // The site's own pages are listed under You: back there.
+      back={at(locale, "/profile")}
+    >
       <JsonLd
         data={graph(
           organization(site, locale),

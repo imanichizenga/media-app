@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../core/account/session.dart';
+import '../features/saved/library.dart';
 import '../features/video/video_screen.dart';
 import '../l10n/gen/strings.dart';
 import '../ui/adaptive/adaptive.dart';
@@ -14,12 +16,12 @@ import '../ui/tokens/theme.dart';
 import 'router.dart';
 import 'window.dart';
 
-List<Place> placesOf(Strings s) => [
+List<Place> placesOf(Strings s, {int saved = 0, String? initial}) => [
   Place(NewsIcons.house, s.navHome, solid: true),
   Place(NewsIcons.play, s.navVideo, solid: true),
   Place(NewsIcons.compass, s.navExplore),
-  Place(NewsIcons.bookmark, s.navSaved, solid: true),
-  Place(NewsIcons.circleUser, s.navYou),
+  Place(NewsIcons.bookmark, s.navSaved, solid: true, count: saved),
+  Place(NewsIcons.circleUser, s.navYou, initial: initial),
 ];
 
 class AppShell extends ConsumerStatefulWidget {
@@ -65,7 +67,11 @@ class _AppShellState extends ConsumerState<AppShell> {
         extendBody: !dark,
         body: shell,
         bottomNavigationBar: PlacesBar(
-          places: placesOf(Strings.of(context)),
+          places: placesOf(
+            Strings.of(context),
+            saved: ref.watch(savedStoriesProvider.select((v) => v.value?.length ?? 0)),
+            initial: ref.watch(readerProvider.select((r) => r?.initial)),
+          ),
           at: at,
           onGo: _go,
           dark: dark,

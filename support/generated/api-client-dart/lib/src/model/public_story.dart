@@ -19,45 +19,29 @@ class PublicStory {
   /// Returns a new [PublicStory] instance.
   PublicStory({
     required this.slug,
+
     required this.title,
+
     required this.path,
+
     required this.summary,
+
     required this.isActive,
   });
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'summary',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'summary', required: true, includeIfNull: false)
   final String summary;
 
-  @JsonKey(
-    name: r'is_active',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'is_active', required: true, includeIfNull: false)
   final bool isActive;
 
   @override

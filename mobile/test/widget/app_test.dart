@@ -238,7 +238,7 @@ void main() {
   testWidgets('the kill switch for shorts leaves the long videos and no dead tab', (t) async {
     final api = FakeApi()
       ..replies['/api/v1/app-config'] = FakeApi.config({
-        'flags': {'shorts': false, 'youtube': true, 'offline_saving': false},
+        'flags': {'shorts': false, 'youtube': true, 'offline_saving': false, 'card_counts': true},
       });
     final p = await start(t, api: api);
     await p.go('/video');

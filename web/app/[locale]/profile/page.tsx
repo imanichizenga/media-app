@@ -11,6 +11,7 @@ import {
 } from "@news/ui/icons";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { AccountCard } from "@/components/account";
 import { SchemeChoice, TextSizeChoice } from "@/components/client";
 import { Frame, Wide } from "@/components/frame";
 import { PageHead } from "@/components/parts";
@@ -47,7 +48,7 @@ const Group = ({ title, children }: { title: string; children: ReactNode }) => (
 );
 const ROW = "flex min-h-13 items-center gap-3 px-4 hover:bg-surface-sunken";
 
-/** How the site behaves for this reader. The sign-in card joins in M4. */
+/** The reader's account (or an invitation to one), and how the site behaves for them. */
 export default async function Page({ params }: Props) {
   const { locale } = await params;
   const [site, foot] = await Promise.all([readSite(), pages(locale)]);
@@ -65,6 +66,7 @@ export default async function Page({ params }: Props) {
       <Wide className="max-w-2xl!">
         <PageHead title={t("navYou")} hidden />
         <div className="flex flex-col gap-6 pt-4">
+          <AccountCard t={t} brand={site.identity.brand_name} />
           <Group title={t("language")}>
             <ul className="divide-y divide-border">
               {(["sw", "en"] as const).map((l) => (

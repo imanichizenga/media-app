@@ -87,7 +87,6 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
       this(localization: localization);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -161,59 +160,71 @@ extension $AppConfigCopyWith on AppConfig {
 // JsonSerializableGenerator
 // **************************************************************************
 
-AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'AppConfig',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'theme',
-            'identity',
-            'version',
-            'media_base_url',
-            'versions',
-            'maintenance',
-            'flags',
-            'links',
-            'pinning',
-            'localization'
-          ],
-        );
-        final val = AppConfig(
-          theme: $checkedConvert(
-              'theme', (v) => SiteTheme.fromJson(v as Map<String, dynamic>)),
-          identity: $checkedConvert('identity',
-              (v) => SiteIdentity.fromJson(v as Map<String, dynamic>)),
-          version: $checkedConvert('version', (v) => v as String),
-          mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
-          versions: $checkedConvert('versions',
-              (v) => AppVersions.fromJson(v as Map<String, dynamic>)),
-          maintenance: $checkedConvert('maintenance',
-              (v) => AppMaintenance.fromJson(v as Map<String, dynamic>)),
-          flags: $checkedConvert(
-              'flags', (v) => AppFlags.fromJson(v as Map<String, dynamic>)),
-          links: $checkedConvert(
-              'links', (v) => AppLinks.fromJson(v as Map<String, dynamic>)),
-          pinning: $checkedConvert(
-              'pinning', (v) => AppPinning.fromJson(v as Map<String, dynamic>)),
-          localization: $checkedConvert('localization',
-              (v) => AppLocalization.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'mediaBaseUrl': 'media_base_url'},
-    );
+AppConfig _$AppConfigFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('AppConfig', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'theme',
+          'identity',
+          'version',
+          'media_base_url',
+          'versions',
+          'maintenance',
+          'flags',
+          'links',
+          'pinning',
+          'localization',
+        ],
+      );
+      final val = AppConfig(
+        theme: $checkedConvert(
+          'theme',
+          (v) => SiteTheme.fromJson(v as Map<String, dynamic>),
+        ),
+        identity: $checkedConvert(
+          'identity',
+          (v) => SiteIdentity.fromJson(v as Map<String, dynamic>),
+        ),
+        version: $checkedConvert('version', (v) => v as String),
+        mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
+        versions: $checkedConvert(
+          'versions',
+          (v) => AppVersions.fromJson(v as Map<String, dynamic>),
+        ),
+        maintenance: $checkedConvert(
+          'maintenance',
+          (v) => AppMaintenance.fromJson(v as Map<String, dynamic>),
+        ),
+        flags: $checkedConvert(
+          'flags',
+          (v) => AppFlags.fromJson(v as Map<String, dynamic>),
+        ),
+        links: $checkedConvert(
+          'links',
+          (v) => AppLinks.fromJson(v as Map<String, dynamic>),
+        ),
+        pinning: $checkedConvert(
+          'pinning',
+          (v) => AppPinning.fromJson(v as Map<String, dynamic>),
+        ),
+        localization: $checkedConvert(
+          'localization',
+          (v) => AppLocalization.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'mediaBaseUrl': 'media_base_url'});
 
 Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
-      'theme': instance.theme.toJson(),
-      'identity': instance.identity.toJson(),
-      'version': instance.version,
-      'media_base_url': instance.mediaBaseUrl,
-      'versions': instance.versions.toJson(),
-      'maintenance': instance.maintenance.toJson(),
-      'flags': instance.flags.toJson(),
-      'links': instance.links.toJson(),
-      'pinning': instance.pinning.toJson(),
-      'localization': instance.localization.toJson(),
-    };
+  'theme': instance.theme.toJson(),
+  'identity': instance.identity.toJson(),
+  'version': instance.version,
+  'media_base_url': instance.mediaBaseUrl,
+  'versions': instance.versions.toJson(),
+  'maintenance': instance.maintenance.toJson(),
+  'flags': instance.flags.toJson(),
+  'links': instance.links.toJson(),
+  'pinning': instance.pinning.toJson(),
+  'localization': instance.localization.toJson(),
+};

@@ -43,7 +43,6 @@ class _$CategoryPageCWProxyImpl implements _$CategoryPageCWProxy {
       this(category: category);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CategoryPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -83,28 +82,26 @@ extension $CategoryPageCopyWith on CategoryPage {
 // **************************************************************************
 
 CategoryPage _$CategoryPageFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'CategoryPage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['next_cursor', 'results', 'category'],
-        );
-        final val = CategoryPage(
-          nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          category: $checkedConvert('category',
-              (v) => PublicCategoryDetail.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'nextCursor': 'next_cursor'},
-    );
+    $checkedCreate('CategoryPage', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['next_cursor', 'results', 'category'],
+      );
+      final val = CategoryPage(
+        nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        category: $checkedConvert(
+          'category',
+          (v) => PublicCategoryDetail.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'nextCursor': 'next_cursor'});
 
 Map<String, dynamic> _$CategoryPageToJson(CategoryPage instance) =>
     <String, dynamic>{

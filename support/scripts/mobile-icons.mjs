@@ -5,7 +5,7 @@ const root = new URL("../..", import.meta.url).pathname;
 const store = `${root}node_modules/.pnpm/`;
 const dir = `${store}${readdirSync(store).find((d) => d.startsWith("lucide-react@"))}/node_modules/lucide-react/dist/esm/icons/`;
 const NAMES =
-  "house play compass bookmark circle-user heart share-2 search chevron-right chevron-left chevron-down arrow-right arrow-left arrow-up x check zap volume-2 volume-x pause images a-large-small clock trash-2 download wifi-off refresh-cw languages moon sun sun-moon info external-link file-text shield mail scale rotate-ccw ellipsis eye-off maximize minimize badge-check quote circle-alert triangle-alert circle-check link-2 gauge newspaper landmark trending-up trophy heart-pulse graduation-cap cpu music leaf globe earth message-square-quote history layers pen-line radio bell sparkles pin menu smartphone rss".split(
+  "house play compass bookmark circle-user heart share-2 search chevron-right chevron-left chevron-down arrow-right arrow-left arrow-up x check zap volume-2 volume-x pause images a-large-small clock trash-2 download wifi-off refresh-cw languages moon sun sun-moon info external-link file-text shield mail scale rotate-ccw ellipsis eye-off maximize minimize badge-check quote circle-alert triangle-alert circle-check link-2 gauge newspaper landmark trending-up trophy heart-pulse graduation-cap cpu music leaf globe earth message-square-quote history layers pen-line radio bell sparkles pin menu smartphone rss eye users message-circle send-horizontal log-out".split(
     " ",
   );
 const n = Number;

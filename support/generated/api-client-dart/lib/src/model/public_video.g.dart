@@ -102,7 +102,6 @@ class _$PublicVideoCWProxyImpl implements _$PublicVideoCWProxy {
   PublicVideo spriteVtt(String spriteVtt) => this(spriteVtt: spriteVtt);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicVideo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -192,51 +191,49 @@ extension $PublicVideoCopyWith on PublicVideo {
 // **************************************************************************
 
 PublicVideo _$PublicVideoFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicVideo',
+  'PublicVideo',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'kind',
-            'id',
-            'alt',
-            'credit',
-            'width',
-            'height',
-            'blurhash',
-            'color',
-            'duration_ms',
-            'hls',
-            'poster',
-            'sprite',
-            'sprite_vtt'
-          ],
-        );
-        final val = PublicVideo(
-          kind: $checkedConvert(
-              'kind', (v) => $enumDecode(_$PublicVideoKindEnumEnumMap, v)),
-          id: $checkedConvert('id', (v) => v as String),
-          alt: $checkedConvert('alt', (v) => v as String),
-          credit: $checkedConvert('credit', (v) => v as String),
-          width: $checkedConvert('width', (v) => (v as num?)?.toInt()),
-          height: $checkedConvert('height', (v) => (v as num?)?.toInt()),
-          blurhash: $checkedConvert('blurhash', (v) => v as String),
-          color: $checkedConvert('color', (v) => v as String),
-          durationMs:
-              $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
-          hls: $checkedConvert('hls', (v) => v as String),
-          poster: $checkedConvert('poster', (v) => v as String),
-          sprite: $checkedConvert('sprite', (v) => v as String),
-          spriteVtt: $checkedConvert('sprite_vtt', (v) => v as String),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'durationMs': 'duration_ms',
-        'spriteVtt': 'sprite_vtt'
-      },
+      requiredKeys: const [
+        'kind',
+        'id',
+        'alt',
+        'credit',
+        'width',
+        'height',
+        'blurhash',
+        'color',
+        'duration_ms',
+        'hls',
+        'poster',
+        'sprite',
+        'sprite_vtt',
+      ],
     );
+    final val = PublicVideo(
+      kind: $checkedConvert(
+        'kind',
+        (v) => $enumDecode(_$PublicVideoKindEnumEnumMap, v),
+      ),
+      id: $checkedConvert('id', (v) => v as String),
+      alt: $checkedConvert('alt', (v) => v as String),
+      credit: $checkedConvert('credit', (v) => v as String),
+      width: $checkedConvert('width', (v) => (v as num?)?.toInt()),
+      height: $checkedConvert('height', (v) => (v as num?)?.toInt()),
+      blurhash: $checkedConvert('blurhash', (v) => v as String),
+      color: $checkedConvert('color', (v) => v as String),
+      durationMs: $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
+      hls: $checkedConvert('hls', (v) => v as String),
+      poster: $checkedConvert('poster', (v) => v as String),
+      sprite: $checkedConvert('sprite', (v) => v as String),
+      spriteVtt: $checkedConvert('sprite_vtt', (v) => v as String),
+    );
+    return val;
+  },
+  fieldKeyMap: const {'durationMs': 'duration_ms', 'spriteVtt': 'sprite_vtt'},
+);
 
 Map<String, dynamic> _$PublicVideoToJson(PublicVideo instance) =>
     <String, dynamic>{
@@ -255,6 +252,4 @@ Map<String, dynamic> _$PublicVideoToJson(PublicVideo instance) =>
       'sprite_vtt': instance.spriteVtt,
     };
 
-const _$PublicVideoKindEnumEnumMap = {
-  PublicVideoKindEnum.video: 'video',
-};
+const _$PublicVideoKindEnumEnumMap = {PublicVideoKindEnum.video: 'video'};

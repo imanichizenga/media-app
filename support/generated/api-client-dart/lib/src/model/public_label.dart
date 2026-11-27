@@ -17,31 +17,15 @@ part 'public_label.g.dart';
 )
 class PublicLabel {
   /// Returns a new [PublicLabel] instance.
-  PublicLabel({
-    required this.slug,
-    required this.name,
-    required this.path,
-  });
+  PublicLabel({required this.slug, required this.name, required this.path});
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'name', required: true, includeIfNull: false)
   final String name;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

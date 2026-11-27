@@ -19,53 +19,34 @@ class Logo {
   /// Returns a new [Logo] instance.
   Logo({
     required this.id,
+
     required this.width,
+
     required this.height,
+
     required this.derived,
+
     required this.svg,
+
     required this.png,
   });
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'width',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'width', required: true, includeIfNull: false)
   final int width;
 
-  @JsonKey(
-    name: r'height',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'height', required: true, includeIfNull: false)
   final int height;
 
-  @JsonKey(
-    name: r'derived',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'derived', required: true, includeIfNull: false)
   final bool derived;
 
-  @JsonKey(
-    name: r'svg',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'svg', required: true, includeIfNull: false)
   final String svg;
 
-  @JsonKey(
-    name: r'png',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'png', required: true, includeIfNull: false)
   final Map<String, String> png;
 
   @override

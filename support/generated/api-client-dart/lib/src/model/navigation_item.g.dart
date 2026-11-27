@@ -73,7 +73,6 @@ class _$NavigationItemCWProxyImpl implements _$NavigationItemCWProxy {
       this(children: children);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `NavigationItem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -138,42 +137,37 @@ extension $NavigationItemCopyWith on NavigationItem {
 // **************************************************************************
 
 NavigationItem _$NavigationItemFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'NavigationItem',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'name',
-            'short_name',
-            'slug',
-            'path',
-            'color',
-            'icon',
-            'children'
-          ],
-        );
-        final val = NavigationItem(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          shortName: $checkedConvert('short_name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          color: $checkedConvert('color', (v) => v as String),
-          icon: $checkedConvert('icon', (v) => v as String),
-          children: $checkedConvert(
-              'children',
-              (v) => (v as List<dynamic>)
-                  .map(
-                      (e) => PublicCategory.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'shortName': 'short_name'},
-    );
+    $checkedCreate('NavigationItem', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'id',
+          'name',
+          'short_name',
+          'slug',
+          'path',
+          'color',
+          'icon',
+          'children',
+        ],
+      );
+      final val = NavigationItem(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        shortName: $checkedConvert('short_name', (v) => v as String),
+        slug: $checkedConvert('slug', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        color: $checkedConvert('color', (v) => v as String),
+        icon: $checkedConvert('icon', (v) => v as String),
+        children: $checkedConvert(
+          'children',
+          (v) => (v as List<dynamic>)
+              .map((e) => PublicCategory.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'shortName': 'short_name'});
 
 Map<String, dynamic> _$NavigationItemToJson(NavigationItem instance) =>
     <String, dynamic>{

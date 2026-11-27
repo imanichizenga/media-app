@@ -3,12 +3,15 @@ import { createPublicClient, type Schemas } from "@news/api-client/public";
 import { cache } from "react";
 import { env } from "./env";
 import type { Locale } from "./locale";
+import type { Asked } from "./search";
 
 export type Card = Schemas["Card"];
 export type Article = Schemas["Article"];
 export type Home = Schemas["Home"];
 export type Site = Schemas["SiteConfig"];
 export type Nav = Schemas["NavigationItem"];
+export type Found = Schemas["Search"];
+export type Hit = Schemas["SearchHit"];
 
 export class Gone extends Error {}
 export class Unavailable extends Error {}
@@ -143,6 +146,36 @@ export const author = cache((locale: Locale, slug: string, p: Paging = {}) =>
     ["latest"],
   ),
 );
+/**
+ * What a reader asked for, already checked (lib/search.ts), as its query string: `cache` knows a string again, not
+ * an object, so the page and its metadata share one answer. The same question is one answer for a minute.
+ */
+export const search = cache((locale: Locale, asked: string) =>
+  read(
+    (o) =>
+      client().GET("/api/v1/content/search", {
+        params: { query: { locale, ...(Object.fromEntries(new URLSearchParams(asked)) as Asked) } },
+        ...o,
+      }),
+    60,
+    ["search", "latest"],
+  ),
+);
+/** Which ways of signing in are open (ADR-0050): the same for everyone, kept a minute; a failure offers none. */
+export const authMethods = cache(async () => {
+  try {
+    return await read((o) => client().GET("/api/v1/auth/methods", o), 60, ["auth"]);
+  } catch {
+    return {
+      phone: false,
+      google: false,
+      apple: false,
+      local_sms: false,
+      resend_seconds: 60,
+      terms_version: "",
+    };
+  }
+});
 export const sitemapIndex = () => read((o) => client().GET("/api/v1/content/sitemap", o), 300, ["latest"]);
 export const sitemapNews = () => read((o) => client().GET("/api/v1/content/sitemap/news", o), 60, ["latest"]);
 export const sitemapMonth = (month: string) =>

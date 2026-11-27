@@ -20,7 +20,13 @@ export function viewOf(locale: Locale, site: Site): NewsEnv {
       sensitive: t("sensitive"),
       minutes: (n) => t("minutesRead", { n }),
       more: t("more"),
+      counts: {
+        likes: t("likesCount", { n: "#" }),
+        comments: t("commentsCount", { n: "#" }),
+        views: t("viewsCount", { n: "#" }),
+      },
     },
+    counts: site.engagement?.card_counts !== false,
   };
 }
 export const cards = (list: Card[]): CardData[] => list as CardData[];

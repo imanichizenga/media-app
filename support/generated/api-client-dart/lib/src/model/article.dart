@@ -31,295 +31,186 @@ class Article {
   /// Returns a new [Article] instance.
   Article({
     required this.id,
+
     required this.type,
+
     required this.locale,
+
     required this.path,
+
     required this.slug,
+
     required this.headline,
+
     required this.railTitle,
+
     required this.standfirst,
+
     required this.category,
+
     required this.authors,
+
     required this.image,
+
     required this.video,
+
     required this.youtubeId,
+
     required this.durationMs,
+
     required this.readingMinutes,
+
     required this.publishedAt,
+
     required this.modifiedAt,
+
     required this.isSensitive,
+
     required this.breakingUntil,
+
     required this.isLive,
+
     required this.body,
+
     required this.assets,
+
     required this.links,
+
     required this.breadcrumbs,
+
     required this.tags,
+
     required this.regions,
+
     required this.story,
+
     required this.engagement,
+
     required this.contentWarning,
+
     required this.sourceUrl,
+
     required this.updateNote,
+
     required this.correctionNote,
+
     required this.seo,
+
     required this.firstPublishedAt,
+
     required this.liveEndedAt,
+
     required this.translations,
   });
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'type',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'type', required: true, includeIfNull: false)
   final PostTypeEnum type;
 
-  @JsonKey(
-    name: r'locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'locale', required: true, includeIfNull: false)
   final String locale;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'headline',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'headline', required: true, includeIfNull: false)
   final String headline;
 
   /// At most 24 characters, for the live rail
-  @JsonKey(
-    name: r'rail_title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'rail_title', required: true, includeIfNull: false)
   final String railTitle;
 
-  @JsonKey(
-    name: r'standfirst',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'standfirst', required: true, includeIfNull: false)
   final String standfirst;
 
-  @JsonKey(
-    name: r'category',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'category', required: true, includeIfNull: false)
   final PublicCategory category;
 
-  @JsonKey(
-    name: r'authors',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'authors', required: true, includeIfNull: false)
   final List<PublicByline> authors;
 
-  @JsonKey(
-    name: r'image',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'image', required: true, includeIfNull: true)
   final PublicImage? image;
 
-  @JsonKey(
-    name: r'video',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'video', required: true, includeIfNull: true)
   final PublicVideo? video;
 
-  @JsonKey(
-    name: r'youtube_id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'youtube_id', required: true, includeIfNull: false)
   final String youtubeId;
 
   /// Of the video, wherever it lives
-  @JsonKey(
-    name: r'duration_ms',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'duration_ms', required: true, includeIfNull: true)
   final int? durationMs;
 
-  @JsonKey(
-    name: r'reading_minutes',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'reading_minutes', required: true, includeIfNull: false)
   final int readingMinutes;
 
-  @JsonKey(
-    name: r'published_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'published_at', required: true, includeIfNull: false)
   final DateTime publishedAt;
 
-  @JsonKey(
-    name: r'modified_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'modified_at', required: true, includeIfNull: false)
   final DateTime modifiedAt;
 
-  @JsonKey(
-    name: r'is_sensitive',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'is_sensitive', required: true, includeIfNull: false)
   final bool isSensitive;
 
-  @JsonKey(
-    name: r'breaking_until',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'breaking_until', required: true, includeIfNull: true)
   final DateTime? breakingUntil;
 
-  @JsonKey(
-    name: r'is_live',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'is_live', required: true, includeIfNull: false)
   final bool isLive;
 
-  @JsonKey(
-    name: r'body',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'body', required: true, includeIfNull: false)
   final Map<String, Object?> body;
 
-  @JsonKey(
-    name: r'assets',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'assets', required: true, includeIfNull: false)
   final Map<String, Map<String, Object?>> assets;
 
-  @JsonKey(
-    name: r'links',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'links', required: true, includeIfNull: false)
   final Map<String, RelatedTarget> links;
 
-  @JsonKey(
-    name: r'breadcrumbs',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'breadcrumbs', required: true, includeIfNull: false)
   final List<PublicCategory> breadcrumbs;
 
-  @JsonKey(
-    name: r'tags',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'tags', required: true, includeIfNull: false)
   final List<PublicLabel> tags;
 
-  @JsonKey(
-    name: r'regions',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'regions', required: true, includeIfNull: false)
   final List<PublicRegion> regions;
 
-  @JsonKey(
-    name: r'story',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'story', required: true, includeIfNull: true)
   final PublicStoryRef? story;
 
-  @JsonKey(
-    name: r'engagement',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'engagement', required: true, includeIfNull: false)
   final PublicPolicy engagement;
 
-  @JsonKey(
-    name: r'content_warning',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'content_warning', required: true, includeIfNull: false)
   final String contentWarning;
 
-  @JsonKey(
-    name: r'source_url',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'source_url', required: true, includeIfNull: false)
   final String sourceUrl;
 
-  @JsonKey(
-    name: r'update_note',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'update_note', required: true, includeIfNull: false)
   final String updateNote;
 
-  @JsonKey(
-    name: r'correction_note',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'correction_note', required: true, includeIfNull: false)
   final String correctionNote;
 
-  @JsonKey(
-    name: r'seo',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'seo', required: true, includeIfNull: false)
   final PublicSeo seo;
 
-  @JsonKey(
-    name: r'first_published_at',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'first_published_at', required: true, includeIfNull: true)
   final DateTime? firstPublishedAt;
 
-  @JsonKey(
-    name: r'live_ended_at',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'live_ended_at', required: true, includeIfNull: true)
   final DateTime? liveEndedAt;
 
-  @JsonKey(
-    name: r'translations',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'translations', required: true, includeIfNull: false)
   final List<Translation> translations;
 
   @override

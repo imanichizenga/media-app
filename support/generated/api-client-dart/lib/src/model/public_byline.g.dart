@@ -60,7 +60,6 @@ class _$PublicBylineCWProxyImpl implements _$PublicBylineCWProxy {
   PublicByline avatar(PublicImage? avatar) => this(avatar: avatar);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicByline(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -115,29 +114,26 @@ extension $PublicBylineCopyWith on PublicByline {
 // **************************************************************************
 
 PublicByline _$PublicBylineFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicByline',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['id', 'name', 'slug', 'path', 'title', 'avatar'],
-        );
-        final val = PublicByline(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          avatar: $checkedConvert(
-              'avatar',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('PublicByline', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['id', 'name', 'slug', 'path', 'title', 'avatar'],
+      );
+      final val = PublicByline(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        slug: $checkedConvert('slug', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        title: $checkedConvert('title', (v) => v as String),
+        avatar: $checkedConvert(
+          'avatar',
+          (v) => v == null
+              ? null
+              : PublicImage.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicBylineToJson(PublicByline instance) =>
     <String, dynamic>{

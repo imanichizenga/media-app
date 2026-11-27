@@ -29,3 +29,11 @@ def relax_nullable_json(result: Any, generator: Any, request: Any, public: bool)
 
     walk(result)
     return result
+
+
+class ReaderBearerScheme(OpenApiAuthenticationExtension):  # type: ignore[no-untyped-call]
+    target_class = "newsplatform.accounts.authentication.ReaderAuthentication"
+    name = "readerBearer"
+
+    def get_security_definition(self, auto_schema: Any) -> dict[str, str]:
+        return {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}

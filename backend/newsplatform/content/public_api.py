@@ -5,7 +5,6 @@ from datetime import timedelta
 from typing import Any, ClassVar
 
 from django.utils import timezone
-
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -97,7 +96,8 @@ class HomeView(PublicView):
             (str(Feed.TYPE), str(PostType.VIDEO), 8),
             (str(Feed.TYPE), str(PostType.YOUTUBE), 8),
             (str(Feed.TYPE), str(PostType.SHORT), 12),
-            *((str(Feed.CATEGORY), str(n.category.pk), 6) for n in roots),
+            # Enough for a row one slides through (web: components/parts.tsx Rail).
+            *((str(Feed.CATEGORY), str(n.category.pk), 12) for n in roots),
         ]
         everything, videos, youtube, shorts, *sections = selectors.several(locale, wanted)
         # Shorts have their own strip and their own screen.
@@ -314,7 +314,12 @@ class NavigationView(PublicView):
         )
 
 
-_SINCE = {"24h": timedelta(hours=24), "7d": timedelta(days=7), "30d": timedelta(days=30), "1y": timedelta(days=365)}
+_SINCE = {
+    "24h": timedelta(hours=24),
+    "7d": timedelta(days=7),
+    "30d": timedelta(days=30),
+    "1y": timedelta(days=365),
+}
 
 
 def _search_params(request: Request, locale: str) -> engine.Params:
@@ -368,7 +373,13 @@ class SearchView(PublicView):
     def get(self, request: Request) -> Response:
         params = _search_params(request, locale_of(request))
         if not params.q:
-            empty = {"available": True, "query": "", "total": 0, "total_is_exact": True, "engine": "opensearch"}
+            empty = {
+                "available": True,
+                "query": "",
+                "total": 0,
+                "total_is_exact": True,
+                "engine": "opensearch",
+            }
             return self.cached({**empty, "next_cursor": None, "results": []}, ["search"])
         page = engine.search(params)
         data = {

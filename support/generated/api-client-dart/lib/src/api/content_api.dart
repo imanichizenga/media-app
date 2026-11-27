@@ -23,6 +23,7 @@ import 'package:news_api_client/src/model/search.dart';
 import 'package:news_api_client/src/model/sitemap_entries.dart';
 import 'package:news_api_client/src/model/sitemap_index.dart';
 import 'package:news_api_client/src/model/story_page.dart';
+import 'package:news_api_client/src/model/suggest.dart';
 import 'package:news_api_client/src/model/tag_page.dart';
 
 class ContentApi {
@@ -55,17 +56,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/articles/{slug}'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/articles/{slug}'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -140,17 +140,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/authors/{slug}'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/authors/{slug}'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -175,8 +174,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<AuthorPage, AuthorPage>(rawData, 'AuthorPage',
-              growable: true);
+          : deserialize<AuthorPage, AuthorPage>(
+              rawData,
+              'AuthorPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -228,17 +230,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/types/{kind}'
-        .replaceAll('{' r'kind' '}', kind.toString());
+    final _path = r'/api/v1/content/types/{kind}'.replaceAll(
+      '{'
+      r'kind'
+      '}',
+      kind.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -263,8 +264,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<FeedPage, FeedPage>(rawData, 'FeedPage',
-              growable: true);
+          : deserialize<FeedPage, FeedPage>(
+              rawData,
+              'FeedPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -316,17 +320,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/categories/{slug}'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/categories/{slug}'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -351,8 +354,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<CategoryPage, CategoryPage>(rawData, 'CategoryPage',
-              growable: true);
+          : deserialize<CategoryPage, CategoryPage>(
+              rawData,
+              'CategoryPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -401,13 +407,8 @@ class ContentApi {
     final _path = r'/api/v1/content/home';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -483,13 +484,8 @@ class ContentApi {
     final _path = r'/api/v1/content/latest';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -514,8 +510,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<FeedPage, FeedPage>(rawData, 'FeedPage',
-              growable: true);
+          : deserialize<FeedPage, FeedPage>(
+              rawData,
+              'FeedPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -564,13 +563,8 @@ class ContentApi {
     final _path = r'/api/v1/content/navigation';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -594,8 +588,10 @@ class ContentApi {
       _responseData = rawData == null
           ? null
           : deserialize<List<NavigationItem>, NavigationItem>(
-              rawData, 'List<NavigationItem>',
-              growable: true);
+              rawData,
+              'List<NavigationItem>',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -643,17 +639,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/pages/{key}'
-        .replaceAll('{' r'key' '}', key.toString());
+    final _path = r'/api/v1/content/pages/{key}'.replaceAll(
+      '{'
+      r'key'
+      '}',
+      key.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -676,8 +671,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<PublicPage, PublicPage>(rawData, 'PublicPage',
-              growable: true);
+          : deserialize<PublicPage, PublicPage>(
+              rawData,
+              'PublicPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -726,13 +724,8 @@ class ContentApi {
     final _path = r'/api/v1/content/pages';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -755,8 +748,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<PublicPages, PublicPages>(rawData, 'PublicPages',
-              growable: true);
+          : deserialize<PublicPages, PublicPages>(
+              rawData,
+              'PublicPages',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -804,17 +800,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/articles/{slug}/related'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/articles/{slug}/related'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -886,19 +881,12 @@ class ContentApi {
     final _path = r'/api/v1/content/resolve';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
-    final _queryParameters = <String, dynamic>{
-      r'path': path,
-    };
+    final _queryParameters = <String, dynamic>{r'path': path};
 
     final _response = await _dio.request<Object>(
       _path,
@@ -939,11 +927,16 @@ class ContentApi {
   }
 
   /// search
-  /// GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
+  /// ADR-0049: words, typing mistakes and first letters, in Swahili and English; newest first on a tie.
   ///
   /// Parameters:
-  /// * [locale]
   /// * [q]
+  /// * [category] - A section's slug; its subsections are included
+  /// * [cursor]
+  /// * [locale]
+  /// * [since]
+  /// * [sort]
+  /// * [type] - Comma-separated post types
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -954,8 +947,13 @@ class ContentApi {
   /// Returns a [Future] containing a [Response] with a [Search] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<Search>> search({
+    required String q,
+    String? category,
+    String? cursor,
     String? locale = 'sw',
-    String? q,
+    String? since,
+    String? sort = 'relevance',
+    String? type,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -966,19 +964,19 @@ class ContentApi {
     final _path = r'/api/v1/content/search';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
     final _queryParameters = <String, dynamic>{
+      if (category != null) r'category': category,
+      if (cursor != null) r'cursor': cursor,
       if (locale != null) r'locale': locale,
-      if (q != null) r'q': q,
+      r'q': q,
+      if (since != null) r'since': since,
+      if (sort != null) r'sort': sort,
+      if (type != null) r'type': type,
     };
 
     final _response = await _dio.request<Object>(
@@ -1019,6 +1017,82 @@ class ContentApi {
     );
   }
 
+  /// searchSuggest
+  /// Headlines as the reader types (ADR-0049).
+  ///
+  /// Parameters:
+  /// * [q]
+  /// * [locale]
+  /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
+  /// * [headers] - Can be used to add additional headers to the request
+  /// * [extras] - Can be used to add flags to the request
+  /// * [validateStatus] - A [ValidateStatus] callback that can be used to determine request success based on the HTTP status of the response
+  /// * [onSendProgress] - A [ProgressCallback] that can be used to get the send progress
+  /// * [onReceiveProgress] - A [ProgressCallback] that can be used to get the receive progress
+  ///
+  /// Returns a [Future] containing a [Response] with a [Suggest] as data
+  /// Throws [DioException] if API call or serialization fails
+  Future<Response<Suggest>> searchSuggest({
+    required String q,
+    String? locale = 'sw',
+    CancelToken? cancelToken,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    ValidateStatus? validateStatus,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    final _path = r'/api/v1/content/search/suggest';
+    final _options = Options(
+      method: r'GET',
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
+      validateStatus: validateStatus,
+    );
+
+    final _queryParameters = <String, dynamic>{
+      if (locale != null) r'locale': locale,
+      r'q': q,
+    };
+
+    final _response = await _dio.request<Object>(
+      _path,
+      options: _options,
+      queryParameters: _queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
+
+    Suggest? _responseData;
+
+    try {
+      final rawData = _response.data;
+      _responseData = rawData == null
+          ? null
+          : deserialize<Suggest, Suggest>(rawData, 'Suggest', growable: true);
+    } catch (error, stackTrace) {
+      throw DioException(
+        requestOptions: _response.requestOptions,
+        response: _response,
+        type: DioExceptionType.unknown,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+
+    return Response<Suggest>(
+      data: _responseData,
+      headers: _response.headers,
+      isRedirect: _response.isRedirect,
+      requestOptions: _response.requestOptions,
+      redirects: _response.redirects,
+      statusCode: _response.statusCode,
+      statusMessage: _response.statusMessage,
+      extra: _response.extra,
+    );
+  }
+
   /// sitemapIndex
   /// GET only, no cookies, no user. Anything about a person is a separate endpoint (M4).
   ///
@@ -1043,13 +1117,8 @@ class ContentApi {
     final _path = r'/api/v1/content/sitemap';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -1067,8 +1136,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<SitemapIndex, SitemapIndex>(rawData, 'SitemapIndex',
-              growable: true);
+          : deserialize<SitemapIndex, SitemapIndex>(
+              rawData,
+              'SitemapIndex',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -1114,17 +1186,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/sitemap/{month}'
-        .replaceAll('{' r'month' '}', month.toString());
+    final _path = r'/api/v1/content/sitemap/{month}'.replaceAll(
+      '{'
+      r'month'
+      '}',
+      month.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -1143,8 +1214,10 @@ class ContentApi {
       _responseData = rawData == null
           ? null
           : deserialize<SitemapEntries, SitemapEntries>(
-              rawData, 'SitemapEntries',
-              growable: true);
+              rawData,
+              'SitemapEntries',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -1191,13 +1264,8 @@ class ContentApi {
     final _path = r'/api/v1/content/sitemap/news';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -1216,8 +1284,10 @@ class ContentApi {
       _responseData = rawData == null
           ? null
           : deserialize<SitemapEntries, SitemapEntries>(
-              rawData, 'SitemapEntries',
-              growable: true);
+              rawData,
+              'SitemapEntries',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -1269,17 +1339,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/stories/{slug}'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/stories/{slug}'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -1304,8 +1373,11 @@ class ContentApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<StoryPage, StoryPage>(rawData, 'StoryPage',
-              growable: true);
+          : deserialize<StoryPage, StoryPage>(
+              rawData,
+              'StoryPage',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,
@@ -1357,17 +1429,16 @@ class ContentApi {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/api/v1/content/tags/{slug}'
-        .replaceAll('{' r'slug' '}', slug.toString());
+    final _path = r'/api/v1/content/tags/{slug}'.replaceAll(
+      '{'
+      r'slug'
+      '}',
+      slug.toString(),
+    );
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 

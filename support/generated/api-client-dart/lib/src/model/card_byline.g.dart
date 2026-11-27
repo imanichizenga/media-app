@@ -21,12 +21,7 @@ abstract class _$CardBylineCWProxy {
   /// ```dart
   /// CardByline(...).copyWith(id: 12, name: "My name")
   /// ````
-  CardByline call({
-    String id,
-    String name,
-    String slug,
-    String path,
-  });
+  CardByline call({String id, String name, String slug, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfCardByline.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfCardByline.copyWith.fieldName(...)`
@@ -48,7 +43,6 @@ class _$CardBylineCWProxyImpl implements _$CardBylineCWProxy {
   CardByline path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `CardByline(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -92,23 +86,17 @@ extension $CardBylineCopyWith on CardByline {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CardByline _$CardBylineFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'CardByline',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['id', 'name', 'slug', 'path'],
-        );
-        final val = CardByline(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+CardByline _$CardBylineFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('CardByline', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['id', 'name', 'slug', 'path']);
+      final val = CardByline(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        slug: $checkedConvert('slug', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$CardBylineToJson(CardByline instance) =>
     <String, dynamic>{

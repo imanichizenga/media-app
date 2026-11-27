@@ -1,11 +1,13 @@
-import type { ReactNode } from "react";
+import { type CSSProperties, Fragment, type ReactNode } from "react";
 import { Bone, cx } from "./base";
 import {
   Bookmark,
   ChevronRight,
+  Eye,
   Heart,
   type Icon,
   Images,
+  MessageCircle,
   MessageSquareQuote,
   Play,
   Share2,
@@ -41,6 +43,8 @@ export type NewsLabels = {
   sensitive: string;
   minutes: (n: number) => string;
   more: string;
+  /** "# likes", "# comments", "# views": read aloud for the counts on cards, the number put in place of "#". */
+  counts?: { likes: string; comments: string; views: string };
 };
 export type NewsEnv = {
   locale: "sw" | "en";
@@ -48,6 +52,8 @@ export type NewsEnv = {
   /** Fixed for a whole page, so the server and the browser agree on "five minutes ago". */
   now: number;
   t: NewsLabels;
+  /** Cards show views, likes and comments before a story is opened (Settings → Engagement); on unless said. */
+  counts?: boolean;
 };
 
 const MINUTE = 60_000;
@@ -106,7 +112,21 @@ export function Wordmark({
   base?: string;
   className?: string;
 }) {
-  if (!light) return <span className={cx("font-serif text-wordmark", className)}>{name}</span>;
+  if (!light)
+    return (
+      // Each word its own span, so a site can let colour flow through them in turn (web/app/globals.css).
+      <span className={cx("font-serif text-wordmark", className)} data-wordmark>
+        {name.split(" ").map((word, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: the words of a name never move
+          <Fragment key={i}>
+            {i > 0 && " "}
+            <span data-word style={{ "--i": i } as CSSProperties}>
+              {word}
+            </span>
+          </Fragment>
+        ))}
+      </span>
+    );
   const image = (logo: Logo, show: string) => (
     <img
       src={base + (logo.svg || logo.png["1x"])}
@@ -193,7 +213,36 @@ export function Kicker({
           {env.t.minutes(Math.max(1, card.reading_minutes))}
         </span>
       )}
+      {env.counts !== false && env.t.counts && <Counts card={card} env={env} />}
     </p>
+  );
+}
+/**
+ * Views, likes and comments at the end of the meta line, never over the picture, filled by the website's
+ * island: counts change faster than cards are kept. The line has one height, so their arrival moves nothing; a count
+ * the story does not allow, or one that is still 0, stays hidden.
+ */
+function Counts({ card, env }: { card: CardData; env: NewsEnv }) {
+  const say = env.t.counts;
+  if (!say) return null;
+  const one = (what: "views" | "likes" | "comments", icon: ReactNode) => (
+    <span data-c={what} data-say={say[what]} hidden className="card-count items-center gap-0.5">
+      {icon}
+      <span data-n="" aria-hidden />
+      <span data-said="" className="sr-only" />
+    </span>
+  );
+  return (
+    <span
+      data-counts={card.id}
+      hidden
+      className="card-counts shrink-0 items-center gap-x-2 whitespace-nowrap tabular-nums"
+    >
+      <span aria-hidden>·</span>
+      {one("views", <Eye size={12} strokeWidth={2} />)}
+      {one("likes", <Heart size={12} strokeWidth={2} />)}
+      {one("comments", <MessageCircle size={12} strokeWidth={2} />)}
+    </span>
   );
 }
 const VIDEO = new Set(["video", "short", "youtube"]);

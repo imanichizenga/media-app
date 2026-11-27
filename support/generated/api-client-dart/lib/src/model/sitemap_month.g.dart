@@ -21,12 +21,7 @@ abstract class _$SitemapMonthCWProxy {
   /// ```dart
   /// SitemapMonth(...).copyWith(id: 12, name: "My name")
   /// ````
-  SitemapMonth call({
-    String month,
-    int count,
-    DateTime modifiedAt,
-    int videos,
-  });
+  SitemapMonth call({String month, int count, DateTime modifiedAt, int videos});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSitemapMonth.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSitemapMonth.copyWith.fieldName(...)`
@@ -48,7 +43,6 @@ class _$SitemapMonthCWProxyImpl implements _$SitemapMonthCWProxy {
   SitemapMonth videos(int videos) => this(videos: videos);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SitemapMonth(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -93,25 +87,22 @@ extension $SitemapMonthCopyWith on SitemapMonth {
 // **************************************************************************
 
 SitemapMonth _$SitemapMonthFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'SitemapMonth',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['month', 'count', 'modified_at', 'videos'],
-        );
-        final val = SitemapMonth(
-          month: $checkedConvert('month', (v) => v as String),
-          count: $checkedConvert('count', (v) => (v as num).toInt()),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-          videos: $checkedConvert('videos', (v) => (v as num).toInt()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'modifiedAt': 'modified_at'},
-    );
+    $checkedCreate('SitemapMonth', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const ['month', 'count', 'modified_at', 'videos'],
+      );
+      final val = SitemapMonth(
+        month: $checkedConvert('month', (v) => v as String),
+        count: $checkedConvert('count', (v) => (v as num).toInt()),
+        modifiedAt: $checkedConvert(
+          'modified_at',
+          (v) => DateTime.parse(v as String),
+        ),
+        videos: $checkedConvert('videos', (v) => (v as num).toInt()),
+      );
+      return val;
+    }, fieldKeyMap: const {'modifiedAt': 'modified_at'});
 
 Map<String, dynamic> _$SitemapMonthToJson(SitemapMonth instance) =>
     <String, dynamic>{

@@ -1,4 +1,4 @@
-import { LeadCard, LiveRail, RowCard, SectionHeading, StoryCard } from "@news/ui/news";
+import { LeadCard, LiveRail, SectionHeading, StoryCard } from "@news/ui/news";
 import { type Home, site as readSite } from "@/lib/api";
 import { words } from "@/lib/i18n";
 import { at, type Locale } from "@/lib/locale";
@@ -6,7 +6,7 @@ import { graph, organization, website } from "@/lib/seo";
 import { cards, isBreaking, viewOf } from "@/lib/view";
 import { Frame, Wide } from "./frame";
 import { JsonLd } from "./json-ld";
-import { type Maybe, none, River, Rows, Strip } from "./parts";
+import { type Maybe, none, Rail, River, Rows, Strip } from "./parts";
 
 /**
  * Without data it is its own skeleton. Breaking news and the live rail are never bones: the skeleton is told them
@@ -35,7 +35,7 @@ export async function HomeView({
       path={path}
       place="home"
       view={view}
-      breaking={hot && cards([hot])[0]}
+      breaking={told ? cards(told.breaking.filter((c) => isBreaking(c, view.now))) : undefined}
       other={at(locale === "sw" ? "en" : "sw", "/")}
     >
       <JsonLd data={graph(organization(site, locale), website(site, locale))} />
@@ -74,34 +74,20 @@ export async function HomeView({
         </section>
       )}
       <Wide className="flex flex-col gap-12 pt-12">
-        {h?.sections.map((section, i) => {
-          const list = cards(section.results);
-          return (
-            <section key={section.category.id} aria-label={section.category.name}>
-              <SectionHeading title={section.category.name} href={section.category.path} env={view} />
-              {i % 2 === 0 ? (
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12">
-                  <StoryCard card={list[0]} env={view} className="lg:col-span-5" />
-                  <ul className="divide-y divide-border lg:col-span-7">
-                    {list.slice(1, 4).map((card) => (
-                      <li key={card.id} className="py-4 first:pt-0">
-                        <RowCard card={card} env={view} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <ul className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4 lg:gap-x-8">
-                  {list.slice(0, 4).map((card) => (
-                    <li key={card.id} className="min-w-0">
-                      <StoryCard card={card} env={view} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          );
-        })}
+        {h?.sections.map((section) => (
+          <section key={section.category.id} aria-label={section.category.name}>
+            <SectionHeading title={section.category.name} href={section.category.path} env={view} />
+            <Rail
+              list={cards(section.results)}
+              env={view}
+              title={section.category.name}
+              href={section.category.path}
+              all={t("seeAllIn", { name: section.category.name })}
+              back={t("earlierStories")}
+              more={t("moreStories")}
+            />
+          </section>
+        ))}
       </Wide>
     </Frame>
   );

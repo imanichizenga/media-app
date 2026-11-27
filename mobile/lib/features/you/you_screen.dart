@@ -17,11 +17,12 @@ import '../../ui/adaptive/tops.dart';
 import '../../ui/components/basics.dart';
 import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
+import '../account/account_card.dart';
 import '../article/text_size.dart';
 import '../content/feeds.dart';
 import '../explore/explore_screen.dart' show categoryIcons;
 
-/// How the app behaves for this reader. The sign-in card joins in M4.
+/// The reader's account (or an invitation to one), and how the app behaves for them.
 class YouScreen extends ConsumerStatefulWidget {
   const YouScreen({super.key});
 
@@ -197,6 +198,7 @@ class _YouScreenState extends ConsumerState<YouScreen> with GoesToTop {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 8),
+                      const AccountCard(),
                       ...groups,
                       const SizedBox(height: 16),
                       const Center(child: Wordmark(size: 22, onDark: null)),

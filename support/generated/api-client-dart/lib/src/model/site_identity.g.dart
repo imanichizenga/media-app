@@ -62,7 +62,6 @@ class _$SiteIdentityCWProxyImpl implements _$SiteIdentityCWProxy {
   SiteIdentity symbol(Logo? symbol) => this(symbol: symbol);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteIdentity(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -129,7 +128,7 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
             'tagline_en',
             'wordmark_light',
             'wordmark_dark',
-            'symbol'
+            'symbol',
           ],
         );
         final val = SiteIdentity(
@@ -137,17 +136,17 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
           taglineSw: $checkedConvert('tagline_sw', (v) => v as String),
           taglineEn: $checkedConvert('tagline_en', (v) => v as String),
           wordmarkLight: $checkedConvert(
-              'wordmark_light',
-              (v) =>
-                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
+            'wordmark_light',
+            (v) => v == null ? null : Logo.fromJson(v as Map<String, dynamic>),
+          ),
           wordmarkDark: $checkedConvert(
-              'wordmark_dark',
-              (v) =>
-                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
+            'wordmark_dark',
+            (v) => v == null ? null : Logo.fromJson(v as Map<String, dynamic>),
+          ),
           symbol: $checkedConvert(
-              'symbol',
-              (v) =>
-                  v == null ? null : Logo.fromJson(v as Map<String, dynamic>)),
+            'symbol',
+            (v) => v == null ? null : Logo.fromJson(v as Map<String, dynamic>),
+          ),
         );
         return val;
       },
@@ -156,7 +155,7 @@ SiteIdentity _$SiteIdentityFromJson(Map<String, dynamic> json) =>
         'taglineSw': 'tagline_sw',
         'taglineEn': 'tagline_en',
         'wordmarkLight': 'wordmark_light',
-        'wordmarkDark': 'wordmark_dark'
+        'wordmarkDark': 'wordmark_dark',
       },
     );
 

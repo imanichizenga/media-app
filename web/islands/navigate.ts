@@ -33,7 +33,8 @@ const PLACES = new Set(["tag"]);
 const STILL = /^(about|editorial-policy|corrections|contact|privacy|terms)$/;
 
 /** Which skeleton an address wears, known before its page is. */
-export function kindOf(path: string): string | null {
+export function kindOf(address: string): string | null {
+  const [path = "", query = ""] = address.split("?");
   const parts = path
     .replace(/^\/en(?=\/|$)/, "")
     .split("/")
@@ -45,7 +46,7 @@ export function kindOf(path: string): string | null {
   if (first === "author") return "author";
   if (second) return parts.length === 2 ? "article" : null;
   if (first === "video") return "video";
-  if (first === "search") return "explore";
+  if (first === "search") return /(^|&)q=[^&]/.test(query) ? "results" : "explore";
   if (first === "shorts") return "shorts";
   if (first === "saved" || first === "profile") return null;
   return STILL.test(first) ? "still" : "front";
@@ -148,7 +149,10 @@ export async function go(url: URL, push = true, headline = ""): Promise<void> {
   here = keyOf(url);
   now.dataset.loading = url.pathname;
   start();
-  const timer = setTimeout(() => wear(kindOf(url.pathname), url.pathname, mine, headline), PATIENCE);
+  const timer = setTimeout(
+    () => wear(kindOf(url.pathname + url.search), url.pathname, mine, headline),
+    PATIENCE,
+  );
   try {
     const got = await ask(url);
     if (visit !== mine) return;

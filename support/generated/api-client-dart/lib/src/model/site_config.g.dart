@@ -19,6 +19,8 @@ abstract class _$SiteConfigCWProxy {
 
   SiteConfig seo(SiteSeo seo);
 
+  SiteConfig engagement(SiteEngagement engagement);
+
   SiteConfig apps(SiteApps apps);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -34,6 +36,7 @@ abstract class _$SiteConfigCWProxy {
     String mediaBaseUrl,
     SiteLocalization localization,
     SiteSeo seo,
+    SiteEngagement engagement,
     SiteApps apps,
   });
 }
@@ -65,10 +68,13 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
   SiteConfig seo(SiteSeo seo) => this(seo: seo);
 
   @override
+  SiteConfig engagement(SiteEngagement engagement) =>
+      this(engagement: engagement);
+
+  @override
   SiteConfig apps(SiteApps apps) => this(apps: apps);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -82,6 +88,7 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
     Object? mediaBaseUrl = const $CopyWithPlaceholder(),
     Object? localization = const $CopyWithPlaceholder(),
     Object? seo = const $CopyWithPlaceholder(),
+    Object? engagement = const $CopyWithPlaceholder(),
     Object? apps = const $CopyWithPlaceholder(),
   }) {
     return SiteConfig(
@@ -109,6 +116,10 @@ class _$SiteConfigCWProxyImpl implements _$SiteConfigCWProxy {
           ? _value.seo
           // ignore: cast_nullable_to_non_nullable
           : seo as SiteSeo,
+      engagement: engagement == const $CopyWithPlaceholder()
+          ? _value.engagement
+          // ignore: cast_nullable_to_non_nullable
+          : engagement as SiteEngagement,
       apps: apps == const $CopyWithPlaceholder()
           ? _value.apps
           // ignore: cast_nullable_to_non_nullable
@@ -127,40 +138,51 @@ extension $SiteConfigCopyWith on SiteConfig {
 // JsonSerializableGenerator
 // **************************************************************************
 
-SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'SiteConfig',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'theme',
-            'identity',
-            'version',
-            'media_base_url',
-            'localization',
-            'seo',
-            'apps'
-          ],
-        );
-        final val = SiteConfig(
-          theme: $checkedConvert(
-              'theme', (v) => SiteTheme.fromJson(v as Map<String, dynamic>)),
-          identity: $checkedConvert('identity',
-              (v) => SiteIdentity.fromJson(v as Map<String, dynamic>)),
-          version: $checkedConvert('version', (v) => v as String),
-          mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
-          localization: $checkedConvert('localization',
-              (v) => SiteLocalization.fromJson(v as Map<String, dynamic>)),
-          seo: $checkedConvert(
-              'seo', (v) => SiteSeo.fromJson(v as Map<String, dynamic>)),
-          apps: $checkedConvert(
-              'apps', (v) => SiteApps.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'mediaBaseUrl': 'media_base_url'},
-    );
+SiteConfig _$SiteConfigFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('SiteConfig', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'theme',
+          'identity',
+          'version',
+          'media_base_url',
+          'localization',
+          'seo',
+          'engagement',
+          'apps',
+        ],
+      );
+      final val = SiteConfig(
+        theme: $checkedConvert(
+          'theme',
+          (v) => SiteTheme.fromJson(v as Map<String, dynamic>),
+        ),
+        identity: $checkedConvert(
+          'identity',
+          (v) => SiteIdentity.fromJson(v as Map<String, dynamic>),
+        ),
+        version: $checkedConvert('version', (v) => v as String),
+        mediaBaseUrl: $checkedConvert('media_base_url', (v) => v as String),
+        localization: $checkedConvert(
+          'localization',
+          (v) => SiteLocalization.fromJson(v as Map<String, dynamic>),
+        ),
+        seo: $checkedConvert(
+          'seo',
+          (v) => SiteSeo.fromJson(v as Map<String, dynamic>),
+        ),
+        engagement: $checkedConvert(
+          'engagement',
+          (v) => SiteEngagement.fromJson(v as Map<String, dynamic>),
+        ),
+        apps: $checkedConvert(
+          'apps',
+          (v) => SiteApps.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'mediaBaseUrl': 'media_base_url'});
 
 Map<String, dynamic> _$SiteConfigToJson(SiteConfig instance) =>
     <String, dynamic>{
@@ -170,5 +192,6 @@ Map<String, dynamic> _$SiteConfigToJson(SiteConfig instance) =>
       'media_base_url': instance.mediaBaseUrl,
       'localization': instance.localization.toJson(),
       'seo': instance.seo.toJson(),
+      'engagement': instance.engagement.toJson(),
       'apps': instance.apps.toJson(),
     };

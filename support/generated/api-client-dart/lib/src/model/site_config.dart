@@ -6,6 +6,7 @@
 import 'package:news_api_client/src/model/site_apps.dart';
 import 'package:news_api_client/src/model/site_localization.dart';
 import 'package:news_api_client/src/model/site_identity.dart';
+import 'package:news_api_client/src/model/site_engagement.dart';
 import 'package:news_api_client/src/model/site_theme.dart';
 import 'package:news_api_client/src/model/site_seo.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -24,61 +25,44 @@ class SiteConfig {
   /// Returns a new [SiteConfig] instance.
   SiteConfig({
     required this.theme,
+
     required this.identity,
+
     required this.version,
+
     required this.mediaBaseUrl,
+
     required this.localization,
+
     required this.seo,
+
+    required this.engagement,
+
     required this.apps,
   });
 
-  @JsonKey(
-    name: r'theme',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'theme', required: true, includeIfNull: false)
   final SiteTheme theme;
 
-  @JsonKey(
-    name: r'identity',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'identity', required: true, includeIfNull: false)
   final SiteIdentity identity;
 
-  @JsonKey(
-    name: r'version',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'version', required: true, includeIfNull: false)
   final String version;
 
-  @JsonKey(
-    name: r'media_base_url',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'media_base_url', required: true, includeIfNull: false)
   final String mediaBaseUrl;
 
-  @JsonKey(
-    name: r'localization',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'localization', required: true, includeIfNull: false)
   final SiteLocalization localization;
 
-  @JsonKey(
-    name: r'seo',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'seo', required: true, includeIfNull: false)
   final SiteSeo seo;
 
-  @JsonKey(
-    name: r'apps',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'engagement', required: true, includeIfNull: false)
+  final SiteEngagement engagement;
+
+  @JsonKey(name: r'apps', required: true, includeIfNull: false)
   final SiteApps apps;
 
   @override
@@ -91,6 +75,7 @@ class SiteConfig {
           other.mediaBaseUrl == mediaBaseUrl &&
           other.localization == localization &&
           other.seo == seo &&
+          other.engagement == engagement &&
           other.apps == apps;
 
   @override
@@ -101,6 +86,7 @@ class SiteConfig {
       mediaBaseUrl.hashCode +
       localization.hashCode +
       seo.hashCode +
+      engagement.hashCode +
       apps.hashCode;
 
   factory SiteConfig.fromJson(Map<String, dynamic> json) =>

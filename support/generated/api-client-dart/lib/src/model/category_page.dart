@@ -21,29 +21,19 @@ class CategoryPage {
   /// Returns a new [CategoryPage] instance.
   CategoryPage({
     required this.nextCursor,
+
     required this.results,
+
     required this.category,
   });
 
-  @JsonKey(
-    name: r'next_cursor',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'next_cursor', required: true, includeIfNull: true)
   final String? nextCursor;
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<Card> results;
 
-  @JsonKey(
-    name: r'category',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'category', required: true, includeIfNull: false)
   final PublicCategoryDetail category;
 
   @override

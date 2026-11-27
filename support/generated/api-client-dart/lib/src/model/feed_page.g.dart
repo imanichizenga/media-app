@@ -17,10 +17,7 @@ abstract class _$FeedPageCWProxy {
   /// ```dart
   /// FeedPage(...).copyWith(id: 12, name: "My name")
   /// ````
-  FeedPage call({
-    String? nextCursor,
-    List<Card> results,
-  });
+  FeedPage call({String? nextCursor, List<Card> results});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfFeedPage.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfFeedPage.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$FeedPageCWProxyImpl implements _$FeedPageCWProxy {
   FeedPage results(List<Card> results) => this(results: results);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `FeedPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,28 +66,22 @@ extension $FeedPageCopyWith on FeedPage {
 // JsonSerializableGenerator
 // **************************************************************************
 
-FeedPage _$FeedPageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'FeedPage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['next_cursor', 'results'],
-        );
-        final val = FeedPage(
-          nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'nextCursor': 'next_cursor'},
-    );
+FeedPage _$FeedPageFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('FeedPage', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['next_cursor', 'results']);
+      final val = FeedPage(
+        nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'nextCursor': 'next_cursor'});
 
 Map<String, dynamic> _$FeedPageToJson(FeedPage instance) => <String, dynamic>{
-      'next_cursor': instance.nextCursor,
-      'results': instance.results.map((e) => e.toJson()).toList(),
-    };
+  'next_cursor': instance.nextCursor,
+  'results': instance.results.map((e) => e.toJson()).toList(),
+};

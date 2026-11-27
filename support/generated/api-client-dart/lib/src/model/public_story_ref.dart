@@ -17,31 +17,15 @@ part 'public_story_ref.g.dart';
 )
 class PublicStoryRef {
   /// Returns a new [PublicStoryRef] instance.
-  PublicStoryRef({
-    required this.slug,
-    required this.title,
-    required this.path,
-  });
+  PublicStoryRef({required this.slug, required this.title, required this.path});
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'title',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'title', required: true, includeIfNull: false)
   final String title;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

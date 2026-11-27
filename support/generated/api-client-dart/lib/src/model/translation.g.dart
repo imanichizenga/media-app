@@ -17,10 +17,7 @@ abstract class _$TranslationCWProxy {
   /// ```dart
   /// Translation(...).copyWith(id: 12, name: "My name")
   /// ````
-  Translation call({
-    String locale,
-    String path,
-  });
+  Translation call({String locale, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTranslation.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTranslation.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$TranslationCWProxyImpl implements _$TranslationCWProxy {
   Translation path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Translation(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,24 +66,15 @@ extension $TranslationCopyWith on Translation {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Translation _$TranslationFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Translation',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['locale', 'path'],
-        );
-        final val = Translation(
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+Translation _$TranslationFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Translation', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['locale', 'path']);
+      final val = Translation(
+        locale: $checkedConvert('locale', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$TranslationToJson(Translation instance) =>
-    <String, dynamic>{
-      'locale': instance.locale,
-      'path': instance.path,
-    };
+    <String, dynamic>{'locale': instance.locale, 'path': instance.path};

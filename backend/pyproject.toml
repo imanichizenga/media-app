@@ -20,6 +20,7 @@ dependencies = [
   "pydantic[email]~=2.12",
   "structlog~=26.1",
   "httpx~=0.28",
+  "joserfc~=1.8",
   "segno>=1.6",
   "sentry-sdk~=3.0",
   "opentelemetry-sdk>=1.30",

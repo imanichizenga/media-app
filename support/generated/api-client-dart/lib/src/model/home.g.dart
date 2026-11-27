@@ -66,7 +66,6 @@ class _$HomeCWProxyImpl implements _$HomeCWProxy {
   Home sections(List<HomeSection> sections) => this(sections: sections);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Home(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -125,69 +124,73 @@ extension $HomeCopyWith on Home {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Home _$HomeFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Home',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'breaking',
-            'live',
-            'lead',
-            'latest',
-            'videos',
-            'shorts',
-            'sections'
-          ],
-        );
-        final val = Home(
-          breaking: $checkedConvert(
-              'breaking',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          live: $checkedConvert(
-              'live',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          lead: $checkedConvert(
-              'lead',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          latest: $checkedConvert(
-              'latest',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          videos: $checkedConvert(
-              'videos',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          shorts: $checkedConvert(
-              'shorts',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          sections: $checkedConvert(
-              'sections',
-              (v) => (v as List<dynamic>)
-                  .map((e) => HomeSection.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-    );
+Home _$HomeFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Home', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'breaking',
+          'live',
+          'lead',
+          'latest',
+          'videos',
+          'shorts',
+          'sections',
+        ],
+      );
+      final val = Home(
+        breaking: $checkedConvert(
+          'breaking',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        live: $checkedConvert(
+          'live',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        lead: $checkedConvert(
+          'lead',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        latest: $checkedConvert(
+          'latest',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        videos: $checkedConvert(
+          'videos',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        shorts: $checkedConvert(
+          'shorts',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        sections: $checkedConvert(
+          'sections',
+          (v) => (v as List<dynamic>)
+              .map((e) => HomeSection.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$HomeToJson(Home instance) => <String, dynamic>{
-      'breaking': instance.breaking.map((e) => e.toJson()).toList(),
-      'live': instance.live.map((e) => e.toJson()).toList(),
-      'lead': instance.lead.map((e) => e.toJson()).toList(),
-      'latest': instance.latest.map((e) => e.toJson()).toList(),
-      'videos': instance.videos.map((e) => e.toJson()).toList(),
-      'shorts': instance.shorts.map((e) => e.toJson()).toList(),
-      'sections': instance.sections.map((e) => e.toJson()).toList(),
-    };
+  'breaking': instance.breaking.map((e) => e.toJson()).toList(),
+  'live': instance.live.map((e) => e.toJson()).toList(),
+  'lead': instance.lead.map((e) => e.toJson()).toList(),
+  'latest': instance.latest.map((e) => e.toJson()).toList(),
+  'videos': instance.videos.map((e) => e.toJson()).toList(),
+  'shorts': instance.shorts.map((e) => e.toJson()).toList(),
+  'sections': instance.sections.map((e) => e.toJson()).toList(),
+};

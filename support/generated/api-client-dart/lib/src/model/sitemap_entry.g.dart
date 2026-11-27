@@ -104,7 +104,6 @@ class _$SitemapEntryCWProxyImpl implements _$SitemapEntryCWProxy {
       this(translations: translations);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SitemapEntry(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -193,70 +192,74 @@ extension $SitemapEntryCopyWith on SitemapEntry {
 // JsonSerializableGenerator
 // **************************************************************************
 
-SitemapEntry _$SitemapEntryFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'SitemapEntry',
+SitemapEntry _$SitemapEntryFromJson(
+  Map<String, dynamic> json,
+) => $checkedCreate(
+  'SitemapEntry',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'path',
-            'locale',
-            'type',
-            'headline',
-            'standfirst',
-            'published_at',
-            'modified_at',
-            'image',
-            'video',
-            'youtube_id',
-            'duration_ms',
-            'is_sensitive',
-            'translations'
-          ],
-        );
-        final val = SitemapEntry(
-          path: $checkedConvert('path', (v) => v as String),
-          locale: $checkedConvert('locale', (v) => v as String),
-          type: $checkedConvert('type', (v) => v as String),
-          headline: $checkedConvert('headline', (v) => v as String),
-          standfirst: $checkedConvert('standfirst', (v) => v as String),
-          publishedAt: $checkedConvert(
-              'published_at', (v) => DateTime.parse(v as String)),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-          image: $checkedConvert(
-              'image',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          video: $checkedConvert(
-              'video',
-              (v) => v == null
-                  ? null
-                  : PublicVideo.fromJson(v as Map<String, dynamic>)),
-          youtubeId: $checkedConvert('youtube_id', (v) => v as String),
-          durationMs:
-              $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
-          isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
-          translations: $checkedConvert(
-              'translations',
-              (v) => (v as List<dynamic>)
-                  .map((e) =>
-                      SitemapTranslation.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'publishedAt': 'published_at',
-        'modifiedAt': 'modified_at',
-        'youtubeId': 'youtube_id',
-        'durationMs': 'duration_ms',
-        'isSensitive': 'is_sensitive'
-      },
+      requiredKeys: const [
+        'path',
+        'locale',
+        'type',
+        'headline',
+        'standfirst',
+        'published_at',
+        'modified_at',
+        'image',
+        'video',
+        'youtube_id',
+        'duration_ms',
+        'is_sensitive',
+        'translations',
+      ],
     );
+    final val = SitemapEntry(
+      path: $checkedConvert('path', (v) => v as String),
+      locale: $checkedConvert('locale', (v) => v as String),
+      type: $checkedConvert('type', (v) => v as String),
+      headline: $checkedConvert('headline', (v) => v as String),
+      standfirst: $checkedConvert('standfirst', (v) => v as String),
+      publishedAt: $checkedConvert(
+        'published_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      modifiedAt: $checkedConvert(
+        'modified_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      image: $checkedConvert(
+        'image',
+        (v) =>
+            v == null ? null : PublicImage.fromJson(v as Map<String, dynamic>),
+      ),
+      video: $checkedConvert(
+        'video',
+        (v) =>
+            v == null ? null : PublicVideo.fromJson(v as Map<String, dynamic>),
+      ),
+      youtubeId: $checkedConvert('youtube_id', (v) => v as String),
+      durationMs: $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
+      isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
+      translations: $checkedConvert(
+        'translations',
+        (v) => (v as List<dynamic>)
+            .map((e) => SitemapTranslation.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'publishedAt': 'published_at',
+    'modifiedAt': 'modified_at',
+    'youtubeId': 'youtube_id',
+    'durationMs': 'duration_ms',
+    'isSensitive': 'is_sensitive',
+  },
+);
 
 Map<String, dynamic> _$SitemapEntryToJson(SitemapEntry instance) =>
     <String, dynamic>{

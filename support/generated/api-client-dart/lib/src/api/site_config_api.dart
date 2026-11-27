@@ -40,13 +40,8 @@ class SiteConfigApi {
     final _path = r'/api/v1/site-config';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -64,8 +59,11 @@ class SiteConfigApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<SiteConfig, SiteConfig>(rawData, 'SiteConfig',
-              growable: true);
+          : deserialize<SiteConfig, SiteConfig>(
+              rawData,
+              'SiteConfig',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,

@@ -50,7 +50,6 @@ class _$SiteSeoCWProxyImpl implements _$SiteSeoCWProxy {
   SiteSeo sameAs(List<String> sameAs) => this(sameAs: sameAs);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteSeo(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -95,40 +94,46 @@ extension $SiteSeoCopyWith on SiteSeo {
 // **************************************************************************
 
 SiteSeo _$SiteSeoFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'SiteSeo',
+  'SiteSeo',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'google_verification',
-            'bing_verification',
-            'indexnow_key',
-            'same_as'
-          ],
-        );
-        final val = SiteSeo(
-          googleVerification:
-              $checkedConvert('google_verification', (v) => v as String),
-          bingVerification:
-              $checkedConvert('bing_verification', (v) => v as String),
-          indexnowKey: $checkedConvert('indexnow_key', (v) => v as String),
-          sameAs: $checkedConvert('same_as',
-              (v) => (v as List<dynamic>).map((e) => e as String).toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'googleVerification': 'google_verification',
-        'bingVerification': 'bing_verification',
-        'indexnowKey': 'indexnow_key',
-        'sameAs': 'same_as'
-      },
+      requiredKeys: const [
+        'google_verification',
+        'bing_verification',
+        'indexnow_key',
+        'same_as',
+      ],
     );
+    final val = SiteSeo(
+      googleVerification: $checkedConvert(
+        'google_verification',
+        (v) => v as String,
+      ),
+      bingVerification: $checkedConvert(
+        'bing_verification',
+        (v) => v as String,
+      ),
+      indexnowKey: $checkedConvert('indexnow_key', (v) => v as String),
+      sameAs: $checkedConvert(
+        'same_as',
+        (v) => (v as List<dynamic>).map((e) => e as String).toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'googleVerification': 'google_verification',
+    'bingVerification': 'bing_verification',
+    'indexnowKey': 'indexnow_key',
+    'sameAs': 'same_as',
+  },
+);
 
 Map<String, dynamic> _$SiteSeoToJson(SiteSeo instance) => <String, dynamic>{
-      'google_verification': instance.googleVerification,
-      'bing_verification': instance.bingVerification,
-      'indexnow_key': instance.indexnowKey,
-      'same_as': instance.sameAs,
-    };
+  'google_verification': instance.googleVerification,
+  'bing_verification': instance.bingVerification,
+  'indexnow_key': instance.indexnowKey,
+  'same_as': instance.sameAs,
+};

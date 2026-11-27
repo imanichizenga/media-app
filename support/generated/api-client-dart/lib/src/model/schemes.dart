@@ -17,23 +17,12 @@ part 'schemes.g.dart';
 )
 class Schemes {
   /// Returns a new [Schemes] instance.
-  Schemes({
-    required this.light,
-    required this.dark,
-  });
+  Schemes({required this.light, required this.dark});
 
-  @JsonKey(
-    name: r'light',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'light', required: true, includeIfNull: false)
   final String light;
 
-  @JsonKey(
-    name: r'dark',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'dark', required: true, includeIfNull: false)
   final String dark;
 
   @override

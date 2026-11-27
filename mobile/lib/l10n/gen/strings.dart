@@ -1040,6 +1040,672 @@ abstract class Strings {
   /// In sw, this message translates to:
   /// **'Huna mtandao.'**
   String get offlineNote;
+
+  /// No description provided for @searchLabel.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tafuta habari'**
+  String get searchLabel;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari, mahali, mtu au mwandishi'**
+  String get searchPlaceholder;
+
+  /// No description provided for @searchGo.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tafuta'**
+  String get searchGo;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In sw, this message translates to:
+  /// **'Futa maneno'**
+  String get searchClear;
+
+  /// No description provided for @searchResultsFor.
+  ///
+  /// In sw, this message translates to:
+  /// **'Matokeo ya “{v}”'**
+  String searchResultsFor(String v);
+
+  /// No description provided for @searchCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari {n} zimepatikana'**
+  String searchCount(int n);
+
+  /// No description provided for @searchCountMany.
+  ///
+  /// In sw, this message translates to:
+  /// **'Zaidi ya habari {n} zimepatikana'**
+  String searchCountMany(int n);
+
+  /// No description provided for @searchNoneTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Hakuna habari zinazolingana'**
+  String get searchNoneTitle;
+
+  /// No description provided for @searchNoneBody.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jaribu neno jingine, angalia tahajia, au ondoa vichujio.'**
+  String get searchNoneBody;
+
+  /// No description provided for @searchRecent.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ulizotafuta karibuni'**
+  String get searchRecent;
+
+  /// No description provided for @searchClearRecent.
+  ///
+  /// In sw, this message translates to:
+  /// **'Futa ulizotafuta'**
+  String get searchClearRecent;
+
+  /// No description provided for @searchFilters.
+  ///
+  /// In sw, this message translates to:
+  /// **'Vichujio'**
+  String get searchFilters;
+
+  /// No description provided for @searchSort.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mpangilio'**
+  String get searchSort;
+
+  /// No description provided for @searchSortBest.
+  ///
+  /// In sw, this message translates to:
+  /// **'Zinazolingana zaidi'**
+  String get searchSortBest;
+
+  /// No description provided for @searchSortNewest.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mpya kwanza'**
+  String get searchSortNewest;
+
+  /// No description provided for @searchType.
+  ///
+  /// In sw, this message translates to:
+  /// **'Aina'**
+  String get searchType;
+
+  /// No description provided for @searchTypeAll.
+  ///
+  /// In sw, this message translates to:
+  /// **'Zote'**
+  String get searchTypeAll;
+
+  /// No description provided for @searchTypeStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari'**
+  String get searchTypeStories;
+
+  /// No description provided for @searchTypeVideos.
+  ///
+  /// In sw, this message translates to:
+  /// **'Video'**
+  String get searchTypeVideos;
+
+  /// No description provided for @searchTypeLive.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mubashara'**
+  String get searchTypeLive;
+
+  /// No description provided for @searchTypeGalleries.
+  ///
+  /// In sw, this message translates to:
+  /// **'Picha'**
+  String get searchTypeGalleries;
+
+  /// No description provided for @searchWhen.
+  ///
+  /// In sw, this message translates to:
+  /// **'Lini'**
+  String get searchWhen;
+
+  /// No description provided for @searchAnyTime.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wakati wowote'**
+  String get searchAnyTime;
+
+  /// No description provided for @searchPastDay.
+  ///
+  /// In sw, this message translates to:
+  /// **'Saa 24 zilizopita'**
+  String get searchPastDay;
+
+  /// No description provided for @searchPastWeek.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wiki iliyopita'**
+  String get searchPastWeek;
+
+  /// No description provided for @searchPastMonth.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mwezi uliopita'**
+  String get searchPastMonth;
+
+  /// No description provided for @searchPastYear.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mwaka uliopita'**
+  String get searchPastYear;
+
+  /// No description provided for @searchMore.
+  ///
+  /// In sw, this message translates to:
+  /// **'Matokeo zaidi'**
+  String get searchMore;
+
+  /// No description provided for @searchUnavailable.
+  ///
+  /// In sw, this message translates to:
+  /// **'Utafutaji haupatikani kwa sasa. Jaribu tena baada ya muda mfupi.'**
+  String get searchUnavailable;
+
+  /// No description provided for @searchSections.
+  ///
+  /// In sw, this message translates to:
+  /// **'Au chagua kundi'**
+  String get searchSections;
+
+  /// No description provided for @seeAllIn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari zote za {name}'**
+  String seeAllIn(String name);
+
+  /// No description provided for @seeAll.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ona zote'**
+  String get seeAll;
+
+  /// No description provided for @earlierStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari zilizotangulia'**
+  String get earlierStories;
+
+  /// No description provided for @moreStories.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari zaidi'**
+  String get moreStories;
+
+  /// No description provided for @savedCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari {n} zimehifadhiwa'**
+  String savedCount(int n);
+
+  /// No description provided for @breakingOf.
+  ///
+  /// In sw, this message translates to:
+  /// **'{at} kati ya {total}'**
+  String breakingOf(String at, String total);
+
+  /// No description provided for @breakingPause.
+  ///
+  /// In sw, this message translates to:
+  /// **'Simamisha habari za dharura'**
+  String get breakingPause;
+
+  /// No description provided for @breakingPlay.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea na habari za dharura'**
+  String get breakingPlay;
+
+  /// No description provided for @savedDoneWeb.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imewekwa kwenye Hifadhi.'**
+  String get savedDoneWeb;
+
+  /// No description provided for @savedUndone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imeondolewa kwenye Hifadhi.'**
+  String get savedUndone;
+
+  /// No description provided for @signIn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia'**
+  String get signIn;
+
+  /// No description provided for @signInTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia au jisajili'**
+  String get signInTitle;
+
+  /// No description provided for @signInLead.
+  ///
+  /// In sw, this message translates to:
+  /// **'Akaunti moja kwa tovuti na programu: penda, toa maoni na hifadhi habari zako popote.'**
+  String get signInLead;
+
+  /// No description provided for @signInToLike.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia ili kupenda habari hii'**
+  String get signInToLike;
+
+  /// No description provided for @signInToComment.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia ili kutoa maoni'**
+  String get signInToComment;
+
+  /// No description provided for @signInToSave.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia ili kuhifadhi kwenye akaunti yako'**
+  String get signInToSave;
+
+  /// No description provided for @signInToFollow.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia ili kufuatilia'**
+  String get signInToFollow;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In sw, this message translates to:
+  /// **'Namba ya simu'**
+  String get phoneLabel;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tutakutumia msimbo wa tarakimu 6 kwa SMS.'**
+  String get phoneHint;
+
+  /// No description provided for @sendCode.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tuma msimbo'**
+  String get sendCode;
+
+  /// No description provided for @orWith.
+  ///
+  /// In sw, this message translates to:
+  /// **'au endelea na'**
+  String get orWith;
+
+  /// No description provided for @withGoogle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea na Google'**
+  String get withGoogle;
+
+  /// No description provided for @withApple.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea na Apple'**
+  String get withApple;
+
+  /// No description provided for @codeTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Weka msimbo'**
+  String get codeTitle;
+
+  /// No description provided for @codeLead.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tumetuma msimbo kwa {v}.'**
+  String codeLead(String v);
+
+  /// No description provided for @codeLabel.
+  ///
+  /// In sw, this message translates to:
+  /// **'Msimbo wa tarakimu 6'**
+  String get codeLabel;
+
+  /// No description provided for @codeResendIn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tuma tena baada ya sekunde {n}'**
+  String codeResendIn(int n);
+
+  /// No description provided for @codeResend.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tuma msimbo tena'**
+  String get codeResend;
+
+  /// No description provided for @codeChangePhone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Badilisha namba'**
+  String get codeChangePhone;
+
+  /// No description provided for @codeLocal.
+  ///
+  /// In sw, this message translates to:
+  /// **'Majaribio: msimbo wako ni {v}'**
+  String codeLocal(String v);
+
+  /// No description provided for @verify.
+  ///
+  /// In sw, this message translates to:
+  /// **'Thibitisha'**
+  String get verify;
+
+  /// No description provided for @welcomeName.
+  ///
+  /// In sw, this message translates to:
+  /// **'Karibu! Tukuiteje?'**
+  String get welcomeName;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jina lako'**
+  String get nameLabel;
+
+  /// No description provided for @nameHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Litaonekana kwenye maoni yako na kwenye orodha za waliosoma habari (unaweza kulificha).'**
+  String get nameHint;
+
+  /// No description provided for @acceptTerms.
+  ///
+  /// In sw, this message translates to:
+  /// **'Nakubali miongozo ya jumuiya na sera ya faragha'**
+  String get acceptTerms;
+
+  /// No description provided for @continueOn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea'**
+  String get continueOn;
+
+  /// No description provided for @signOut.
+  ///
+  /// In sw, this message translates to:
+  /// **'Toka'**
+  String get signOut;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Akaunti yangu'**
+  String get accountTitle;
+
+  /// No description provided for @editName.
+  ///
+  /// In sw, this message translates to:
+  /// **'Badilisha jina'**
+  String get editName;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In sw, this message translates to:
+  /// **'Hifadhi mabadiliko'**
+  String get saveChanges;
+
+  /// No description provided for @downloadData.
+  ///
+  /// In sw, this message translates to:
+  /// **'Pakua data yangu'**
+  String get downloadData;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Futa akaunti'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteConfirm.
+  ///
+  /// In sw, this message translates to:
+  /// **'Akaunti itafutwa baada ya siku 30. Ukiingia tena kabla ya hapo, itabaki. Endelea?'**
+  String get deleteConfirm;
+
+  /// No description provided for @joinTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jiunge na wasomaji wetu'**
+  String get joinTitle;
+
+  /// No description provided for @joinPoints.
+  ///
+  /// In sw, this message translates to:
+  /// **'Penda habari · Toa maoni · Hifadhi kwenye vifaa vyote'**
+  String get joinPoints;
+
+  /// No description provided for @likeStory.
+  ///
+  /// In sw, this message translates to:
+  /// **'Penda'**
+  String get likeStory;
+
+  /// No description provided for @likesCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wamependa {n}'**
+  String likesCount(int n);
+
+  /// No description provided for @commentsCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Maoni {n}'**
+  String commentsCount(int n);
+
+  /// No description provided for @comments.
+  ///
+  /// In sw, this message translates to:
+  /// **'Maoni'**
+  String get comments;
+
+  /// No description provided for @commentsNone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Bado hakuna maoni. Kuwa wa kwanza.'**
+  String get commentsNone;
+
+  /// No description provided for @commentsClosed.
+  ///
+  /// In sw, this message translates to:
+  /// **'Maoni yamefungwa kwa habari hii.'**
+  String get commentsClosed;
+
+  /// No description provided for @commentPlaceholder.
+  ///
+  /// In sw, this message translates to:
+  /// **'Andika maoni yako…'**
+  String get commentPlaceholder;
+
+  /// No description provided for @commentReplyTo.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jibu {name}'**
+  String commentReplyTo(String name);
+
+  /// No description provided for @commentSend.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tuma'**
+  String get commentSend;
+
+  /// No description provided for @commentReply.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jibu'**
+  String get commentReply;
+
+  /// No description provided for @commentDelete.
+  ///
+  /// In sw, this message translates to:
+  /// **'Futa'**
+  String get commentDelete;
+
+  /// No description provided for @commentHeld.
+  ///
+  /// In sw, this message translates to:
+  /// **'Inasubiri idhini'**
+  String get commentHeld;
+
+  /// No description provided for @commentWriter.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mwandishi'**
+  String get commentWriter;
+
+  /// No description provided for @commentReplies.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ona majibu {n}'**
+  String commentReplies(int n);
+
+  /// No description provided for @commentsMore.
+  ///
+  /// In sw, this message translates to:
+  /// **'Maoni zaidi'**
+  String get commentsMore;
+
+  /// No description provided for @commentSlow.
+  ///
+  /// In sw, this message translates to:
+  /// **'Subiri kidogo kabla ya maoni mengine.'**
+  String get commentSlow;
+
+  /// No description provided for @commentFailed.
+  ///
+  /// In sw, this message translates to:
+  /// **'Maoni hayakutumwa. Jaribu tena.'**
+  String get commentFailed;
+
+  /// No description provided for @followTopic.
+  ///
+  /// In sw, this message translates to:
+  /// **'Fuatilia'**
+  String get followTopic;
+
+  /// No description provided for @followingTopic.
+  ///
+  /// In sw, this message translates to:
+  /// **'Unafuatilia'**
+  String get followingTopic;
+
+  /// No description provided for @errorTryAgain.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kuna tatizo. Jaribu tena.'**
+  String get errorTryAgain;
+
+  /// No description provided for @errorPhone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Namba hii si sahihi. Mfano: 0712 345 678'**
+  String get errorPhone;
+
+  /// No description provided for @errorCountry.
+  ///
+  /// In sw, this message translates to:
+  /// **'Hatuwezi kutuma SMS kwa nchi hii.'**
+  String get errorCountry;
+
+  /// No description provided for @errorWait.
+  ///
+  /// In sw, this message translates to:
+  /// **'Subiri kidogo kisha ujaribu tena.'**
+  String get errorWait;
+
+  /// No description provided for @errorCodeWrong.
+  ///
+  /// In sw, this message translates to:
+  /// **'Msimbo si sahihi. Majaribio {n} yamebaki.'**
+  String errorCodeWrong(int n);
+
+  /// No description provided for @errorCodeExpired.
+  ///
+  /// In sw, this message translates to:
+  /// **'Msimbo umeisha muda. Omba mpya.'**
+  String get errorCodeExpired;
+
+  /// No description provided for @errorSmsDown.
+  ///
+  /// In sw, this message translates to:
+  /// **'SMS haziwezi kutumwa sasa. Jaribu baadaye.'**
+  String get errorSmsDown;
+
+  /// No description provided for @signedInToast.
+  ///
+  /// In sw, this message translates to:
+  /// **'Karibu, {name}!'**
+  String signedInToast(String name);
+
+  /// No description provided for @signedOutToast.
+  ///
+  /// In sw, this message translates to:
+  /// **'Umetoka.'**
+  String get signedOutToast;
+
+  /// No description provided for @signInFailed.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kuingia hakukufaulu. Jaribu tena.'**
+  String get signInFailed;
+
+  /// No description provided for @logoAlt.
+  ///
+  /// In sw, this message translates to:
+  /// **'Nembo ya {name}'**
+  String logoAlt(String name);
+
+  /// No description provided for @viewsCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Imesomwa mara {n}'**
+  String viewsCount(int n);
+
+  /// No description provided for @readersCount.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wasomaji {n}'**
+  String readersCount(int n);
+
+  /// No description provided for @readersTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Waliosoma habari hii'**
+  String get readersTitle;
+
+  /// No description provided for @readersGuests.
+  ///
+  /// In sw, this message translates to:
+  /// **'na wageni {n} wasiojisajili'**
+  String readersGuests(int n);
+
+  /// No description provided for @readersNone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Bado hakuna msomaji aliyejisajili.'**
+  String get readersNone;
+
+  /// No description provided for @readersPrivate.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ficha jina langu kwenye orodha za wasomaji'**
+  String get readersPrivate;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

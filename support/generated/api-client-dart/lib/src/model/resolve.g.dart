@@ -15,9 +15,7 @@ abstract class _$ResolveCWProxy {
   /// ```dart
   /// Resolve(...).copyWith(id: 12, name: "My name")
   /// ````
-  Resolve call({
-    String path,
-  });
+  Resolve call({String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfResolve.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfResolve.copyWith.fieldName(...)`
@@ -30,16 +28,13 @@ class _$ResolveCWProxyImpl implements _$ResolveCWProxy {
   Resolve path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Resolve(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// Resolve(...).copyWith(id: 12, name: "My name")
   /// ````
-  Resolve call({
-    Object? path = const $CopyWithPlaceholder(),
-  }) {
+  Resolve call({Object? path = const $CopyWithPlaceholder()}) {
     return Resolve(
       path: path == const $CopyWithPlaceholder()
           ? _value.path
@@ -59,21 +54,13 @@ extension $ResolveCopyWith on Resolve {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Resolve _$ResolveFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Resolve',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['path'],
-        );
-        final val = Resolve(
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+Resolve _$ResolveFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Resolve', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['path']);
+      final val = Resolve(path: $checkedConvert('path', (v) => v as String));
+      return val;
+    });
 
 Map<String, dynamic> _$ResolveToJson(Resolve instance) => <String, dynamic>{
-      'path': instance.path,
-    };
+  'path': instance.path,
+};

@@ -26,6 +26,197 @@
                 }
             }
         },
+        "/api/v1/auth/apple": {
+            "post": {
+                "operationId": "auth_apple",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProviderSignInRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignedIn"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/code": {
+            "post": {
+                "operationId": "auth_code",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CodeRequestRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CodeSent"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/code/verify": {
+            "post": {
+                "operationId": "auth_code_verify",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CodeVerifyRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignedIn"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/google": {
+            "post": {
+                "operationId": "auth_google",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProviderSignInRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignedIn"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/methods": {
+            "get": {
+                "operationId": "auth_methods",
+                "tags": [
+                    "auth"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Methods"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "operationId": "auth_refresh",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignedIn"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/sign-out": {
+            "post": {
+                "operationId": "auth_sign_out",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/api/v1/content/articles/{slug}": {
             "get": {
                 "operationId": "article",
@@ -849,6 +1040,678 @@
                 }
             }
         },
+        "/api/v1/engagement/comments/{comment_id}": {
+            "delete": {
+                "operationId": "comment_delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "comment_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/comments/{comment_id}/like": {
+            "put": {
+                "operationId": "comment_like",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "comment_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentLiked"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "comment_unlike",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "comment_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/follows/{kind}/{target}": {
+            "put": {
+                "operationId": "follow",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "kind",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "target",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Following"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "unfollow",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "kind",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "in": "path",
+                        "name": "target",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/posts/{post_id}/bookmark": {
+            "put": {
+                "operationId": "bookmark",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bookmarked"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "unbookmark",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/posts/{post_id}/comments": {
+            "get": {
+                "operationId": "comments",
+                "description": "GET: a page of comments (or one comment's replies). POST: a new one. Signed-in readers also see their\nown\nheld comments and which they liked, so their answers are private; everyone else's may be kept 15 s.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "parent",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "comment_create",
+                "description": "GET: a page of comments (or one comment's replies). POST: a new one. Signed-in readers also see their\nown\nheld comments and which they liked, so their answers are private; everyone else's may be kept 15 s.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NewCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/posts/{post_id}/like": {
+            "put": {
+                "operationId": "like",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Liked"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "unlike",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/posts/{post_id}/opened": {
+            "post": {
+                "operationId": "opened",
+                "description": "A story was opened: counted (views, readers) and its counts given back. Guests too.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenedRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostState"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/posts/{post_id}/readers": {
+            "get": {
+                "operationId": "readers",
+                "description": "Who read the story: signed-in readers who did not choose to be left out, and how many guests.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Readers"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/engagement/state": {
+            "get": {
+                "operationId": "engagement_state",
+                "description": "Counts and this reader's marks for up to 50 posts: `?posts=id,id`. Guests get the counts alone.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "posts",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Comma-separated post ids, at most 50",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "engagement"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "$ref": "#/components/schemas/PostState"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me": {
+            "get": {
+                "operationId": "me",
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Reader"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "me_update",
+                "tags": [
+                    "me"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProfileRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Reader"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "me_delete",
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Deletion"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me/{what}": {
+            "get": {
+                "operationId": "my_list",
+                "description": "`what`: saved, liked (cards) or follows (FollowList).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "what",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CardList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/me/export": {
+            "get": {
+                "operationId": "me_export",
+                "description": "Everything kept about the reader, as JSON (PDPA Tanzania 2022).",
+                "tags": [
+                    "me"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Export"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/site-config": {
             "get": {
                 "operationId": "site_config",
@@ -930,9 +1793,13 @@
                     },
                     "offline_saving": {
                         "type": "boolean"
+                    },
+                    "card_counts": {
+                        "type": "boolean"
                     }
                 },
                 "required": [
+                    "card_counts",
                     "offline_saving",
                     "shorts",
                     "youtube"
@@ -1296,6 +2163,34 @@
                     "results"
                 ]
             },
+            "Bookmarked": {
+                "type": "object",
+                "properties": {
+                    "views": {
+                        "type": "integer",
+                        "description": "Openings; one device counts once in 30 minutes."
+                    },
+                    "likes": {
+                        "type": "integer"
+                    },
+                    "comments": {
+                        "type": "integer"
+                    },
+                    "bookmarks": {
+                        "type": "integer"
+                    },
+                    "bookmarked": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "bookmarked",
+                    "bookmarks",
+                    "comments",
+                    "likes",
+                    "views"
+                ]
+            },
             "Card": {
                 "type": "object",
                 "properties": {
@@ -1436,6 +2331,20 @@
                     "slug"
                 ]
             },
+            "CardList": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Card"
+                        }
+                    }
+                },
+                "required": [
+                    "results"
+                ]
+            },
             "CategoryPage": {
                 "type": "object",
                 "properties": {
@@ -1476,6 +2385,196 @@
                     "path"
                 ]
             },
+            "CodeRequestRequest": {
+                "type": "object",
+                "properties": {
+                    "phone": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "As the reader typed it; 0712 345 678 is +255712345678."
+                    },
+                    "locale": {
+                        "$ref": "#/components/schemas/LocaleEnum"
+                    }
+                },
+                "required": [
+                    "phone"
+                ]
+            },
+            "CodeSent": {
+                "type": "object",
+                "properties": {
+                    "challenge": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "resend_in": {
+                        "type": "integer"
+                    },
+                    "expires_in": {
+                        "type": "integer"
+                    },
+                    "local_code": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "challenge",
+                    "expires_in",
+                    "phone",
+                    "resend_in"
+                ]
+            },
+            "CodeVerifyRequest": {
+                "type": "object",
+                "properties": {
+                    "challenge": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "code": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "device": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "challenge",
+                    "code"
+                ]
+            },
+            "Comment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "body": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/CommentAuthor"
+                    },
+                    "like_count": {
+                        "type": "integer"
+                    },
+                    "reply_count": {
+                        "type": "integer"
+                    },
+                    "liked": {
+                        "type": "boolean"
+                    },
+                    "mine": {
+                        "type": "boolean"
+                    },
+                    "pinned": {
+                        "type": "boolean"
+                    },
+                    "held": {
+                        "type": "boolean",
+                        "description": "Waiting for a moderator; only its writer sees it."
+                    },
+                    "parent": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "author",
+                    "body",
+                    "created_at",
+                    "held",
+                    "id",
+                    "like_count",
+                    "liked",
+                    "mine",
+                    "parent",
+                    "pinned",
+                    "reply_count"
+                ]
+            },
+            "CommentAuthor": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "initial": {
+                        "type": "string"
+                    },
+                    "is_writer": {
+                        "type": "boolean",
+                        "description": "Wrote the story: a badge."
+                    }
+                },
+                "required": [
+                    "initial",
+                    "is_writer",
+                    "name",
+                    "username"
+                ]
+            },
+            "CommentLiked": {
+                "type": "object",
+                "properties": {
+                    "liked": {
+                        "type": "boolean"
+                    },
+                    "like_count": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "like_count",
+                    "liked"
+                ]
+            },
+            "CommentPage": {
+                "type": "object",
+                "properties": {
+                    "policy": {
+                        "$ref": "#/components/schemas/PublicPolicy"
+                    },
+                    "count": {
+                        "type": "integer"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Comment"
+                        }
+                    },
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "count",
+                    "next_cursor",
+                    "policy",
+                    "results"
+                ]
+            },
             "CommentsEnum": {
                 "enum": [
                     "open",
@@ -1494,6 +2593,17 @@
                 "type": "string",
                 "description": "* `sw` - sw\n* `en` - en"
             },
+            "Deletion": {
+                "type": "object",
+                "properties": {
+                    "grace_days": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "grace_days"
+                ]
+            },
             "EngineEnum": {
                 "enum": [
                     "opensearch",
@@ -1501,6 +2611,65 @@
                 ],
                 "type": "string",
                 "description": "* `opensearch` - opensearch\n* `fallback` - fallback"
+            },
+            "Export": {
+                "type": "object",
+                "properties": {
+                    "account": {
+                        "$ref": "#/components/schemas/Reader"
+                    },
+                    "identities": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "consents": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "likes": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "bookmarks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    },
+                    "follows": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {}
+                        }
+                    }
+                },
+                "required": [
+                    "account",
+                    "bookmarks",
+                    "comments",
+                    "consents",
+                    "follows",
+                    "identities",
+                    "likes"
+                ]
             },
             "FeedPage": {
                 "type": "object",
@@ -1521,6 +2690,17 @@
                 "required": [
                     "next_cursor",
                     "results"
+                ]
+            },
+            "Following": {
+                "type": "object",
+                "properties": {
+                    "following": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "following"
                 ]
             },
             "Home": {
@@ -1597,6 +2777,42 @@
                     "results"
                 ]
             },
+            "Liked": {
+                "type": "object",
+                "properties": {
+                    "views": {
+                        "type": "integer",
+                        "description": "Openings; one device counts once in 30 minutes."
+                    },
+                    "likes": {
+                        "type": "integer"
+                    },
+                    "comments": {
+                        "type": "integer"
+                    },
+                    "bookmarks": {
+                        "type": "integer"
+                    },
+                    "liked": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "bookmarks",
+                    "comments",
+                    "liked",
+                    "likes",
+                    "views"
+                ]
+            },
+            "LocaleEnum": {
+                "enum": [
+                    "sw",
+                    "en"
+                ],
+                "type": "string",
+                "description": "* `sw` - Sw\n* `en` - En"
+            },
             "Logo": {
                 "type": "object",
                 "properties": {
@@ -1631,6 +2847,66 @@
                     "svg",
                     "width"
                 ]
+            },
+            "Methods": {
+                "type": "object",
+                "properties": {
+                    "phone": {
+                        "type": "boolean"
+                    },
+                    "google": {
+                        "type": "boolean"
+                    },
+                    "google_client_id": {
+                        "type": "string"
+                    },
+                    "apple": {
+                        "type": "boolean"
+                    },
+                    "apple_services_id": {
+                        "type": "string"
+                    },
+                    "countries": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "code_length": {
+                        "type": "integer"
+                    },
+                    "resend_seconds": {
+                        "type": "integer"
+                    },
+                    "terms_version": {
+                        "type": "string"
+                    },
+                    "local_sms": {
+                        "type": "boolean",
+                        "description": "Development only: the code comes back in the answer, never by SMS."
+                    }
+                },
+                "required": [
+                    "apple",
+                    "apple_services_id",
+                    "code_length",
+                    "countries",
+                    "google",
+                    "google_client_id",
+                    "local_sms",
+                    "phone",
+                    "resend_seconds",
+                    "terms_version"
+                ]
+            },
+            "MethodsEnum": {
+                "enum": [
+                    "phone",
+                    "google",
+                    "apple"
+                ],
+                "type": "string",
+                "description": "* `phone` - phone\n* `google` - google\n* `apple` - apple"
             },
             "NavigationItem": {
                 "type": "object",
@@ -1676,6 +2952,36 @@
                     "slug"
                 ]
             },
+            "NewCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "body": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                    },
+                    "parent": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "body"
+                ]
+            },
+            "OpenedRequest": {
+                "type": "object",
+                "properties": {
+                    "device": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "A guest's random id, kept by the browser or app."
+                    }
+                }
+            },
             "PageTranslation": {
                 "type": "object",
                 "properties": {
@@ -1689,6 +2995,75 @@
                 "required": [
                     "locale",
                     "path"
+                ]
+            },
+            "PatchedProfileRequest": {
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "locale": {
+                        "$ref": "#/components/schemas/LocaleEnum"
+                    },
+                    "accept_terms": {
+                        "type": "boolean"
+                    },
+                    "hide_from_readers": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PostState": {
+                "type": "object",
+                "properties": {
+                    "views": {
+                        "type": "integer",
+                        "description": "Openings; one device counts once in 30 minutes."
+                    },
+                    "likes": {
+                        "type": "integer"
+                    },
+                    "comments": {
+                        "type": "integer"
+                    },
+                    "bookmarks": {
+                        "type": "integer"
+                    },
+                    "readers": {
+                        "type": "integer",
+                        "description": "Distinct people who opened it."
+                    },
+                    "liked": {
+                        "type": "boolean"
+                    },
+                    "bookmarked": {
+                        "type": "boolean"
+                    },
+                    "likes_on": {
+                        "type": "boolean",
+                        "description": "The story allows likes now: a count it does not allow is not shown."
+                    },
+                    "comments_on": {
+                        "type": "boolean",
+                        "description": "The story's comments are not closed."
+                    }
+                },
+                "required": [
+                    "bookmarked",
+                    "bookmarks",
+                    "comments",
+                    "comments_on",
+                    "liked",
+                    "likes",
+                    "likes_on",
+                    "readers",
+                    "views"
                 ]
             },
             "PostTypeEnum": {
@@ -1706,6 +3081,42 @@
                 ],
                 "type": "string",
                 "description": "* `article` - Article\n* `breaking` - Breaking\n* `video` - Video\n* `gallery` - Gallery\n* `live_blog` - Live Blog\n* `live_stream` - Live Stream\n* `opinion` - Opinion\n* `short` - Short\n* `youtube` - Youtube\n* `instagram_import` - Instagram"
+            },
+            "ProviderSignInRequest": {
+                "type": "object",
+                "properties": {
+                    "id_token": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "From the app's SDK."
+                    },
+                    "code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "From the website's redirect."
+                    },
+                    "redirect_uri": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "code_verifier": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "nonce": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Apple sends the name once, outside the token."
+                    },
+                    "device": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
             },
             "PublicAuthor": {
                 "type": "object",
@@ -2279,6 +3690,137 @@
                 "type": "string",
                 "description": "* `video` - video"
             },
+            "Reader": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "initial": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "locale": {
+                        "$ref": "#/components/schemas/LocaleEnum"
+                    },
+                    "methods": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MethodsEnum"
+                        }
+                    },
+                    "onboarding": {
+                        "type": "boolean",
+                        "description": "A name and the terms are still to come."
+                    },
+                    "hide_from_readers": {
+                        "type": "boolean"
+                    },
+                    "joined": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "email",
+                    "hide_from_readers",
+                    "id",
+                    "initial",
+                    "joined",
+                    "locale",
+                    "methods",
+                    "onboarding",
+                    "phone",
+                    "username"
+                ]
+            },
+            "ReaderEntry": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "initial": {
+                        "type": "string"
+                    },
+                    "at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "at",
+                    "initial",
+                    "name",
+                    "username"
+                ]
+            },
+            "Readers": {
+                "type": "object",
+                "properties": {
+                    "readers": {
+                        "type": "integer"
+                    },
+                    "views": {
+                        "type": "integer"
+                    },
+                    "guests": {
+                        "type": "integer",
+                        "description": "Readers without an account, counted but never named."
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ReaderEntry"
+                        }
+                    },
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "guests",
+                    "next_cursor",
+                    "readers",
+                    "results",
+                    "views"
+                ]
+            },
+            "RefreshRequest": {
+                "type": "object",
+                "properties": {
+                    "refresh": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "device": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "refresh"
+                ]
+            },
             "Related": {
                 "type": "object",
                 "properties": {
@@ -2410,6 +3952,32 @@
                     "text"
                 ]
             },
+            "SignedIn": {
+                "type": "object",
+                "properties": {
+                    "access": {
+                        "type": "string"
+                    },
+                    "refresh": {
+                        "type": "string"
+                    },
+                    "expires_in": {
+                        "type": "integer"
+                    },
+                    "created": {
+                        "type": "boolean"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/Reader"
+                    }
+                },
+                "required": [
+                    "access",
+                    "expires_in",
+                    "refresh",
+                    "user"
+                ]
+            },
             "SiteApps": {
                 "type": "object",
                 "properties": {
@@ -2446,18 +4014,33 @@
                     "seo": {
                         "$ref": "#/components/schemas/SiteSeo"
                     },
+                    "engagement": {
+                        "$ref": "#/components/schemas/SiteEngagement"
+                    },
                     "apps": {
                         "$ref": "#/components/schemas/SiteApps"
                     }
                 },
                 "required": [
                     "apps",
+                    "engagement",
                     "identity",
                     "localization",
                     "media_base_url",
                     "seo",
                     "theme",
                     "version"
+                ]
+            },
+            "SiteEngagement": {
+                "type": "object",
+                "properties": {
+                    "card_counts": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "card_counts"
                 ]
             },
             "SiteIdentity": {
@@ -2875,6 +4458,13 @@
                     "locale",
                     "path"
                 ]
+            }
+        },
+        "securitySchemes": {
+            "readerBearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     }

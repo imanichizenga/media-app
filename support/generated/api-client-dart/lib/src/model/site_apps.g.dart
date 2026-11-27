@@ -17,10 +17,7 @@ abstract class _$SiteAppsCWProxy {
   /// ```dart
   /// SiteApps(...).copyWith(id: 12, name: "My name")
   /// ````
-  SiteApps call({
-    String android,
-    String ios,
-  });
+  SiteApps call({String android, String ios});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfSiteApps.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfSiteApps.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$SiteAppsCWProxyImpl implements _$SiteAppsCWProxy {
   SiteApps ios(String ios) => this(ios: ios);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `SiteApps(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,23 +66,17 @@ extension $SiteAppsCopyWith on SiteApps {
 // JsonSerializableGenerator
 // **************************************************************************
 
-SiteApps _$SiteAppsFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'SiteApps',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['android', 'ios'],
-        );
-        final val = SiteApps(
-          android: $checkedConvert('android', (v) => v as String),
-          ios: $checkedConvert('ios', (v) => v as String),
-        );
-        return val;
-      },
-    );
+SiteApps _$SiteAppsFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('SiteApps', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['android', 'ios']);
+      final val = SiteApps(
+        android: $checkedConvert('android', (v) => v as String),
+        ios: $checkedConvert('ios', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$SiteAppsToJson(SiteApps instance) => <String, dynamic>{
-      'android': instance.android,
-      'ios': instance.ios,
-    };
+  'android': instance.android,
+  'ios': instance.ios,
+};

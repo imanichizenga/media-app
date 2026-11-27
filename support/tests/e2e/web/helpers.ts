@@ -46,6 +46,10 @@ export async function places(locale: "sw" | "en") {
     "video-story": (await api(`types/video?locale=${locale}`)).results[0].path,
     shorts: at("/shorts"),
     search: at("/search"),
+    // A word of a story's headline, so the results page has results.
+    results: at(
+      `/search?q=${encodeURIComponent(story.headline.split(" ").find((w: string) => w.length > 5) ?? story.headline)}`,
+    ),
     saved: at("/saved"),
     profile: at("/profile"),
     page: at("/privacy"),

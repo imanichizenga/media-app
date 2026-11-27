@@ -148,8 +148,10 @@ def test_public_config_exposes_no_security_settings(db):
         "theme",
         "localization",
         "seo",
+        "engagement",
         "apps",
     }
+    assert config["engagement"] == {"card_counts": True}
     # What a page's own source shows anyway.
     assert set(config["seo"]) == {"google_verification", "bing_verification", "indexnow_key", "same_as"}
     assert set(config["apps"]) == {"android", "ios"}

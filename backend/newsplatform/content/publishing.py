@@ -292,9 +292,8 @@ def _write(post: Post, text: PostText, ctx: dict[str, Any]) -> Publication:
     if previous and previous.path != path:
         moved(previous.path, path)
     _relist(row, post, ctx)
-    vectors.write(
-        [row]
-    )  # in this transaction: Postgres's search is right even if the queue is not (ADR-0049)
+    # In this transaction: Postgres's search is right even if the queue is not (ADR-0049).
+    vectors.write([row])
     return row
 
 

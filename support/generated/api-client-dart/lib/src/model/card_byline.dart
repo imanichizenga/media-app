@@ -19,37 +19,24 @@ class CardByline {
   /// Returns a new [CardByline] instance.
   CardByline({
     required this.id,
+
     required this.name,
+
     required this.slug,
+
     required this.path,
   });
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'name', required: true, includeIfNull: false)
   final String name;
 
-  @JsonKey(
-    name: r'slug',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'slug', required: true, includeIfNull: false)
   final String slug;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

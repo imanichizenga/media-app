@@ -19,11 +19,7 @@ abstract class _$PublicLabelCWProxy {
   /// ```dart
   /// PublicLabel(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicLabel call({
-    String slug,
-    String name,
-    String path,
-  });
+  PublicLabel call({String slug, String name, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPublicLabel.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPublicLabel.copyWith.fieldName(...)`
@@ -42,7 +38,6 @@ class _$PublicLabelCWProxyImpl implements _$PublicLabelCWProxy {
   PublicLabel path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicLabel(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -81,22 +76,16 @@ extension $PublicLabelCopyWith on PublicLabel {
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicLabel _$PublicLabelFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicLabel',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['slug', 'name', 'path'],
-        );
-        final val = PublicLabel(
-          slug: $checkedConvert('slug', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+PublicLabel _$PublicLabelFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('PublicLabel', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['slug', 'name', 'path']);
+      final val = PublicLabel(
+        slug: $checkedConvert('slug', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicLabelToJson(PublicLabel instance) =>
     <String, dynamic>{

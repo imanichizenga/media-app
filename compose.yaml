@@ -46,13 +46,15 @@ services:
         retries: 30,
       }
   opensearch:
-    image: opensearchproject/opensearch:3.9.0
+    image: opensearchproject/opensearch:3.7.0
     profiles: [search]
     environment:
       discovery.type: single-node
       DISABLE_SECURITY_PLUGIN: "true"
       DISABLE_INSTALL_DEMO_CONFIG: "true"
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      # Codespace disks are small and often over 90% full; locally, do not refuse shards for that.
+      cluster.routing.allocation.disk.threshold_enabled: "false"
     ports: ["127.0.0.1:9200:9200"]
     volumes: ["os:/usr/share/opensearch/data"]
     healthcheck:

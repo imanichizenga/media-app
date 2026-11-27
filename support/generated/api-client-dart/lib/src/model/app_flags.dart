@@ -19,30 +19,25 @@ class AppFlags {
   /// Returns a new [AppFlags] instance.
   AppFlags({
     required this.shorts,
+
     required this.youtube,
+
     required this.offlineSaving,
+
+    required this.cardCounts,
   });
 
-  @JsonKey(
-    name: r'shorts',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'shorts', required: true, includeIfNull: false)
   final bool shorts;
 
-  @JsonKey(
-    name: r'youtube',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'youtube', required: true, includeIfNull: false)
   final bool youtube;
 
-  @JsonKey(
-    name: r'offline_saving',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'offline_saving', required: true, includeIfNull: false)
   final bool offlineSaving;
+
+  @JsonKey(name: r'card_counts', required: true, includeIfNull: false)
+  final bool cardCounts;
 
   @override
   bool operator ==(Object other) =>
@@ -50,11 +45,15 @@ class AppFlags {
       other is AppFlags &&
           other.shorts == shorts &&
           other.youtube == youtube &&
-          other.offlineSaving == offlineSaving;
+          other.offlineSaving == offlineSaving &&
+          other.cardCounts == cardCounts;
 
   @override
   int get hashCode =>
-      shorts.hashCode + youtube.hashCode + offlineSaving.hashCode;
+      shorts.hashCode +
+      youtube.hashCode +
+      offlineSaving.hashCode +
+      cardCounts.hashCode;
 
   factory AppFlags.fromJson(Map<String, dynamic> json) =>
       _$AppFlagsFromJson(json);

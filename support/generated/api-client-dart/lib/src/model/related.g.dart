@@ -15,9 +15,7 @@ abstract class _$RelatedCWProxy {
   /// ```dart
   /// Related(...).copyWith(id: 12, name: "My name")
   /// ````
-  Related call({
-    List<Card> results,
-  });
+  Related call({List<Card> results});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfRelated.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfRelated.copyWith.fieldName(...)`
@@ -30,16 +28,13 @@ class _$RelatedCWProxyImpl implements _$RelatedCWProxy {
   Related results(List<Card> results) => this(results: results);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Related(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// Related(...).copyWith(id: 12, name: "My name")
   /// ````
-  Related call({
-    Object? results = const $CopyWithPlaceholder(),
-  }) {
+  Related call({Object? results = const $CopyWithPlaceholder()}) {
     return Related(
       results: results == const $CopyWithPlaceholder()
           ? _value.results
@@ -59,25 +54,20 @@ extension $RelatedCopyWith on Related {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Related _$RelatedFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Related',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['results'],
-        );
-        final val = Related(
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-    );
+Related _$RelatedFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('Related', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['results']);
+      final val = Related(
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$RelatedToJson(Related instance) => <String, dynamic>{
-      'results': instance.results.map((e) => e.toJson()).toList(),
-    };
+  'results': instance.results.map((e) => e.toJson()).toList(),
+};

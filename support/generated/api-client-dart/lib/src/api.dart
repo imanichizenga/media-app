@@ -8,7 +8,10 @@ import 'package:news_api_client/src/auth/basic_auth.dart';
 import 'package:news_api_client/src/auth/bearer_auth.dart';
 import 'package:news_api_client/src/auth/oauth.dart';
 import 'package:news_api_client/src/api/app_config_api.dart';
+import 'package:news_api_client/src/api/auth_api.dart';
 import 'package:news_api_client/src/api/content_api.dart';
+import 'package:news_api_client/src/api/engagement_api.dart';
+import 'package:news_api_client/src/api/me_api.dart';
 import 'package:news_api_client/src/api/site_config_api.dart';
 
 class NewsApiClient {
@@ -19,12 +22,15 @@ class NewsApiClient {
     Dio? dio,
     String? basePathOverride,
     List<Interceptor>? interceptors,
-  }) : this.dio = dio ??
-            Dio(BaseOptions(
-              baseUrl: basePathOverride ?? basePath,
-              connectTimeout: const Duration(milliseconds: 5000),
-              receiveTimeout: const Duration(milliseconds: 3000),
-            )) {
+  }) : this.dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               baseUrl: basePathOverride ?? basePath,
+               connectTimeout: const Duration(milliseconds: 5000),
+               receiveTimeout: const Duration(milliseconds: 3000),
+             ),
+           ) {
     if (interceptors == null) {
       this.dio.interceptors.addAll([
         OAuthInterceptor(),
@@ -40,8 +46,9 @@ class NewsApiClient {
   void setOAuthToken(String name, String token) {
     if (this.dio.interceptors.any((i) => i is OAuthInterceptor)) {
       (this.dio.interceptors.firstWhere((i) => i is OAuthInterceptor)
-              as OAuthInterceptor)
-          .tokens[name] = token;
+                  as OAuthInterceptor)
+              .tokens[name] =
+          token;
     }
   }
 
@@ -61,8 +68,9 @@ class NewsApiClient {
   void setBearerAuth(String name, String token) {
     if (this.dio.interceptors.any((i) => i is BearerAuthInterceptor)) {
       (this.dio.interceptors.firstWhere((i) => i is BearerAuthInterceptor)
-              as BearerAuthInterceptor)
-          .tokens[name] = token;
+                  as BearerAuthInterceptor)
+              .tokens[name] =
+          token;
     }
   }
 
@@ -83,7 +91,10 @@ class NewsApiClient {
     if (this.dio.interceptors.any((i) => i is BasicAuthInterceptor)) {
       (this.dio.interceptors.firstWhere((i) => i is BasicAuthInterceptor)
               as BasicAuthInterceptor)
-          .authInfo[name] = BasicAuthInfo(username, password);
+          .authInfo[name] = BasicAuthInfo(
+        username,
+        password,
+      );
     }
   }
 
@@ -102,12 +113,12 @@ class NewsApiClient {
 
   void setApiKey(String name, String apiKey) {
     if (this.dio.interceptors.any((i) => i is ApiKeyAuthInterceptor)) {
-      (this
-                  .dio
-                  .interceptors
-                  .firstWhere((element) => element is ApiKeyAuthInterceptor)
-              as ApiKeyAuthInterceptor)
-          .apiKeys[name] = apiKey;
+      (this.dio.interceptors.firstWhere(
+                    (element) => element is ApiKeyAuthInterceptor,
+                  )
+                  as ApiKeyAuthInterceptor)
+              .apiKeys[name] =
+          apiKey;
     }
   }
 
@@ -117,10 +128,9 @@ class NewsApiClient {
   /// given [name], this method has no effect.
   void removeApiKey(String name) {
     if (this.dio.interceptors.any((i) => i is ApiKeyAuthInterceptor)) {
-      (this
-                  .dio
-                  .interceptors
-                  .firstWhere((element) => element is ApiKeyAuthInterceptor)
+      (this.dio.interceptors.firstWhere(
+                (element) => element is ApiKeyAuthInterceptor,
+              )
               as ApiKeyAuthInterceptor)
           .apiKeys
           .remove(name);
@@ -133,10 +143,28 @@ class NewsApiClient {
     return AppConfigApi(dio);
   }
 
+  /// Get AuthApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  AuthApi getAuthApi() {
+    return AuthApi(dio);
+  }
+
   /// Get ContentApi instance, base route and serializer can be overridden by a given but be careful,
   /// by doing that all interceptors will not be executed
   ContentApi getContentApi() {
     return ContentApi(dio);
+  }
+
+  /// Get EngagementApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  EngagementApi getEngagementApi() {
+    return EngagementApi(dio);
+  }
+
+  /// Get MeApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  MeApi getMeApi() {
+    return MeApi(dio);
   }
 
   /// Get SiteConfigApi instance, base route and serializer can be overridden by a given but be careful,

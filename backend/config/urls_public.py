@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.urls import path, re_path
 
+from newsplatform.accounts import reader_api as readers
 from newsplatform.common import health
 from newsplatform.content import public_api as content
+from newsplatform.engagement import api as engage
 from newsplatform.media import dev
 from newsplatform.pages import public_api as pages
 from newsplatform.seo import public_api as seo
@@ -42,6 +44,26 @@ urlpatterns = [
     path(CONTENT + "sitemap/news", seo.SitemapNewsView.as_view()),
     path(CONTENT + "sitemap/<slug:month>", seo.SitemapMonthView.as_view()),
     path(CONTENT + "resolve", content.ResolveView.as_view()),
+    # Readers (ADR-0050): never cached, except what is the same for everyone.
+    path(API + "auth/methods", readers.MethodsView.as_view()),
+    path(API + "auth/code", readers.CodeRequestView.as_view()),
+    path(API + "auth/code/verify", readers.CodeVerifyView.as_view()),
+    path(API + "auth/google", readers.GoogleView.as_view()),
+    path(API + "auth/apple", readers.AppleView.as_view()),
+    path(API + "auth/refresh", readers.RefreshView.as_view()),
+    path(API + "auth/sign-out", readers.SignOutView.as_view()),
+    path(API + "me", readers.MeView.as_view()),
+    path(API + "me/export", readers.ExportView.as_view()),
+    path(API + "me/<slug:what>", engage.MyListView.as_view()),
+    path(API + "engagement/state", engage.StateView.as_view()),
+    path(API + "engagement/posts/<uuid:post_id>/like", engage.LikeView.as_view()),
+    path(API + "engagement/posts/<uuid:post_id>/bookmark", engage.BookmarkView.as_view()),
+    path(API + "engagement/posts/<uuid:post_id>/comments", engage.CommentsView.as_view()),
+    path(API + "engagement/posts/<uuid:post_id>/opened", engage.OpenedView.as_view()),
+    path(API + "engagement/posts/<uuid:post_id>/readers", engage.ReadersView.as_view()),
+    path(API + "engagement/comments/<uuid:comment_id>", engage.CommentView.as_view()),
+    path(API + "engagement/comments/<uuid:comment_id>/like", engage.CommentLikeView.as_view()),
+    path(API + "engagement/follows/<slug:kind>/<uuid:target>", engage.FollowView.as_view()),
 ]
 if settings.STORAGE_ENDPOINT_URL:
     urlpatterns.append(path("media/<path:path>", dev.serve))

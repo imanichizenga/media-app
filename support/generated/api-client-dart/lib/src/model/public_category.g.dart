@@ -60,7 +60,6 @@ class _$PublicCategoryCWProxyImpl implements _$PublicCategoryCWProxy {
   PublicCategory color(String color) => this(color: color);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicCategory(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -115,33 +114,28 @@ extension $PublicCategoryCopyWith on PublicCategory {
 // **************************************************************************
 
 PublicCategory _$PublicCategoryFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicCategory',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'name',
-            'short_name',
-            'slug',
-            'path',
-            'color'
-          ],
-        );
-        final val = PublicCategory(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          shortName: $checkedConvert('short_name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          color: $checkedConvert('color', (v) => v as String),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'shortName': 'short_name'},
-    );
+    $checkedCreate('PublicCategory', json, ($checkedConvert) {
+      $checkKeys(
+        json,
+        requiredKeys: const [
+          'id',
+          'name',
+          'short_name',
+          'slug',
+          'path',
+          'color',
+        ],
+      );
+      final val = PublicCategory(
+        id: $checkedConvert('id', (v) => v as String),
+        name: $checkedConvert('name', (v) => v as String),
+        shortName: $checkedConvert('short_name', (v) => v as String),
+        slug: $checkedConvert('slug', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+        color: $checkedConvert('color', (v) => v as String),
+      );
+      return val;
+    }, fieldKeyMap: const {'shortName': 'short_name'});
 
 Map<String, dynamic> _$PublicCategoryToJson(PublicCategory instance) =>
     <String, dynamic>{

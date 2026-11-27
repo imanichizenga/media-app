@@ -17,23 +17,12 @@ part 'site_apps.g.dart';
 )
 class SiteApps {
   /// Returns a new [SiteApps] instance.
-  SiteApps({
-    required this.android,
-    required this.ios,
-  });
+  SiteApps({required this.android, required this.ios});
 
-  @JsonKey(
-    name: r'android',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'android', required: true, includeIfNull: false)
   final String android;
 
-  @JsonKey(
-    name: r'ios',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'ios', required: true, includeIfNull: false)
   final String ios;
 
   @override

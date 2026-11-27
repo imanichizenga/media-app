@@ -149,12 +149,13 @@ locals {
   # The website's, and only its: it holds no key to the database, the broker or the API's cache.
   web_secrets = ["WEB_REDIS_URL", "REVALIDATE_SECRET"]
   web_env = {
-    PORT         = "3000"
-    HOSTNAME     = "0.0.0.0"
-    SITE_URL     = "https://${var.web_host}"
-    API_BASE_URL = "https://${var.api_host}"
-    MEDIA_ORIGIN = "https://${var.media_host}"
-    SITE_CLOSED  = var.environment == "prod" ? "" : "1"
+    PORT               = "3000"
+    HOSTNAME           = "0.0.0.0"
+    SITE_URL           = "https://${var.web_host}"
+    TRUSTED_PROXY_HOPS = "2" # CloudFront, then the load balancer; the reader's address goes to the API signed (ADR-0050)
+    API_BASE_URL       = "https://${var.api_host}"
+    MEDIA_ORIGIN       = "https://${var.media_host}"
+    SITE_CLOSED        = var.environment == "prod" ? "" : "1"
   }
   runtime_secrets = ["DJANGO_SECRET_KEY", "ORIGIN_VERIFY_SECRET", "DATABASE_URL", "REDIS_URL", "BROKER_URL"]
   uvicorn         = ["gunicorn", "config.asgi:application", "-k", "uvicorn_worker.UvicornWorker", "-b", "0.0.0.0:8000", "--access-logfile", "-"]

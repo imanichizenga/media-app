@@ -21,29 +21,19 @@ class StoryPage {
   /// Returns a new [StoryPage] instance.
   StoryPage({
     required this.nextCursor,
+
     required this.results,
+
     required this.story,
   });
 
-  @JsonKey(
-    name: r'next_cursor',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'next_cursor', required: true, includeIfNull: true)
   final String? nextCursor;
 
-  @JsonKey(
-    name: r'results',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'results', required: true, includeIfNull: false)
   final List<Card> results;
 
-  @JsonKey(
-    name: r'story',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'story', required: true, includeIfNull: false)
   final PublicStory story;
 
   @override

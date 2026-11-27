@@ -20,101 +20,64 @@ class PublicImage {
   /// Returns a new [PublicImage] instance.
   PublicImage({
     required this.kind,
+
     required this.id,
+
     required this.alt,
+
     required this.credit,
+
     required this.width,
+
     required this.height,
+
     required this.blurhash,
+
     required this.color,
+
     required this.focal,
+
     required this.base_,
+
     required this.widths,
+
     required this.crops,
   });
 
-  @JsonKey(
-    name: r'kind',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'kind', required: true, includeIfNull: false)
   final PublicImageKindEnum kind;
 
-  @JsonKey(
-    name: r'id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'id', required: true, includeIfNull: false)
   final String id;
 
-  @JsonKey(
-    name: r'alt',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'alt', required: true, includeIfNull: false)
   final String alt;
 
-  @JsonKey(
-    name: r'credit',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'credit', required: true, includeIfNull: false)
   final String credit;
 
-  @JsonKey(
-    name: r'width',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'width', required: true, includeIfNull: true)
   final int? width;
 
-  @JsonKey(
-    name: r'height',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'height', required: true, includeIfNull: true)
   final int? height;
 
-  @JsonKey(
-    name: r'blurhash',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'blurhash', required: true, includeIfNull: false)
   final String blurhash;
 
-  @JsonKey(
-    name: r'color',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'color', required: true, includeIfNull: false)
   final String color;
 
-  @JsonKey(
-    name: r'focal',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'focal', required: true, includeIfNull: false)
   final List<int> focal;
 
-  @JsonKey(
-    name: r'base',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'base', required: true, includeIfNull: false)
   final String base_;
 
-  @JsonKey(
-    name: r'widths',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'widths', required: true, includeIfNull: false)
   final List<int> widths;
 
-  @JsonKey(
-    name: r'crops',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'crops', required: true, includeIfNull: false)
   final String crops;
 
   @override

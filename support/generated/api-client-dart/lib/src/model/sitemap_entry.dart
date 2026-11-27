@@ -22,109 +22,69 @@ class SitemapEntry {
   /// Returns a new [SitemapEntry] instance.
   SitemapEntry({
     required this.path,
+
     required this.locale,
+
     required this.type,
+
     required this.headline,
+
     required this.standfirst,
+
     required this.publishedAt,
+
     required this.modifiedAt,
+
     required this.image,
+
     required this.video,
+
     required this.youtubeId,
+
     required this.durationMs,
+
     required this.isSensitive,
+
     required this.translations,
   });
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'locale', required: true, includeIfNull: false)
   final String locale;
 
-  @JsonKey(
-    name: r'type',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'type', required: true, includeIfNull: false)
   final String type;
 
-  @JsonKey(
-    name: r'headline',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'headline', required: true, includeIfNull: false)
   final String headline;
 
-  @JsonKey(
-    name: r'standfirst',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'standfirst', required: true, includeIfNull: false)
   final String standfirst;
 
-  @JsonKey(
-    name: r'published_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'published_at', required: true, includeIfNull: false)
   final DateTime publishedAt;
 
-  @JsonKey(
-    name: r'modified_at',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'modified_at', required: true, includeIfNull: false)
   final DateTime modifiedAt;
 
-  @JsonKey(
-    name: r'image',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'image', required: true, includeIfNull: true)
   final PublicImage? image;
 
-  @JsonKey(
-    name: r'video',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'video', required: true, includeIfNull: true)
   final PublicVideo? video;
 
-  @JsonKey(
-    name: r'youtube_id',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'youtube_id', required: true, includeIfNull: false)
   final String youtubeId;
 
-  @JsonKey(
-    name: r'duration_ms',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'duration_ms', required: true, includeIfNull: true)
   final int? durationMs;
 
-  @JsonKey(
-    name: r'is_sensitive',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'is_sensitive', required: true, includeIfNull: false)
   final bool isSensitive;
 
-  @JsonKey(
-    name: r'translations',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'translations', required: true, includeIfNull: false)
   final List<SitemapTranslation> translations;
 
   @override

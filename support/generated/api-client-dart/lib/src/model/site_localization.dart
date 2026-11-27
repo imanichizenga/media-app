@@ -18,23 +18,12 @@ part 'site_localization.g.dart';
 )
 class SiteLocalization {
   /// Returns a new [SiteLocalization] instance.
-  SiteLocalization({
-    required this.defaultLocale,
-    required this.timezone,
-  });
+  SiteLocalization({required this.defaultLocale, required this.timezone});
 
-  @JsonKey(
-    name: r'default_locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'default_locale', required: true, includeIfNull: false)
   final DefaultLocaleEnum defaultLocale;
 
-  @JsonKey(
-    name: r'timezone',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'timezone', required: true, includeIfNull: false)
   final String timezone;
 
   @override

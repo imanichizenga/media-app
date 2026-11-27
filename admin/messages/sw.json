@@ -230,7 +230,8 @@
     "history": "Historia ya majaribio",
     "noHistory": "Hakuna majaribio bado.",
     "param": {
-      "to": "Tuma barua ya jaribio kwa"
+      "to": "Tuma barua ya jaribio kwa",
+      "phone": "Tuma SMS ya majaribio kwa (mf. 0712 345 678)"
     }
   },
   "approvals": {
@@ -363,7 +364,9 @@
       "localization": "Lugha na saa",
       "security": "Usalama",
       "app": "Programu ya simu",
-      "seo": "Injini za utafutaji"
+      "seo": "Injini za utafutaji",
+      "engagement": "Ushiriki",
+      "sign_in": "Kuingia kwa wasomaji"
     },
     "field": {
       "default_locale": "Lugha chaguo-msingi",
@@ -405,7 +408,21 @@
       "indexnow": "Julisha injini za utafutaji papo hapo (IndexNow)",
       "indexnow_key": "Ufunguo wa IndexNow (herufi 32 za heksadesimali)",
       "same_as": "Kurasa za mchapishaji kwingine",
-      "app_banner": "Pendekeza programu kwenye simu"
+      "app_banner": "Pendekeza programu kwenye simu",
+      "signin_phone": "Simu na msimbo wa SMS",
+      "signin_google": "Google",
+      "signin_apple": "Apple",
+      "countries": "Nchi zinazoweza kupokea SMS (misimbo ya nchi, mf. 255)",
+      "code_minutes": "Msimbo unadumu (dakika)",
+      "attempts": "Majaribio kwa msimbo mmoja",
+      "resend_seconds": "Subiri kabla ya msimbo mwingine (sekunde)",
+      "per_phone_daily": "Misimbo kwa namba moja kwa siku",
+      "per_prefix_hourly": "Misimbo kwa kundi la namba kwa saa",
+      "per_ip_hourly": "Misimbo kutoka mtandao mmoja kwa saa",
+      "sms_hourly_budget": "SMS zote kwa saa (bajeti)",
+      "android_app_hash": "Hash ya programu ya Android (SMS)",
+      "terms_version": "Toleo la masharti",
+      "card_counts": "Onyesha idadi ya waliosoma, waliopenda na maoni kwenye kadi za habari"
     },
     "option": {
       "sw": "Kiswahili",

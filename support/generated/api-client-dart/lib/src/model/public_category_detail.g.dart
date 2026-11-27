@@ -109,7 +109,6 @@ class _$PublicCategoryDetailCWProxyImpl
       this(translations: translations);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicCategoryDetail(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -200,83 +199,82 @@ extension $PublicCategoryDetailCopyWith on PublicCategoryDetail {
 // **************************************************************************
 
 PublicCategoryDetail _$PublicCategoryDetailFromJson(
-        Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicCategoryDetail',
+  Map<String, dynamic> json,
+) => $checkedCreate(
+  'PublicCategoryDetail',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'name',
-            'short_name',
-            'slug',
-            'path',
-            'color',
-            'icon',
-            'description',
-            'seo_title',
-            'seo_description',
-            'parents',
-            'children',
-            'translations'
-          ],
-        );
-        final val = PublicCategoryDetail(
-          id: $checkedConvert('id', (v) => v as String),
-          name: $checkedConvert('name', (v) => v as String),
-          shortName: $checkedConvert('short_name', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          color: $checkedConvert('color', (v) => v as String),
-          icon: $checkedConvert('icon', (v) => v as String),
-          description: $checkedConvert('description', (v) => v as String),
-          seoTitle: $checkedConvert('seo_title', (v) => v as String),
-          seoDescription:
-              $checkedConvert('seo_description', (v) => v as String),
-          parents: $checkedConvert(
-              'parents',
-              (v) => (v as List<dynamic>)
-                  .map(
-                      (e) => PublicCategory.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          children: $checkedConvert(
-              'children',
-              (v) => (v as List<dynamic>)
-                  .map(
-                      (e) => PublicCategory.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          translations: $checkedConvert(
-              'translations',
-              (v) => (v as List<dynamic>)
-                  .map((e) =>
-                      CategoryTranslation.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'shortName': 'short_name',
-        'seoTitle': 'seo_title',
-        'seoDescription': 'seo_description'
-      },
+      requiredKeys: const [
+        'id',
+        'name',
+        'short_name',
+        'slug',
+        'path',
+        'color',
+        'icon',
+        'description',
+        'seo_title',
+        'seo_description',
+        'parents',
+        'children',
+        'translations',
+      ],
     );
+    final val = PublicCategoryDetail(
+      id: $checkedConvert('id', (v) => v as String),
+      name: $checkedConvert('name', (v) => v as String),
+      shortName: $checkedConvert('short_name', (v) => v as String),
+      slug: $checkedConvert('slug', (v) => v as String),
+      path: $checkedConvert('path', (v) => v as String),
+      color: $checkedConvert('color', (v) => v as String),
+      icon: $checkedConvert('icon', (v) => v as String),
+      description: $checkedConvert('description', (v) => v as String),
+      seoTitle: $checkedConvert('seo_title', (v) => v as String),
+      seoDescription: $checkedConvert('seo_description', (v) => v as String),
+      parents: $checkedConvert(
+        'parents',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicCategory.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      children: $checkedConvert(
+        'children',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicCategory.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      translations: $checkedConvert(
+        'translations',
+        (v) => (v as List<dynamic>)
+            .map((e) => CategoryTranslation.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'shortName': 'short_name',
+    'seoTitle': 'seo_title',
+    'seoDescription': 'seo_description',
+  },
+);
 
 Map<String, dynamic> _$PublicCategoryDetailToJson(
-        PublicCategoryDetail instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'short_name': instance.shortName,
-      'slug': instance.slug,
-      'path': instance.path,
-      'color': instance.color,
-      'icon': instance.icon,
-      'description': instance.description,
-      'seo_title': instance.seoTitle,
-      'seo_description': instance.seoDescription,
-      'parents': instance.parents.map((e) => e.toJson()).toList(),
-      'children': instance.children.map((e) => e.toJson()).toList(),
-      'translations': instance.translations.map((e) => e.toJson()).toList(),
-    };
+  PublicCategoryDetail instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'name': instance.name,
+  'short_name': instance.shortName,
+  'slug': instance.slug,
+  'path': instance.path,
+  'color': instance.color,
+  'icon': instance.icon,
+  'description': instance.description,
+  'seo_title': instance.seoTitle,
+  'seo_description': instance.seoDescription,
+  'parents': instance.parents.map((e) => e.toJson()).toList(),
+  'children': instance.children.map((e) => e.toJson()).toList(),
+  'translations': instance.translations.map((e) => e.toJson()).toList(),
+};

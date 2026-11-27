@@ -15,9 +15,7 @@ abstract class _$PublicPagesCWProxy {
   /// ```dart
   /// PublicPages(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicPages call({
-    List<PublicPageLink> results,
-  });
+  PublicPages call({List<PublicPageLink> results});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPublicPages.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPublicPages.copyWith.fieldName(...)`
@@ -30,16 +28,13 @@ class _$PublicPagesCWProxyImpl implements _$PublicPagesCWProxy {
   PublicPages results(List<PublicPageLink> results) => this(results: results);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicPages(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// PublicPages(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicPages call({
-    Object? results = const $CopyWithPlaceholder(),
-  }) {
+  PublicPages call({Object? results = const $CopyWithPlaceholder()}) {
     return PublicPages(
       results: results == const $CopyWithPlaceholder()
           ? _value.results
@@ -59,25 +54,19 @@ extension $PublicPagesCopyWith on PublicPages {
 // JsonSerializableGenerator
 // **************************************************************************
 
-PublicPages _$PublicPagesFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicPages',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['results'],
-        );
-        final val = PublicPages(
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map(
-                      (e) => PublicPageLink.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-    );
+PublicPages _$PublicPagesFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('PublicPages', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['results']);
+      final val = PublicPages(
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => PublicPageLink.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicPagesToJson(PublicPages instance) =>
     <String, dynamic>{

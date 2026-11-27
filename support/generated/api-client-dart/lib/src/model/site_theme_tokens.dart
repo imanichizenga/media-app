@@ -17,23 +17,12 @@ part 'site_theme_tokens.g.dart';
 )
 class SiteThemeTokens {
   /// Returns a new [SiteThemeTokens] instance.
-  SiteThemeTokens({
-    required this.light,
-    required this.dark,
-  });
+  SiteThemeTokens({required this.light, required this.dark});
 
-  @JsonKey(
-    name: r'light',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'light', required: true, includeIfNull: false)
   final Map<String, String> light;
 
-  @JsonKey(
-    name: r'dark',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'dark', required: true, includeIfNull: false)
   final Map<String, String> dark;
 
   @override

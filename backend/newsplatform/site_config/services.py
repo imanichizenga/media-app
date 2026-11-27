@@ -72,6 +72,7 @@ def public_config() -> dict[str, Any]:
             "indexnow_key": seo.indexnow_key if seo.indexnow else "",
             "same_as": seo.same_as,
         },
+        "engagement": {"card_counts": card_counts()},
         # Where the app is, for the banner on phones; empty until there is one to offer.
         "apps": {
             "android": app.store_android if seo.app_banner else "",
@@ -88,6 +89,12 @@ def get_seo() -> tuple[Seo, int]:
 
 _LINKS = ("about", "editorial", "corrections", "contact", "privacy", "terms")
 _FLAGS = ("shorts", "youtube", "offline_saving")
+
+
+def card_counts() -> bool:
+    """Whether cards show views, likes and comments before a story is opened (Settings → Engagement)."""
+    section = get_section("engagement")[0]
+    return bool(getattr(section, "card_counts", True))
 
 
 def get_app() -> tuple[App, int]:
@@ -112,7 +119,7 @@ def app_config() -> dict[str, Any]:
             "ios": {"minimum": app.min_ios, "recommended": app.recommended_ios, "store": app.store_ios},
         },
         "maintenance": {"on": app.maintenance, "sw": app.maintenance_sw, "en": app.maintenance_en},
-        "flags": {n: getattr(app, n) for n in _FLAGS},
+        "flags": {**{n: getattr(app, n) for n in _FLAGS}, "card_counts": card_counts()},
         "links": {n: getattr(app, f"link_{n}") for n in _LINKS},
         "pinning": {"enabled": app.pinning, "pins": app.pins if app.pinning else []},
         "identity": site["identity"],
@@ -154,9 +161,12 @@ def ip_allowed(ip: str | None, security: Security) -> bool:
 
 
 def permission_for(key: str) -> str:
-    return {"security": "settings.security", "engagement": "engagement.manage_policy"}.get(
-        key, "settings.manage"
-    )
+    # Readers' sign-in rules guard SMS spend and fraud limits: those who may change security may change them.
+    return {
+        "security": "settings.security",
+        "sign_in": "settings.security",
+        "engagement": "engagement.manage_policy",
+    }.get(key, "settings.manage")
 
 
 def _validate(key: str, data: dict[str, Any]) -> Section:
@@ -192,7 +202,7 @@ def _write(*, actor: User, key: str, data: dict[str, Any], version: int, approve
         before={k: before.get(k) for k in changed},
         after={k: data[k] for k in changed},
     )
-    if key in {"app", "seo"}:
+    if key in {"app", "seo", "engagement"}:
         from newsplatform.content.tasks import announce
 
         transaction.on_commit(lambda: announce.delay(["app-config", "site"], []), robust=True)

@@ -40,13 +40,8 @@ class AppConfigApi {
     final _path = r'/api/v1/app-config';
     final _options = Options(
       method: r'GET',
-      headers: <String, dynamic>{
-        ...?headers,
-      },
-      extra: <String, dynamic>{
-        'secure': <Map<String, String>>[],
-        ...?extra,
-      },
+      headers: <String, dynamic>{...?headers},
+      extra: <String, dynamic>{'secure': <Map<String, String>>[], ...?extra},
       validateStatus: validateStatus,
     );
 
@@ -64,8 +59,11 @@ class AppConfigApi {
       final rawData = _response.data;
       _responseData = rawData == null
           ? null
-          : deserialize<AppConfig, AppConfig>(rawData, 'AppConfig',
-              growable: true);
+          : deserialize<AppConfig, AppConfig>(
+              rawData,
+              'AppConfig',
+              growable: true,
+            );
     } catch (error, stackTrace) {
       throw DioException(
         requestOptions: _response.requestOptions,

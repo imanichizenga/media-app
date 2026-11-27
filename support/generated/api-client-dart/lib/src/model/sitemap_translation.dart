@@ -17,23 +17,12 @@ part 'sitemap_translation.g.dart';
 )
 class SitemapTranslation {
   /// Returns a new [SitemapTranslation] instance.
-  SitemapTranslation({
-    required this.locale,
-    required this.path,
-  });
+  SitemapTranslation({required this.locale, required this.path});
 
-  @JsonKey(
-    name: r'locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'locale', required: true, includeIfNull: false)
   final String locale;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

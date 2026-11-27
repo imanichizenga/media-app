@@ -17,10 +17,7 @@ abstract class _$PageTranslationCWProxy {
   /// ```dart
   /// PageTranslation(...).copyWith(id: 12, name: "My name")
   /// ````
-  PageTranslation call({
-    String locale,
-    String path,
-  });
+  PageTranslation call({String locale, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPageTranslation.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPageTranslation.copyWith.fieldName(...)`
@@ -36,7 +33,6 @@ class _$PageTranslationCWProxyImpl implements _$PageTranslationCWProxy {
   PageTranslation path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PageTranslation(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -71,24 +67,14 @@ extension $PageTranslationCopyWith on PageTranslation {
 // **************************************************************************
 
 PageTranslation _$PageTranslationFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PageTranslation',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['locale', 'path'],
-        );
-        final val = PageTranslation(
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('PageTranslation', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['locale', 'path']);
+      final val = PageTranslation(
+        locale: $checkedConvert('locale', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PageTranslationToJson(PageTranslation instance) =>
-    <String, dynamic>{
-      'locale': instance.locale,
-      'path': instance.path,
-    };
+    <String, dynamic>{'locale': instance.locale, 'path': instance.path};

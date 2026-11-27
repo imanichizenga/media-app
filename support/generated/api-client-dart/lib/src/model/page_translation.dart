@@ -17,23 +17,12 @@ part 'page_translation.g.dart';
 )
 class PageTranslation {
   /// Returns a new [PageTranslation] instance.
-  PageTranslation({
-    required this.locale,
-    required this.path,
-  });
+  PageTranslation({required this.locale, required this.path});
 
-  @JsonKey(
-    name: r'locale',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'locale', required: true, includeIfNull: false)
   final String locale;
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
   @override

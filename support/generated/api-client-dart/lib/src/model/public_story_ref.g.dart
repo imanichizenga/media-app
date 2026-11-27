@@ -19,11 +19,7 @@ abstract class _$PublicStoryRefCWProxy {
   /// ```dart
   /// PublicStoryRef(...).copyWith(id: 12, name: "My name")
   /// ````
-  PublicStoryRef call({
-    String slug,
-    String title,
-    String path,
-  });
+  PublicStoryRef call({String slug, String title, String path});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfPublicStoryRef.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfPublicStoryRef.copyWith.fieldName(...)`
@@ -42,7 +38,6 @@ class _$PublicStoryRefCWProxyImpl implements _$PublicStoryRefCWProxy {
   PublicStoryRef path(String path) => this(path: path);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicStoryRef(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -82,22 +77,15 @@ extension $PublicStoryRefCopyWith on PublicStoryRef {
 // **************************************************************************
 
 PublicStoryRef _$PublicStoryRefFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'PublicStoryRef',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['slug', 'title', 'path'],
-        );
-        final val = PublicStoryRef(
-          slug: $checkedConvert('slug', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('PublicStoryRef', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['slug', 'title', 'path']);
+      final val = PublicStoryRef(
+        slug: $checkedConvert('slug', (v) => v as String),
+        title: $checkedConvert('title', (v) => v as String),
+        path: $checkedConvert('path', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$PublicStoryRefToJson(PublicStoryRef instance) =>
     <String, dynamic>{

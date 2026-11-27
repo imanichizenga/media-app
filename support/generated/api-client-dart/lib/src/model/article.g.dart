@@ -248,7 +248,6 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
       this(translations: translations);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -453,202 +452,226 @@ extension $ArticleCopyWith on Article {
 // **************************************************************************
 
 Article _$ArticleFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'Article',
+  'Article',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'id',
-            'type',
-            'locale',
-            'path',
-            'slug',
-            'headline',
-            'rail_title',
-            'standfirst',
-            'category',
-            'authors',
-            'image',
-            'video',
-            'youtube_id',
-            'duration_ms',
-            'reading_minutes',
-            'published_at',
-            'modified_at',
-            'is_sensitive',
-            'breaking_until',
-            'is_live',
-            'body',
-            'assets',
-            'links',
-            'breadcrumbs',
-            'tags',
-            'regions',
-            'story',
-            'engagement',
-            'content_warning',
-            'source_url',
-            'update_note',
-            'correction_note',
-            'seo',
-            'first_published_at',
-            'live_ended_at',
-            'translations'
-          ],
-        );
-        final val = Article(
-          id: $checkedConvert('id', (v) => v as String),
-          type: $checkedConvert(
-              'type', (v) => $enumDecode(_$PostTypeEnumEnumMap, v)),
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          slug: $checkedConvert('slug', (v) => v as String),
-          headline: $checkedConvert('headline', (v) => v as String),
-          railTitle: $checkedConvert('rail_title', (v) => v as String),
-          standfirst: $checkedConvert('standfirst', (v) => v as String),
-          category: $checkedConvert('category',
-              (v) => PublicCategory.fromJson(v as Map<String, dynamic>)),
-          authors: $checkedConvert(
-              'authors',
-              (v) => (v as List<dynamic>)
-                  .map((e) => PublicByline.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          image: $checkedConvert(
-              'image',
-              (v) => v == null
-                  ? null
-                  : PublicImage.fromJson(v as Map<String, dynamic>)),
-          video: $checkedConvert(
-              'video',
-              (v) => v == null
-                  ? null
-                  : PublicVideo.fromJson(v as Map<String, dynamic>)),
-          youtubeId: $checkedConvert('youtube_id', (v) => v as String),
-          durationMs:
-              $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
-          readingMinutes:
-              $checkedConvert('reading_minutes', (v) => (v as num).toInt()),
-          publishedAt: $checkedConvert(
-              'published_at', (v) => DateTime.parse(v as String)),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-          isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
-          breakingUntil: $checkedConvert('breaking_until',
-              (v) => v == null ? null : DateTime.parse(v as String)),
-          isLive: $checkedConvert('is_live', (v) => v as bool),
-          body: $checkedConvert('body', (v) => v as Map<String, dynamic>),
-          assets: $checkedConvert(
-              'assets',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(k, e as Map<String, dynamic>),
-                  )),
-          links: $checkedConvert(
-              'links',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(
-                        k, RelatedTarget.fromJson(e as Map<String, dynamic>)),
-                  )),
-          breadcrumbs: $checkedConvert(
-              'breadcrumbs',
-              (v) => (v as List<dynamic>)
-                  .map(
-                      (e) => PublicCategory.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          tags: $checkedConvert(
-              'tags',
-              (v) => (v as List<dynamic>)
-                  .map((e) => PublicLabel.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          regions: $checkedConvert(
-              'regions',
-              (v) => (v as List<dynamic>)
-                  .map((e) => PublicRegion.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          story: $checkedConvert(
-              'story',
-              (v) => v == null
-                  ? null
-                  : PublicStoryRef.fromJson(v as Map<String, dynamic>)),
-          engagement: $checkedConvert('engagement',
-              (v) => PublicPolicy.fromJson(v as Map<String, dynamic>)),
-          contentWarning:
-              $checkedConvert('content_warning', (v) => v as String),
-          sourceUrl: $checkedConvert('source_url', (v) => v as String),
-          updateNote: $checkedConvert('update_note', (v) => v as String),
-          correctionNote:
-              $checkedConvert('correction_note', (v) => v as String),
-          seo: $checkedConvert(
-              'seo', (v) => PublicSeo.fromJson(v as Map<String, dynamic>)),
-          firstPublishedAt: $checkedConvert('first_published_at',
-              (v) => v == null ? null : DateTime.parse(v as String)),
-          liveEndedAt: $checkedConvert('live_ended_at',
-              (v) => v == null ? null : DateTime.parse(v as String)),
-          translations: $checkedConvert(
-              'translations',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Translation.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'railTitle': 'rail_title',
-        'youtubeId': 'youtube_id',
-        'durationMs': 'duration_ms',
-        'readingMinutes': 'reading_minutes',
-        'publishedAt': 'published_at',
-        'modifiedAt': 'modified_at',
-        'isSensitive': 'is_sensitive',
-        'breakingUntil': 'breaking_until',
-        'isLive': 'is_live',
-        'contentWarning': 'content_warning',
-        'sourceUrl': 'source_url',
-        'updateNote': 'update_note',
-        'correctionNote': 'correction_note',
-        'firstPublishedAt': 'first_published_at',
-        'liveEndedAt': 'live_ended_at'
-      },
+      requiredKeys: const [
+        'id',
+        'type',
+        'locale',
+        'path',
+        'slug',
+        'headline',
+        'rail_title',
+        'standfirst',
+        'category',
+        'authors',
+        'image',
+        'video',
+        'youtube_id',
+        'duration_ms',
+        'reading_minutes',
+        'published_at',
+        'modified_at',
+        'is_sensitive',
+        'breaking_until',
+        'is_live',
+        'body',
+        'assets',
+        'links',
+        'breadcrumbs',
+        'tags',
+        'regions',
+        'story',
+        'engagement',
+        'content_warning',
+        'source_url',
+        'update_note',
+        'correction_note',
+        'seo',
+        'first_published_at',
+        'live_ended_at',
+        'translations',
+      ],
     );
+    final val = Article(
+      id: $checkedConvert('id', (v) => v as String),
+      type: $checkedConvert(
+        'type',
+        (v) => $enumDecode(_$PostTypeEnumEnumMap, v),
+      ),
+      locale: $checkedConvert('locale', (v) => v as String),
+      path: $checkedConvert('path', (v) => v as String),
+      slug: $checkedConvert('slug', (v) => v as String),
+      headline: $checkedConvert('headline', (v) => v as String),
+      railTitle: $checkedConvert('rail_title', (v) => v as String),
+      standfirst: $checkedConvert('standfirst', (v) => v as String),
+      category: $checkedConvert(
+        'category',
+        (v) => PublicCategory.fromJson(v as Map<String, dynamic>),
+      ),
+      authors: $checkedConvert(
+        'authors',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicByline.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      image: $checkedConvert(
+        'image',
+        (v) =>
+            v == null ? null : PublicImage.fromJson(v as Map<String, dynamic>),
+      ),
+      video: $checkedConvert(
+        'video',
+        (v) =>
+            v == null ? null : PublicVideo.fromJson(v as Map<String, dynamic>),
+      ),
+      youtubeId: $checkedConvert('youtube_id', (v) => v as String),
+      durationMs: $checkedConvert('duration_ms', (v) => (v as num?)?.toInt()),
+      readingMinutes: $checkedConvert(
+        'reading_minutes',
+        (v) => (v as num).toInt(),
+      ),
+      publishedAt: $checkedConvert(
+        'published_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      modifiedAt: $checkedConvert(
+        'modified_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
+      breakingUntil: $checkedConvert(
+        'breaking_until',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      isLive: $checkedConvert('is_live', (v) => v as bool),
+      body: $checkedConvert('body', (v) => v as Map<String, dynamic>),
+      assets: $checkedConvert(
+        'assets',
+        (v) => (v as Map<String, dynamic>).map(
+          (k, e) => MapEntry(k, e as Map<String, dynamic>),
+        ),
+      ),
+      links: $checkedConvert(
+        'links',
+        (v) => (v as Map<String, dynamic>).map(
+          (k, e) =>
+              MapEntry(k, RelatedTarget.fromJson(e as Map<String, dynamic>)),
+        ),
+      ),
+      breadcrumbs: $checkedConvert(
+        'breadcrumbs',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicCategory.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      tags: $checkedConvert(
+        'tags',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicLabel.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      regions: $checkedConvert(
+        'regions',
+        (v) => (v as List<dynamic>)
+            .map((e) => PublicRegion.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      story: $checkedConvert(
+        'story',
+        (v) => v == null
+            ? null
+            : PublicStoryRef.fromJson(v as Map<String, dynamic>),
+      ),
+      engagement: $checkedConvert(
+        'engagement',
+        (v) => PublicPolicy.fromJson(v as Map<String, dynamic>),
+      ),
+      contentWarning: $checkedConvert('content_warning', (v) => v as String),
+      sourceUrl: $checkedConvert('source_url', (v) => v as String),
+      updateNote: $checkedConvert('update_note', (v) => v as String),
+      correctionNote: $checkedConvert('correction_note', (v) => v as String),
+      seo: $checkedConvert(
+        'seo',
+        (v) => PublicSeo.fromJson(v as Map<String, dynamic>),
+      ),
+      firstPublishedAt: $checkedConvert(
+        'first_published_at',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      liveEndedAt: $checkedConvert(
+        'live_ended_at',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      translations: $checkedConvert(
+        'translations',
+        (v) => (v as List<dynamic>)
+            .map((e) => Translation.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'railTitle': 'rail_title',
+    'youtubeId': 'youtube_id',
+    'durationMs': 'duration_ms',
+    'readingMinutes': 'reading_minutes',
+    'publishedAt': 'published_at',
+    'modifiedAt': 'modified_at',
+    'isSensitive': 'is_sensitive',
+    'breakingUntil': 'breaking_until',
+    'isLive': 'is_live',
+    'contentWarning': 'content_warning',
+    'sourceUrl': 'source_url',
+    'updateNote': 'update_note',
+    'correctionNote': 'correction_note',
+    'firstPublishedAt': 'first_published_at',
+    'liveEndedAt': 'live_ended_at',
+  },
+);
 
 Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
-      'id': instance.id,
-      'type': _$PostTypeEnumEnumMap[instance.type]!,
-      'locale': instance.locale,
-      'path': instance.path,
-      'slug': instance.slug,
-      'headline': instance.headline,
-      'rail_title': instance.railTitle,
-      'standfirst': instance.standfirst,
-      'category': instance.category.toJson(),
-      'authors': instance.authors.map((e) => e.toJson()).toList(),
-      'image': instance.image?.toJson(),
-      'video': instance.video?.toJson(),
-      'youtube_id': instance.youtubeId,
-      'duration_ms': instance.durationMs,
-      'reading_minutes': instance.readingMinutes,
-      'published_at': instance.publishedAt.toIso8601String(),
-      'modified_at': instance.modifiedAt.toIso8601String(),
-      'is_sensitive': instance.isSensitive,
-      'breaking_until': instance.breakingUntil?.toIso8601String(),
-      'is_live': instance.isLive,
-      'body': instance.body,
-      'assets': instance.assets,
-      'links': instance.links.map((k, e) => MapEntry(k, e.toJson())),
-      'breadcrumbs': instance.breadcrumbs.map((e) => e.toJson()).toList(),
-      'tags': instance.tags.map((e) => e.toJson()).toList(),
-      'regions': instance.regions.map((e) => e.toJson()).toList(),
-      'story': instance.story?.toJson(),
-      'engagement': instance.engagement.toJson(),
-      'content_warning': instance.contentWarning,
-      'source_url': instance.sourceUrl,
-      'update_note': instance.updateNote,
-      'correction_note': instance.correctionNote,
-      'seo': instance.seo.toJson(),
-      'first_published_at': instance.firstPublishedAt?.toIso8601String(),
-      'live_ended_at': instance.liveEndedAt?.toIso8601String(),
-      'translations': instance.translations.map((e) => e.toJson()).toList(),
-    };
+  'id': instance.id,
+  'type': _$PostTypeEnumEnumMap[instance.type]!,
+  'locale': instance.locale,
+  'path': instance.path,
+  'slug': instance.slug,
+  'headline': instance.headline,
+  'rail_title': instance.railTitle,
+  'standfirst': instance.standfirst,
+  'category': instance.category.toJson(),
+  'authors': instance.authors.map((e) => e.toJson()).toList(),
+  'image': instance.image?.toJson(),
+  'video': instance.video?.toJson(),
+  'youtube_id': instance.youtubeId,
+  'duration_ms': instance.durationMs,
+  'reading_minutes': instance.readingMinutes,
+  'published_at': instance.publishedAt.toIso8601String(),
+  'modified_at': instance.modifiedAt.toIso8601String(),
+  'is_sensitive': instance.isSensitive,
+  'breaking_until': instance.breakingUntil?.toIso8601String(),
+  'is_live': instance.isLive,
+  'body': instance.body,
+  'assets': instance.assets,
+  'links': instance.links.map((k, e) => MapEntry(k, e.toJson())),
+  'breadcrumbs': instance.breadcrumbs.map((e) => e.toJson()).toList(),
+  'tags': instance.tags.map((e) => e.toJson()).toList(),
+  'regions': instance.regions.map((e) => e.toJson()).toList(),
+  'story': instance.story?.toJson(),
+  'engagement': instance.engagement.toJson(),
+  'content_warning': instance.contentWarning,
+  'source_url': instance.sourceUrl,
+  'update_note': instance.updateNote,
+  'correction_note': instance.correctionNote,
+  'seo': instance.seo.toJson(),
+  'first_published_at': instance.firstPublishedAt?.toIso8601String(),
+  'live_ended_at': instance.liveEndedAt?.toIso8601String(),
+  'translations': instance.translations.map((e) => e.toJson()).toList(),
+};
 
 const _$PostTypeEnumEnumMap = {
   PostTypeEnum.article: 'article',

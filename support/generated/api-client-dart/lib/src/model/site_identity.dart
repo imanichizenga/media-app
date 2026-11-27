@@ -20,53 +20,34 @@ class SiteIdentity {
   /// Returns a new [SiteIdentity] instance.
   SiteIdentity({
     required this.brandName,
+
     required this.taglineSw,
+
     required this.taglineEn,
+
     required this.wordmarkLight,
+
     required this.wordmarkDark,
+
     required this.symbol,
   });
 
-  @JsonKey(
-    name: r'brand_name',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'brand_name', required: true, includeIfNull: false)
   final String brandName;
 
-  @JsonKey(
-    name: r'tagline_sw',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'tagline_sw', required: true, includeIfNull: false)
   final String taglineSw;
 
-  @JsonKey(
-    name: r'tagline_en',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'tagline_en', required: true, includeIfNull: false)
   final String taglineEn;
 
-  @JsonKey(
-    name: r'wordmark_light',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'wordmark_light', required: true, includeIfNull: true)
   final Logo? wordmarkLight;
 
-  @JsonKey(
-    name: r'wordmark_dark',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'wordmark_dark', required: true, includeIfNull: true)
   final Logo? wordmarkDark;
 
-  @JsonKey(
-    name: r'symbol',
-    required: true,
-    includeIfNull: true,
-  )
+  @JsonKey(name: r'symbol', required: true, includeIfNull: true)
   final Logo? symbol;
 
   @override

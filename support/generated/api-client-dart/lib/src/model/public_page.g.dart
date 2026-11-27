@@ -87,7 +87,6 @@ class _$PublicPageCWProxyImpl implements _$PublicPageCWProxy {
       this(translations: translations);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PublicPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -162,54 +161,59 @@ extension $PublicPageCopyWith on PublicPage {
 // **************************************************************************
 
 PublicPage _$PublicPageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'PublicPage',
+  'PublicPage',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
       json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const [
-            'key',
-            'locale',
-            'path',
-            'title',
-            'summary',
-            'body',
-            'assets',
-            'published_at',
-            'modified_at',
-            'translations'
-          ],
-        );
-        final val = PublicPage(
-          key: $checkedConvert('key', (v) => v as String),
-          locale: $checkedConvert('locale', (v) => v as String),
-          path: $checkedConvert('path', (v) => v as String),
-          title: $checkedConvert('title', (v) => v as String),
-          summary: $checkedConvert('summary', (v) => v as String),
-          body: $checkedConvert('body', (v) => v as Map<String, dynamic>),
-          assets: $checkedConvert(
-              'assets',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(k, e as Map<String, dynamic>),
-                  )),
-          publishedAt: $checkedConvert(
-              'published_at', (v) => DateTime.parse(v as String)),
-          modifiedAt: $checkedConvert(
-              'modified_at', (v) => DateTime.parse(v as String)),
-          translations: $checkedConvert(
-              'translations',
-              (v) => (v as List<dynamic>)
-                  .map((e) =>
-                      PageTranslation.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-        );
-        return val;
-      },
-      fieldKeyMap: const {
-        'publishedAt': 'published_at',
-        'modifiedAt': 'modified_at'
-      },
+      requiredKeys: const [
+        'key',
+        'locale',
+        'path',
+        'title',
+        'summary',
+        'body',
+        'assets',
+        'published_at',
+        'modified_at',
+        'translations',
+      ],
     );
+    final val = PublicPage(
+      key: $checkedConvert('key', (v) => v as String),
+      locale: $checkedConvert('locale', (v) => v as String),
+      path: $checkedConvert('path', (v) => v as String),
+      title: $checkedConvert('title', (v) => v as String),
+      summary: $checkedConvert('summary', (v) => v as String),
+      body: $checkedConvert('body', (v) => v as Map<String, dynamic>),
+      assets: $checkedConvert(
+        'assets',
+        (v) => (v as Map<String, dynamic>).map(
+          (k, e) => MapEntry(k, e as Map<String, dynamic>),
+        ),
+      ),
+      publishedAt: $checkedConvert(
+        'published_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      modifiedAt: $checkedConvert(
+        'modified_at',
+        (v) => DateTime.parse(v as String),
+      ),
+      translations: $checkedConvert(
+        'translations',
+        (v) => (v as List<dynamic>)
+            .map((e) => PageTranslation.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+    );
+    return val;
+  },
+  fieldKeyMap: const {
+    'publishedAt': 'published_at',
+    'modifiedAt': 'modified_at',
+  },
+);
 
 Map<String, dynamic> _$PublicPageToJson(PublicPage instance) =>
     <String, dynamic>{

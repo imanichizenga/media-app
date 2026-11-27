@@ -42,7 +42,6 @@ class _$AuthorPageCWProxyImpl implements _$AuthorPageCWProxy {
   AuthorPage author(PublicAuthor author) => this(author: author);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AuthorPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -82,27 +81,27 @@ extension $AuthorPageCopyWith on AuthorPage {
 // **************************************************************************
 
 AuthorPage _$AuthorPageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'AuthorPage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['next_cursor', 'results', 'author'],
-        );
-        final val = AuthorPage(
-          nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          author: $checkedConvert('author',
-              (v) => PublicAuthor.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'nextCursor': 'next_cursor'},
+  'AuthorPage',
+  json,
+  ($checkedConvert) {
+    $checkKeys(json, requiredKeys: const ['next_cursor', 'results', 'author']);
+    final val = AuthorPage(
+      nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
+      results: $checkedConvert(
+        'results',
+        (v) => (v as List<dynamic>)
+            .map((e) => Card.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      ),
+      author: $checkedConvert(
+        'author',
+        (v) => PublicAuthor.fromJson(v as Map<String, dynamic>),
+      ),
     );
+    return val;
+  },
+  fieldKeyMap: const {'nextCursor': 'next_cursor'},
+);
 
 Map<String, dynamic> _$AuthorPageToJson(AuthorPage instance) =>
     <String, dynamic>{

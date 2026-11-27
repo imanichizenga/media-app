@@ -1,5 +1,5 @@
 import { Bone, cx } from "@news/ui/base";
-import { ChevronRight } from "@news/ui/icons";
+import { ArrowRight, ChevronLeft, ChevronRight } from "@news/ui/icons";
 import { Picture } from "@news/ui/media";
 import {
   type CardData,
@@ -73,6 +73,79 @@ export const Strip = ({ list, env, shorts = false }: { list: Maybe[]; env: NewsE
   </ul>
 );
 
+/**
+ * A section's stories in a row one slides through: a thumb swipes, a mouse has arrows, the keyboard tabs along, and
+ * each card stops at the edge (scroll snap). The next card always peeks in, so there is clearly more; the last card
+ * goes to the whole section, for those who want many. The arrows are shown by islands/site.ts where there is more.
+ */
+export function Rail({
+  list,
+  env,
+  title,
+  href,
+  all,
+  back,
+  more,
+}: {
+  list: Maybe[];
+  env: NewsEnv;
+  title: string;
+  href?: string;
+  /** The last card's words, "All … stories". */
+  all: string;
+  back: string;
+  more: string;
+}) {
+  const CARD = "w-[72%] shrink-0 snap-start sm:w-[42%] lg:w-[calc((100%-4.5rem)/4)]";
+  return (
+    <div data-rail="" className="relative">
+      <ul
+        aria-label={title}
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1 scrollbar-none lg:mx-0 lg:scroll-px-0 lg:gap-6 lg:px-0"
+      >
+        {list.map((card, i) => (
+          <li key={card?.id ?? i} className={CARD}>
+            <StoryCard card={card} env={env} />
+          </li>
+        ))}
+        {href && (
+          <li className="w-[44%] shrink-0 snap-start sm:w-[30%] lg:w-[calc((100%-4.5rem)/4)]">
+            <a
+              href={href}
+              className="rail-all group flex aspect-video flex-col items-center justify-center gap-3 rounded-md border border-border bg-surface-sunken p-4 text-center text-label hover:border-text-primary"
+            >
+              <span className="grid size-11 place-items-center rounded-full bg-brand text-on-brand transition-transform group-hover:translate-x-1">
+                <ArrowRight size={20} />
+              </span>
+              <span className="font-medium">{all}</span>
+            </a>
+          </li>
+        )}
+      </ul>
+      {(
+        [
+          [-1, back, ChevronLeft, "left-2"],
+          [1, more, ChevronRight, "right-2"],
+        ] as const
+      ).map(([way, label, Sign, side]) => (
+        <button
+          key={way}
+          type="button"
+          data-tabs-go={way}
+          aria-label={label}
+          hidden
+          className={cx(
+            "rail-go absolute top-[28%] z-10 size-11 place-items-center rounded-full border border-border bg-surface-raised text-text-primary shadow-md hover:bg-surface max-lg:hidden",
+            side,
+          )}
+        >
+          <Sign size={20} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /** A list: lead with two beside it, then rows in two columns at a desk. Lists of any kind share it. */
 export function Feed({
   list,
@@ -121,7 +194,7 @@ export function Feed({
     </>
   );
 }
-export const More = ({ href, t }: { href?: string; t: T }) =>
+export const More = ({ href, t, label }: { href?: string; t: T; label?: string }) =>
   href ? (
     <p className="pt-6 text-center">
       <a
@@ -129,7 +202,7 @@ export const More = ({ href, t }: { href?: string; t: T }) =>
         rel="next"
         className="tap inline-flex items-center gap-1 rounded-sm border border-border-strong px-6 text-label hover:bg-surface-sunken"
       >
-        {t("olderStories")} <ChevronRight size={16} />
+        {label ?? t("olderStories")} <ChevronRight size={16} />
       </a>
     </p>
   ) : null;

@@ -19,11 +19,7 @@ abstract class _$AppPlatformVersionsCWProxy {
   /// ```dart
   /// AppPlatformVersions(...).copyWith(id: 12, name: "My name")
   /// ````
-  AppPlatformVersions call({
-    String minimum,
-    String recommended,
-    String store,
-  });
+  AppPlatformVersions call({String minimum, String recommended, String store});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfAppPlatformVersions.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfAppPlatformVersions.copyWith.fieldName(...)`
@@ -43,7 +39,6 @@ class _$AppPlatformVersionsCWProxyImpl implements _$AppPlatformVersionsCWProxy {
   AppPlatformVersions store(String store) => this(store: store);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppPlatformVersions(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -84,27 +79,20 @@ extension $AppPlatformVersionsCopyWith on AppPlatformVersions {
 // **************************************************************************
 
 AppPlatformVersions _$AppPlatformVersionsFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'AppPlatformVersions',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['minimum', 'recommended', 'store'],
-        );
-        final val = AppPlatformVersions(
-          minimum: $checkedConvert('minimum', (v) => v as String),
-          recommended: $checkedConvert('recommended', (v) => v as String),
-          store: $checkedConvert('store', (v) => v as String),
-        );
-        return val;
-      },
-    );
+    $checkedCreate('AppPlatformVersions', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['minimum', 'recommended', 'store']);
+      final val = AppPlatformVersions(
+        minimum: $checkedConvert('minimum', (v) => v as String),
+        recommended: $checkedConvert('recommended', (v) => v as String),
+        store: $checkedConvert('store', (v) => v as String),
+      );
+      return val;
+    });
 
 Map<String, dynamic> _$AppPlatformVersionsToJson(
-        AppPlatformVersions instance) =>
-    <String, dynamic>{
-      'minimum': instance.minimum,
-      'recommended': instance.recommended,
-      'store': instance.store,
-    };
+  AppPlatformVersions instance,
+) => <String, dynamic>{
+  'minimum': instance.minimum,
+  'recommended': instance.recommended,
+  'store': instance.store,
+};

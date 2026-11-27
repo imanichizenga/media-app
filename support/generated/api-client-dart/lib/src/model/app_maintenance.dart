@@ -17,31 +17,15 @@ part 'app_maintenance.g.dart';
 )
 class AppMaintenance {
   /// Returns a new [AppMaintenance] instance.
-  AppMaintenance({
-    required this.on_,
-    required this.sw,
-    required this.en,
-  });
+  AppMaintenance({required this.on_, required this.sw, required this.en});
 
-  @JsonKey(
-    name: r'on',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'on', required: true, includeIfNull: false)
   final bool on_;
 
-  @JsonKey(
-    name: r'sw',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'sw', required: true, includeIfNull: false)
   final String sw;
 
-  @JsonKey(
-    name: r'en',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'en', required: true, includeIfNull: false)
   final String en;
 
   @override

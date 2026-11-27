@@ -19,53 +19,34 @@ class AppLinks {
   /// Returns a new [AppLinks] instance.
   AppLinks({
     required this.about,
+
     required this.editorial,
+
     required this.corrections,
+
     required this.contact,
+
     required this.privacy,
+
     required this.terms,
   });
 
-  @JsonKey(
-    name: r'about',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'about', required: true, includeIfNull: false)
   final String about;
 
-  @JsonKey(
-    name: r'editorial',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'editorial', required: true, includeIfNull: false)
   final String editorial;
 
-  @JsonKey(
-    name: r'corrections',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'corrections', required: true, includeIfNull: false)
   final String corrections;
 
-  @JsonKey(
-    name: r'contact',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'contact', required: true, includeIfNull: false)
   final String contact;
 
-  @JsonKey(
-    name: r'privacy',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'privacy', required: true, includeIfNull: false)
   final String privacy;
 
-  @JsonKey(
-    name: r'terms',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'terms', required: true, includeIfNull: false)
   final String terms;
 
   @override

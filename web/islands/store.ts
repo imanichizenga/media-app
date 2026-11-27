@@ -1,5 +1,5 @@
 /** Stories kept in this browser, and how it likes to read. */
-export type Kept = { path: string; headline: string; category: string };
+export type Kept = { path: string; headline: string; category: string; post?: string };
 const KEY = "saved";
 
 export function remember(key: string, value: string) {

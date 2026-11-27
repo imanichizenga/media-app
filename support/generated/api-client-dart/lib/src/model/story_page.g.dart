@@ -19,11 +19,7 @@ abstract class _$StoryPageCWProxy {
   /// ```dart
   /// StoryPage(...).copyWith(id: 12, name: "My name")
   /// ````
-  StoryPage call({
-    String? nextCursor,
-    List<Card> results,
-    PublicStory story,
-  });
+  StoryPage call({String? nextCursor, List<Card> results, PublicStory story});
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfStoryPage.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfStoryPage.copyWith.fieldName(...)`
@@ -42,7 +38,6 @@ class _$StoryPageCWProxyImpl implements _$StoryPageCWProxy {
   StoryPage story(PublicStory story) => this(story: story);
 
   @override
-
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StoryPage(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -81,31 +76,27 @@ extension $StoryPageCopyWith on StoryPage {
 // JsonSerializableGenerator
 // **************************************************************************
 
-StoryPage _$StoryPageFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'StoryPage',
-      json,
-      ($checkedConvert) {
-        $checkKeys(
-          json,
-          requiredKeys: const ['next_cursor', 'results', 'story'],
-        );
-        final val = StoryPage(
-          nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
-          results: $checkedConvert(
-              'results',
-              (v) => (v as List<dynamic>)
-                  .map((e) => Card.fromJson(e as Map<String, dynamic>))
-                  .toList()),
-          story: $checkedConvert(
-              'story', (v) => PublicStory.fromJson(v as Map<String, dynamic>)),
-        );
-        return val;
-      },
-      fieldKeyMap: const {'nextCursor': 'next_cursor'},
-    );
+StoryPage _$StoryPageFromJson(Map<String, dynamic> json) =>
+    $checkedCreate('StoryPage', json, ($checkedConvert) {
+      $checkKeys(json, requiredKeys: const ['next_cursor', 'results', 'story']);
+      final val = StoryPage(
+        nextCursor: $checkedConvert('next_cursor', (v) => v as String?),
+        results: $checkedConvert(
+          'results',
+          (v) => (v as List<dynamic>)
+              .map((e) => Card.fromJson(e as Map<String, dynamic>))
+              .toList(),
+        ),
+        story: $checkedConvert(
+          'story',
+          (v) => PublicStory.fromJson(v as Map<String, dynamic>),
+        ),
+      );
+      return val;
+    }, fieldKeyMap: const {'nextCursor': 'next_cursor'});
 
 Map<String, dynamic> _$StoryPageToJson(StoryPage instance) => <String, dynamic>{
-      'next_cursor': instance.nextCursor,
-      'results': instance.results.map((e) => e.toJson()).toList(),
-      'story': instance.story.toJson(),
-    };
+  'next_cursor': instance.nextCursor,
+  'results': instance.results.map((e) => e.toJson()).toList(),
+  'story': instance.story.toJson(),
+};

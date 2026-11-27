@@ -17,23 +17,12 @@ part 'related_target.g.dart';
 )
 class RelatedTarget {
   /// Returns a new [RelatedTarget] instance.
-  RelatedTarget({
-    required this.path,
-    required this.headline,
-  });
+  RelatedTarget({required this.path, required this.headline});
 
-  @JsonKey(
-    name: r'path',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'path', required: true, includeIfNull: false)
   final String path;
 
-  @JsonKey(
-    name: r'headline',
-    required: true,
-    includeIfNull: false,
-  )
+  @JsonKey(name: r'headline', required: true, includeIfNull: false)
   final String headline;
 
   @override

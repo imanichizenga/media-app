@@ -7,9 +7,8 @@ from typing import Any
 from newsplatform.content import selectors
 from newsplatform.content.models import Publication
 
-BODY_LIMIT = (
-    30_000  # characters: longer stories are rare and their first 30 000 hold the words people search for
-)
+# Characters: longer stories are rare, and their first 30 000 hold the words people search for.
+BODY_LIMIT = 30_000
 _SKIP = {"id", "asset", "marks", "attrs", "src", "url", "href", "type", "level", "embed"}
 
 
@@ -54,13 +53,13 @@ def document(row: Publication) -> dict[str, Any]:
         "headline": card.get("headline", ""),
         "standfirst": card.get("standfirst", ""),
         "body": body_text(art),
-        "tags": _values(art.get("tags", [], "name")),
-        "tag_slugs": _values(art.get("tags", [], "slug")),
-        "authors": _values(card.get("authors", [], "name")),
-        "author_slugs": _values(card.get("authors", [], "slug")),
-        "category": card.get("category", {}).get("name", ""),
+        "tags": _values(art.get("tags"), "name"),
+        "tag_slugs": _values(art.get("tags"), "slug"),
+        "authors": _values(card.get("authors"), "name"),
+        "author_slugs": _values(card.get("authors"), "slug"),
+        "category": (card.get("category") or {}).get("name", ""),
         "category_ids": sorted({str(row.category_id), *(str(a) for a in row.category.ancestors)}),
-        "regions": _values(art.get("regions", [], "name")),
+        "regions": _values(art.get("regions"), "name"),
         "published_at": row.published_at.isoformat(),
         "modified_at": row.modified_at.isoformat(),
         "etag": row.etag,

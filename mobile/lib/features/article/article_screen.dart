@@ -12,6 +12,8 @@ import 'package:news_design_tokens/news_design_tokens.dart';
 
 import '../../app/router.dart';
 import '../../app/window.dart';
+import '../../core/account/counts.dart';
+import '../../core/account/session.dart';
 import '../../core/config/app_config.dart';
 import '../../core/format/format.dart';
 import '../../core/models.dart';
@@ -31,12 +33,12 @@ import '../../ui/states/designed.dart';
 import '../../ui/tokens/news_icon.dart';
 import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
+import '../account/engagement.dart';
 import '../content/feeds.dart';
 import '../content/list_screen.dart' show Initial;
 import '../content/share.dart';
 import '../saved/library.dart';
 import 'blocks.dart';
-import 'text_size.dart';
 
 /// One story. It opens with what its card already knew, and the rest arrives beneath.
 class ArticleScreen extends ConsumerStatefulWidget {
@@ -62,6 +64,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
   final _progress = ValueNotifier<double>(0);
   final _body = GlobalKey();
   Timer? _poll;
+  var _counted = false;
   bool _noted = false;
   int _mark = 0;
 
@@ -145,6 +148,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     } else {
       unawaited(library.save(story, article: article));
     }
+    // A signed-in reader's saves go to the account too, so they are on every device (ADR-0050).
+    if (ref.read(readerProvider) != null) {
+      final path = '/api/v1/engagement/posts/${story.id}/bookmark';
+      final dio = ref.read(dioProvider);
+      unawaited(
+        (saved ? dio.delete<void>(path) : dio.put<void>(path)).then((_) {}, onError: (Object _) {}),
+      );
+    }
     messenger.showSnackBar(
       SnackBar(
         content: Text(saved ? s.removed : s.savedDone),
@@ -165,7 +176,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     final copy = ref.watch(savedArticleProvider(widget.path)).value;
     final article = state.value?.value ?? (state.hasError ? copy : null);
     final story = article == null ? widget.extra?.story : storyOf(article);
-    if (article != null) _note(story!);
+    if (article != null) {
+      _note(story!);
+      // Counted once per opening; the server keeps one device to once in 30 minutes (ADR-0050).
+      if (!_counted) {
+        _counted = true;
+        final counts = ref.read(postStateProvider(story.id).notifier);
+        unawaited(Future<void>.microtask(counts.opened));
+      }
+    }
     if (article != null && article.isLive && _poll == null) {
       _poll = Timer.periodic(const Duration(seconds: 30), (_) => _tick());
     }
@@ -276,11 +295,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
             : ActionBar(
                 shown: _bar,
                 story: story,
+                likes: article?.engagement.likes ?? false,
+                comments: article != null && article.engagement.comments.name != 'closed',
                 onShare: () => unawaited(shareStory(ref, story)),
                 onSave: ref.watch(flagsProvider).offlineSaving
                     ? () => unawaited(_save(story, article))
                     : null,
-                onText: () => showTextSize(context),
               ),
         body: Shimmer(
           child: NotificationListener<UserScrollNotification>(
@@ -721,6 +741,7 @@ class _Byline extends ConsumerWidget {
                 maxLines: 1,
                 style: type.caption.copyWith(color: c.textSecondary),
               ),
+              if (story != null) SizedBox(height: 28, child: StoryStats(story!.id)),
             ],
           ),
         ),
@@ -769,7 +790,7 @@ class _Moving extends ConsumerWidget {
 }
 
 /// What one can do with the story. The page makes room for it, so it covers nothing; it steps aside while one reads
-/// down. More arrives with accounts (M4).
+/// down. The heart and the comments come with accounts (ADR-0050).
 class ActionBar extends ConsumerWidget {
   const ActionBar({
     super.key,
@@ -777,14 +798,18 @@ class ActionBar extends ConsumerWidget {
     required this.story,
     required this.onShare,
     required this.onSave,
-    required this.onText,
+    this.likes = false,
+    this.comments = false,
   });
 
   final ValueListenable<bool> shown;
   final Story story;
+
+  /// What the story's rules allow (SPEC 9.6): only that is drawn.
+  final bool likes;
+  final bool comments;
   final VoidCallback onShare;
   final VoidCallback? onSave;
-  final VoidCallback onText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -818,7 +843,9 @@ class ActionBar extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                RoundButton(NewsIcons.aLargeSmall, label: s.textSize, onTap: onText),
+                if (likes) LikeButton(story.id),
+                if (comments)
+                  CommentsButton(story.id, open: () => unawaited(showComments(context, story.id))),
                 if (onSave != null)
                   RoundButton(
                     NewsIcons.bookmark,
