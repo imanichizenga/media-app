@@ -64,10 +64,7 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = new URL(
-    event.notification.data?.url || "/",
-    self.location.origin,
-  );
+  const target = new URL(event.notification.data?.url || "/", self.location.origin);
   // Only this site's own pages open from a notification.
   if (target.origin !== self.location.origin) return;
   event.waitUntil(

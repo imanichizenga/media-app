@@ -12,6 +12,7 @@ import {
 } from "@news/ui/icons";
 import type { T } from "@/lib/i18n";
 import { BUTTON } from "./button";
+import { Template } from "./template";
 
 /**
  * Readers' accounts and what they do (ADR-0050). Everything here is drawn by the server, the same for everyone, so
@@ -272,7 +273,7 @@ export function ReadersSheet({ t }: { t: T }) {
         </div>
         <p data-readers-sum className="px-5 pt-3 text-caption text-text-secondary" />
         <ul data-readers-list className="flex-1 divide-y divide-border overflow-y-auto px-5 pb-5" />
-        <template data-reader-row>
+        <Template data-reader-row>
           <li className="flex items-center gap-3 py-3">
             <span
               data-initial
@@ -283,7 +284,7 @@ export function ReadersSheet({ t }: { t: T }) {
               <span data-handle className="block truncate text-caption text-text-secondary" />
             </span>
           </li>
-        </template>
+        </Template>
       </div>
     </dialog>
   );
@@ -417,7 +418,7 @@ export function Comments({ post, t, mode }: { post: string; t: T; mode: string }
       <button type="button" data-comments-more hidden className={cx(BUTTON, "self-center")}>
         {t("commentsMore")}
       </button>
-      <template data-comment-row>
+      <Template data-comment-row>
         <li className="comment flex gap-3">
           <span
             data-initial
@@ -466,7 +467,7 @@ export function Comments({ post, t, mode }: { post: string; t: T; mode: string }
             <ol data-replies className="mt-3 flex flex-col gap-4 empty:hidden" />
           </div>
         </li>
-      </template>
+      </Template>
     </section>
   );
 }

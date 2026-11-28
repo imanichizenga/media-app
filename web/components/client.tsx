@@ -2,6 +2,7 @@ import { Bone } from "@news/ui/base";
 import { Bell, Bookmark, Share2, Smartphone, SunMoon, X } from "@news/ui/icons";
 import type { ReactNode } from "react";
 import type { T } from "@/lib/i18n";
+import { Template } from "./template";
 
 // What the reader presses. Plain elements: web/islands makes them work, and no framework is sent (ADR-0046).
 const ICON = "tap grid w-11 place-items-center rounded-sm hover:bg-current/10";
@@ -246,9 +247,9 @@ export const SavedList = ({ empty, remove, label }: { empty: ReactNode; remove: 
         <Row key={n} remove={remove} bones />
       ))}
     </ul>
-    <template data-row>
+    <Template data-row>
       <Row remove={remove} />
-    </template>
+    </Template>
     <div hidden data-empty className="[[hidden]]:hidden">
       {empty}
     </div>

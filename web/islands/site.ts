@@ -388,6 +388,25 @@ function leave() {
   for (const stop of stopShorts) stop();
   stopShorts = [];
 }
-begin(arrive, leave);
-arrive();
-network();
+function start() {
+  begin(arrive, leave);
+  arrive();
+  network();
+}
+// Readers get no framework client (lib/slim.ts), so this starts at once. Under `next dev` the client stays for hot
+// reload: what this changes must wait until React has taken over the page, or React finds the page changed and
+// renders it all again. The last node React takes over is #say; then one more frame for it to finish.
+const framework = document.querySelector('script[src*="/_next/"]');
+const taken = () => {
+  const last = document.getElementById("say");
+  return !last || Object.keys(last).some((k) => k.startsWith("__reactFiber$"));
+};
+if (!framework) start();
+else {
+  const until = Date.now() + 10_000;
+  const wait = () => {
+    if (taken() || Date.now() > until) requestAnimationFrame(() => setTimeout(start));
+    else setTimeout(wait, 30);
+  };
+  wait();
+}
