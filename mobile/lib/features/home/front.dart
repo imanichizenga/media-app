@@ -25,6 +25,7 @@ import '../../ui/tokens/news_icons.g.dart';
 import '../../ui/tokens/theme.dart';
 import '../content/feed_slivers.dart';
 import '../content/feeds.dart';
+import '../saved/library.dart';
 import '../system/banners.dart';
 import '../video/video_screen.dart';
 import 'carousel.dart';
@@ -146,7 +147,27 @@ class _FrontPageState extends ConsumerState<FrontPage> {
             ),
             SliverToBoxAdapter(child: StaleBanner(loaded: loaded)),
             const SliverToBoxAdapter(child: UpdateBanner()),
-            grows(LiveRail(stories: live, onTap: open)),
+            grows(
+              LiveRail(
+                live: loaded == null ? null : live,
+                // The day's stories after the live ones: the lead, then the newest, each once, with a picture.
+                stories: [
+                  for (final (i, x) in [...?loaded?.value.lead, ...?loaded?.value.latest].indexed)
+                    if (x.image != null &&
+                        [
+                              ...?loaded?.value.lead,
+                              ...?loaded?.value.latest,
+                            ].indexWhere((y) => y.id == x.id) ==
+                            i)
+                      x,
+                ].take(14).toList(),
+                seen: {
+                  for (final r in ref.watch(historyStoriesProvider).value ?? const <ReadStory>[])
+                    r.story.path,
+                },
+                onTap: open,
+              ),
+            ),
             ..._body(context, home, loaded?.value, open, breaking, s),
           ],
         ),

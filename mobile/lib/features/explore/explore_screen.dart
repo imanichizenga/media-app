@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_api_client/news_api_client.dart' hide Card;
 import 'package:news_design_tokens/news_design_tokens.dart';
@@ -59,6 +60,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> with GoesToTop {
   void initState() {
     super.initState();
     _focus.addListener(() => setState(() {}));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = GoRouterState.of(context).uri;
+    if (route.queryParameters['focus'] == '1') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _focus.requestFocus();
+        GoRouter.of(context).go(route.path);
+      });
+    }
   }
 
   @override

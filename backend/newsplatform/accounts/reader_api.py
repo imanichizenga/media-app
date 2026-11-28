@@ -98,6 +98,9 @@ def me(user: User) -> dict[str, Any]:
         "methods": providers,
         "onboarding": signin.needs_onboarding(user),
         "hide_from_readers": user.hide_from_readers,
+        "bio": user.bio,
+        # What to show in the form: the reader's own, else the one a provider verified.
+        "contact_email": user.contact_email or user.email or "",
         "joined": user.created_at.date().isoformat(),
     }
 

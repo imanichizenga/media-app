@@ -52,6 +52,9 @@ import 'package:news_api_client/src/model/public_seo.dart';
 import 'package:news_api_client/src/model/public_story.dart';
 import 'package:news_api_client/src/model/public_story_ref.dart';
 import 'package:news_api_client/src/model/public_video.dart';
+import 'package:news_api_client/src/model/push_key.dart';
+import 'package:news_api_client/src/model/push_keys_request.dart';
+import 'package:news_api_client/src/model/push_subscription_request.dart';
 import 'package:news_api_client/src/model/reader.dart';
 import 'package:news_api_client/src/model/reader_entry.dart';
 import 'package:news_api_client/src/model/readers.dart';
@@ -238,6 +241,14 @@ ReturnType deserialize<ReturnType, BaseType>(
     case 'PublicVideo':
       return PublicVideo.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'PublicVideoKindEnum':
+    case 'PushKey':
+      return PushKey.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PushKeysRequest':
+      return PushKeysRequest.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
+    case 'PushSubscriptionRequest':
+      return PushSubscriptionRequest.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'Reader':
       return Reader.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'ReaderEntry':

@@ -1706,6 +1706,150 @@ abstract class Strings {
   /// In sw, this message translates to:
   /// **'Ficha jina langu kwenye orodha za wasomaji'**
   String get readersPrivate;
+
+  /// No description provided for @notifications.
+  ///
+  /// In sw, this message translates to:
+  /// **'Arifa'**
+  String get notifications;
+
+  /// No description provided for @notifyTurnOn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Washa arifa za habari mpya'**
+  String get notifyTurnOn;
+
+  /// No description provided for @notifyTurnOff.
+  ///
+  /// In sw, this message translates to:
+  /// **'Zima arifa za habari mpya'**
+  String get notifyTurnOff;
+
+  /// No description provided for @notifyOn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Arifa zimewashwa: utaambiwa kila habari mpya.'**
+  String get notifyOn;
+
+  /// No description provided for @notifyOff.
+  ///
+  /// In sw, this message translates to:
+  /// **'Arifa zimezimwa.'**
+  String get notifyOff;
+
+  /// No description provided for @notifyBlocked.
+  ///
+  /// In sw, this message translates to:
+  /// **'Arifa zimezuiwa kwenye kivinjari hiki. Ziruhusu kwenye mipangilio ya tovuti.'**
+  String get notifyBlocked;
+
+  /// No description provided for @notifyUnsupported.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kivinjari hiki hakionyeshi arifa. Kwenye iPhone, weka tovuti kwenye skrini ya mwanzo kwanza.'**
+  String get notifyUnsupported;
+
+  /// No description provided for @storiesRail.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari za sasa'**
+  String get storiesRail;
+
+  /// No description provided for @seenStory.
+  ///
+  /// In sw, this message translates to:
+  /// **'Umeshaiona'**
+  String get seenStory;
+
+  /// No description provided for @searchOpen.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tafuta habari'**
+  String get searchOpen;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wasifu wako'**
+  String get profileTitle;
+
+  /// No description provided for @fullName.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jina kamili'**
+  String get fullName;
+
+  /// No description provided for @username.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jina la mtumiaji'**
+  String get username;
+
+  /// No description provided for @usernameHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Herufi, namba au _ ; 3 hadi 30.'**
+  String get usernameHint;
+
+  /// No description provided for @bio.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kuhusu wewe'**
+  String get bio;
+
+  /// No description provided for @bioHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sentensi moja au mbili, hadi herufi 160.'**
+  String get bioHint;
+
+  /// No description provided for @email.
+  ///
+  /// In sw, this message translates to:
+  /// **'Barua pepe'**
+  String get email;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kwa mawasiliano tu; haitumiki kuingia.'**
+  String get emailHint;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In sw, this message translates to:
+  /// **'Wasifu umehifadhiwa.'**
+  String get profileSaved;
+
+  /// No description provided for @usernameTaken.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jina hili limeshachukuliwa.'**
+  String get usernameTaken;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mipangilio'**
+  String get settingsTitle;
+
+  /// No description provided for @accountActions.
+  ///
+  /// In sw, this message translates to:
+  /// **'Akaunti'**
+  String get accountActions;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In sw, this message translates to:
+  /// **'Msomaji tangu {v}'**
+  String memberSince(String v);
+
+  /// No description provided for @addBio.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ongeza maelezo mafupi kukuhusu'**
+  String get addBio;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

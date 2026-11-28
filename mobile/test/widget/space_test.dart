@@ -80,16 +80,29 @@ void main() {
   testWidgets('what stands above the news is as low as it may be', (t) async {
     await start(t);
     expect(t.getSize(find.byType(BreakingBanner)).height, lessThanOrEqualTo(48));
-    expect(t.getSize(find.byType(LiveRail)).height, lessThanOrEqualTo(96));
+    expect(t.getSize(find.byType(LiveRail)).height, lessThanOrEqualTo(LiveRail.extent));
     expect(t.getSize(find.byType(TabBar)).height, lessThanOrEqualTo(48));
     expect(find.text('Jumanne, 24 Novemba'), findsNothing);
   });
 
-  testWidgets('nothing live, no rail', (t) async {
+  testWidgets('nothing live: the day\'s stories, with no LIVE mark', (t) async {
     final api = FakeApi()
       ..replies['/api/v1/content/home'] = home('sw', (h) => h['live'] = <Object>[]);
     await start(t, api: api);
-    expect(find.bySemanticsLabel('Moja kwa moja'), findsNothing);
+    expect(find.byType(StoryRing), findsWidgets);
+    expect(find.text('MUBASHARA'), findsNothing);
+  });
+
+  testWidgets('nothing live and no stories: no rail', (t) async {
+    final api = FakeApi()
+      ..replies['/api/v1/content/home'] = home('sw', (h) {
+        h['live'] = <Object>[];
+        for (final c in [...h['lead'] as List, ...h['latest'] as List]) {
+          (c as Map<String, dynamic>)['image'] = null;
+        }
+      });
+    await start(t, api: api);
+    expect(find.byType(StoryRing), findsNothing);
     expect(t.getRect(find.byType(CoverCard)).top, t.getRect(find.byType(BreakingBanner)).bottom);
   });
 
@@ -282,7 +295,7 @@ void main() {
         first = false;
         if (news) {
           expect(find.byType(BreakingBanner), findsOneWidget);
-          expect(t.getSize(find.byType(LiveRail)).height, 96);
+          expect(t.getSize(find.byType(LiveRail)).height, LiveRail.extent);
         } else {
           expect(find.byType(BreakingBanner), findsNothing);
           expect((at.top - bones.top).abs(), lessThanOrEqualTo(8));
@@ -293,7 +306,8 @@ void main() {
       expect(first, isFalse);
       await q.settle(4);
       final end = t.getRect(find.byType(CoverCard).first);
-      final above = news ? 48 + 96 : 0;
+      // The rail has its room in the skeleton already: only breaking news comes in above.
+      final above = news ? 48 : 0;
       expect((end.top - bones.top - above).abs(), lessThanOrEqualTo(8));
     });
   }

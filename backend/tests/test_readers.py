@@ -707,3 +707,23 @@ def test_who_read_a_story_lists_signed_in_readers_who_did_not_hide(story):
     seen = Client().get(API + f"engagement/posts/{story.pk}/readers").json()
     assert [r["name"] for r in seen["results"]] == ["Asha Juma"]
     assert seen["readers"] == 3 and seen["guests"] == 1
+
+
+def test_a_reader_writes_a_bio_and_an_email_to_be_reached_at(google):
+    a = sign_in()["access"]
+    res = call(
+        "patch", "me", a, {"bio": "  Napenda  habari za michezo. ", "contact_email": "Asha@Example.com"}
+    )
+    assert res.status_code == 200, res.content
+    assert (res.json()["bio"], res.json()["contact_email"]) == (
+        "Napenda habari za michezo.",
+        "asha@example.com",
+    )
+    assert call("patch", "me", a, {"bio": "x" * 161}).json()["code"] == "validation_error"
+    assert call("patch", "me", a, {"contact_email": "si barua"}).json()["code"] == "validation_error"
+    # Typed, not verified: whoever owns that address and signs in with Google gets an account of their own.
+    key, _ = google
+    claims = {"iss": "https://accounts.google.com", "sub": "g-9", "email": "asha@example.com", "name": "Asha"}
+    token = _token(key, "RS256", aud="456-def.apps.googleusercontent.com", email_verified=True, **claims)
+    theirs = post("auth/google", {"id_token": token}).json()["user"]
+    assert theirs["id"] != call("get", "me", a).json()["id"]

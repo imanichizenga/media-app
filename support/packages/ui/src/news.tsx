@@ -2,6 +2,7 @@ import { type CSSProperties, Fragment, type ReactNode } from "react";
 import { Bone, cx } from "./base";
 import {
   Bookmark,
+  ChevronLeft,
   ChevronRight,
   Eye,
   Heart,
@@ -474,23 +475,50 @@ export function SectionHeading({ title, href, env }: { title?: string; href?: st
   );
 }
 /** Circles with a ring, a shape nothing else has: something is happening now. Absent when nothing is. */
-export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsEnv; title: string }) {
-  if (cards?.length === 0) return null;
+/**
+ * Rounds at the top, as people know them from their phones: live coverage first, its ring turning red and marked
+ * LIVE; then the day's stories in a still red ring. The website's island greys the ones this browser has opened
+ * and puts them last, so what is new is always first; the row says it goes on (a fade at its edge, chevrons at a
+ * desk).
+ */
+export function LiveRail({
+  cards,
+  stories = [],
+  env,
+  title,
+  back,
+  more,
+}: {
+  cards?: CardData[];
+  stories?: CardData[];
+  env: NewsEnv;
+  title: string;
+  back?: string;
+  more?: string;
+}) {
+  const live = new Set((cards ?? []).map((c) => c.id));
+  const rest = stories.filter((c) => !live.has(c.id));
+  if (cards?.length === 0 && rest.length === 0) return null;
+  const items: { card?: CardData; on: boolean }[] = cards
+    ? [...cards.map((card) => ({ card, on: true })), ...rest.map((card) => ({ card, on: false }))]
+    : Array.from({ length: 6 }, () => ({ on: false }));
   return (
-    <section
-      aria-label={title}
-      className="-mx-4 h-24 overflow-x-auto overflow-y-hidden px-4 scrollbar-none lg:h-28"
-    >
-      <ul className="flex gap-2 pt-2 lg:gap-4">
-        {(cards ?? Array.from({ length: 4 }, () => undefined)).map((card, i) => (
-          <li key={card?.id ?? i} className="group relative w-20 shrink-0 text-center lg:w-24">
+    <section aria-label={title} data-rail="" data-stories="" className="relative -mx-4 lg:mx-0">
+      <ul className="stories flex h-28 gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain px-4 pt-2 scrollbar-none lg:h-32 lg:gap-4 lg:px-0">
+        {items.map(({ card, on }, i) => (
+          <li
+            key={card?.id ?? i}
+            data-story={card?.path}
+            data-live={on ? "" : undefined}
+            className="story group relative w-[4.75rem] shrink-0 text-center lg:w-24"
+          >
             <span
               className={cx(
-                "relative mx-auto block size-14 rounded-full border-2 p-0.5 lg:size-18",
-                card ? "border-signal-live" : "border-border",
+                "story-ring relative mx-auto block size-16 rounded-full lg:size-20",
+                on && "live",
               )}
             >
-              <span className="block size-full overflow-hidden rounded-full bg-surface-sunken">
+              <span className="block size-full overflow-hidden rounded-full border-[3px] border-bg bg-surface-sunken">
                 {card?.image ? (
                   <Picture
                     image={card.image}
@@ -503,13 +531,22 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
                   <span aria-hidden className="bone block! size-full" />
                 )}
               </span>
+              {on && (
+                <span
+                  aria-hidden
+                  className="story-live absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-sm border-2 border-bg bg-signal-live px-1.5 font-bold text-[0.625rem] text-on-signal-live leading-4 tracking-wide"
+                >
+                  {env.t.live.toUpperCase()}
+                </span>
+              )}
             </span>
             {/* Two lines (R3): the editor's rail title, or the headline cut between words by the server. */}
-            <span className="rail-title mt-1 block text-[0.75rem] leading-[1.15]">
+            <span className="rail-title mt-1.5 block text-[0.75rem] leading-[1.15]">
               {card ? (
                 <a href={card.path} className="after:absolute after:inset-0">
                   <span className="sr-only">
-                    {env.t.live}: {card.headline}
+                    {on ? `${env.t.live}: ` : ""}
+                    {card.headline}
                   </span>
                   <span aria-hidden>{card.rail_title || card.headline}</span>
                 </a>
@@ -520,6 +557,28 @@ export function LiveRail({ cards, env, title }: { cards?: CardData[]; env: NewsE
           </li>
         ))}
       </ul>
+      {back &&
+        more &&
+        (
+          [
+            [-1, back, ChevronLeft, "left-1"],
+            [1, more, ChevronRight, "right-1"],
+          ] as const
+        ).map(([way, label, Sign, side]) => (
+          <button
+            key={way}
+            type="button"
+            data-tabs-go={way}
+            aria-label={label}
+            hidden
+            className={cx(
+              "rail-go absolute top-7 z-10 size-10 place-items-center rounded-full border border-border bg-surface-raised text-text-primary shadow-md hover:bg-surface max-lg:hidden",
+              side,
+            )}
+          >
+            <Sign size={18} />
+          </button>
+        ))}
     </section>
   );
 }

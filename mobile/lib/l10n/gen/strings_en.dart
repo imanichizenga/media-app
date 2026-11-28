@@ -906,4 +906,80 @@ class StringsEn extends Strings {
 
   @override
   String get readersPrivate => 'Hide my name from reader lists';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notifyTurnOn => 'Turn on notifications for new stories';
+
+  @override
+  String get notifyTurnOff => 'Turn off notifications for new stories';
+
+  @override
+  String get notifyOn => 'Notifications are on: you\'ll hear of every new story.';
+
+  @override
+  String get notifyOff => 'Notifications are off.';
+
+  @override
+  String get notifyBlocked =>
+      'Notifications are blocked in this browser. Allow them in the site\'s settings.';
+
+  @override
+  String get notifyUnsupported =>
+      'This browser can\'t show notifications. On an iPhone, add the site to the home screen first.';
+
+  @override
+  String get storiesRail => 'Stories now';
+
+  @override
+  String get seenStory => 'Seen';
+
+  @override
+  String get searchOpen => 'Search the news';
+
+  @override
+  String get profileTitle => 'Your profile';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get usernameHint => 'Letters, digits or _ ; 3 to 30.';
+
+  @override
+  String get bio => 'Bio';
+
+  @override
+  String get bioHint => 'A line or two, up to 160 characters.';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get emailHint => 'For contact only; it is never used to sign in.';
+
+  @override
+  String get profileSaved => 'Profile saved.';
+
+  @override
+  String get usernameTaken => 'This username is taken.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get accountActions => 'Account';
+
+  @override
+  String memberSince(String v) {
+    return 'Reader since $v';
+  }
+
+  @override
+  String get addBio => 'Add a short bio';
 }

@@ -18,6 +18,8 @@ from typing import Any
 
 import structlog
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
@@ -376,6 +378,23 @@ def update_profile(user: User, data: dict[str, Any]) -> User:
     if "hide_from_readers" in data:
         user.hide_from_readers = bool(data["hide_from_readers"])
         fields.append("hide_from_readers")
+    if "bio" in data:
+        bio = " ".join(str(data["bio"] or "").split())
+        if len(bio) > 160:
+            raise DomainError("At most 160 characters.", code="validation_error", field="bio")
+        user.bio = bio
+        fields.append("bio")
+    if "contact_email" in data:
+        mail = str(data["contact_email"] or "").strip()
+        try:
+            if mail:
+                validate_email(mail)
+        except ValidationError as exc:
+            raise DomainError(
+                "Write a whole email address.", code="validation_error", field="contact_email"
+            ) from exc
+        user.contact_email = mail.lower()
+        fields.append("contact_email")
     if data.get("accept_terms"):
         Consent.objects.get_or_create(user=user, kind="terms", version=rules().terms_version)
     if fields:

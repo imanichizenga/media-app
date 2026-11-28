@@ -527,21 +527,26 @@ form[aria-busy="true"] .search-spin {
 /* A row of sections that goes on (components/frame.tsx, islands/site.ts): the side with more fades out, so the next
    section peeks in, and a chevron there goes on. Without script a phone's row fades at its end, where it usually goes
    on; the island then says exactly which sides have more. */
-[data-tabs] > ul {
+[data-tabs] > ul,
+[data-stories] > ul {
   --fade: 2.5rem;
 }
 @media (max-width: 1023px) {
-  [data-tabs]:not([data-ready]) > ul {
+  [data-tabs]:not([data-ready]) > ul,
+  [data-stories]:not([data-ready]) > ul {
     mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
   }
 }
-[data-tabs][data-after] > ul {
+[data-tabs][data-after] > ul,
+[data-stories][data-after] > ul {
   mask-image: linear-gradient(to right, #000 calc(100% - var(--fade)), transparent);
 }
-[data-tabs][data-before] > ul {
+[data-tabs][data-before] > ul,
+[data-stories][data-before] > ul {
   mask-image: linear-gradient(to right, transparent, #000 var(--fade));
 }
-[data-tabs][data-before][data-after] > ul {
+[data-tabs][data-before][data-after] > ul,
+[data-stories][data-before][data-after] > ul {
   mask-image: linear-gradient(
     to right,
     transparent,
@@ -585,4 +590,67 @@ form[aria-busy="true"] .search-spin {
   #progress {
     transition: none;
   }
+}
+
+/* ---- The rounds at the top: live coverage, then the day's stories (ADR-0051) ---- */
+@property --story-turn {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.story-ring {
+  padding: 3px;
+  background: var(--color-brand);
+}
+/* Live: a red ring that turns, and its LIVE mark breathes. Still for readers who asked for less motion. */
+.story-ring.live {
+  background: conic-gradient(
+    from var(--story-turn),
+    var(--color-signal-live),
+    color-mix(in oklab, var(--color-signal-live) 25%, transparent) 35%,
+    var(--color-signal-live) 70%
+  );
+}
+@keyframes story-turn {
+  to {
+    --story-turn: 360deg;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .story-ring.live {
+    animation: story-turn 1.8s linear infinite;
+  }
+  .story-live {
+    animation: breathe 1.4s ease-in-out infinite;
+  }
+  .story-ring {
+    transition: transform 0.15s ease;
+  }
+  .story:active .story-ring {
+    transform: scale(0.94);
+  }
+}
+/* Opened in this browser: grey, and moved after what is still new (islands/site.ts). */
+.story[data-seen] .story-ring:not(.live) {
+  background: var(--color-border-strong);
+}
+.story[data-seen] .rail-title {
+  color: var(--color-text-secondary);
+}
+/* The searched words in the headlines of results (islands/search.ts). */
+mark.hit {
+  background: var(--color-brand-soft);
+  color: inherit;
+  border-radius: 0.15em;
+  padding-inline: 0.05em;
+}
+/* You → Settings → Notifications: the switch follows the bell (islands/push.ts). */
+.notify[aria-pressed="true"] .switch {
+  background: var(--color-brand);
+}
+.notify[aria-pressed="true"] .switch > span {
+  transform: translateX(1rem);
+}
+.profile-band {
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-strong));
 }

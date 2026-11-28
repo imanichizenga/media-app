@@ -200,6 +200,7 @@ class _YouScreenState extends ConsumerState<YouScreen> with GoesToTop {
                       const SizedBox(height: 8),
                       const AccountCard(),
                       ...groups,
+                      const AccountActions(),
                       const SizedBox(height: 16),
                       const Center(child: Wordmark(size: 22, onDark: null)),
                       const SizedBox(height: 4),

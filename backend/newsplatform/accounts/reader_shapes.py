@@ -63,6 +63,8 @@ class ReaderSerializer(S.Serializer[Any]):
     methods = S.ListField(child=S.ChoiceField(choices=["phone", "google", "apple"]))
     onboarding = S.BooleanField(help_text="A name and the terms are still to come.")
     hide_from_readers = S.BooleanField()
+    bio = S.CharField(allow_blank=True)
+    contact_email = S.CharField(allow_blank=True, help_text="Typed by the reader; never used to sign in.")
     joined = S.DateField()
 
 
@@ -85,6 +87,8 @@ class ProfileSerializer(S.Serializer[Any]):
     locale = S.ChoiceField(choices=Locale.choices, required=False)
     accept_terms = S.BooleanField(required=False)
     hide_from_readers = S.BooleanField(required=False)
+    bio = S.CharField(required=False, allow_blank=True, max_length=160)
+    contact_email = S.CharField(required=False, allow_blank=True, max_length=254)
 
 
 class DeleteSerializer(S.Serializer[Any]):

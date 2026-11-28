@@ -83,7 +83,12 @@ def manifest(locale: str) -> dict[str, Any]:
     brand = get_brand()[0]
     light = tokens(brand.appearance)[0]
     symbol = identity_body(brand.identity)["symbol"]
-    icons = []
+    # Until a symbol is uploaded, the brand's initial on its colour,
+    # so the site can still be installed (ADR-0051).
+    icons = [
+        {"src": "/theme/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
+        {"src": "/theme/icon.svg?maskable=1", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable"},
+    ]
     if symbol:
         icons = [
             {"src": symbol["png"][n], "sizes": f"{s}x{s}", "type": "image/png", "purpose": "any"}
@@ -101,7 +106,29 @@ def manifest(locale: str) -> dict[str, Any]:
         "background_color": light["bg"],
         "theme_color": light["theme-color"],
         "icons": icons,
+        "scope": "/",
+        "id": "/",
     }
+
+
+def icon_svg(maskable: bool = False) -> str:
+    """The brand's initial in white on the brand colour; a maskable icon keeps it inside the middle 80%."""
+    from html import escape
+
+    from newsplatform.site_config.services import get_brand
+
+    brand = get_brand()[0]
+    colour = tokens(brand.appearance)[0]["brand"]
+    initial = escape((brand.identity.brand_name.strip()[:1] or "N").upper())
+    size = 220 if maskable else 300
+    corner = 0 if maskable else 96
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">'
+        f'<rect width="512" height="512" rx="{corner}" fill="{escape(colour)}"/>'
+        f'<text x="256" y="256" dy=".35em" text-anchor="middle" '
+        f'font-family="Georgia,serif" font-weight="700" '
+        f'font-size="{size}" fill="#fff">{initial}</text></svg>'
+    )
 
 
 # ---- validity ----

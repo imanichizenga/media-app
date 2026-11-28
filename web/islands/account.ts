@@ -22,6 +22,9 @@ type Me = {
   email: string;
   onboarding: boolean;
   hide_from_readers: boolean;
+  bio?: string;
+  contact_email?: string;
+  joined?: string;
 };
 type State = {
   likes: number;
@@ -120,6 +123,7 @@ async function whoAmI(force = false) {
 function paintMe() {
   for (const el of $$("[data-me-initial]")) el.textContent = me?.initial ?? "?";
   for (const el of $$("[data-me-badge]")) el.hidden = !me;
+  for (const el of $$("[data-reader-only]")) el.hidden = !me;
   const card = $("[data-account]");
   if (card) {
     ($("[data-guest]", card) as HTMLElement).hidden = Boolean(me);
@@ -131,13 +135,37 @@ function paintMe() {
       };
       set("[data-me-name]", me.display_name || me.username);
       set("[data-me-handle]", me.username ? `@${me.username}` : "");
-      set("[data-me-contact]", me.phone || me.email);
-      const name = $<HTMLInputElement>("#me-name", card);
-      if (name && document.activeElement !== name) name.value = me.display_name;
+      set("[data-me-bio]", me.bio ?? "");
+      const add = $("[data-me-add-bio]", card);
+      if (add) add.hidden = Boolean(me.bio);
+      const since = $("[data-me-since]", card);
+      if (since && me.joined) {
+        const when = new Intl.DateTimeFormat(document.documentElement.lang === "en" ? "en-GB" : "sw", {
+          month: "long",
+          year: "numeric",
+        }).format(new Date(me.joined));
+        since.textContent = say(since, "say", when);
+      }
+      const fill = (id: string, value: string) => {
+        const el = $<HTMLInputElement | HTMLTextAreaElement>(id, card);
+        if (el && document.activeElement !== el) el.value = value;
+      };
+      fill("#me-name", me.display_name);
+      fill("#me-username", me.username);
+      fill("#me-bio", me.bio ?? "");
+      fill("#me-email", me.contact_email ?? "");
+      count();
       const hide = $<HTMLInputElement>("[data-hide-readers]", card);
       if (hide) hide.checked = me.hide_from_readers;
     }
   }
+}
+
+/** How much of the bio is left. */
+function count() {
+  const bio = $<HTMLTextAreaElement>("#me-bio");
+  const shown = $("[data-bio-count]");
+  if (bio && shown) shown.textContent = `${bio.value.length}/160`;
 }
 
 // ---- the sign-in sheet ----
@@ -631,6 +659,7 @@ export function start(given: Tools) {
   });
   document.addEventListener("input", (e) => {
     const el = e.target as HTMLElement;
+    if (el.id === "me-bio") count();
     if (el.id === "comment-body") {
       // The box grows with what is written, up to its limit.
       el.style.height = "auto";
@@ -682,12 +711,33 @@ export function start(given: Tools) {
           await done();
         } else sayError(d, data?.code ?? "");
       } else if (kind === "profile") {
-        const name = (form.elements.namedItem("display_name") as HTMLInputElement).value;
-        const { status, data } = await call<Me>("/api/me", "PATCH", { display_name: name });
+        const value = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
+        const status_ = $("[data-profile-status]", form);
+        const { status, data } = await call<Me & { code?: string; field?: string; detail?: string }>(
+          "/api/me",
+          "PATCH",
+          {
+            display_name: value("display_name"),
+            username: value("username").replace(/^@/, ""),
+            bio: value("bio"),
+            contact_email: value("contact_email"),
+          },
+        );
+        for (const el of form.querySelectorAll("[aria-invalid]")) el.removeAttribute("aria-invalid");
         if (status === 200 && data) {
           me = data;
           paintMe();
-          tools.toast("✓");
+          if (status_) status_.textContent = "";
+          tools.toast(form.dataset.saved ?? "✓");
+        } else {
+          const field = data?.field ? form.querySelector(`[name="${CSS.escape(data.field)}"]`) : null;
+          field?.setAttribute("aria-invalid", "true");
+          (field as HTMLElement | null)?.focus();
+          if (status_)
+            status_.textContent =
+              data?.code === "username_taken"
+                ? (form.dataset.taken ?? "")
+                : (data?.detail ?? form.dataset.invalid ?? "");
         }
       } else if (kind === "comment") {
         const section = box();

@@ -192,6 +192,10 @@ class Engagement(Section):
     # Views, likes and comments on the cards of lists, before a story is opened. A count a story does not
     # allow (likes off, comments closed) is never shown, whatever this says.
     card_counts: bool = _field(True, "Show counts on story cards", "Onyesha idadi kwenye kadi za habari")
+    # Web Push to every browser that asked, when a story is first published (ADR-0051).
+    push_new_stories: bool = _field(
+        True, "Notify readers of each new story", "Wajulishe wasomaji kila habari mpya"
+    )
 
 
 CallingCode = Annotated[str, Field(pattern=r"^[1-9][0-9]{0,3}$")]

@@ -13,6 +13,8 @@ Name | Type | Description | Notes
 **locale** | [**LocaleEnum**](LocaleEnum.md) |  | [optional] 
 **acceptTerms** | **bool** |  | [optional] 
 **hideFromReaders** | **bool** |  | [optional] 
+**bio** | **String** |  | [optional] 
+**contactEmail** | **String** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

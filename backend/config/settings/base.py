@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "newsplatform.pages",
     "newsplatform.engagement",
     "newsplatform.search",
+    "newsplatform.notifications",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -117,6 +118,8 @@ LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
 # Sign-in codes go to the log and back in the answer instead of by SMS (ADR-0050). Refused in deployed
 # environments.
 LOCAL_SMS = env_bool("LOCAL_SMS")
+# Web Push (ADR-0051): who push services may write to about this site's notifications (mailto: or https:).
+WEB_PUSH_SUBJECT = env_str("WEB_PUSH_SUBJECT", "" if IS_DEPLOYED else "mailto:newsroom@localhost")
 LOCAL_WEB_ORIGIN = env_str(
     "LOCAL_WEB_ORIGIN", ""
 )  # a website on this machine, told like the real one (ADR-0046)

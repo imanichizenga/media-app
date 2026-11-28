@@ -20,7 +20,7 @@ import { at, bare, type Locale } from "@/lib/locale";
 import { cards, isBreaking } from "@/lib/view";
 import { AuthSheet, ReadersSheet } from "./account";
 import { Breaking } from "./breaking";
-import { OpenInApp, SchemeButton } from "./client";
+import { NotifyButton, OpenInApp } from "./client";
 
 /** What is breaking now, from Home's answer (kept a minute); a failure there costs a page nothing. */
 async function breakingNow(locale: Locale, now: number): Promise<CardData[]> {
@@ -232,7 +232,6 @@ export async function Frame({
   locale,
   path,
   place,
-  other,
   view,
   breaking,
   back,
@@ -245,7 +244,7 @@ export async function Frame({
   locale: Locale;
   path: string;
   place?: Place;
-  /** The same page in the other language, when there is one. */
+  /** The same page in the other language, when there is one (its link is in You → Language now). */
   other?: string;
   view: NewsEnv;
   /** Breaking news; without it the frame asks for it itself, so every page shows it first. */
@@ -278,7 +277,6 @@ export async function Frame({
   // A breaking story's own page does not announce itself.
   const news = hot.filter((c) => c.path !== path);
   const logo = logoOf(site);
-  const otherLocale: Locale = locale === "sw" ? "en" : "sw";
   return (
     <div className="flex min-h-dvh flex-col" data-reading-page={reading ? "" : undefined}>
       <a
@@ -337,9 +335,12 @@ export async function Frame({
               )}
             </div>
             <div className="flex justify-end">
-              <a href={at(locale, "/search")} aria-label={t("search")} className={cx(ICON, "max-lg:hidden")}>
-                <Search size={20} />
-              </a>
+              {/* Search first: it is what readers come back for (ADR-0051). On its own page it is the field. */}
+              {place !== "explore" && (
+                <a href={at(locale, "/search?focus=1")} aria-label={t("searchOpen")} className={ICON}>
+                  <Search size={20} />
+                </a>
+              )}
               {/* At a desk there is no bar at the foot: its places for one's own things are here. */}
               <a
                 href={at(locale, "/saved")}
@@ -352,6 +353,9 @@ export async function Frame({
                   <SavedCount say={t("savedCount", { n: "#" })} />
                 </span>
               </a>
+              {/* The language and light or dark are the reader's settings (You); the bell is here. */}
+              {/* Desk order: search, saved, bell, then the reader's own profile last. */}
+              <NotifyButton t={t} />
               <a
                 href={at(locale, "/profile")}
                 aria-label={t("navYou")}
@@ -363,16 +367,6 @@ export async function Frame({
                   <Me />
                 </span>
               </a>
-              <a
-                href={other ?? at(otherLocale, "/")}
-                hrefLang={otherLocale}
-                lang={otherLocale}
-                aria-label={otherLocale === "sw" ? "Kiswahili" : "English"}
-                className={cx(ICON, "text-label")}
-              >
-                {otherLocale.toUpperCase()}
-              </a>
-              <SchemeButton label={t("appearance")} />
             </div>
           </div>
         </header>

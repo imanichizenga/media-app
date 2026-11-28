@@ -6,6 +6,7 @@ from newsplatform.common import health
 from newsplatform.content import public_api as content
 from newsplatform.engagement import api as engage
 from newsplatform.media import dev
+from newsplatform.notifications import api as push
 from newsplatform.pages import public_api as pages
 from newsplatform.seo import public_api as seo
 from newsplatform.site_config import brand_api as brand
@@ -21,6 +22,7 @@ urlpatterns = [
         brand.logo_file,
     ),
     re_path(r"^theme/manifest-(?P<locale>sw|en)\.webmanifest$", brand.manifest),
+    path("theme/icon.svg", brand.icon),
     path("health/live", health.live),
     path("health/ready", health.ready),
     path(API + "site-config", PublicConfigView.as_view()),
@@ -55,6 +57,8 @@ urlpatterns = [
     path(API + "me", readers.MeView.as_view()),
     path(API + "me/export", readers.ExportView.as_view()),
     path(API + "me/<slug:what>", engage.MyListView.as_view()),
+    path(API + "push/key", push.PushKeyView.as_view()),
+    path(API + "push/subscriptions", push.PushSubscriptionsView.as_view()),
     path(API + "engagement/state", engage.StateView.as_view()),
     path(API + "engagement/posts/<uuid:post_id>/like", engage.LikeView.as_view()),
     path(API + "engagement/posts/<uuid:post_id>/bookmark", engage.BookmarkView.as_view()),

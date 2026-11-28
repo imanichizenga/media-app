@@ -49,6 +49,10 @@ class User(AbstractBaseUser, BaseModel):
     deletion_requested_at = models.DateTimeField(null=True, blank=True)
     # The reader's own choice: off, their name is left out of the lists of who read a story.
     hide_from_readers = models.BooleanField(default=False)
+    # Written by the reader (ADR-0051). The contact email is theirs to type, so it is never used to link a
+    # sign-in to this account: only an email a provider verified (`email`) does that.
+    bio = models.CharField(max_length=160, blank=True)
+    contact_email = models.EmailField(blank=True)
 
     USERNAME_FIELD = "id"
     REQUIRED_FIELDS: ClassVar[list[str]] = []

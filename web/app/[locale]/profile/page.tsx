@@ -11,8 +11,8 @@ import {
 } from "@news/ui/icons";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { AccountCard } from "@/components/account";
-import { SchemeChoice, TextSizeChoice } from "@/components/client";
+import { AccountActions, AccountCard } from "@/components/account";
+import { NotifyRow, SchemeChoice, TextSizeChoice } from "@/components/client";
 import { Frame, Wide } from "@/components/frame";
 import { PageHead } from "@/components/parts";
 import { pages, site as readSite } from "@/lib/api";
@@ -67,6 +67,9 @@ export default async function Page({ params }: Props) {
         <PageHead title={t("navYou")} hidden />
         <div className="flex flex-col gap-6 pt-4">
           <AccountCard t={t} brand={site.identity.brand_name} />
+          <Group title={t("settingsTitle")}>
+            <NotifyRow t={t} />
+          </Group>
           <Group title={t("language")}>
             <ul className="divide-y divide-border">
               {(["sw", "en"] as const).map((l) => (
@@ -117,6 +120,7 @@ export default async function Page({ params }: Props) {
               </ul>
             </Group>
           )}
+          <AccountActions t={t} />
         </div>
       </Wide>
     </Frame>

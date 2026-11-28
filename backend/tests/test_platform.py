@@ -62,9 +62,11 @@ def test_public_surface_has_no_admin_routes():
     }
     rest = {str(p.pattern) for p in patterns if "/content/" not in str(p.pattern)}
     theme = {p.strip("^").split("theme/")[1].split("(")[0] for p in rest if "theme/" in p}
-    assert theme == {"", "current.css", "logo/", "manifest-"}
+    assert theme == {"", "current.css", "icon.svg", "logo/", "manifest-"}
     other = {p for p in rest if "theme/" not in p and "well-known" not in p}
-    readers = {p for p in other if p.startswith(("api/v1/auth/", "api/v1/me", "api/v1/engagement/"))}
+    readers = {
+        p for p in other if p.startswith(("api/v1/auth/", "api/v1/me", "api/v1/engagement/", "api/v1/push/"))
+    }
     assert other - readers == {"health/live", "health/ready", "api/v1/site-config", "api/v1/app-config"}
     # Readers' own addresses (ADR-0050): each listed on purpose, each a ReaderView (bearer token, rate limit,
     # never cached unless the same for everyone). None of them reaches anything of the newsroom's.
@@ -88,6 +90,8 @@ def test_public_surface_has_no_admin_routes():
         "api/v1/engagement/comments/<uuid:comment_id>",
         "api/v1/engagement/comments/<uuid:comment_id>/like",
         "api/v1/engagement/follows/<slug:kind>/<uuid:target>",
+        "api/v1/push/key",
+        "api/v1/push/subscriptions",
     }
     from newsplatform.accounts.reader_api import ReaderView
 

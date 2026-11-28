@@ -17,6 +17,10 @@ abstract class _$PatchedProfileRequestCWProxy {
 
   PatchedProfileRequest hideFromReaders(bool? hideFromReaders);
 
+  PatchedProfileRequest bio(String? bio);
+
+  PatchedProfileRequest contactEmail(String? contactEmail);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PatchedProfileRequest(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +33,8 @@ abstract class _$PatchedProfileRequestCWProxy {
     LocaleEnum? locale,
     bool? acceptTerms,
     bool? hideFromReaders,
+    String? bio,
+    String? contactEmail,
   });
 }
 
@@ -58,6 +64,13 @@ class _$PatchedProfileRequestCWProxyImpl
       this(hideFromReaders: hideFromReaders);
 
   @override
+  PatchedProfileRequest bio(String? bio) => this(bio: bio);
+
+  @override
+  PatchedProfileRequest contactEmail(String? contactEmail) =>
+      this(contactEmail: contactEmail);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `PatchedProfileRequest(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -70,6 +83,8 @@ class _$PatchedProfileRequestCWProxyImpl
     Object? locale = const $CopyWithPlaceholder(),
     Object? acceptTerms = const $CopyWithPlaceholder(),
     Object? hideFromReaders = const $CopyWithPlaceholder(),
+    Object? bio = const $CopyWithPlaceholder(),
+    Object? contactEmail = const $CopyWithPlaceholder(),
   }) {
     return PatchedProfileRequest(
       displayName: displayName == const $CopyWithPlaceholder()
@@ -92,6 +107,14 @@ class _$PatchedProfileRequestCWProxyImpl
           ? _value.hideFromReaders
           // ignore: cast_nullable_to_non_nullable
           : hideFromReaders as bool?,
+      bio: bio == const $CopyWithPlaceholder()
+          ? _value.bio
+          // ignore: cast_nullable_to_non_nullable
+          : bio as String?,
+      contactEmail: contactEmail == const $CopyWithPlaceholder()
+          ? _value.contactEmail
+          // ignore: cast_nullable_to_non_nullable
+          : contactEmail as String?,
     );
   }
 }
@@ -122,6 +145,8 @@ PatchedProfileRequest _$PatchedProfileRequestFromJson(
       ),
       acceptTerms: $checkedConvert('accept_terms', (v) => v as bool?),
       hideFromReaders: $checkedConvert('hide_from_readers', (v) => v as bool?),
+      bio: $checkedConvert('bio', (v) => v as String?),
+      contactEmail: $checkedConvert('contact_email', (v) => v as String?),
     );
     return val;
   },
@@ -129,6 +154,7 @@ PatchedProfileRequest _$PatchedProfileRequestFromJson(
     'displayName': 'display_name',
     'acceptTerms': 'accept_terms',
     'hideFromReaders': 'hide_from_readers',
+    'contactEmail': 'contact_email',
   },
 );
 
@@ -140,6 +166,8 @@ Map<String, dynamic> _$PatchedProfileRequestToJson(
   'locale': ?_$LocaleEnumEnumMap[instance.locale],
   'accept_terms': ?instance.acceptTerms,
   'hide_from_readers': ?instance.hideFromReaders,
+  'bio': ?instance.bio,
+  'contact_email': ?instance.contactEmail,
 };
 
 const _$LocaleEnumEnumMap = {LocaleEnum.sw: 'sw', LocaleEnum.en: 'en'};

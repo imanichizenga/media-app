@@ -672,6 +672,7 @@ class SettingsRow extends StatelessWidget {
     this.onTap,
     this.trailing,
     this.toggled,
+    this.color,
   });
 
   final NewsIconData icon;
@@ -681,18 +682,21 @@ class SettingsRow extends StatelessWidget {
   final Widget? trailing;
   final bool? toggled;
 
+  /// A row that ends something (delete): its icon and words in this colour.
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final apple = context.isApple;
-    final words = context.type.bodyM.copyWith(color: c.textPrimary, fontSize: 16);
+    final words = context.type.bodyM.copyWith(color: color ?? c.textPrimary, fontSize: 16);
     final soft = context.type.bodyM.copyWith(color: c.textSecondary, fontSize: apple ? 16 : 14);
     final row = Container(
       constraints: BoxConstraints(minHeight: apple ? 48 : 56),
       padding: EdgeInsets.symmetric(horizontal: apple ? 16 : NewsSpace.s5, vertical: 6),
       child: Row(
         children: [
-          NewsIcon(icon, size: 20, color: c.textSecondary),
+          NewsIcon(icon, size: 20, color: color ?? c.textSecondary),
           const SizedBox(width: 16),
           Expanded(
             child: apple || value == null

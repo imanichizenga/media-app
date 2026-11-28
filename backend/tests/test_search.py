@@ -326,3 +326,30 @@ def test_reindex_swaps_the_alias_and_keeps_everything(editor, cat, opensearch):
     result = indexing.reindex("sw")
     assert result["documents"] == 1 and result["previous"] == before and indexing.current("sw") != before
     assert headlines(find("maji")) == ["Maji safi Mwanza"]
+
+
+def test_every_word_must_be_there_and_a_headline_comes_before_a_tag(editor, cat):
+    story(editor, cat, "Shule za Mwanza zaanza mpango wa chakula")
+    story(editor, cat, "Wakazi wa Mwanza wapata maji safi")
+    story(editor, cat, "Soko jipya la Mbeya", tags=[str(f.tag("kilimo").pk)])
+    story(editor, cat, "Kilimo cha mpunga chaimarika Mbeya")
+    assert headlines(find("shule mwanza")) == ["Shule za Mwanza zaanza mpango wa chakula"]
+    assert headlines(find("kilimo")) == ["Kilimo cha mpunga chaimarika Mbeya", "Soko jipya la Mbeya"]
+
+
+def test_a_misspelt_word_never_brings_a_word_that_only_looks_a_little_like_it(editor, cat):
+    story(editor, cat, "Barabara mpya ya Mtwara yafunguliwa")
+    assert headlines(find("mpira")) == []  # football is not "new"
+    assert headlines(find("mtwra")) == ["Barabara mpya ya Mtwara yafunguliwa"]
+
+
+def test_the_snippet_shows_the_sentence_with_the_words(editor, cat):
+    story(
+        editor,
+        cat,
+        "Habari ya leo",
+        body="Mvua ilinyesha. Mkutano wa wavuvi ulifanyika Bagamoyo jana. Asante.",
+    )
+    [hit] = find("wavuvi bagamoyo")["results"]
+    assert "".join(s["text"] for s in hit["snippet"]) == "Mkutano wa wavuvi ulifanyika Bagamoyo jana."
+    assert [s["text"] for s in hit["snippet"] if s["hit"]] == ["wavuvi", "Bagamoyo"]

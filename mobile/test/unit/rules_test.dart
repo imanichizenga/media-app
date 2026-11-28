@@ -27,8 +27,9 @@ void main() {
         for (final (i, line) in f.readAsLinesSync().indexed)
           if (RegExp(r'(Circular|Linear)ProgressIndicator\(').hasMatch(line)) '${f.path}:${i + 1}',
     ];
-    // Pending states of buttons: the play button, and the sign-in step's button.
+    // Pending states of buttons: the play button, the sign-in step's and the profile's Save.
     expect(found.map((f) => f.split(':').first).toList()..sort(), [
+      'lib/features/account/account_card.dart',
       'lib/features/account/sign_in.dart',
       'lib/ui/components/player.dart',
     ]);

@@ -41,7 +41,23 @@ export async function HomeView({
       <JsonLd data={graph(organization(site, locale), website(site, locale))} />
       <h1 className="sr-only">{site.identity.brand_name}</h1>
       <Wide className="lg:pt-4">
-        {told && <LiveRail cards={cards(told.live)} env={view} title={t("liveNow")} />}
+        {told && (
+          <LiveRail
+            cards={cards(told.live)}
+            // The day's stories after the live ones: the lead, then the newest, each once, with a picture.
+            stories={
+              h
+                ? cards([...h.lead, ...h.latest])
+                    .filter((c, i, all) => c.image && all.findIndex((x) => x.id === c.id) === i)
+                    .slice(0, 14)
+                : []
+            }
+            env={view}
+            title={t("storiesRail")}
+            back={t("back")}
+            more={t("more")}
+          />
+        )}
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12 lg:pt-4">
           <LeadCard card={lead[0]} env={view} priority className="lg:col-span-6" />
           <div className="lg:col-span-3">

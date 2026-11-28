@@ -1,6 +1,5 @@
 import { cx } from "@news/ui/base";
 import {
-  Download,
   Eye,
   Heart,
   LogOut,
@@ -474,65 +473,169 @@ export function Comments({ post, t, mode }: { post: string; t: T; mode: string }
 
 /** On You: a guest is invited in; a reader sees their account. Which one is decided by the island. */
 export function AccountCard({ t, brand }: { t: T; brand: string }) {
+  const label = "text-label font-medium";
+  const hint = "text-caption text-text-secondary";
   return (
     <section aria-label={t("accountTitle")} data-account>
       <div
         data-guest
-        className="flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-5"
+        className="flex flex-col items-start gap-3 overflow-hidden rounded-xl border border-border bg-surface p-6"
       >
+        <span className="grid size-14 place-items-center rounded-full bg-brand-soft text-brand-text">
+          <Users size={26} />
+        </span>
         <h2 className="font-serif text-headline-m">{t("joinTitle")}</h2>
         <p className="text-text-secondary">{t("joinPoints")}</p>
-        <button type="button" data-auth-open data-intent={t("signInTitle")} className={BUTTON}>
+        <button
+          type="button"
+          data-auth-open
+          data-intent={t("signInTitle")}
+          className={cx(BUTTON, "w-full sm:w-auto")}
+        >
           {t("signIn")}
         </button>
         <p className="sr-only">{brand}</p>
       </div>
-      <div data-reader hidden className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5">
-        <div className="flex items-center gap-4">
-          <span
-            data-me-initial
-            className="grid size-16 shrink-0 place-items-center rounded-full bg-brand font-serif text-headline-l text-on-brand"
-          />
-          <div className="min-w-0 flex-1">
-            <p data-me-name className="truncate font-serif text-headline-s" />
-            <p data-me-handle className="truncate text-label text-text-secondary" />
-            <p data-me-contact className="truncate text-caption text-text-secondary" />
+      <div data-reader hidden className="flex flex-col gap-6">
+        {/* Who one is, as others see it. */}
+        <div className="overflow-hidden rounded-xl border border-border bg-surface">
+          <div aria-hidden className="profile-band h-20 bg-brand" />
+          <div className="flex flex-col gap-1 px-5 pb-5">
+            <span
+              data-me-initial
+              className="-mt-10 mb-2 grid size-20 place-items-center rounded-full bg-brand font-serif text-display text-on-brand ring-4 ring-surface"
+            />
+            <h2 className="font-serif text-headline-m break-words">
+              <span data-me-name />
+            </h2>
+            <p className="flex flex-col text-label text-text-secondary">
+              <span data-me-handle />
+              <span data-me-since data-say={t("memberSince", { v: "#" })} />
+            </p>
+            <p data-me-bio className="pt-2 text-body-m whitespace-pre-line break-words" />
+            <a href="#me-bio" data-me-add-bio className="pt-2 text-label font-medium text-brand-text" hidden>
+              + {t("addBio")}
+            </a>
           </div>
         </div>
-        <form data-form="profile" className="flex flex-col gap-2" noValidate>
-          <label htmlFor="me-name" className="text-label font-medium">
-            {t("editName")}
+        {/* What one may change. */}
+        <form
+          data-form="profile"
+          noValidate
+          aria-labelledby="profile-title"
+          data-saved={t("profileSaved")}
+          data-taken={t("usernameTaken")}
+          data-invalid={t("errorTryAgain")}
+          className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-5"
+        >
+          <h2 id="profile-title" className="font-serif text-headline-s">
+            {t("profileTitle")}
+          </h2>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="me-name" className={label}>
+              {t("fullName")}
+            </label>
+            <input id="me-name" name="display_name" autoComplete="name" maxLength={80} className={FIELD} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="me-username" className={label}>
+              {t("username")}
+            </label>
+            <div className="relative">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-text-secondary"
+              >
+                @
+              </span>
+              <input
+                id="me-username"
+                name="username"
+                autoComplete="username"
+                autoCapitalize="none"
+                spellCheck={false}
+                maxLength={30}
+                pattern="[A-Za-z0-9_]{3,30}"
+                aria-describedby="me-username-hint"
+                className={cx(FIELD, "pl-8")}
+              />
+            </div>
+            <p id="me-username-hint" className={hint}>
+              {t("usernameHint")}
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-baseline justify-between">
+              <label htmlFor="me-bio" className={label}>
+                {t("bio")}
+              </label>
+              <span data-bio-count aria-hidden className={cx(hint, "tabular-nums")}>
+                0/160
+              </span>
+            </div>
+            <textarea
+              id="me-bio"
+              name="bio"
+              rows={3}
+              maxLength={160}
+              aria-describedby="me-bio-hint"
+              className={cx(FIELD, "h-auto resize-none py-3")}
+            />
+            <p id="me-bio-hint" className={hint}>
+              {t("bioHint")}
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="me-email" className={label}>
+              {t("email")}
+            </label>
+            <input
+              id="me-email"
+              name="contact_email"
+              type="email"
+              autoComplete="email"
+              maxLength={254}
+              aria-describedby="me-email-hint"
+              className={FIELD}
+            />
+            <p id="me-email-hint" className={hint}>
+              {t("emailHint")}
+            </p>
+          </div>
+          <p data-profile-status role="status" className="text-label empty:hidden" />
+          <button type="submit" className={cx(BUTTON, "w-full sm:w-auto sm:self-start")}>
+            {t("saveChanges")}
+          </button>
+          <label className="flex items-start gap-3 border-border border-t pt-4 text-label">
+            <input type="checkbox" data-hide-readers className="mt-0.5 size-5 shrink-0 accent-brand" />
+            {t("readersPrivate")}
           </label>
-          <div className="flex gap-2">
-            <input id="me-name" name="display_name" maxLength={80} className={FIELD} />
-            <button type="submit" className={cx(BUTTON, "shrink-0")}>
-              {t("saveChanges")}
-            </button>
-          </div>
         </form>
-        <label className="flex items-center gap-3 text-label">
-          <input type="checkbox" data-hide-readers className="size-5 accent-brand" />
-          {t("readersPrivate")}
-        </label>
-        <div className="flex flex-wrap gap-2 border-border border-t pt-4">
-          <button type="button" data-sign-out className={SECOND.replace("w-full", "w-auto")}>
-            <LogOut size={18} />
-            {t("signOut")}
-          </button>
-          <a href="/api/me/export" download className={SECOND.replace("w-full", "w-auto")}>
-            <Download size={18} />
-            {t("downloadData")}
-          </a>
-          <button
-            type="button"
-            data-delete-account
-            data-confirm={t("deleteConfirm")}
-            className={cx(SECOND.replace("w-full", "w-auto"), "text-error")}
-          >
-            <Trash2 size={18} />
-            {t("deleteAccount")}
-          </button>
-        </div>
+      </div>
+    </section>
+  );
+}
+
+/** At the foot of You, for a signed-in reader only: leave, or go for good. Nothing else. */
+export function AccountActions({ t }: { t: T }) {
+  const row = "tap flex w-full min-h-13 items-center gap-3 px-4 text-left hover:bg-surface-sunken";
+  return (
+    <section aria-label={t("accountActions")} data-reader-only hidden className="flex flex-col gap-2">
+      <h2 className="px-1 font-sans text-label text-text-secondary">{t("accountActions")}</h2>
+      <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
+        <button type="button" data-sign-out className={row}>
+          <LogOut size={20} className="text-text-secondary" />
+          <span className="flex-1">{t("signOut")}</span>
+        </button>
+        <button
+          type="button"
+          data-delete-account
+          data-confirm={t("deleteConfirm")}
+          className={cx(row, "text-danger")}
+        >
+          <Trash2 size={20} />
+          <span className="flex-1">{t("deleteAccount")}</span>
+        </button>
       </div>
     </section>
   );

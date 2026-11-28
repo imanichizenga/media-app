@@ -93,6 +93,39 @@ function move({ input, list, panel }: Parts, by: number) {
   return true;
 }
 
+// ---- the words in the headlines ----
+const fold = (text: string) => text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+/** The searched words, marked where a headline's words begin with them: one sees at once why each came. */
+export function highlight() {
+  const q = new URL(location.href).searchParams.get("q") ?? "";
+  const words = fold(q)
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((w) => w.length >= 2);
+  if (words.length === 0) return;
+  for (const link of document.querySelectorAll<HTMLElement>("[data-results] [data-card] :is(h2, h3) a")) {
+    if (link.dataset.marked !== undefined) continue;
+    link.dataset.marked = "";
+    for (const node of [...link.childNodes]) {
+      if (node.nodeType !== Node.TEXT_NODE || !node.textContent) continue;
+      const text = node.textContent;
+      const parts = document.createDocumentFragment();
+      let at = 0;
+      for (const m of text.matchAll(/[\p{L}\p{N}]+/gu)) {
+        if (!words.some((w) => fold(m[0]).startsWith(w))) continue;
+        parts.append(text.slice(at, m.index));
+        const mark = document.createElement("mark");
+        mark.className = "hit";
+        mark.textContent = m[0];
+        parts.append(mark);
+        at = (m.index ?? 0) + m[0].length;
+      }
+      if (at === 0) continue;
+      parts.append(text.slice(at));
+      node.replaceWith(parts);
+    }
+  }
+}
+
 // ---- results as one types ----
 /** This page's address for the field's words and the filters the form carries; no words: the sections. */
 function addressOf(form: HTMLFormElement): URL {
@@ -131,6 +164,7 @@ async function run(p: Parts) {
     const status = p.form.querySelector("[data-search-status]");
     if (status) status.textContent = document.querySelector("[data-results] h2")?.textContent ?? "";
     tools.fresh();
+    highlight();
   } catch {
     // The network or the site failed: the reader can still press Search, which is an ordinary request.
   } finally {
@@ -154,6 +188,7 @@ function typed(p: Parts) {
 /** Once: everything is delegated, so it holds for the forms of pages that come later. */
 export function searchAsOneTypes(given: Tools) {
   tools = given;
+  highlight();
   const formOf = (e: Event) => (e.target as Element | null)?.closest?.<HTMLFormElement>("form[data-search]");
   const field = (e: Event) => {
     const form = formOf(e);

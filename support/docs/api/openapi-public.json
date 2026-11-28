@@ -1712,6 +1712,77 @@
                 }
             }
         },
+        "/api/v1/push/key": {
+            "get": {
+                "operationId": "push_key",
+                "tags": [
+                    "push"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PushKey"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/push/subscriptions": {
+            "post": {
+                "operationId": "push_subscribe",
+                "description": "This browser wants to hear of new stories (or no longer does). Signed in or not.",
+                "tags": [
+                    "push"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PushSubscriptionRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "push_unsubscribe",
+                "description": "This browser wants to hear of new stories (or no longer does). Signed in or not.",
+                "tags": [
+                    "push"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
         "/api/v1/site-config": {
             "get": {
                 "operationId": "site_config",
@@ -3016,6 +3087,14 @@
                     },
                     "hide_from_readers": {
                         "type": "boolean"
+                    },
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 160
+                    },
+                    "contact_email": {
+                        "type": "string",
+                        "maxLength": 254
                     }
                 }
             },
@@ -3690,6 +3769,60 @@
                 "type": "string",
                 "description": "* `video` - video"
             },
+            "PushKey": {
+                "type": "object",
+                "properties": {
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "The newsroom sends notifications of new stories."
+                    },
+                    "public_key": {
+                        "type": "string",
+                        "description": "VAPID application server key, base64url (applicationServerKey)."
+                    }
+                },
+                "required": [
+                    "enabled",
+                    "public_key"
+                ]
+            },
+            "PushKeysRequest": {
+                "type": "object",
+                "properties": {
+                    "p256dh": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "auth": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "auth",
+                    "p256dh"
+                ]
+            },
+            "PushSubscriptionRequest": {
+                "type": "object",
+                "properties": {
+                    "endpoint": {
+                        "type": "string",
+                        "format": "uri",
+                        "minLength": 1
+                    },
+                    "keys": {
+                        "$ref": "#/components/schemas/PushKeysRequest"
+                    },
+                    "locale": {
+                        "$ref": "#/components/schemas/LocaleEnum"
+                    }
+                },
+                "required": [
+                    "endpoint",
+                    "keys"
+                ]
+            },
             "Reader": {
                 "type": "object",
                 "properties": {
@@ -3728,12 +3861,21 @@
                     "hide_from_readers": {
                         "type": "boolean"
                     },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "contact_email": {
+                        "type": "string",
+                        "description": "Typed by the reader; never used to sign in."
+                    },
                     "joined": {
                         "type": "string",
                         "format": "date"
                     }
                 },
                 "required": [
+                    "bio",
+                    "contact_email",
                     "display_name",
                     "email",
                     "hide_from_readers",

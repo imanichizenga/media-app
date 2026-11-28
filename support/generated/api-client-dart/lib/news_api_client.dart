@@ -13,6 +13,7 @@ export 'package:news_api_client/src/api/auth_api.dart';
 export 'package:news_api_client/src/api/content_api.dart';
 export 'package:news_api_client/src/api/engagement_api.dart';
 export 'package:news_api_client/src/api/me_api.dart';
+export 'package:news_api_client/src/api/push_api.dart';
 export 'package:news_api_client/src/api/site_config_api.dart';
 
 export 'package:news_api_client/src/model/app_config.dart';
@@ -77,6 +78,9 @@ export 'package:news_api_client/src/model/public_story.dart';
 export 'package:news_api_client/src/model/public_story_ref.dart';
 export 'package:news_api_client/src/model/public_video.dart';
 export 'package:news_api_client/src/model/public_video_kind_enum.dart';
+export 'package:news_api_client/src/model/push_key.dart';
+export 'package:news_api_client/src/model/push_keys_request.dart';
+export 'package:news_api_client/src/model/push_subscription_request.dart';
 export 'package:news_api_client/src/model/reader.dart';
 export 'package:news_api_client/src/model/reader_entry.dart';
 export 'package:news_api_client/src/model/readers.dart';

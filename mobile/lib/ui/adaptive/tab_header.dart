@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_design_tokens/news_design_tokens.dart';
 
@@ -60,7 +61,27 @@ class TabHeader extends StatelessWidget {
                   child: ClipRect(
                     child: Padding(
                       padding: EdgeInsets.only(top: top),
-                      child: _name(context, t),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(child: _name(context, t)),
+                          // Search, at the top of Home: what readers come back for (ADR-0051).
+                          Positioned(
+                            right: NewsSpace.s2,
+                            top: 0,
+                            bottom: 0,
+                            child: Opacity(
+                              opacity: (1 - t * 1.4).clamp(0, 1),
+                              child: Center(
+                                child: RoundButton(
+                                  NewsIcons.search,
+                                  label: Strings.of(context).searchOpen,
+                                  onTap: () => GoRouter.of(context).go('/search?focus=1'),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

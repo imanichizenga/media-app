@@ -28,6 +28,10 @@ class PatchedProfileRequest {
     this.acceptTerms,
 
     this.hideFromReaders,
+
+    this.bio,
+
+    this.contactEmail,
   });
 
   @JsonKey(name: r'display_name', required: false, includeIfNull: false)
@@ -45,6 +49,12 @@ class PatchedProfileRequest {
   @JsonKey(name: r'hide_from_readers', required: false, includeIfNull: false)
   final bool? hideFromReaders;
 
+  @JsonKey(name: r'bio', required: false, includeIfNull: false)
+  final String? bio;
+
+  @JsonKey(name: r'contact_email', required: false, includeIfNull: false)
+  final String? contactEmail;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -53,7 +63,9 @@ class PatchedProfileRequest {
           other.username == username &&
           other.locale == locale &&
           other.acceptTerms == acceptTerms &&
-          other.hideFromReaders == hideFromReaders;
+          other.hideFromReaders == hideFromReaders &&
+          other.bio == bio &&
+          other.contactEmail == contactEmail;
 
   @override
   int get hashCode =>
@@ -61,7 +73,9 @@ class PatchedProfileRequest {
       username.hashCode +
       locale.hashCode +
       acceptTerms.hashCode +
-      hideFromReaders.hashCode;
+      hideFromReaders.hashCode +
+      bio.hashCode +
+      contactEmail.hashCode;
 
   factory PatchedProfileRequest.fromJson(Map<String, dynamic> json) =>
       _$PatchedProfileRequestFromJson(json);

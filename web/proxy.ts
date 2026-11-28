@@ -36,6 +36,6 @@ export function proxy(request: NextRequest) {
 export const config = {
   // Pages only. Everything with a dot (sitemap.xml, robots.txt) and every machine address has its own route.
   matcher: [
-    "/((?!api/|_next/|js/|theme/|media/|sitemaps/|rss(?:/|$)|feed(?:/|$)|og/|healthz|monitoring|indexnow|\\.well-known/|[^/]*\\.(?:xml|ico|webmanifest|png|svg)$|robots\\.txt$).*)",
+    "/((?!api/|_next/|js/|theme/|media/|sitemaps/|rss(?:/|$)|feed(?:/|$)|og/|healthz|monitoring|indexnow|\\.well-known/|[^/]*\\.(?:xml|ico|webmanifest|png|svg)$|robots\\.txt$|sw\\.js$).*)",
   ],
 };

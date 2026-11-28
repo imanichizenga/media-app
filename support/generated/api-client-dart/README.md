@@ -110,6 +110,9 @@ Class | Method | HTTP request | Description
 [*MeApi*](doc/MeApi.md) | [**meExport**](doc/MeApi.md#meexport) | **GET** /api/v1/me/export | 
 [*MeApi*](doc/MeApi.md) | [**meUpdate**](doc/MeApi.md#meupdate) | **PATCH** /api/v1/me | 
 [*MeApi*](doc/MeApi.md) | [**myList**](doc/MeApi.md#mylist) | **GET** /api/v1/me/{what} | 
+[*PushApi*](doc/PushApi.md) | [**pushKey**](doc/PushApi.md#pushkey) | **GET** /api/v1/push/key | 
+[*PushApi*](doc/PushApi.md) | [**pushSubscribe**](doc/PushApi.md#pushsubscribe) | **POST** /api/v1/push/subscriptions | 
+[*PushApi*](doc/PushApi.md) | [**pushUnsubscribe**](doc/PushApi.md#pushunsubscribe) | **DELETE** /api/v1/push/subscriptions | 
 [*SiteConfigApi*](doc/SiteConfigApi.md) | [**siteConfig**](doc/SiteConfigApi.md#siteconfig) | **GET** /api/v1/site-config | 
 
 
@@ -177,6 +180,9 @@ Class | Method | HTTP request | Description
  - [PublicStoryRef](doc/PublicStoryRef.md)
  - [PublicVideo](doc/PublicVideo.md)
  - [PublicVideoKindEnum](doc/PublicVideoKindEnum.md)
+ - [PushKey](doc/PushKey.md)
+ - [PushKeysRequest](doc/PushKeysRequest.md)
+ - [PushSubscriptionRequest](doc/PushSubscriptionRequest.md)
  - [Reader](doc/Reader.md)
  - [ReaderEntry](doc/ReaderEntry.md)
  - [Readers](doc/Readers.md)

@@ -13,7 +13,7 @@ from typing import Any, Literal
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramWordSimilarity
 from django.db import connections, transaction
-from django.db.models import F, Q, Value
+from django.db.models import Case, F, Q, Value, When
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -314,13 +314,22 @@ def _prefix_query(q: str, config: str) -> SearchQuery | None:
     return SearchQuery(" & ".join([*words[:-1], words[-1] + ":*"]), search_type="raw", config=config)
 
 
-TYPO_THRESHOLD = 0.4  # word_similarity: one wrong letter in a six-letter word still matches (measured)
+# strict_word_similarity, word by word: "chamjo" finds "chanjo" (0.4) and "dodma" finds "Dodoma" (0.44), but
+# "mpira" (football) does not find "mpya" (new, 0.22). Plain word_similarity let that through (0.5).
+TYPO_THRESHOLD = 0.4
+
+
+def _words(q: str, shortest: int = 1) -> list[str]:
+    return [w for w in re.findall(r"\w+", q) if len(w) >= shortest]
 
 
 def _headline_like(q: str) -> Q:
-    """`headline %> q`: served by the trigram index (publication_headline_trgm), unlike a filter on a computed
-    similarity, which reads every row."""
-    return Q(headline__trigram_word_similar=q)
+    """Every word of the question looks like a word of the headline (`headline %>> word`, served by the
+    trigram index publication_headline_trgm). Words of three letters or fewer must be right."""
+    match = Q()
+    for w in _words(q, 4):
+        match &= Q(headline__trigram_strict_word_similar=w)
+    return match
 
 
 def _fetch(rows: Any, start: int, stop: int) -> list[Publication]:
@@ -328,31 +337,42 @@ def _fetch(rows: Any, start: int, stop: int) -> list[Publication]:
     alias = rows.db
     with transaction.atomic(using=alias):
         with connections[alias].cursor() as cursor:
-            cursor.execute("SET LOCAL pg_trgm.word_similarity_threshold = %s", [TYPO_THRESHOLD])
+            cursor.execute("SET LOCAL pg_trgm.strict_word_similarity_threshold = %s", [TYPO_THRESHOLD])
         return list(rows[start:stop])
 
 
-FEW = 5  # fewer word matches than this, and look-alikes (typing mistakes) are added
+# ts_rank weights for D, C, B, A: the headline (A) counts ten times the body (C); tags, writers and the
+# section (B) count little, so a story about the words comes before one only filed under them.
+WEIGHTS = [0.01, 0.1, 0.2, 1.0]
+
+
+def _in_headline(q: str) -> Any:
+    """How many of the words begin a word of the headline: the strongest sign a story is about them."""
+    total: Any = Value(0)
+    for w in _words(q, 2)[:8]:
+        total = total + Case(When(headline__iregex=r"\m" + re.escape(w), then=Value(1)), default=Value(0))
+    return total
 
 
 def _postgres(p: Params) -> Page:
     config = _config(p.locale)
+    # Every word must be there (websearch: "a b" is a AND b; "a or b" and "-a" as people write them).
     words = SearchQuery(p.q, search_type="websearch", config=config)
     prefix = _prefix_query(p.q, config)
     text = Q(search_vector=words)
-    text_rank: Any = Coalesce(SearchRank(F("search_vector"), words), Value(0.0))
+    text_rank: Any = Coalesce(SearchRank(F("search_vector"), words, weights=WEIGHTS), Value(0.0))
     if prefix is not None:
+        # The last word as it is being typed: "mwan" finds Mwanza.
         text |= Q(search_vector=prefix)
-        text_rank = text_rank + Coalesce(SearchRank(F("search_vector"), prefix), Value(0.0))
+        text_rank = text_rank + Coalesce(SearchRank(F("search_vector"), prefix, weights=WEIGHTS), Value(0.0))
     base = _postgres_rows(p).annotate(headline=KeyTextTransform("headline", "card"))
-    # Typing mistakes only when the words themselves find little: "chanjo" must not bring "chakula cha".
-    match = text if base.filter(text)[:FEW].count() >= FEW else text | _headline_like(p.q)
-    rows = (
-        base.filter(match)
-        # Real word matches first (ranked 4 times higher); a look-alike by trigrams only fills in after them.
-        .annotate(rank=text_rank * 4 + TrigramWordSimilarity(p.q, F("headline")) * 0.5)
-        .only("card", "modified_at")
-    )
+    # Look-alikes (typing mistakes) only when the words as typed find nothing at all.
+    typo = _words(p.q, 4) and not base.filter(text).exists()
+    match = _headline_like(p.q) if typo else text
+    rank: Any = text_rank * 4 + _in_headline(p.q) * 2
+    if typo:
+        rank = rank + TrigramWordSimilarity(p.q, F("headline"))
+    rows = base.filter(match).annotate(rank=rank).only("card", "article", "modified_at")
     rows = (
         rows.order_by("-published_at", "post_id")
         if p.sort == "newest"
@@ -363,7 +383,7 @@ def _postgres(p: Params) -> Page:
     chunk = _fetch(rows, start, start + PAGE + 1)
     more = len(chunk) > PAGE and page < MAX_PAGES
     return Page(
-        results=[Hit(card=selectors.card(r)) for r in chunk[:PAGE]],
+        results=[Hit(card=selectors.card(r), snippet=snippet(r, p.q)) for r in chunk[:PAGE]],
         next_cursor=_encode([], page + 1) if more else None,
         total=start + len(chunk[:PAGE]) + (1 if more else 0),
         total_is_exact=not more,
@@ -371,17 +391,75 @@ def _postgres(p: Params) -> Page:
     )
 
 
+SNIPPET = 180  # characters around the first word found
+
+
+def snippet(row: Publication, q: str) -> list[dict[str, Any]]:
+    """Where the words are: the sentence of the standfirst or the body with most of them, the words marked;
+    else the tag or writer they matched, so a reader sees why the story came. Text, never markup."""
+    from newsplatform.search.documents import body_text
+
+    words = _words(_fold(q), 2)
+    if not words:
+        return []
+
+    def hit(token: str) -> bool:
+        folded = _fold(token)
+        return any(folded.startswith(w) for w in words)
+
+    def hits(text: str) -> int:
+        return sum(1 for t in re.findall(r"\w+", text) if hit(t))
+
+    sentences = [
+        x.strip()
+        for text in (str(row.card.get("standfirst", "")), body_text(row.article))
+        for x in re.split(r"(?<=[.!?])\s+", text)
+        if x.strip()
+    ]
+    names = [
+        str(i.get("name", ""))
+        for key in ("tags", "regions")
+        for i in (row.article.get(key) or [])
+        if isinstance(i, dict)
+    ] + [str(a.get("name", "")) for a in (row.card.get("authors") or []) if isinstance(a, dict)]
+    best = max(sentences, key=hits, default="")
+    if hits(best) == 0:
+        # Found by the headline itself: the card says it already.
+        if hits(str(row.card.get("headline", ""))):
+            return []
+        best = " · ".join(n for n in names if hits(n))
+    if not best:
+        return []
+    first = next((m.start() for m in re.finditer(r"\w+", best) if hit(m.group())), 0)
+    begin = max(0, first - SNIPPET // 3)
+    if begin:
+        begin = best.find(" ", begin) + 1 or begin
+    cut = best[begin : begin + SNIPPET]
+    if begin + SNIPPET < len(best):
+        cut = cut[: cut.rfind(" ")] if " " in cut else cut
+    marked = re.sub(r"\w+", lambda m: f"{HIT}{m.group()}{END}" if hit(m.group()) else m.group(), cut)
+    parts = segments(("… " if begin else "") + marked + ("…" if begin + len(cut) < len(best) else ""))
+    return parts
+
+
 def _postgres_suggest(q: str, locale: str) -> list[dict[str, Any]]:
+    """Headlines for the words typed so far: those holding them first, then look-alikes of a mistyped word."""
     prefix = _prefix_query(q, "simple")
-    match = _headline_like(q)
-    if prefix is not None:
-        match |= Q(search_vector=prefix)
+    if prefix is None:
+        return []
+    base = Publication.objects.filter(locale=locale, published_at__lte=timezone.now()).annotate(
+        headline=KeyTextTransform("headline", "card")
+    )
+    match = Q(search_vector=prefix)
+    if _words(q, 4) and not base.filter(match).exists():
+        match = _headline_like(q)
     rows = (
-        Publication.objects.filter(locale=locale, published_at__lte=timezone.now())
-        .annotate(headline=KeyTextTransform("headline", "card"))
-        .filter(match)
-        .annotate(similarity=TrigramWordSimilarity(q, F("headline")))
-        .order_by("-similarity", "-published_at")
+        base.filter(match)
+        .annotate(
+            in_headline=_in_headline(q),
+            similarity=TrigramWordSimilarity(q, F("headline")),
+        )
+        .order_by("-in_headline", "-similarity", "-published_at")
         .only("card", "modified_at")
     )
     return [_suggestion(r.card) for r in _fetch(rows, 0, SUGGESTIONS)]

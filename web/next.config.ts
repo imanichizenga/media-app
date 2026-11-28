@@ -29,6 +29,14 @@ const config: NextConfig = {
     { source: "/(.*)", headers: security },
     // The content is in the name.
     { source: "/js/(.*)", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },
+    // The worker is checked on every visit, so a new one arrives at once (ADR-0051).
+    {
+      source: "/sw.js",
+      headers: [
+        { key: "Cache-Control", value: "no-cache" },
+        { key: "Service-Worker-Allowed", value: "/" },
+      ],
+    },
   ],
   // Local and E2E only. In AWS the load balancer and the CDN route these on the same origin.
   rewrites: async () => ({

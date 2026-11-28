@@ -917,4 +917,80 @@ class StringsSw extends Strings {
 
   @override
   String get readersPrivate => 'Ficha jina langu kwenye orodha za wasomaji';
+
+  @override
+  String get notifications => 'Arifa';
+
+  @override
+  String get notifyTurnOn => 'Washa arifa za habari mpya';
+
+  @override
+  String get notifyTurnOff => 'Zima arifa za habari mpya';
+
+  @override
+  String get notifyOn => 'Arifa zimewashwa: utaambiwa kila habari mpya.';
+
+  @override
+  String get notifyOff => 'Arifa zimezimwa.';
+
+  @override
+  String get notifyBlocked =>
+      'Arifa zimezuiwa kwenye kivinjari hiki. Ziruhusu kwenye mipangilio ya tovuti.';
+
+  @override
+  String get notifyUnsupported =>
+      'Kivinjari hiki hakionyeshi arifa. Kwenye iPhone, weka tovuti kwenye skrini ya mwanzo kwanza.';
+
+  @override
+  String get storiesRail => 'Habari za sasa';
+
+  @override
+  String get seenStory => 'Umeshaiona';
+
+  @override
+  String get searchOpen => 'Tafuta habari';
+
+  @override
+  String get profileTitle => 'Wasifu wako';
+
+  @override
+  String get fullName => 'Jina kamili';
+
+  @override
+  String get username => 'Jina la mtumiaji';
+
+  @override
+  String get usernameHint => 'Herufi, namba au _ ; 3 hadi 30.';
+
+  @override
+  String get bio => 'Kuhusu wewe';
+
+  @override
+  String get bioHint => 'Sentensi moja au mbili, hadi herufi 160.';
+
+  @override
+  String get email => 'Barua pepe';
+
+  @override
+  String get emailHint => 'Kwa mawasiliano tu; haitumiki kuingia.';
+
+  @override
+  String get profileSaved => 'Wasifu umehifadhiwa.';
+
+  @override
+  String get usernameTaken => 'Jina hili limeshachukuliwa.';
+
+  @override
+  String get settingsTitle => 'Mipangilio';
+
+  @override
+  String get accountActions => 'Akaunti';
+
+  @override
+  String memberSince(String v) {
+    return 'Msomaji tangu $v';
+  }
+
+  @override
+  String get addBio => 'Ongeza maelezo mafupi kukuhusu';
 }

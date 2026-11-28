@@ -327,5 +327,38 @@
   "readersTitle": ["Waliosoma habari hii", "Who read this story"],
   "readersGuests": ["na wageni {n} wasiojisajili", "and {n} guests without an account"],
   "readersNone": ["Bado hakuna msomaji aliyejisajili.", "No signed-in reader yet."],
-  "readersPrivate": ["Ficha jina langu kwenye orodha za wasomaji", "Hide my name from reader lists"]
+  "readersPrivate": ["Ficha jina langu kwenye orodha za wasomaji", "Hide my name from reader lists"],
+  "notifications": ["Arifa", "Notifications"],
+  "notifyTurnOn": ["Washa arifa za habari mpya", "Turn on notifications for new stories"],
+  "notifyTurnOff": ["Zima arifa za habari mpya", "Turn off notifications for new stories"],
+  "notifyOn": [
+    "Arifa zimewashwa: utaambiwa kila habari mpya.",
+    "Notifications are on: you'll hear of every new story."
+  ],
+  "notifyOff": ["Arifa zimezimwa.", "Notifications are off."],
+  "notifyBlocked": [
+    "Arifa zimezuiwa kwenye kivinjari hiki. Ziruhusu kwenye mipangilio ya tovuti.",
+    "Notifications are blocked in this browser. Allow them in the site's settings."
+  ],
+  "notifyUnsupported": [
+    "Kivinjari hiki hakionyeshi arifa. Kwenye iPhone, weka tovuti kwenye skrini ya mwanzo kwanza.",
+    "This browser can't show notifications. On an iPhone, add the site to the home screen first."
+  ],
+  "storiesRail": ["Habari za sasa", "Stories now"],
+  "seenStory": ["Umeshaiona", "Seen"],
+  "searchOpen": ["Tafuta habari", "Search the news"],
+  "profileTitle": ["Wasifu wako", "Your profile"],
+  "fullName": ["Jina kamili", "Full name"],
+  "username": ["Jina la mtumiaji", "Username"],
+  "usernameHint": ["Herufi, namba au _ ; 3 hadi 30.", "Letters, digits or _ ; 3 to 30."],
+  "bio": ["Kuhusu wewe", "Bio"],
+  "bioHint": ["Sentensi moja au mbili, hadi herufi 160.", "A line or two, up to 160 characters."],
+  "email": ["Barua pepe", "Email"],
+  "emailHint": ["Kwa mawasiliano tu; haitumiki kuingia.", "For contact only; it is never used to sign in."],
+  "profileSaved": ["Wasifu umehifadhiwa.", "Profile saved."],
+  "usernameTaken": ["Jina hili limeshachukuliwa.", "This username is taken."],
+  "settingsTitle": ["Mipangilio", "Settings"],
+  "accountActions": ["Akaunti", "Account"],
+  "memberSince": ["Msomaji tangu {v}", "Reader since {v}"],
+  "addBio": ["Ongeza maelezo mafupi kukuhusu", "Add a short bio"]
 }

@@ -646,6 +646,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/push/key": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["push_key"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/push/subscriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description This browser wants to hear of new stories (or no longer does). Signed in or not. */
+        post: operations["push_subscribe"];
+        /** @description This browser wants to hear of new stories (or no longer does). Signed in or not. */
+        delete: operations["push_unsubscribe"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/site-config": {
         parameters: {
             query?: never;
@@ -1022,6 +1056,8 @@ export interface components {
             locale?: components["schemas"]["LocaleEnum"];
             accept_terms?: boolean;
             hide_from_readers?: boolean;
+            bio?: string;
+            contact_email?: string;
         };
         PostState: {
             /** @description Openings; one device counts once in 30 minutes. */
@@ -1220,6 +1256,22 @@ export interface components {
          * @enum {string}
          */
         PublicVideoKindEnum: "video";
+        PushKey: {
+            /** @description The newsroom sends notifications of new stories. */
+            enabled: boolean;
+            /** @description VAPID application server key, base64url (applicationServerKey). */
+            public_key: string;
+        };
+        PushKeysRequest: {
+            p256dh: string;
+            auth: string;
+        };
+        PushSubscriptionRequest: {
+            /** Format: uri */
+            endpoint: string;
+            keys: components["schemas"]["PushKeysRequest"];
+            locale?: components["schemas"]["LocaleEnum"];
+        };
         Reader: {
             /** Format: uuid */
             id: string;
@@ -1233,6 +1285,9 @@ export interface components {
             /** @description A name and the terms are still to come. */
             onboarding: boolean;
             hide_from_readers: boolean;
+            bio: string;
+            /** @description Typed by the reader; never used to sign in. */
+            contact_email: string;
             /** Format: date */
             joined: string;
         };
@@ -2415,6 +2470,65 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Export"];
                 };
+            };
+        };
+    };
+    push_key: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushKey"];
+                };
+            };
+        };
+    };
+    push_subscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushSubscriptionRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    push_unsubscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

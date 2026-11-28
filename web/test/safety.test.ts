@@ -77,9 +77,11 @@ describe("the policy", () => {
     const hash = createHash("sha256").update(STYLE).digest("base64");
     expect(style).toContain(hash);
   });
-  test("asks for Trusted Types, with one policy, and says where to report", () => {
+  test("asks for Trusted Types, with two narrow policies, and says where to report", () => {
     expect(csp).toContain("require-trusted-types-for 'script'");
-    expect(directive("trusted-types")).toBe("trusted-types navigate");
+    // navigate: pages put in place; worker: the one service worker script, /sw.js (islands/push.ts).
+    expect(directive("trusted-types")).toBe("trusted-types navigate worker");
+    expect(directive("worker-src")).toBe("worker-src 'self'");
     expect(csp).toContain("report-uri /api/csp-report");
     expect(csp).toContain("report-to csp");
   });

@@ -1,4 +1,5 @@
 import { again, ask, begin, go, inside, replace } from "./navigate";
+import { paint as paintBell, register, toggle as toggleBell } from "./push";
 import { keep, kept, remember, unkeep } from "./store";
 import { playVideo, playYouTube, shorts, toggleShort, toggleSound } from "./video";
 
@@ -82,6 +83,7 @@ const coverage = () => {
 // ---- what is pressed ----
 const DO: Record<string, (b: HTMLElement) => void> = {
   scheme: () => wear(isDark() ? "light" : "dark"),
+  notify: (b) => void toggleBell(b as HTMLButtonElement, toast),
   share: async (b) => {
     const url = location.origin + (b.dataset.path ?? location.pathname);
     try {
@@ -237,6 +239,36 @@ addEventListener("resize", () => {
   fitting = requestAnimationFrame(fitMeta);
 });
 
+// ---- the rounds at the top: what this browser has opened ----
+// Opened stories turn grey and go after the new ones; live coverage stays first. Kept in this browser only.
+const SEEN = "seen";
+function opened(): string[] {
+  try {
+    const list = JSON.parse(localStorage.getItem(SEEN) ?? "[]");
+    return Array.isArray(list) ? list.filter((p): p is string => typeof p === "string") : [];
+  } catch {
+    return [];
+  }
+}
+function stories() {
+  if (document.querySelector("[data-stats]")) {
+    try {
+      const here = location.pathname;
+      localStorage.setItem(SEEN, JSON.stringify([here, ...opened().filter((p) => p !== here)].slice(0, 300)));
+    } catch {}
+  }
+  const seen = new Set(opened());
+  for (const ul of all("[data-stories] > ul")) {
+    const items = [...ul.children] as HTMLElement[];
+    const was = (li: HTMLElement) => seen.has(li.dataset.story ?? "");
+    for (const li of items) li.toggleAttribute("data-seen", was(li));
+    const live = items.filter((li) => li.dataset.live !== undefined);
+    const rest = items.filter((li) => li.dataset.live === undefined);
+    const order = [...live, ...rest.filter((li) => !was(li)), ...rest.filter(was)];
+    if (order.some((li, i) => li !== items[i])) ul.append(...order);
+  }
+}
+
 // ---- a row of sections that goes on ----
 // The sides with more are marked for the stylesheet (a fade), and their chevrons shown; a chevron goes most of a row on.
 function tabs() {
@@ -286,6 +318,14 @@ const account = () => {
 // Its own file, fetched only where there is a search field: every other page stays as light as it was.
 let searching: Promise<void> | null = null;
 const search = () => {
+  // From the header's search button: the field is ready to type in, and the address stays clean.
+  const url = new URL(location.href);
+  if (url.searchParams.get("focus") === "1") {
+    url.searchParams.delete("focus");
+    history.replaceState(history.state, "", url);
+    document.querySelector<HTMLInputElement>("form[data-search] input[name=q]")?.focus();
+  }
+  if (searching) void searching.then(() => import("./search").then((m) => m.highlight()));
   if (!searching && document.querySelector("form[data-search]"))
     searching = import("./search")
       .then((m) =>
@@ -336,10 +376,13 @@ function arrive() {
   }
   stopShorts = [...all("[data-shorts]")].map(shorts);
   fitMeta();
+  stories();
   tabs();
   search();
   breaking();
   account();
+  register();
+  void paintBell();
 }
 function leave() {
   for (const stop of stopShorts) stop();

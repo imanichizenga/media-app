@@ -269,6 +269,13 @@ def logo_file(request: HttpRequest, kind: str, digest: str, name: str) -> HttpRe
 
 
 @require_safe
+def icon(request: HttpRequest) -> HttpResponse:
+    response = HttpResponse(brand.icon_svg(request.GET.get("maskable") == "1"), content_type="image/svg+xml")
+    response["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+    return _headers(response, SHORT)
+
+
+@require_safe
 def manifest(request: HttpRequest, locale: str) -> HttpResponse:
     text = json.dumps(brand.manifest(locale), ensure_ascii=False)
     return _headers(HttpResponse(text, content_type="application/manifest+json"), SHORT)

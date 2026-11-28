@@ -40,6 +40,10 @@ class Reader {
 
     required this.hideFromReaders,
 
+    required this.bio,
+
+    required this.contactEmail,
+
     required this.joined,
   });
 
@@ -74,6 +78,13 @@ class Reader {
   @JsonKey(name: r'hide_from_readers', required: true, includeIfNull: false)
   final bool hideFromReaders;
 
+  @JsonKey(name: r'bio', required: true, includeIfNull: false)
+  final String bio;
+
+  /// Typed by the reader; never used to sign in.
+  @JsonKey(name: r'contact_email', required: true, includeIfNull: false)
+  final String contactEmail;
+
   @JsonKey(name: r'joined', required: true, includeIfNull: false)
   final DateTime joined;
 
@@ -91,6 +102,8 @@ class Reader {
           other.methods == methods &&
           other.onboarding == onboarding &&
           other.hideFromReaders == hideFromReaders &&
+          other.bio == bio &&
+          other.contactEmail == contactEmail &&
           other.joined == joined;
 
   @override
@@ -105,6 +118,8 @@ class Reader {
       methods.hashCode +
       onboarding.hashCode +
       hideFromReaders.hashCode +
+      bio.hashCode +
+      contactEmail.hashCode +
       joined.hashCode;
 
   factory Reader.fromJson(Map<String, dynamic> json) => _$ReaderFromJson(json);

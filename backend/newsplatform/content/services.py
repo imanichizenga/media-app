@@ -440,6 +440,7 @@ def _run(post: Post, step: Transition, actor: User | None, note: str, scheduled_
         post.scheduled_at = scheduled_at
     if step.key in ("publish", "republish") and post.embargo_until and post.embargo_until > now:
         raise Conflict("This is under embargo.", code="embargoed", until=post.embargo_until.isoformat())
+    first = step.key == "publish" and post.first_published_at is None
     if step.key == "publish":
         post.first_published_at = post.first_published_at or now
         # An unpublished article that returns keeps its place in time.
@@ -453,6 +454,12 @@ def _run(post: Post, step: Transition, actor: User | None, note: str, scheduled_
     if step.key in ("publish", "republish"):
         publishing.publish(post)
         _revise(post, actor or post.created_by, RevisionKind.PUBLISH)
+    if first:
+        # Readers who asked hear of a new story once, never of its corrections (ADR-0051).
+        from newsplatform.notifications.tasks import new_story
+
+        post_id = str(post.pk)
+        transaction.on_commit(lambda: new_story.delay(post_id), robust=True)
     elif step.key == "unpublish":
         publishing.withdraw(post)
     if note and actor:

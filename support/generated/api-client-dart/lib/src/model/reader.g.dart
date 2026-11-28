@@ -27,6 +27,10 @@ abstract class _$ReaderCWProxy {
 
   Reader hideFromReaders(bool hideFromReaders);
 
+  Reader bio(String bio);
+
+  Reader contactEmail(String contactEmail);
+
   Reader joined(DateTime joined);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Reader(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -46,6 +50,8 @@ abstract class _$ReaderCWProxy {
     List<MethodsEnum> methods,
     bool onboarding,
     bool hideFromReaders,
+    String bio,
+    String contactEmail,
     DateTime joined,
   });
 }
@@ -88,6 +94,12 @@ class _$ReaderCWProxyImpl implements _$ReaderCWProxy {
       this(hideFromReaders: hideFromReaders);
 
   @override
+  Reader bio(String bio) => this(bio: bio);
+
+  @override
+  Reader contactEmail(String contactEmail) => this(contactEmail: contactEmail);
+
+  @override
   Reader joined(DateTime joined) => this(joined: joined);
 
   @override
@@ -108,6 +120,8 @@ class _$ReaderCWProxyImpl implements _$ReaderCWProxy {
     Object? methods = const $CopyWithPlaceholder(),
     Object? onboarding = const $CopyWithPlaceholder(),
     Object? hideFromReaders = const $CopyWithPlaceholder(),
+    Object? bio = const $CopyWithPlaceholder(),
+    Object? contactEmail = const $CopyWithPlaceholder(),
     Object? joined = const $CopyWithPlaceholder(),
   }) {
     return Reader(
@@ -151,6 +165,14 @@ class _$ReaderCWProxyImpl implements _$ReaderCWProxy {
           ? _value.hideFromReaders
           // ignore: cast_nullable_to_non_nullable
           : hideFromReaders as bool,
+      bio: bio == const $CopyWithPlaceholder()
+          ? _value.bio
+          // ignore: cast_nullable_to_non_nullable
+          : bio as String,
+      contactEmail: contactEmail == const $CopyWithPlaceholder()
+          ? _value.contactEmail
+          // ignore: cast_nullable_to_non_nullable
+          : contactEmail as String,
       joined: joined == const $CopyWithPlaceholder()
           ? _value.joined
           // ignore: cast_nullable_to_non_nullable
@@ -186,6 +208,8 @@ Reader _$ReaderFromJson(Map<String, dynamic> json) => $checkedCreate(
         'methods',
         'onboarding',
         'hide_from_readers',
+        'bio',
+        'contact_email',
         'joined',
       ],
     );
@@ -208,6 +232,8 @@ Reader _$ReaderFromJson(Map<String, dynamic> json) => $checkedCreate(
       ),
       onboarding: $checkedConvert('onboarding', (v) => v as bool),
       hideFromReaders: $checkedConvert('hide_from_readers', (v) => v as bool),
+      bio: $checkedConvert('bio', (v) => v as String),
+      contactEmail: $checkedConvert('contact_email', (v) => v as String),
       joined: $checkedConvert('joined', (v) => DateTime.parse(v as String)),
     );
     return val;
@@ -215,6 +241,7 @@ Reader _$ReaderFromJson(Map<String, dynamic> json) => $checkedCreate(
   fieldKeyMap: const {
     'displayName': 'display_name',
     'hideFromReaders': 'hide_from_readers',
+    'contactEmail': 'contact_email',
   },
 );
 
@@ -229,6 +256,8 @@ Map<String, dynamic> _$ReaderToJson(Reader instance) => <String, dynamic>{
   'methods': instance.methods.map((e) => _$MethodsEnumEnumMap[e]!).toList(),
   'onboarding': instance.onboarding,
   'hide_from_readers': instance.hideFromReaders,
+  'bio': instance.bio,
+  'contact_email': instance.contactEmail,
   'joined': instance.joined.toIso8601String(),
 };
 

@@ -1,6 +1,7 @@
 import { Bone } from "@news/ui/base";
-import { Bookmark, Share2, Smartphone, SunMoon, X } from "@news/ui/icons";
+import { Bell, Bookmark, Share2, Smartphone, SunMoon, X } from "@news/ui/icons";
 import type { ReactNode } from "react";
+import type { T } from "@/lib/i18n";
 
 // What the reader presses. Plain elements: web/islands makes them work, and no framework is sent (ADR-0046).
 const ICON = "tap grid w-11 place-items-center rounded-sm hover:bg-current/10";
@@ -11,6 +12,60 @@ export const SchemeButton = ({ label }: { label: string }) => (
     <SunMoon size={20} />
   </button>
 );
+
+/** Notifications of new stories (islands/push.ts): its words are said in a toast as things happen. */
+export const NotifyButton = ({ t }: { t: T }) => {
+  const say = (k: string) => t(k as never);
+  return (
+    <button
+      type="button"
+      data-do="notify"
+      data-notify=""
+      aria-pressed="false"
+      aria-label={say("notifyTurnOn")}
+      title={say("notifyTurnOn")}
+      data-on={say("notifyTurnOn")}
+      data-off={say("notifyTurnOff")}
+      data-done={say("notifyOn")}
+      data-gone={say("notifyOff")}
+      data-blocked={say("notifyBlocked")}
+      data-unsupported={say("notifyUnsupported")}
+      className={`${ICON} notify`}
+    >
+      <Bell size={20} />
+    </button>
+  );
+};
+
+/** The same, as a row of You's settings, with a switch that shows whether it is on. */
+export const NotifyRow = ({ t }: { t: T }) => {
+  const say = (k: string) => t(k as never);
+  return (
+    <button
+      type="button"
+      data-do="notify"
+      data-notify=""
+      aria-pressed="false"
+      aria-label={say("notifyTurnOn")}
+      data-on={say("notifyTurnOn")}
+      data-off={say("notifyTurnOff")}
+      data-done={say("notifyOn")}
+      data-gone={say("notifyOff")}
+      data-blocked={say("notifyBlocked")}
+      data-unsupported={say("notifyUnsupported")}
+      className="notify tap flex min-h-13 w-full items-center gap-3 px-4 text-left hover:bg-surface-sunken"
+    >
+      <Bell size={20} className="text-text-secondary" />
+      <span className="flex-1">{say("notifications")}</span>
+      <span
+        aria-hidden
+        className="switch relative h-6 w-10 shrink-0 rounded-full bg-border-strong transition-colors"
+      >
+        <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-surface shadow-sm transition-transform" />
+      </span>
+    </button>
+  );
+};
 
 /** The same three as the app's. */
 export const SchemeChoice = ({ legend, names }: { legend: string; names: [string, string, string] }) => (

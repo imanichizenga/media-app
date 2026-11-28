@@ -17,6 +17,9 @@ class Reader {
     required this.email,
     required this.onboarding,
     required this.hideFromReaders,
+    this.bio = '',
+    this.contactEmail = '',
+    this.joined,
   });
 
   factory Reader.fromJson(Map<String, dynamic> j) => Reader(
@@ -28,6 +31,9 @@ class Reader {
     email: (j['email'] as String?) ?? '',
     onboarding: (j['onboarding'] as bool?) ?? false,
     hideFromReaders: (j['hide_from_readers'] as bool?) ?? false,
+    bio: (j['bio'] as String?) ?? '',
+    contactEmail: (j['contact_email'] as String?) ?? '',
+    joined: DateTime.tryParse((j['joined'] as String?) ?? ''),
   );
 
   final String id;
@@ -38,6 +44,11 @@ class Reader {
   final String email;
   final bool onboarding;
   final bool hideFromReaders;
+  final String bio;
+
+  /// Typed by the reader, for contact only: it never signs anyone in.
+  final String contactEmail;
+  final DateTime? joined;
 
   String get name => displayName.isNotEmpty ? displayName : username;
 }
@@ -72,11 +83,15 @@ class SignInMethods {
 
 /// A refusal from the API: `code` is what the app branches on, never the text.
 class Refused implements Exception {
-  const Refused(this.code, {this.attemptsLeft, this.retryAfter});
+  const Refused(this.code, {this.attemptsLeft, this.retryAfter, this.field, this.detail});
 
   final String code;
   final int? attemptsLeft;
   final int? retryAfter;
+
+  /// The field the server found wrong, and what it said (in the reader's language when it has one).
+  final String? field;
+  final String? detail;
 
   static Refused of(DioException e) {
     final data = e.response?.data;
@@ -84,6 +99,8 @@ class Refused implements Exception {
     return Refused(
       (map['code'] as String?) ?? (e.response == null ? 'offline' : 'error'),
       attemptsLeft: (map['attempts_left'] as num?)?.toInt(),
+      field: map['field'] as String?,
+      detail: map['detail'] as String?,
       retryAfter: int.tryParse(e.response?.headers.value('retry-after') ?? ''),
     );
   }

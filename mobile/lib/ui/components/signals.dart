@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:news_design_tokens/news_design_tokens.dart';
 
@@ -137,83 +136,301 @@ class BreakingBanner extends StatelessWidget {
   }
 }
 
-/// Circles with a ring, a shape nothing else has. The next one always peeks in, so the row visibly scrolls.
-class LiveRail extends ConsumerWidget {
-  const LiveRail({super.key, required this.stories, required this.onTap});
+/// Rounds at the top, as people know them from their phones (ADR-0051): live coverage first, its red ring turning
+/// and marked LIVE; then the day's stories in a still red ring. Stories already read turn grey and go last, so what
+/// is new is always first. The next one always peeks in and the edge fades while there is more, so the row visibly
+/// goes on.
+class LiveRail extends StatefulWidget {
+  const LiveRail({
+    super.key,
+    required this.live,
+    this.stories = const [],
+    this.seen = const {},
+    required this.onTap,
+  });
 
-  /// Null: a skeleton. Empty: nothing at all.
-  final List<Story>? stories;
+  /// Null: a skeleton. Empty with no stories: nothing at all.
+  final List<Story>? live;
+  final List<Story> stories;
+
+  /// Paths of the stories read on this phone.
+  final Set<String> seen;
   final ValueChanged<Story> onTap;
 
   static const _width = 80.0;
-  static const _ring = 54.0;
+  static const _ring = 66.0;
 
   /// Never more, whatever is live.
-  static const extent = 96.0;
+  static const extent = 124.0;
 
   /// The label's two lines, in the rail's own type.
   static TextStyle label(BuildContext context) =>
       context.type.caption.copyWith(color: context.colors.textPrimary, height: 1.15, fontSize: 12);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (stories?.isEmpty ?? false) return const SizedBox.shrink();
-    final c = context.colors;
+  State<LiveRail> createState() => _LiveRailState();
+}
+
+class _LiveRailState extends State<LiveRail> {
+  final _scroll = ScrollController();
+  var _before = false;
+  var _after = true;
+
+  void _edges(ScrollMetrics m) {
+    final before = m.pixels > 1;
+    final after = m.pixels < m.maxScrollExtent - 1;
+    if (before != _before || after != _after) {
+      setState(() {
+        _before = before;
+        _after = after;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final live = widget.live;
+    final ids = {for (final x in live ?? const <Story>[]) x.id};
+    final rest = [
+      for (final x in widget.stories)
+        if (!ids.contains(x.id)) x,
+    ];
+    if (live != null && live.isEmpty && rest.isEmpty) return const SizedBox.shrink();
     final s = Strings.of(context);
-    final List<Story?> shown = stories ?? List.filled(4, null);
-    final style = label(context);
+    final style = LiveRail.label(context);
+    bool read(Story x) => widget.seen.contains(x.path);
+    final List<(Story?, bool)> shown = live == null
+        ? List.filled(5, (null, false))
+        : [
+            for (final x in live) (x, true),
+            for (final x in rest)
+              if (!read(x)) (x, false),
+            for (final x in rest)
+              if (read(x)) (x, false),
+          ];
+    const fade = 36.0;
+    final solid = context.colors.textPrimary;
     return Semantics(
       container: true,
-      label: s.liveNow,
+      label: s.storiesRail,
       child: MediaQuery.withClampedTextScaling(
         maxScaleFactor: 1.2,
         child: SizedBox(
-          height: extent,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s1, NewsSpace.s4, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final story in shown)
-                  Padding(
-                    padding: const EdgeInsets.only(right: NewsSpace.s1),
-                    child: Pressable(
-                      onTap: story == null ? null : () => onTap(story),
-                      label: story == null ? null : '${s.live}: ${story.headline}',
-                      link: true,
-                      scale: 0.95,
-                      child: SizedBox(
-                        width: _width,
-                        child: Column(
-                          children: [
-                            Container(
-                              width: _ring,
-                              height: _ring,
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: story == null ? c.border : c.signalLive,
-                                  width: 2.5,
+          height: LiveRail.extent,
+          child: NotificationListener<ScrollMetricsNotification>(
+            onNotification: (n) {
+              _edges(n.metrics);
+              return false;
+            },
+            child: NotificationListener<ScrollUpdateNotification>(
+              onNotification: (n) {
+                _edges(n.metrics);
+                return false;
+              },
+              child: ShaderMask(
+                blendMode: BlendMode.dstIn,
+                // Only the mask's alpha counts (dstIn): any opaque colour of the theme draws the row whole.
+                shaderCallback: (box) => LinearGradient(
+                  colors: [
+                    if (_before) OverMedia.clear else solid,
+                    solid,
+                    solid,
+                    if (_after) OverMedia.clear else solid,
+                  ],
+                  stops: [0, fade / box.width, 1 - fade / box.width, 1],
+                ).createShader(box),
+                child: ListView(
+                  controller: _scroll,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.fromLTRB(NewsSpace.s4, NewsSpace.s2, NewsSpace.s4, 0),
+                  children: [
+                    for (final (story, on) in shown)
+                      Padding(
+                        padding: const EdgeInsets.only(right: NewsSpace.s2),
+                        child: Pressable(
+                          onTap: story == null ? null : () => widget.onTap(story),
+                          label: story == null
+                              ? null
+                              : [
+                                  if (on) s.live,
+                                  story.headline,
+                                  if (read(story)) s.seenStory,
+                                ].join(': '),
+                          link: true,
+                          scale: 0.94,
+                          child: SizedBox(
+                            width: LiveRail._width,
+                            child: Column(
+                              children: [
+                                StoryRing(
+                                  story: story,
+                                  live: on,
+                                  seen: story != null && !on && read(story),
+                                  size: LiveRail._ring,
                                 ),
-                              ),
-                              child: ClipOval(child: NewsPicture(story?.image)),
+                                const SizedBox(height: 6),
+                                if (story == null)
+                                  TextOrBone(null, style: style, lines: 2, align: TextAlign.center)
+                                else if (on)
+                                  RailLabel(story.railTitle, style: style)
+                                else
+                                  // A story's own headline, not a title written for the rail: two lines, then "…".
+                                  Text(
+                                    story.headline,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: read(story)
+                                        ? style.copyWith(color: context.colors.textSecondary)
+                                        : style,
+                                  ),
+                              ],
                             ),
-                            const SizedBox(height: NewsSpace.s1),
-                            if (story == null)
-                              TextOrBone(null, style: style, lines: 2, align: TextAlign.center)
-                            else
-                              RailLabel(story.railTitle, style: style),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// A story's round: its picture in a ring. Live: red, turning, with a LIVE mark that breathes (still when the
+/// phone asks for less motion). A story: the brand's red. Read: grey.
+class StoryRing extends StatefulWidget {
+  const StoryRing({
+    super.key,
+    required this.story,
+    required this.live,
+    required this.seen,
+    required this.size,
+  });
+
+  final Story? story;
+  final bool live;
+  final bool seen;
+  final double size;
+
+  @override
+  State<StoryRing> createState() => _StoryRingState();
+}
+
+class _StoryRingState extends State<StoryRing> with SingleTickerProviderStateMixin {
+  late final _turn = AnimationController(vsync: this, duration: const Duration(milliseconds: 1800));
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final move = widget.live && !context.still;
+    if (move && !_turn.isAnimating) {
+      _turn.repeat();
+    } else if (!move) {
+      _turn.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _turn.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final s = Strings.of(context);
+    final story = widget.story;
+    final picture = Container(
+      margin: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(2.5),
+      decoration: BoxDecoration(color: c.bg, shape: BoxShape.circle),
+      child: ClipOval(child: NewsPicture(story?.image)),
+    );
+    Widget ring;
+    if (story == null) {
+      ring = DecoratedBox(
+        decoration: BoxDecoration(shape: BoxShape.circle, color: c.border),
+        child: picture,
+      );
+    } else if (widget.live) {
+      ring = AnimatedBuilder(
+        animation: _turn,
+        builder: (context, child) => DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: SweepGradient(
+              transform: GradientRotation(_turn.value * 6.2832),
+              colors: [
+                c.signalLive,
+                c.signalLive.withValues(alpha: 0.25),
+                c.signalLive,
+                c.signalLive,
+              ],
+              stops: const [0, 0.35, 0.7, 1],
+            ),
+          ),
+          child: child,
+        ),
+        child: picture,
+      );
+    } else {
+      ring = DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: widget.seen ? c.borderStrong : c.brand,
+        ),
+        child: picture,
+      );
+    }
+    return SizedBox(
+      width: widget.size,
+      height: widget.size + 6,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          SizedBox.square(dimension: widget.size, child: ring),
+          if (widget.live && story != null)
+            Positioned(
+              bottom: 0,
+              child: AnimatedBuilder(
+                animation: _turn,
+                builder: (context, child) => Opacity(
+                  opacity: context.still ? 1 : 0.65 + 0.35 * (1 - (2 * _turn.value - 1).abs()),
+                  child: child,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: c.signalLive,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: c.bg, width: 2),
+                  ),
+                  child: Text(
+                    s.live.toUpperCase(),
+                    style: context.type.caption.copyWith(
+                      color: c.onSignalLive,
+                      fontSize: 9,
+                      height: 1.2,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

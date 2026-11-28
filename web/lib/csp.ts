@@ -16,7 +16,7 @@ const hash = (text: string) => `'sha256-${createHash("sha256").update(text).dige
 export const REPORTS = "/api/csp-report";
 
 /** The one Trusted Types policy: the navigation island reads our own documents (islands/navigate.ts). */
-export const TRUSTED_TYPES = "navigate";
+export const TRUSTED_TYPES = "navigate worker";
 
 /**
  * One policy for every page, with no nonce (ADR-0046): pages are kept by the CDN and seen by many readers, so a nonce
@@ -46,7 +46,7 @@ export function policy({
     `connect-src ${allow("'self'", files)}`,
     "frame-src https://www.youtube-nocookie.com",
     "manifest-src 'self'",
-    "worker-src 'none'",
+    "worker-src 'self'",
     "object-src 'none'",
     "base-uri 'none'",
     "form-action 'self'",
