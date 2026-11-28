@@ -26,6 +26,7 @@ Name | Type | Description | Notes
 **publishedAt** | [**DateTime**](DateTime.md) |  | 
 **modifiedAt** | [**DateTime**](DateTime.md) |  | 
 **isSensitive** | **bool** |  | 
+**premium** | **bool** | For subscribers: the card and the opening are for everyone | [optional] 
 **breakingUntil** | [**DateTime**](DateTime.md) |  | 
 **isLive** | **bool** |  | 
 

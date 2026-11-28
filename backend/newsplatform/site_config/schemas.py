@@ -239,6 +239,21 @@ class SignIn(Section):
     )
 
 
+class Subscriptions(Section):
+    """Paid reading (ADR-0052). The plans are in Subscriptions; Snippe's keys are in Integrations."""
+
+    enabled: bool = _field(
+        True,
+        "Stories marked for subscribers are locked",
+        "Habari za wanachama zimefungwa",
+    )
+    preview_paragraphs: int = _field(
+        3, "Paragraphs everyone may read", "Aya ambazo kila mtu anasoma", ge=1, le=8
+    )
+    mobile_money: bool = _field(True, "Pay by mobile money", "Lipa kwa pesa ya simu")
+    cards: bool = _field(True, "Pay by card", "Lipa kwa kadi")
+
+
 SECTIONS: dict[str, type[Section]] = {
     "brand": Brand,
     "localization": Localization,
@@ -247,4 +262,5 @@ SECTIONS: dict[str, type[Section]] = {
     "security": Security,
     "engagement": Engagement,
     "sign_in": SignIn,
+    "subscriptions": Subscriptions,
 }

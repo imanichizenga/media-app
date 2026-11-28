@@ -305,13 +305,25 @@ let accounts: Promise<typeof import("./account")> | null = null;
 const account = () => {
   if (
     document.cookie.includes("signed=1") ||
-    document.querySelector("[data-counts],[data-stats],[data-account]")
+    document.querySelector("[data-counts],[data-stats],[data-account],[data-paywall],[data-plans]")
   )
     accounts ??= import("./account").then((m) => {
       m.start({ go, toast, bounce, remember, kept });
       return m;
     });
   accounts?.then((m) => m.arrive());
+};
+
+// ---- subscriptions (ADR-0052) ----
+// Only where a story for subscribers ends or the plans are: paying, and opening the story for a subscriber.
+let paying: Promise<typeof import("./subscribe")> | null = null;
+const subscribe = () => {
+  if (!paying && !document.querySelector("[data-paywall],[data-plans]")) return;
+  paying ??= import("./subscribe").then((m) => {
+    m.start({ toast, account: () => accounts });
+    return m;
+  });
+  void paying.then((m) => m.arrive()).catch(() => {});
 };
 
 // ---- search (ADR-0049) ----
@@ -381,6 +393,7 @@ function arrive() {
   search();
   breaking();
   account();
+  subscribe();
   register();
   void paintBell();
 }

@@ -3759,6 +3759,206 @@
                 }
             }
         },
+        "/api/v1/subscriptions/payments": {
+            "get": {
+                "operationId": "payments_list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "cursor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentAdminPage"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/plans": {
+            "get": {
+                "operationId": "plans_list",
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PlanAdmin"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "plans_create",
+                "tags": [
+                    "subscriptions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PlanAdminRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlanAdmin"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/plans/{plan_id}": {
+            "put": {
+                "operationId": "plans_save",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "plan_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PlanAdminRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlanAdmin"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "plans_delete",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "plan_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/summary": {
+            "get": {
+                "operationId": "subscriptions_summary",
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "staffSession": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubscriptionSummary"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/tags": {
             "get": {
                 "operationId": "tags_list",
@@ -6525,6 +6725,101 @@
                     }
                 }
             },
+            "PaymentAdmin": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "reader": {
+                        "type": "string",
+                        "description": "The reader's name"
+                    },
+                    "plan": {
+                        "type": "string"
+                    },
+                    "method": {
+                        "$ref": "#/components/schemas/PaymentMethodEnum"
+                    },
+                    "amount": {
+                        "type": "integer"
+                    },
+                    "currency": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "All but the last three digits hidden"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PaymentStatusEnum"
+                    },
+                    "channel": {
+                        "type": "string"
+                    },
+                    "reference": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "channel",
+                    "created_at",
+                    "currency",
+                    "id",
+                    "method",
+                    "phone",
+                    "plan",
+                    "reader",
+                    "reference",
+                    "status"
+                ]
+            },
+            "PaymentAdminPage": {
+                "type": "object",
+                "properties": {
+                    "next_cursor": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PaymentAdmin"
+                        }
+                    }
+                },
+                "required": [
+                    "next_cursor",
+                    "results"
+                ]
+            },
+            "PaymentMethodEnum": {
+                "enum": [
+                    "mobile",
+                    "card"
+                ],
+                "type": "string",
+                "description": "* `mobile` - Mobile\n* `card` - Card"
+            },
+            "PaymentStatusEnum": {
+                "enum": [
+                    "pending",
+                    "completed",
+                    "failed",
+                    "expired",
+                    "voided"
+                ],
+                "type": "string",
+                "description": "* `pending` - Pending\n* `completed` - Completed\n* `failed` - Failed\n* `expired` - Expired\n* `voided` - Voided"
+            },
             "Permission": {
                 "type": "object",
                 "properties": {
@@ -6567,6 +6862,208 @@
                     "display_name",
                     "id"
                 ]
+            },
+            "PlanAdmin": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true
+                    },
+                    "code": {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/PlanIntervalEnum"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "description": "In whole shillings (TZS), as Snippe takes it"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "name_sw": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "name_en": {
+                        "type": "string",
+                        "maxLength": 60
+                    },
+                    "tagline_sw": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "tagline_en": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "features_sw": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 80
+                        },
+                        "maxItems": 10
+                    },
+                    "features_en": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 80
+                        },
+                        "maxItems": 10
+                    },
+                    "badge_sw": {
+                        "type": "string",
+                        "maxLength": 30
+                    },
+                    "badge_en": {
+                        "type": "string",
+                        "maxLength": 30
+                    },
+                    "tone": {
+                        "$ref": "#/components/schemas/ToneEnum"
+                    },
+                    "highlighted": {
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "position": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    },
+                    "subscribers": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "default": 0
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "code",
+                    "created_at",
+                    "currency",
+                    "id",
+                    "interval",
+                    "name_en",
+                    "name_sw",
+                    "price",
+                    "subscribers",
+                    "updated_at"
+                ]
+            },
+            "PlanAdminRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 40,
+                        "pattern": "^[-a-zA-Z0-9_]+$"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/PlanIntervalEnum"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0,
+                        "description": "In whole shillings (TZS), as Snippe takes it"
+                    },
+                    "name_sw": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                    },
+                    "name_en": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                    },
+                    "tagline_sw": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "tagline_en": {
+                        "type": "string",
+                        "maxLength": 140
+                    },
+                    "features_sw": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                        },
+                        "maxItems": 10
+                    },
+                    "features_en": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                        },
+                        "maxItems": 10
+                    },
+                    "badge_sw": {
+                        "type": "string",
+                        "maxLength": 30
+                    },
+                    "badge_en": {
+                        "type": "string",
+                        "maxLength": 30
+                    },
+                    "tone": {
+                        "$ref": "#/components/schemas/ToneEnum"
+                    },
+                    "highlighted": {
+                        "type": "boolean"
+                    },
+                    "is_active": {
+                        "type": "boolean"
+                    },
+                    "position": {
+                        "type": "integer",
+                        "maximum": 32767,
+                        "minimum": 0
+                    }
+                },
+                "required": [
+                    "code",
+                    "interval",
+                    "name_en",
+                    "name_sw",
+                    "price"
+                ]
+            },
+            "PlanIntervalEnum": {
+                "enum": [
+                    "month",
+                    "year"
+                ],
+                "type": "string",
+                "description": "* `month` - Month\n* `year` - Year"
             },
             "Policy": {
                 "type": "object",
@@ -6841,6 +7338,9 @@
                     "is_sensitive": {
                         "type": "boolean"
                     },
+                    "requires_subscription": {
+                        "type": "boolean"
+                    },
                     "content_warning": {
                         "type": "string",
                         "maxLength": 200
@@ -6971,6 +7471,9 @@
                         "type": "boolean"
                     },
                     "is_sensitive": {
+                        "type": "boolean"
+                    },
+                    "requires_subscription": {
                         "type": "boolean"
                     },
                     "content_warning": {
@@ -8230,6 +8733,35 @@
                     "title_sw"
                 ]
             },
+            "SubscriptionSummary": {
+                "type": "object",
+                "properties": {
+                    "subscribers": {
+                        "type": "integer",
+                        "description": "Readers with paid time left"
+                    },
+                    "monthly": {
+                        "type": "integer"
+                    },
+                    "yearly": {
+                        "type": "integer"
+                    },
+                    "revenue_30d": {
+                        "type": "integer",
+                        "description": "Completed payments in the last 30 days, TZS"
+                    },
+                    "pending": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "monthly",
+                    "pending",
+                    "revenue_30d",
+                    "subscribers",
+                    "yearly"
+                ]
+            },
             "Summary": {
                 "type": "object",
                 "properties": {
@@ -8617,6 +9149,18 @@
                 ],
                 "type": "string",
                 "description": "* `signature` - signature\n* `bold` - bold\n* `quiet` - quiet"
+            },
+            "ToneEnum": {
+                "enum": [
+                    "brand",
+                    "ember",
+                    "ocean",
+                    "forest",
+                    "violet",
+                    "night"
+                ],
+                "type": "string",
+                "description": "* `brand` - brand\n* `ember` - ember\n* `ocean` - ocean\n* `forest` - forest\n* `violet` - violet\n* `night` - night"
             },
             "TotpBegin": {
                 "type": "object",

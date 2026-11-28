@@ -13,6 +13,7 @@ class IntegrationsConfig(AppConfig):
             google_signin,
             s3,
             ses,
+            snippe,
             waf,
             web,
             youtube,

@@ -206,6 +206,11 @@ def _write(*, actor: User, key: str, data: dict[str, Any], version: int, approve
         from newsplatform.content.tasks import announce
 
         transaction.on_commit(lambda: announce.delay(["app-config", "site"], []), robust=True)
+    if key == "subscriptions":
+        from newsplatform.content.tasks import announce
+
+        # What a locked story shows (and whether it is locked) is in every one of them.
+        transaction.on_commit(lambda: announce.delay(["premium", "site"], []), robust=True)
     if key == "security":
         from newsplatform.staff_security.tasks import sync_waf_allowlist
 

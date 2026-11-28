@@ -94,6 +94,8 @@ export async function asReader(path: string, init: RequestInit = {}): Promise<An
 }
 
 export const signedIn = async () => (await cookies()).has(REFRESH);
+/** The access token as it is now (after `asReader` has renewed it): for this server's own pages only. */
+export const accessToken = async () => (await cookies()).get(ACCESS)?.value ?? "";
 export const refreshToken = async () => (await cookies()).get(REFRESH)?.value ?? "";
 
 /** Unsafe requests come from this site's own pages: the Origin says so (and the cookies are SameSite=Lax). */

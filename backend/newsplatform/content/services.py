@@ -56,6 +56,7 @@ _PLAIN = (
     "is_evergreen",
     "is_sensitive",
     "content_warning",
+    "requires_subscription",
 )
 
 

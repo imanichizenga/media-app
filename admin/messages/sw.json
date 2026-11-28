@@ -33,7 +33,8 @@
     "taxonomy": "Makundi na lebo",
     "author": "Ukurasa wangu wa mwandishi",
     "appearance": "Mwonekano",
-    "pages": "Kurasa"
+    "pages": "Kurasa",
+    "subscriptions": "Usajili"
   },
   "errors": {
     "unavailable": "Hitilafu imetokea. Tafadhali jaribu tena.",
@@ -366,7 +367,8 @@
       "app": "Programu ya simu",
       "seo": "Injini za utafutaji",
       "engagement": "Ushiriki",
-      "sign_in": "Kuingia kwa wasomaji"
+      "sign_in": "Kuingia kwa wasomaji",
+      "subscriptions": "Usajili"
     },
     "field": {
       "default_locale": "Lugha chaguo-msingi",
@@ -422,7 +424,11 @@
       "sms_hourly_budget": "SMS zote kwa saa (bajeti)",
       "android_app_hash": "Hash ya programu ya Android (SMS)",
       "terms_version": "Toleo la masharti",
-      "card_counts": "Onyesha idadi ya waliosoma, waliopenda na maoni kwenye kadi za habari"
+      "card_counts": "Onyesha idadi ya waliosoma, waliopenda na maoni kwenye kadi za habari",
+      "paywall_enabled": "Funga habari za wanachama",
+      "preview_paragraphs": "Aya ambazo kila mtu anasoma",
+      "mobile_money": "Lipa kwa pesa ya simu",
+      "cards": "Lipa kwa kadi"
     },
     "option": {
       "sw": "Kiswahili",
@@ -717,7 +723,8 @@
       "is_evergreen": "ya kudumu",
       "is_sensitive": "nyeti",
       "breaking_until": "dharura",
-      "embargo_until": "zuio"
+      "embargo_until": "zuio",
+      "requires_subscription": "kwa wanachama"
     },
     "textField": {
       "headline": "Kichwa cha habari",
@@ -737,7 +744,8 @@
       "same": "Haijabadilika"
     },
     "earlier": "{n, plural, one {# ya awali} other {# za awali}}",
-    "calendarTruncated": "Habari ni nyingi mno kwa mwonekano mmoja. Orodha hii haijakamilika."
+    "calendarTruncated": "Habari ni nyingi mno kwa mwonekano mmoja. Orodha hii haijakamilika.",
+    "subscribers": "Kwa wanachama tu (mwanzo ni bure)"
   },
   "editor": {
     "body": "Maandishi ya makala",
@@ -1120,5 +1128,68 @@
       "privacy": "Faragha",
       "terms": "Masharti"
     }
+  },
+  "subscriptions": {
+    "title": "Usajili",
+    "lead": "Vifurushi wasomaji wanavyonunua, na walicholipa. Funguo za Snippe ziko Miunganisho; kanuni za kufunga habari ziko Mipangilio.",
+    "subscribers": "Wanachama",
+    "monthly": "Wa kila mwezi",
+    "yearly": "Wa kila mwaka",
+    "revenue": "Malipo ya siku 30 zilizopita",
+    "pending": "Malipo yanayosubiri",
+    "plans": "Vifurushi",
+    "newPlan": "Kifurushi kipya",
+    "editPlan": "Hariri kifurushi",
+    "noPlans": "Bado hakuna vifurushi. Wasomaji wanaona kizuizi lakini hawawezi kulipa.",
+    "code": "Msimbo",
+    "codeHelp": "Herufi ndogo, tarakimu na vistari. Wasomaji hawauoni.",
+    "interval": "Malipo",
+    "month": "Kila mwezi",
+    "year": "Kila mwaka",
+    "price": "Bei (TZS)",
+    "priceHelp": "Shilingi kamili. Angalau 500.",
+    "nameSw": "Jina (Kiswahili)",
+    "nameEn": "Jina (Kiingereza)",
+    "taglineSw": "Mstari chini ya jina (Kiswahili)",
+    "taglineEn": "Mstari chini ya jina (Kiingereza)",
+    "featuresSw": "Kinachotolewa (Kiswahili), kimoja kwa mstari",
+    "featuresEn": "Kinachotolewa (Kiingereza), kimoja kwa mstari",
+    "badgeSw": "Beji (Kiswahili)",
+    "badgeEn": "Beji (Kiingereza)",
+    "badgeHelp": "Neno juu ya kadi, kama Maarufu zaidi. Acha wazi kama hakuna.",
+    "tone": "Rangi",
+    "highlighted": "Kinachaguliwa kwanza",
+    "active": "Kinatolewa kwa wasomaji",
+    "position": "Mpangilio",
+    "save": "Hifadhi kifurushi",
+    "remove": "Ondoa",
+    "removeHelp": "Kifurushi kilicholipiwa kinafichwa, hakifutwi.",
+    "perMonth": "/mwezi",
+    "perYear": "/mwaka",
+    "activeCount": "{n, plural, one {# mwanachama} other {# wanachama}}",
+    "hidden": "Kimefichwa",
+    "payments": "Malipo",
+    "when": "Lini",
+    "reader": "Msomaji",
+    "plan": "Kifurushi",
+    "method": "Njia",
+    "amount": "Kiasi",
+    "status": "Hali",
+    "phone": "Simu",
+    "noPayments": "Bado hakuna malipo.",
+    "mobile": "Pesa ya simu",
+    "card": "Kadi",
+    "status_pending": "Inasubiri",
+    "status_completed": "Imelipwa",
+    "status_failed": "Imeshindwa",
+    "status_expired": "Muda umeisha",
+    "status_voided": "Imebatilishwa",
+    "tone_brand": "Chapa",
+    "tone_ember": "Moto",
+    "tone_ocean": "Bahari",
+    "tone_forest": "Msitu",
+    "tone_violet": "Zambarau",
+    "tone_night": "Usiku",
+    "preview": "Wasomaji wanavyokiona"
   }
 }

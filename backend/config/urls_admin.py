@@ -15,6 +15,7 @@ from newsplatform.seo import api as seo
 from newsplatform.site_config import api as site
 from newsplatform.site_config import brand_api as brand
 from newsplatform.staff_security import api as staff
+from newsplatform.subscriptions import admin_api as paid
 from newsplatform.taxonomy import api as taxonomy
 
 API = "api/v1/"
@@ -116,6 +117,10 @@ urlpatterns = [
     path(API + "pages/<slug:key>", pages.PageView.as_view()),
     path(API + "pages/<slug:key>/publish", pages.PagePublishView.as_view()),
     path(API + "pages/<slug:key>/revisions/<int:number>", pages.PageRevisionView.as_view()),
+    path(API + "subscriptions/plans", paid.PlanListView.as_view()),
+    path(API + "subscriptions/plans/<uuid:plan_id>", paid.PlanView.as_view()),
+    path(API + "subscriptions/payments", paid.PaymentListView.as_view()),
+    path(API + "subscriptions/summary", paid.SummaryView.as_view()),
     path(API + "redirects", seo.RedirectListView.as_view()),
     path(API + "redirects/<uuid:redirect_id>", seo.RedirectView.as_view()),
 ]

@@ -16,6 +16,7 @@ def deployed_environment_is_hardened(app_configs: Any, **_: Any) -> list[Error]:
         "E008": (not settings.STORAGE_ENDPOINT_URL, "STORAGE_ENDPOINT_URL must not be set"),
         "E009": (not settings.LOCAL_TRANSCODER, "LOCAL_TRANSCODER must not be set"),
         "E016": (not settings.LOCAL_SMS, "LOCAL_SMS must not be set"),
+        "E017": (not settings.LOCAL_PAYMENTS, "LOCAL_PAYMENTS must not be set"),
         "E010": (not settings.LOCAL_SCANNER, "LOCAL_SCANNER must not be set"),
         "E011": (not settings.LOCAL_WEB_ORIGIN, "LOCAL_WEB_ORIGIN must not be set"),
         "E005": (settings.ADMIN_ORIGIN.startswith("https://"), "ADMIN_ORIGIN must be https"),

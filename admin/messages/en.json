@@ -33,7 +33,8 @@
     "taxonomy": "Categories and tags",
     "author": "My author page",
     "appearance": "Appearance",
-    "pages": "Pages"
+    "pages": "Pages",
+    "subscriptions": "Subscriptions"
   },
   "errors": {
     "unavailable": "Something went wrong. Please try again.",
@@ -366,7 +367,8 @@
       "app": "Mobile app",
       "seo": "Search engines",
       "engagement": "Engagement",
-      "sign_in": "Readers' sign-in"
+      "sign_in": "Readers' sign-in",
+      "subscriptions": "Subscriptions"
     },
     "field": {
       "default_locale": "Default language",
@@ -422,7 +424,11 @@
       "sms_hourly_budget": "All SMS codes an hour (budget)",
       "android_app_hash": "Android app hash (SMS autofill)",
       "terms_version": "Terms version readers accept",
-      "card_counts": "Show views, likes and comments on story cards"
+      "card_counts": "Show views, likes and comments on story cards",
+      "paywall_enabled": "Lock stories marked for subscribers",
+      "preview_paragraphs": "Paragraphs everyone may read",
+      "mobile_money": "Pay by mobile money",
+      "cards": "Pay by card"
     },
     "option": {
       "sw": "Kiswahili",
@@ -717,7 +723,8 @@
       "is_evergreen": "evergreen",
       "is_sensitive": "sensitive",
       "breaking_until": "breaking",
-      "embargo_until": "embargo"
+      "embargo_until": "embargo",
+      "requires_subscription": "for subscribers"
     },
     "textField": {
       "headline": "Headline",
@@ -737,7 +744,8 @@
       "same": "Unchanged"
     },
     "earlier": "{n, plural, one {# earlier} other {# earlier}}",
-    "calendarTruncated": "Too many posts for one view. The list below is incomplete."
+    "calendarTruncated": "Too many posts for one view. The list below is incomplete.",
+    "subscribers": "For subscribers only (the opening is free)"
   },
   "editor": {
     "body": "Article text",
@@ -1120,5 +1128,68 @@
       "privacy": "Privacy",
       "terms": "Terms"
     }
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "lead": "The plans readers buy, and what they paid. Snippe's keys are in Integrations; the paywall's rules are in Settings.",
+    "subscribers": "Subscribers",
+    "monthly": "On a monthly plan",
+    "yearly": "On a yearly plan",
+    "revenue": "Paid in the last 30 days",
+    "pending": "Payments waiting",
+    "plans": "Plans",
+    "newPlan": "New plan",
+    "editPlan": "Edit plan",
+    "noPlans": "No plans yet. Readers see the paywall but cannot pay.",
+    "code": "Code",
+    "codeHelp": "Lowercase letters, digits and dashes. Not shown to readers.",
+    "interval": "Billed",
+    "month": "Monthly",
+    "year": "Yearly",
+    "price": "Price (TZS)",
+    "priceHelp": "Whole shillings. At least 500.",
+    "nameSw": "Name (Swahili)",
+    "nameEn": "Name (English)",
+    "taglineSw": "Line under the name (Swahili)",
+    "taglineEn": "Line under the name (English)",
+    "featuresSw": "What it gives (Swahili), one per line",
+    "featuresEn": "What it gives (English), one per line",
+    "badgeSw": "Badge (Swahili)",
+    "badgeEn": "Badge (English)",
+    "badgeHelp": "A word above the card, like Most popular. Empty for none.",
+    "tone": "Colour",
+    "highlighted": "Chosen first on the plans page",
+    "active": "Offered to readers",
+    "position": "Order",
+    "save": "Save plan",
+    "remove": "Remove",
+    "removeHelp": "A plan someone paid for is hidden, not deleted.",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "activeCount": "{n, plural, one {# subscriber} other {# subscribers}}",
+    "hidden": "Hidden",
+    "payments": "Payments",
+    "when": "When",
+    "reader": "Reader",
+    "plan": "Plan",
+    "method": "Method",
+    "amount": "Amount",
+    "status": "Status",
+    "phone": "Phone",
+    "noPayments": "No payments yet.",
+    "mobile": "Mobile money",
+    "card": "Card",
+    "status_pending": "Waiting",
+    "status_completed": "Paid",
+    "status_failed": "Failed",
+    "status_expired": "Expired",
+    "status_voided": "Voided",
+    "tone_brand": "Brand",
+    "tone_ember": "Ember",
+    "tone_ocean": "Ocean",
+    "tone_forest": "Forest",
+    "tone_violet": "Violet",
+    "tone_night": "Night",
+    "preview": "How readers see it"
   }
 }

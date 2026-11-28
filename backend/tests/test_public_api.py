@@ -161,7 +161,15 @@ def test_no_private_field_ever_reaches_a_reader(editor, cat):
     row = full(editor, cat)
     services.add_note(actor=editor, post_id=row.pk, text="siri-ya-mhariri")
     text = get("articles/kichwa-sw").content.decode()
-    for secret in (editor.email, "siri-ya-mhariri", "focus_keyword", "original_key", "originals/", "locked"):
+    for secret in (
+        editor.email,
+        "siri-ya-mhariri",
+        "focus_keyword",
+        "original_key",
+        "originals/",
+        "locked_by",
+        "locked_at",
+    ):
         assert secret not in text
 
 

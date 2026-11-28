@@ -47,3 +47,6 @@
 - [0045](0045-static-pages.md) The publisher's own pages
 - [0046](0046-website-rendering.md) How the website renders, caches and moves
 - [0047](0047-website-hosting.md) The website runs on ECS behind CloudFront
+- [0049](0049-search.md) Search
+- [0050](0050-readers-accounts-and-engagement.md) Readers' accounts and engagement
+- [0052](0052-subscriptions.md) Subscriptions: stories for subscribers, plans and Snippe

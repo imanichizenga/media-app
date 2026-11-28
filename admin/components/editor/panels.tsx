@@ -649,6 +649,12 @@ export function DetailsPanel({ draft, snap, locale, disabled }: Props) {
         onChange={(is_evergreen) => draft.change({ is_evergreen })}
       />
       <Row
+        label={t("subscribers")}
+        checked={data.requires_subscription ?? false}
+        disabled={disabled}
+        onChange={(requires_subscription) => draft.change({ requires_subscription })}
+      />
+      <Row
         label={t("sensitive")}
         checked={data.is_sensitive ?? false}
         disabled={disabled}

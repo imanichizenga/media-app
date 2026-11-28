@@ -4,6 +4,7 @@ import {
   Bookmark,
   ChevronLeft,
   ChevronRight,
+  Crown,
   Eye,
   Heart,
   type Icon,
@@ -36,12 +37,16 @@ export type CardData = {
   breaking_until: string | null;
   is_live: boolean;
   is_sensitive: boolean;
+  /** For subscribers: the card is everyone's, most of the story is not (ADR-0052). */
+  premium?: boolean;
 };
 export type NewsLabels = {
   live: string;
   breaking: string;
   gallery: string;
   sensitive: string;
+  /** The mark on a card whose story is for subscribers. */
+  premium?: string;
   minutes: (n: number) => string;
   more: string;
   /** "# likes", "# comments", "# views": read aloud for the counts on cards, the number put in place of "#". */
@@ -156,6 +161,19 @@ export const LivePill = ({ label, className }: { label: string; className?: stri
     {label}
   </span>
 );
+/** A story for subscribers: a small crown and the word, in the brand's gold-on-ink, before the category. */
+export const PremiumMark = ({ label, className }: { label: string; className?: string }) => (
+  <span
+    data-premium=""
+    className={cx(
+      "premium-mark inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 text-[11px] font-bold uppercase leading-[1.6] tracking-wide",
+      className,
+    )}
+  >
+    <Crown size={11} strokeWidth={2.5} />
+    {label}
+  </span>
+);
 /**
  * What a card is about and how fresh it is: one line, always, and nothing in it cut (ADR-0044, R2). In order of what
  * matters: the category, whole; the time; the reading time. The line is one line high and its parts wrap whole onto a
@@ -194,6 +212,7 @@ export function Kicker({
       className="meta flex h-[1lh] w-full min-w-0 flex-wrap items-center gap-x-1.5 self-stretch overflow-hidden text-caption text-text-secondary"
     >
       {pill && <LivePill label={env.t.live} className={cx("shrink-0", cover ? "lg:hidden" : "")} />}
+      {card.premium && env.t.premium && <PremiumMark label={env.t.premium} />}
       {named && (
         <span className="shrink-0 whitespace-nowrap font-semibold text-text-primary">
           <span data-name="">{name}</span>

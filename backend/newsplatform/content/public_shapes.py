@@ -91,6 +91,9 @@ class CardSerializer(serializers.Serializer[Any]):
     published_at = serializers.DateTimeField()
     modified_at = serializers.DateTimeField()
     is_sensitive = serializers.BooleanField()
+    premium = serializers.BooleanField(
+        required=False, help_text="For subscribers: the card and the opening are for everyone"
+    )
     breaking_until = _when()
     is_live = serializers.BooleanField()
 
@@ -138,6 +141,10 @@ class ArticleSerializer(CardSerializer):
     seo = schema("PublicSeo", title=serializers.CharField(), description=_text())
     first_published_at = _when()
     live_ended_at = _when()
+    locked = serializers.BooleanField(
+        required=False,
+        help_text="Only the opening of the body is here; the rest is for subscribers (see subscriptions)",
+    )
     translations = serializers.ListField(
         child=schema("Translation", locale=serializers.CharField(), path=serializers.CharField())
     )

@@ -43,6 +43,8 @@ abstract class _$CardCWProxy {
 
   Card isSensitive(bool isSensitive);
 
+  Card premium(bool? premium);
+
   Card breakingUntil(DateTime? breakingUntil);
 
   Card isLive(bool isLive);
@@ -72,6 +74,7 @@ abstract class _$CardCWProxy {
     DateTime publishedAt,
     DateTime modifiedAt,
     bool isSensitive,
+    bool? premium,
     DateTime? breakingUntil,
     bool isLive,
   });
@@ -139,6 +142,9 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
   Card isSensitive(bool isSensitive) => this(isSensitive: isSensitive);
 
   @override
+  Card premium(bool? premium) => this(premium: premium);
+
+  @override
   Card breakingUntil(DateTime? breakingUntil) =>
       this(breakingUntil: breakingUntil);
 
@@ -171,6 +177,7 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
     Object? publishedAt = const $CopyWithPlaceholder(),
     Object? modifiedAt = const $CopyWithPlaceholder(),
     Object? isSensitive = const $CopyWithPlaceholder(),
+    Object? premium = const $CopyWithPlaceholder(),
     Object? breakingUntil = const $CopyWithPlaceholder(),
     Object? isLive = const $CopyWithPlaceholder(),
   }) {
@@ -247,6 +254,10 @@ class _$CardCWProxyImpl implements _$CardCWProxy {
           ? _value.isSensitive
           // ignore: cast_nullable_to_non_nullable
           : isSensitive as bool,
+      premium: premium == const $CopyWithPlaceholder()
+          ? _value.premium
+          // ignore: cast_nullable_to_non_nullable
+          : premium as bool?,
       breakingUntil: breakingUntil == const $CopyWithPlaceholder()
           ? _value.breakingUntil
           // ignore: cast_nullable_to_non_nullable
@@ -345,6 +356,7 @@ Card _$CardFromJson(Map<String, dynamic> json) => $checkedCreate(
         (v) => DateTime.parse(v as String),
       ),
       isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
+      premium: $checkedConvert('premium', (v) => v as bool?),
       breakingUntil: $checkedConvert(
         'breaking_until',
         (v) => v == null ? null : DateTime.parse(v as String),
@@ -385,6 +397,7 @@ Map<String, dynamic> _$CardToJson(Card instance) => <String, dynamic>{
   'published_at': instance.publishedAt.toIso8601String(),
   'modified_at': instance.modifiedAt.toIso8601String(),
   'is_sensitive': instance.isSensitive,
+  'premium': ?instance.premium,
   'breaking_until': instance.breakingUntil?.toIso8601String(),
   'is_live': instance.isLive,
 };

@@ -26,6 +26,7 @@ Name | Type | Description | Notes
 **publishedAt** | [**DateTime**](DateTime.md) |  | 
 **modifiedAt** | [**DateTime**](DateTime.md) |  | 
 **isSensitive** | **bool** |  | 
+**premium** | **bool** | For subscribers: the card and the opening are for everyone | [optional] 
 **breakingUntil** | [**DateTime**](DateTime.md) |  | 
 **isLive** | **bool** |  | 
 **body** | **Map&lt;String, Object?&gt;** |  | 
@@ -43,6 +44,7 @@ Name | Type | Description | Notes
 **seo** | [**PublicSeo**](PublicSeo.md) |  | 
 **firstPublishedAt** | [**DateTime**](DateTime.md) |  | 
 **liveEndedAt** | [**DateTime**](DateTime.md) |  | 
+**locked** | **bool** | Only the opening of the body is here; the rest is for subscribers (see subscriptions) | [optional] 
 **translations** | [**List&lt;Translation&gt;**](Translation.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

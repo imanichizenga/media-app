@@ -1,6 +1,12 @@
 """What to do about a failed test step, in Swahili. `detail` stays as the vendor said it: it is evidence."""
 
 SW = {
+    "The Snippe API key is wrong or revoked.": "Ufunguo wa API wa Snippe si sahihi au umefutwa.",
+    "Give the Snippe API key the collection scopes.": "Upe ufunguo wa API wa Snippe ruhusa za collection.",
+    "Snippe is limiting requests. Try again in a minute.": "Snippe inapunguza maombi. Jaribu tena baada ya dakika moja.",
+    "Snippe had an internal error. Try again shortly.": "Snippe imepata hitilafu. Jaribu tena baadaye kidogo.",
+    "Add the checkout token to take cards.": "Weka tokeni ya ukurasa wa malipo ili kupokea kadi.",
+    "Paste the webhook signing key again.": "Bandika tena ufunguo wa kusaini webhook.",
     "Grant the missing IAM action to the role or key this platform uses.": "Ipe role au ufunguo unaotumiwa na mfumo huu ruhusa ya IAM inayokosekana.",
     "Check the bucket name and region.": "Hakiki jina la ndoo na eneo lake.",
     "The access key does not exist. Create a new one or use the task role.": "Ufunguo huu haupo. Tengeneza mpya au tumia role ya seva.",

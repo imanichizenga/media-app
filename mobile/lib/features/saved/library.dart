@@ -189,6 +189,7 @@ Story storyOf(Article a) => api.Card(
   publishedAt: a.publishedAt,
   modifiedAt: a.modifiedAt,
   isSensitive: a.isSensitive,
+  premium: a.premium,
   breakingUntil: a.breakingUntil,
   isLive: a.isLive,
 );

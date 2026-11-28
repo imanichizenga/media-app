@@ -43,6 +43,8 @@ abstract class _$ArticleCWProxy {
 
   Article isSensitive(bool isSensitive);
 
+  Article premium(bool? premium);
+
   Article breakingUntil(DateTime? breakingUntil);
 
   Article isLive(bool isLive);
@@ -77,6 +79,8 @@ abstract class _$ArticleCWProxy {
 
   Article liveEndedAt(DateTime? liveEndedAt);
 
+  Article locked(bool? locked);
+
   Article translations(List<Translation> translations);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Article(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -104,6 +108,7 @@ abstract class _$ArticleCWProxy {
     DateTime publishedAt,
     DateTime modifiedAt,
     bool isSensitive,
+    bool? premium,
     DateTime? breakingUntil,
     bool isLive,
     Map<String, Object?> body,
@@ -121,6 +126,7 @@ abstract class _$ArticleCWProxy {
     PublicSeo seo,
     DateTime? firstPublishedAt,
     DateTime? liveEndedAt,
+    bool? locked,
     List<Translation> translations,
   });
 }
@@ -187,6 +193,9 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
   Article isSensitive(bool isSensitive) => this(isSensitive: isSensitive);
 
   @override
+  Article premium(bool? premium) => this(premium: premium);
+
+  @override
   Article breakingUntil(DateTime? breakingUntil) =>
       this(breakingUntil: breakingUntil);
 
@@ -244,6 +253,9 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
   Article liveEndedAt(DateTime? liveEndedAt) => this(liveEndedAt: liveEndedAt);
 
   @override
+  Article locked(bool? locked) => this(locked: locked);
+
+  @override
   Article translations(List<Translation> translations) =>
       this(translations: translations);
 
@@ -273,6 +285,7 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
     Object? publishedAt = const $CopyWithPlaceholder(),
     Object? modifiedAt = const $CopyWithPlaceholder(),
     Object? isSensitive = const $CopyWithPlaceholder(),
+    Object? premium = const $CopyWithPlaceholder(),
     Object? breakingUntil = const $CopyWithPlaceholder(),
     Object? isLive = const $CopyWithPlaceholder(),
     Object? body = const $CopyWithPlaceholder(),
@@ -290,6 +303,7 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
     Object? seo = const $CopyWithPlaceholder(),
     Object? firstPublishedAt = const $CopyWithPlaceholder(),
     Object? liveEndedAt = const $CopyWithPlaceholder(),
+    Object? locked = const $CopyWithPlaceholder(),
     Object? translations = const $CopyWithPlaceholder(),
   }) {
     return Article(
@@ -365,6 +379,10 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
           ? _value.isSensitive
           // ignore: cast_nullable_to_non_nullable
           : isSensitive as bool,
+      premium: premium == const $CopyWithPlaceholder()
+          ? _value.premium
+          // ignore: cast_nullable_to_non_nullable
+          : premium as bool?,
       breakingUntil: breakingUntil == const $CopyWithPlaceholder()
           ? _value.breakingUntil
           // ignore: cast_nullable_to_non_nullable
@@ -433,6 +451,10 @@ class _$ArticleCWProxyImpl implements _$ArticleCWProxy {
           ? _value.liveEndedAt
           // ignore: cast_nullable_to_non_nullable
           : liveEndedAt as DateTime?,
+      locked: locked == const $CopyWithPlaceholder()
+          ? _value.locked
+          // ignore: cast_nullable_to_non_nullable
+          : locked as bool?,
       translations: translations == const $CopyWithPlaceholder()
           ? _value.translations
           // ignore: cast_nullable_to_non_nullable
@@ -543,6 +565,7 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => $checkedCreate(
         (v) => DateTime.parse(v as String),
       ),
       isSensitive: $checkedConvert('is_sensitive', (v) => v as bool),
+      premium: $checkedConvert('premium', (v) => v as bool?),
       breakingUntil: $checkedConvert(
         'breaking_until',
         (v) => v == null ? null : DateTime.parse(v as String),
@@ -606,6 +629,7 @@ Article _$ArticleFromJson(Map<String, dynamic> json) => $checkedCreate(
         'live_ended_at',
         (v) => v == null ? null : DateTime.parse(v as String),
       ),
+      locked: $checkedConvert('locked', (v) => v as bool?),
       translations: $checkedConvert(
         'translations',
         (v) => (v as List<dynamic>)
@@ -653,6 +677,7 @@ Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
   'published_at': instance.publishedAt.toIso8601String(),
   'modified_at': instance.modifiedAt.toIso8601String(),
   'is_sensitive': instance.isSensitive,
+  'premium': ?instance.premium,
   'breaking_until': instance.breakingUntil?.toIso8601String(),
   'is_live': instance.isLive,
   'body': instance.body,
@@ -670,6 +695,7 @@ Map<String, dynamic> _$ArticleToJson(Article instance) => <String, dynamic>{
   'seo': instance.seo.toJson(),
   'first_published_at': instance.firstPublishedAt?.toIso8601String(),
   'live_ended_at': instance.liveEndedAt?.toIso8601String(),
+  'locked': ?instance.locked,
   'translations': instance.translations.map((e) => e.toJson()).toList(),
 };
 

@@ -52,6 +52,7 @@ type Comment = {
 type Pending =
   | { kind: "like"; post: string }
   | { kind: "comment"; post: string; body: string; parent: string | null }
+  | { kind: "subscribe" }
   | { kind: "none" };
 
 let tools: Tools;
@@ -277,6 +278,8 @@ async function done() {
   if (d?.open) d.close();
   tools.toast(say(d, "sayWelcome", me?.display_name || me?.username || ""));
   await mergeSaved();
+  // A story for subscribers opens if they are one (islands/subscribe.ts).
+  dispatchEvent(new Event("signed-in"));
   await resume();
   arrive();
 }
@@ -292,6 +295,8 @@ async function resume() {
     if (b && b.getAttribute("aria-pressed") !== "true") await like(b);
   } else if (then.kind === "comment" && then.body) {
     await postComment(then.post, then.body, then.parent);
+  } else if (then.kind === "subscribe") {
+    dispatchEvent(new Event("resume-subscribe"));
   }
 }
 /** Stories saved on this device before signing in go to the account, so they are on every device. */
@@ -668,10 +673,7 @@ export function start(given: Tools) {
     if (el.id === "auth-code" && (el as HTMLInputElement).value.replace(/\D/g, "").length === 6)
       (el.closest("form") as HTMLFormElement).requestSubmit();
   });
-  document.addEventListener("focusin", (e) => {
-    if ((e.target as HTMLElement).id === "comment-body" && !me && known)
-      openSheet(box()?.dataset.intent ?? "", { kind: "none" });
-  });
+  // A guest writes the comment first; sending it asks them to sign in, and it is sent once they are (resume).
   document.addEventListener("submit", async (e) => {
     const form = e.target as HTMLFormElement;
     const kind = form.dataset.form ?? (form.matches("[data-comment-form]") ? "comment" : "");

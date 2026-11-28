@@ -1284,6 +1284,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/subscriptions/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payments_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["plans_list"];
+        put?: never;
+        post: operations["plans_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/plans/{plan_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["plans_save"];
+        post?: never;
+        delete: operations["plans_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["subscriptions_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tags": {
         parameters: {
             query?: never;
@@ -2075,6 +2139,42 @@ export interface components {
             focal_x?: number;
             focal_y?: number;
         };
+        PaymentAdmin: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            created_at: string;
+            /** @description The reader's name */
+            reader: string;
+            plan: string;
+            method: components["schemas"]["PaymentMethodEnum"];
+            amount: number;
+            currency: string;
+            /** @description All but the last three digits hidden */
+            phone: string;
+            status: components["schemas"]["PaymentStatusEnum"];
+            channel: string;
+            reference: string;
+        };
+        PaymentAdminPage: {
+            next_cursor: string | null;
+            results: components["schemas"]["PaymentAdmin"][];
+        };
+        /**
+         * @description * `mobile` - Mobile
+         *     * `card` - Card
+         * @enum {string}
+         */
+        PaymentMethodEnum: "mobile" | "card";
+        /**
+         * @description * `pending` - Pending
+         *     * `completed` - Completed
+         *     * `failed` - Failed
+         *     * `expired` - Expired
+         *     * `voided` - Voided
+         * @enum {string}
+         */
+        PaymentStatusEnum: "pending" | "completed" | "failed" | "expired" | "voided";
         Permission: {
             code: string;
             en: string;
@@ -2087,6 +2187,57 @@ export interface components {
             id: string;
             display_name: string;
         };
+        PlanAdmin: {
+            /** Format: uuid */
+            readonly id: string;
+            code: string;
+            interval: components["schemas"]["PlanIntervalEnum"];
+            /** @description In whole shillings (TZS), as Snippe takes it */
+            price: number;
+            readonly currency: string;
+            name_sw: string;
+            name_en: string;
+            tagline_sw?: string;
+            tagline_en?: string;
+            features_sw?: string[];
+            features_en?: string[];
+            badge_sw?: string;
+            badge_en?: string;
+            tone?: components["schemas"]["ToneEnum"];
+            highlighted?: boolean;
+            is_active?: boolean;
+            position?: number;
+            /** @default 0 */
+            readonly subscribers: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        PlanAdminRequest: {
+            code: string;
+            interval: components["schemas"]["PlanIntervalEnum"];
+            /** @description In whole shillings (TZS), as Snippe takes it */
+            price: number;
+            name_sw: string;
+            name_en: string;
+            tagline_sw?: string;
+            tagline_en?: string;
+            features_sw?: string[];
+            features_en?: string[];
+            badge_sw?: string;
+            badge_en?: string;
+            tone?: components["schemas"]["ToneEnum"];
+            highlighted?: boolean;
+            is_active?: boolean;
+            position?: number;
+        };
+        /**
+         * @description * `month` - Month
+         *     * `year` - Year
+         * @enum {string}
+         */
+        PlanIntervalEnum: "month" | "year";
         Policy: {
             likes: boolean;
             comments: components["schemas"]["CommentsEnum"];
@@ -2149,6 +2300,7 @@ export interface components {
             source_url?: string;
             is_evergreen?: boolean;
             is_sensitive?: boolean;
+            requires_subscription?: boolean;
             content_warning?: string;
             /** Format: date-time */
             breaking_until?: string | null;
@@ -2178,6 +2330,7 @@ export interface components {
             source_url?: string;
             is_evergreen?: boolean;
             is_sensitive?: boolean;
+            requires_subscription?: boolean;
             content_warning?: string;
             /** Format: date-time */
             breaking_until?: string | null;
@@ -2530,6 +2683,15 @@ export interface components {
             /** @default true */
             is_active: boolean;
         };
+        SubscriptionSummary: {
+            /** @description Readers with paid time left */
+            subscribers: number;
+            monthly: number;
+            yearly: number;
+            /** @description Completed payments in the last 30 days, TZS */
+            revenue_30d: number;
+            pending: number;
+        };
         Summary: {
             provider: string;
             name: string;
@@ -2640,6 +2802,16 @@ export interface components {
          * @enum {string}
          */
         ThemeKeyEnum: "signature" | "bold" | "quiet";
+        /**
+         * @description * `brand` - brand
+         *     * `ember` - ember
+         *     * `ocean` - ocean
+         *     * `forest` - forest
+         *     * `violet` - violet
+         *     * `night` - night
+         * @enum {string}
+         */
+        ToneEnum: "brand" | "ember" | "ocean" | "forest" | "violet" | "night";
         TotpBegin: {
             secret: string;
             qr_svg: string;
@@ -4959,6 +5131,134 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Story"];
+                };
+            };
+        };
+    };
+    payments_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentAdminPage"];
+                };
+            };
+        };
+    };
+    plans_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAdmin"][];
+                };
+            };
+        };
+    };
+    plans_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanAdminRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAdmin"];
+                };
+            };
+        };
+    };
+    plans_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanAdminRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanAdmin"];
+                };
+            };
+        };
+    };
+    plans_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    subscriptions_summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionSummary"];
                 };
             };
         };

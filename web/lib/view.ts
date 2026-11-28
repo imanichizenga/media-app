@@ -18,6 +18,7 @@ export function viewOf(locale: Locale, site: Site): NewsEnv {
       breaking: t("breaking"),
       gallery: t("gallery"),
       sensitive: t("sensitive"),
+      premium: t("premium"),
       minutes: (n) => t("minutesRead", { n }),
       more: t("more"),
       counts: {

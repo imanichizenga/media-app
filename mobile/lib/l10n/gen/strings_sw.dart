@@ -993,4 +993,149 @@ class StringsSw extends Strings {
 
   @override
   String get addBio => 'Ongeza maelezo mafupi kukuhusu';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get paywallTitle => 'Endelea kusoma habari hii';
+
+  @override
+  String get paywallText =>
+      'Habari hii ni ya wanachama. Jiunge upate habari zote, uchambuzi na ripoti maalum, bila kikomo.';
+
+  @override
+  String get paywallAction => 'Jiunge sasa';
+
+  @override
+  String get paywallSignIn => 'Tayari ni mwanachama? Ingia';
+
+  @override
+  String get paywallFree => 'Sio sasa, endelea na habari za bure';
+
+  @override
+  String paywallFrom(String v) {
+    return 'Kuanzia $v kwa mwezi';
+  }
+
+  @override
+  String get paywallUnlocking => 'Tunafungua habari…';
+
+  @override
+  String get plansTitle => 'Chagua kifurushi chako';
+
+  @override
+  String get plansLead => 'Habari zote, bila kikomo, kwenye simu na kompyuta. Acha wakati wowote.';
+
+  @override
+  String get plansMonthly => 'Kila mwezi';
+
+  @override
+  String get plansYearly => 'Kila mwaka';
+
+  @override
+  String get perMonth => '/mwezi';
+
+  @override
+  String get perYear => '/mwaka';
+
+  @override
+  String plansEquivalent(String v) {
+    return 'Sawa na $v kwa mwezi';
+  }
+
+  @override
+  String get plansContinue => 'Endelea';
+
+  @override
+  String get plansNone => 'Hakuna vifurushi kwa sasa.';
+
+  @override
+  String get plansFine =>
+      'Bei ni kwa Shilingi za Tanzania. Kifurushi hakijirudii chenyewe: unalipa tena ukitaka kuendelea.';
+
+  @override
+  String payTitle(String name) {
+    return 'Lipia $name';
+  }
+
+  @override
+  String get payMobile => 'Pesa kwa simu';
+
+  @override
+  String get payMobileHint => 'M-Pesa, Airtel Money, Mixx by Yas, Halopesa';
+
+  @override
+  String get payCard => 'Kadi ya benki';
+
+  @override
+  String get payCardHint => 'Mastercard au Visa';
+
+  @override
+  String get payPhone => 'Namba ya simu itakayolipa';
+
+  @override
+  String payButton(String v) {
+    return 'Lipa $v';
+  }
+
+  @override
+  String get payWaitTitle => 'Thibitisha kwenye simu yako';
+
+  @override
+  String payWaitText(String name) {
+    return 'Tumetuma ombi la malipo kwenda $name. Weka PIN yako kuthibitisha.';
+  }
+
+  @override
+  String get payCardRedirect => 'Tunakupeleka kwenye ukurasa salama wa malipo…';
+
+  @override
+  String get payChecking => 'Tunathibitisha malipo yako…';
+
+  @override
+  String get paySuccessTitle => 'Karibu, sasa wewe ni mwanachama!';
+
+  @override
+  String paySuccessText(String when) {
+    return 'Kifurushi chako kinadumu hadi $when.';
+  }
+
+  @override
+  String get payContinue => 'Endelea kusoma';
+
+  @override
+  String get payFailed => 'Malipo hayakukamilika. Jaribu tena.';
+
+  @override
+  String get payExpired => 'Muda wa malipo umeisha. Jaribu tena.';
+
+  @override
+  String get payUnavailable => 'Malipo hayapatikani kwa sasa. Jaribu baadaye.';
+
+  @override
+  String get payPhoneInvalid => 'Andika namba ya simu ya Tanzania.';
+
+  @override
+  String get paySecure => 'Malipo salama kupitia Snippe';
+
+  @override
+  String get payTryAgain => 'Jaribu tena';
+
+  @override
+  String get signInToSubscribe => 'Ingia ili ujiunge';
+
+  @override
+  String subscribedUntil(String when) {
+    return 'Mwanachama hadi $when';
+  }
+
+  @override
+  String get subscriptionMine => 'Kifurushi changu';
+
+  @override
+  String get subscriptionNone => 'Bado si mwanachama';
+
+  @override
+  String get subscriptionJoin => 'Angalia vifurushi';
 }

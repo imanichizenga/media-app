@@ -696,6 +696,89 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/subscriptions/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["subscription_checkout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["subscription_mine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/payments/{payment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Where a payment is, for the reader watching it. Asks Snippe now and then, in case its word is late. */
+        get: operations["subscription_payment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description What a reader may buy. The same for everyone. */
+        get: operations["subscription_plans"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/posts/{post_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The whole of a story for subscribers, for a reader with paid time left (402 otherwise). */
+        get: operations["subscription_story"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -773,6 +856,8 @@ export interface components {
             /** Format: date-time */
             modified_at: string;
             is_sensitive: boolean;
+            /** @description For subscribers: the card and the opening are for everyone */
+            premium?: boolean;
             /** Format: date-time */
             breaking_until: string | null;
             is_live: boolean;
@@ -801,6 +886,8 @@ export interface components {
             first_published_at: string | null;
             /** Format: date-time */
             live_ended_at: string | null;
+            /** @description Only the opening of the body is here; the rest is for subscribers (see subscriptions) */
+            locked?: boolean;
             translations: components["schemas"]["Translation"][];
         };
         AuthorPage: {
@@ -840,6 +927,8 @@ export interface components {
             /** Format: date-time */
             modified_at: string;
             is_sensitive: boolean;
+            /** @description For subscribers: the card and the opening are for everyone */
+            premium?: boolean;
             /** Format: date-time */
             breaking_until: string | null;
             is_live: boolean;
@@ -862,6 +951,14 @@ export interface components {
         CategoryTranslation: {
             locale: string;
             path: string;
+        };
+        CheckoutRequest: {
+            /** Format: uuid */
+            plan: string;
+            method: components["schemas"]["PaymentMethodEnum"];
+            phone?: string;
+            /** @description Where a card checkout comes back to, on the site */
+            return_path?: string;
         };
         CodeRequestRequest: {
             /** @description As the reader typed it; 0712 345 678 is +255712345678. */
@@ -1018,13 +1115,12 @@ export interface components {
             /** @description Development only: the code comes back in the answer, never by SMS. */
             local_sms: boolean;
         };
-        /**
-         * @description * `phone` - phone
-         *     * `google` - google
-         *     * `apple` - apple
-         * @enum {string}
-         */
-        MethodsEnum: "phone" | "google" | "apple";
+        MySubscription: {
+            active: boolean;
+            plan: components["schemas"]["Plan"] | null;
+            /** Format: date-time */
+            ends_at: string | null;
+        };
         NavigationItem: {
             /** Format: uuid */
             id: string;
@@ -1041,6 +1137,12 @@ export interface components {
             body: string;
             /** Format: uuid */
             parent?: string | null;
+        };
+        Offer: {
+            enabled: boolean;
+            preview_paragraphs: number;
+            methods: components["schemas"]["PaymentMethodEnum"][];
+            plans: components["schemas"]["Plan"][];
         };
         OpenedRequest: {
             /** @description A guest's random id, kept by the browser or app. */
@@ -1059,6 +1161,60 @@ export interface components {
             bio?: string;
             contact_email?: string;
         };
+        Payment: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["PaymentStatusEnum"];
+            method: components["schemas"]["PaymentMethodEnum"];
+            amount: number;
+            currency: string;
+            plan: string;
+            /** @description Cards: send the reader here */
+            checkout_url: string;
+            /** Format: date-time */
+            completed_at: string | null;
+            subscription: components["schemas"]["MySubscription"];
+        };
+        /**
+         * @description * `mobile` - Mobile
+         *     * `card` - Card
+         * @enum {string}
+         */
+        PaymentMethodEnum: "mobile" | "card";
+        /**
+         * @description * `pending` - Pending
+         *     * `completed` - Completed
+         *     * `failed` - Failed
+         *     * `expired` - Expired
+         *     * `voided` - Voided
+         * @enum {string}
+         */
+        PaymentStatusEnum: "pending" | "completed" | "failed" | "expired" | "voided";
+        Plan: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            interval: components["schemas"]["PlanIntervalEnum"];
+            /** @description Whole shillings */
+            price: number;
+            currency: string;
+            name: string;
+            tagline: string;
+            features: string[];
+            /** @description A word on the card's top; empty for none */
+            badge: string;
+            /** @description brand, ember, ocean, forest, violet or night */
+            tone: string;
+            highlighted: boolean;
+            /** @description A year's price over twelve; the month's own price otherwise */
+            monthly_equivalent: number;
+        };
+        /**
+         * @description * `month` - Month
+         *     * `year` - Year
+         * @enum {string}
+         */
+        PlanIntervalEnum: "month" | "year";
         PostState: {
             /** @description Openings; one device counts once in 30 minutes. */
             views: number;
@@ -1281,7 +1437,7 @@ export interface components {
             phone: string;
             email: string;
             locale: components["schemas"]["LocaleEnum"];
-            methods: components["schemas"]["MethodsEnum"][];
+            methods: components["schemas"]["ReaderMethodsEnum"][];
             /** @description A name and the terms are still to come. */
             onboarding: boolean;
             hide_from_readers: boolean;
@@ -1298,6 +1454,13 @@ export interface components {
             /** Format: date-time */
             at: string;
         };
+        /**
+         * @description * `phone` - phone
+         *     * `google` - google
+         *     * `apple` - apple
+         * @enum {string}
+         */
+        ReaderMethodsEnum: "phone" | "google" | "apple";
         Readers: {
             readers: number;
             views: number;
@@ -2547,6 +2710,117 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SiteConfig"];
+                };
+            };
+        };
+    };
+    subscription_checkout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    subscription_mine: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MySubscription"];
+                };
+            };
+        };
+    };
+    subscription_payment: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path: {
+                payment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Payment"];
+                };
+            };
+        };
+    };
+    subscription_plans: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Offer"];
+                };
+            };
+        };
+    };
+    subscription_story: {
+        parameters: {
+            query?: {
+                locale?: "en" | "sw";
+            };
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Article"];
                 };
             };
         };

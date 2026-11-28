@@ -14,6 +14,7 @@ import 'package:news_api_client/src/api/engagement_api.dart';
 import 'package:news_api_client/src/api/me_api.dart';
 import 'package:news_api_client/src/api/push_api.dart';
 import 'package:news_api_client/src/api/site_config_api.dart';
+import 'package:news_api_client/src/api/subscriptions_api.dart';
 
 class NewsApiClient {
   static const String basePath = r'http://localhost';
@@ -178,5 +179,11 @@ class NewsApiClient {
   /// by doing that all interceptors will not be executed
   SiteConfigApi getSiteConfigApi() {
     return SiteConfigApi(dio);
+  }
+
+  /// Get SubscriptionsApi instance, base route and serializer can be overridden by a given but be careful,
+  /// by doing that all interceptors will not be executed
+  SubscriptionsApi getSubscriptionsApi() {
+    return SubscriptionsApi(dio);
   }
 }

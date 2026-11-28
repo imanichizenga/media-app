@@ -352,4 +352,18 @@ abstract final class NewsIcons {
     'M21 12H9',
     'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4',
   ]);
+  static const crown = NewsIconData([
+    'M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z',
+    'M5 21h14',
+  ]);
+  static const lockKeyhole = NewsIconData([
+    'M11 16a1 1 0 1 0 2 0a1 1 0 1 0 -2 0Z',
+    'M5 10h14a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2Z',
+    'M7 10V7a5 5 0 0 1 10 0v3',
+  ]);
+  static const creditCard = NewsIconData([
+    'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2Z',
+    'M2 10L22 10',
+    'M6 14h2',
+  ]);
 }

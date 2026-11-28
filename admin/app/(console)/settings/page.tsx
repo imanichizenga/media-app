@@ -62,6 +62,12 @@ const SECTIONS: Record<string, Spec[]> = {
     { name: "app_banner", kind: "check" },
   ],
   engagement: [{ name: "card_counts", kind: "check" }],
+  subscriptions: [
+    { name: "enabled", label: "paywall_enabled", kind: "check" },
+    { name: "preview_paragraphs", kind: "number" },
+    { name: "mobile_money", kind: "check" },
+    { name: "cards", kind: "check" },
+  ],
   sign_in: [
     { name: "phone", label: "signin_phone", kind: "check" },
     { name: "google", label: "signin_google", kind: "check" },

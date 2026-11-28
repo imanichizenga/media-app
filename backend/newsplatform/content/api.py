@@ -103,6 +103,7 @@ class PostDataSerializer(serializers.Serializer[Any]):
     source_url = serializers.URLField(max_length=500, allow_blank=True, required=False)
     is_evergreen = serializers.BooleanField(required=False)
     is_sensitive = serializers.BooleanField(required=False)
+    requires_subscription = serializers.BooleanField(required=False)
     content_warning = serializers.CharField(max_length=200, allow_blank=True, required=False)
     breaking_until = serializers.DateTimeField(allow_null=True, required=False)
     embargo_until = serializers.DateTimeField(allow_null=True, required=False)

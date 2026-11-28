@@ -982,4 +982,149 @@ class StringsEn extends Strings {
 
   @override
   String get addBio => 'Add a short bio';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get paywallTitle => 'Keep reading this story';
+
+  @override
+  String get paywallText =>
+      'This story is for subscribers. Join for every story, analysis and special report, without limits.';
+
+  @override
+  String get paywallAction => 'Subscribe now';
+
+  @override
+  String get paywallSignIn => 'Already a subscriber? Sign in';
+
+  @override
+  String get paywallFree => 'Not now, keep reading free stories';
+
+  @override
+  String paywallFrom(String v) {
+    return 'From $v a month';
+  }
+
+  @override
+  String get paywallUnlocking => 'Unlocking the story…';
+
+  @override
+  String get plansTitle => 'Choose your plan';
+
+  @override
+  String get plansLead => 'Every story, without limits, on your phone and computer. Stop any time.';
+
+  @override
+  String get plansMonthly => 'Monthly';
+
+  @override
+  String get plansYearly => 'Yearly';
+
+  @override
+  String get perMonth => '/month';
+
+  @override
+  String get perYear => '/year';
+
+  @override
+  String plansEquivalent(String v) {
+    return 'Just $v a month';
+  }
+
+  @override
+  String get plansContinue => 'Continue';
+
+  @override
+  String get plansNone => 'No plans right now.';
+
+  @override
+  String get plansFine =>
+      'Prices are in Tanzanian shillings. A plan does not renew by itself: you pay again when you want more.';
+
+  @override
+  String payTitle(String name) {
+    return 'Pay for $name';
+  }
+
+  @override
+  String get payMobile => 'Mobile money';
+
+  @override
+  String get payMobileHint => 'M-Pesa, Airtel Money, Mixx by Yas, Halopesa';
+
+  @override
+  String get payCard => 'Bank card';
+
+  @override
+  String get payCardHint => 'Mastercard or Visa';
+
+  @override
+  String get payPhone => 'Phone number that pays';
+
+  @override
+  String payButton(String v) {
+    return 'Pay $v';
+  }
+
+  @override
+  String get payWaitTitle => 'Approve on your phone';
+
+  @override
+  String payWaitText(String name) {
+    return 'We sent a payment request to $name. Enter your PIN to approve it.';
+  }
+
+  @override
+  String get payCardRedirect => 'Taking you to the secure payment page…';
+
+  @override
+  String get payChecking => 'Confirming your payment…';
+
+  @override
+  String get paySuccessTitle => 'Welcome, you\'re subscribed!';
+
+  @override
+  String paySuccessText(String when) {
+    return 'Your plan runs until $when.';
+  }
+
+  @override
+  String get payContinue => 'Continue reading';
+
+  @override
+  String get payFailed => 'The payment did not go through. Try again.';
+
+  @override
+  String get payExpired => 'The payment timed out. Try again.';
+
+  @override
+  String get payUnavailable => 'Payments are not available right now. Try later.';
+
+  @override
+  String get payPhoneInvalid => 'Enter a Tanzanian mobile number.';
+
+  @override
+  String get paySecure => 'Secure payment by Snippe';
+
+  @override
+  String get payTryAgain => 'Try again';
+
+  @override
+  String get signInToSubscribe => 'Sign in to subscribe';
+
+  @override
+  String subscribedUntil(String when) {
+    return 'Subscribed until $when';
+  }
+
+  @override
+  String get subscriptionMine => 'My plan';
+
+  @override
+  String get subscriptionNone => 'Not subscribed yet';
+
+  @override
+  String get subscriptionJoin => 'See plans';
 }

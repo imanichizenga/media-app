@@ -12,6 +12,7 @@ import '../tokens/theme.dart';
 import 'basics.dart';
 import 'card_counts.dart';
 import 'picture.dart';
+import 'premium.dart';
 import 'signals.dart';
 import 'skeleton.dart';
 import 'story_menu.dart';
@@ -64,12 +65,14 @@ class Kicker extends ConsumerWidget {
       strong: strong,
       soft: soft,
     );
-    if (!cardCountsOn(ref)) return line;
+    final premium = story.premium ?? false;
+    if (!cardCountsOn(ref) && !premium) return line;
     // The counts take what they need at the end; the line makes itself shorter as it always does (R2).
     return Row(
       children: [
+        if (premium) ...[const PremiumMark(), const SizedBox(width: 6)],
         Flexible(child: line),
-        CardCounts(story.id, onMedia: onMedia),
+        if (cardCountsOn(ref)) CardCounts(story.id, onMedia: onMedia),
       ],
     );
   }
@@ -317,6 +320,7 @@ String _say(BuildContext context, Story story, DateTime now) {
     story.headline,
     if (story.length != null && story.isVideo) clock(story.length!),
     if (story.isSensitive) s.sensitive,
+    if (story.premium ?? false) s.premium,
     ago(story.publishedAt, s, now),
   ].join('. ');
 }

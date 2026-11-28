@@ -65,9 +65,21 @@ def test_public_surface_has_no_admin_routes():
     assert theme == {"", "current.css", "icon.svg", "logo/", "manifest-"}
     other = {p for p in rest if "theme/" not in p and "well-known" not in p}
     readers = {
-        p for p in other if p.startswith(("api/v1/auth/", "api/v1/me", "api/v1/engagement/", "api/v1/push/"))
+        p
+        for p in other
+        if p.startswith(
+            ("api/v1/auth/", "api/v1/me", "api/v1/engagement/", "api/v1/push/", "api/v1/subscriptions/")
+        )
+        and p != "api/v1/subscriptions/webhook"
     }
-    assert other - readers == {"health/live", "health/ready", "api/v1/site-config", "api/v1/app-config"}
+    # Snippe's word about a payment (ADR-0052): believed only when signed with the account's webhook key.
+    assert other - readers == {
+        "health/live",
+        "health/ready",
+        "api/v1/site-config",
+        "api/v1/app-config",
+        "api/v1/subscriptions/webhook",
+    }
     # Readers' own addresses (ADR-0050): each listed on purpose, each a ReaderView (bearer token, rate limit,
     # never cached unless the same for everyone). None of them reaches anything of the newsroom's.
     assert readers == {
@@ -92,6 +104,11 @@ def test_public_surface_has_no_admin_routes():
         "api/v1/engagement/follows/<slug:kind>/<uuid:target>",
         "api/v1/push/key",
         "api/v1/push/subscriptions",
+        "api/v1/subscriptions/plans",
+        "api/v1/subscriptions/mine",
+        "api/v1/subscriptions/checkout",
+        "api/v1/subscriptions/payments/<uuid:payment_id>",
+        "api/v1/subscriptions/posts/<uuid:post_id>",
     }
     from newsplatform.accounts.reader_api import ReaderView
 

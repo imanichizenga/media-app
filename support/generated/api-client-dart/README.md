@@ -114,6 +114,11 @@ Class | Method | HTTP request | Description
 [*PushApi*](doc/PushApi.md) | [**pushSubscribe**](doc/PushApi.md#pushsubscribe) | **POST** /api/v1/push/subscriptions | 
 [*PushApi*](doc/PushApi.md) | [**pushUnsubscribe**](doc/PushApi.md#pushunsubscribe) | **DELETE** /api/v1/push/subscriptions | 
 [*SiteConfigApi*](doc/SiteConfigApi.md) | [**siteConfig**](doc/SiteConfigApi.md#siteconfig) | **GET** /api/v1/site-config | 
+[*SubscriptionsApi*](doc/SubscriptionsApi.md) | [**subscriptionCheckout**](doc/SubscriptionsApi.md#subscriptioncheckout) | **POST** /api/v1/subscriptions/checkout | 
+[*SubscriptionsApi*](doc/SubscriptionsApi.md) | [**subscriptionMine**](doc/SubscriptionsApi.md#subscriptionmine) | **GET** /api/v1/subscriptions/mine | 
+[*SubscriptionsApi*](doc/SubscriptionsApi.md) | [**subscriptionPayment**](doc/SubscriptionsApi.md#subscriptionpayment) | **GET** /api/v1/subscriptions/payments/{payment_id} | 
+[*SubscriptionsApi*](doc/SubscriptionsApi.md) | [**subscriptionPlans**](doc/SubscriptionsApi.md#subscriptionplans) | **GET** /api/v1/subscriptions/plans | 
+[*SubscriptionsApi*](doc/SubscriptionsApi.md) | [**subscriptionStory**](doc/SubscriptionsApi.md#subscriptionstory) | **GET** /api/v1/subscriptions/posts/{post_id} | 
 
 
 ## Documentation For Models
@@ -134,6 +139,7 @@ Class | Method | HTTP request | Description
  - [CardList](doc/CardList.md)
  - [CategoryPage](doc/CategoryPage.md)
  - [CategoryTranslation](doc/CategoryTranslation.md)
+ - [CheckoutRequest](doc/CheckoutRequest.md)
  - [CodeRequestRequest](doc/CodeRequestRequest.md)
  - [CodeSent](doc/CodeSent.md)
  - [CodeVerifyRequest](doc/CodeVerifyRequest.md)
@@ -153,13 +159,19 @@ Class | Method | HTTP request | Description
  - [LocaleEnum](doc/LocaleEnum.md)
  - [Logo](doc/Logo.md)
  - [Methods](doc/Methods.md)
- - [MethodsEnum](doc/MethodsEnum.md)
  - [ModelExport](doc/ModelExport.md)
+ - [MySubscription](doc/MySubscription.md)
  - [NavigationItem](doc/NavigationItem.md)
  - [NewCommentRequest](doc/NewCommentRequest.md)
+ - [Offer](doc/Offer.md)
  - [OpenedRequest](doc/OpenedRequest.md)
  - [PageTranslation](doc/PageTranslation.md)
  - [PatchedProfileRequest](doc/PatchedProfileRequest.md)
+ - [Payment](doc/Payment.md)
+ - [PaymentMethodEnum](doc/PaymentMethodEnum.md)
+ - [PaymentStatusEnum](doc/PaymentStatusEnum.md)
+ - [Plan](doc/Plan.md)
+ - [PlanIntervalEnum](doc/PlanIntervalEnum.md)
  - [PostState](doc/PostState.md)
  - [PostTypeEnum](doc/PostTypeEnum.md)
  - [ProviderSignInRequest](doc/ProviderSignInRequest.md)
@@ -185,6 +197,7 @@ Class | Method | HTTP request | Description
  - [PushSubscriptionRequest](doc/PushSubscriptionRequest.md)
  - [Reader](doc/Reader.md)
  - [ReaderEntry](doc/ReaderEntry.md)
+ - [ReaderMethodsEnum](doc/ReaderMethodsEnum.md)
  - [Readers](doc/Readers.md)
  - [RefreshRequest](doc/RefreshRequest.md)
  - [Related](doc/Related.md)

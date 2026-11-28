@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "newsplatform.engagement",
     "newsplatform.search",
     "newsplatform.notifications",
+    "newsplatform.subscriptions",
 ]
 MIDDLEWARE = [
     "newsplatform.common.middleware.RequestContextMiddleware",
@@ -118,6 +119,9 @@ LOCAL_SCANNER = env_str("LOCAL_SCANNER", "")  # "clamav://host:port" or "eicar"
 # Sign-in codes go to the log and back in the answer instead of by SMS (ADR-0050). Refused in deployed
 # environments.
 LOCAL_SMS = env_bool("LOCAL_SMS")
+# Subscriptions without Snippe: a payment completes by itself a moment later (ADR-0052). Refused in deployed
+# environments.
+LOCAL_PAYMENTS = env_bool("LOCAL_PAYMENTS")
 # Web Push (ADR-0051): who push services may write to about this site's notifications (mailto: or https:).
 WEB_PUSH_SUBJECT = env_str("WEB_PUSH_SUBJECT", "" if IS_DEPLOYED else "mailto:newsroom@localhost")
 LOCAL_WEB_ORIGIN = env_str(
@@ -176,6 +180,9 @@ SPECTACULAR_SETTINGS = {
         "newsplatform.common.schema.relax_nullable_json",
     ],
     "ENUM_NAME_OVERRIDES": {
+        "PaymentMethodEnum": "newsplatform.subscriptions.models.Method",
+        "PaymentStatusEnum": "newsplatform.subscriptions.models.PaymentStatus",
+        "PlanIntervalEnum": "newsplatform.subscriptions.models.Interval",
         "PageKeyEnum": "newsplatform.pages.models.PageKey",
         "ThemeKeyEnum": "newsplatform.site_config.theme.derive.CHOICES",
         "LogoKindEnum": "newsplatform.site_config.models.BrandLogo.Kind",

@@ -360,5 +360,69 @@
   "settingsTitle": ["Mipangilio", "Settings"],
   "accountActions": ["Akaunti", "Account"],
   "memberSince": ["Msomaji tangu {v}", "Reader since {v}"],
-  "addBio": ["Ongeza maelezo mafupi kukuhusu", "Add a short bio"]
+  "addBio": ["Ongeza maelezo mafupi kukuhusu", "Add a short bio"],
+  "premium": ["Premium", "Premium"],
+  "paywallTitle": ["Endelea kusoma habari hii", "Keep reading this story"],
+  "paywallText": [
+    "Habari hii ni ya wanachama. Jiunge upate habari zote, uchambuzi na ripoti maalum, bila kikomo.",
+    "This story is for subscribers. Join for every story, analysis and special report, without limits."
+  ],
+  "paywallAction": ["Jiunge sasa", "Subscribe now"],
+  "paywallSignIn": ["Tayari ni mwanachama? Ingia", "Already a subscriber? Sign in"],
+  "paywallFree": ["Sio sasa, endelea na habari za bure", "Not now, keep reading free stories"],
+  "paywallFrom": ["Kuanzia {v} kwa mwezi", "From {v} a month"],
+  "paywallUnlocking": ["Tunafungua habari…", "Unlocking the story…"],
+  "plansTitle": ["Chagua kifurushi chako", "Choose your plan"],
+  "plansLead": [
+    "Habari zote, bila kikomo, kwenye simu na kompyuta. Acha wakati wowote.",
+    "Every story, without limits, on your phone and computer. Stop any time."
+  ],
+  "plansMonthly": ["Kila mwezi", "Monthly"],
+  "plansYearly": ["Kila mwaka", "Yearly"],
+  "perMonth": ["/mwezi", "/month"],
+  "perYear": ["/mwaka", "/year"],
+  "plansEquivalent": ["Sawa na {v} kwa mwezi", "Just {v} a month"],
+  "plansContinue": ["Endelea", "Continue"],
+  "plansNone": ["Hakuna vifurushi kwa sasa.", "No plans right now."],
+  "plansFine": [
+    "Bei ni kwa Shilingi za Tanzania. Kifurushi hakijirudii chenyewe: unalipa tena ukitaka kuendelea.",
+    "Prices are in Tanzanian shillings. A plan does not renew by itself: you pay again when you want more."
+  ],
+  "payTitle": ["Lipia {name}", "Pay for {name}"],
+  "payMobile": ["Pesa kwa simu", "Mobile money"],
+  "payMobileHint": [
+    "M-Pesa, Airtel Money, Mixx by Yas, Halopesa",
+    "M-Pesa, Airtel Money, Mixx by Yas, Halopesa"
+  ],
+  "payCard": ["Kadi ya benki", "Bank card"],
+  "payCardHint": ["Mastercard au Visa", "Mastercard or Visa"],
+  "payPhone": ["Namba ya simu itakayolipa", "Phone number that pays"],
+  "payButton": ["Lipa {v}", "Pay {v}"],
+  "payWaitTitle": ["Thibitisha kwenye simu yako", "Approve on your phone"],
+  "payWaitText": [
+    "Tumetuma ombi la malipo kwenda {name}. Weka PIN yako kuthibitisha.",
+    "We sent a payment request to {name}. Enter your PIN to approve it."
+  ],
+  "payCardRedirect": [
+    "Tunakupeleka kwenye ukurasa salama wa malipo…",
+    "Taking you to the secure payment page…"
+  ],
+  "payChecking": ["Tunathibitisha malipo yako…", "Confirming your payment…"],
+  "paySuccessTitle": ["Karibu, sasa wewe ni mwanachama!", "Welcome, you're subscribed!"],
+  "paySuccessText": ["Kifurushi chako kinadumu hadi {when}.", "Your plan runs until {when}."],
+  "payContinue": ["Endelea kusoma", "Continue reading"],
+  "payFailed": ["Malipo hayakukamilika. Jaribu tena.", "The payment did not go through. Try again."],
+  "payExpired": ["Muda wa malipo umeisha. Jaribu tena.", "The payment timed out. Try again."],
+  "payUnavailable": [
+    "Malipo hayapatikani kwa sasa. Jaribu baadaye.",
+    "Payments are not available right now. Try later."
+  ],
+  "payPhoneInvalid": ["Andika namba ya simu ya Tanzania.", "Enter a Tanzanian mobile number."],
+  "paySecure": ["Malipo salama kupitia Snippe", "Secure payment by Snippe"],
+  "payTryAgain": ["Jaribu tena", "Try again"],
+  "signInToSubscribe": ["Ingia ili ujiunge", "Sign in to subscribe"],
+  "subscribedUntil": ["Mwanachama hadi {when}", "Subscribed until {when}"],
+  "subscriptionMine": ["Kifurushi changu", "My plan"],
+  "subscriptionNone": ["Bado si mwanachama", "Not subscribed yet"],
+  "subscriptionJoin": ["Angalia vifurushi", "See plans"]
 }

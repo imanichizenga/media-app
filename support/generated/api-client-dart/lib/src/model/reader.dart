@@ -3,8 +3,8 @@
 //
 
 // ignore_for_file: unused_element
-import 'package:news_api_client/src/model/methods_enum.dart';
 import 'package:news_api_client/src/model/locale_enum.dart';
+import 'package:news_api_client/src/model/reader_methods_enum.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -69,7 +69,7 @@ class Reader {
   final LocaleEnum locale;
 
   @JsonKey(name: r'methods', required: true, includeIfNull: false)
-  final List<MethodsEnum> methods;
+  final List<ReaderMethodsEnum> methods;
 
   /// A name and the terms are still to come.
   @JsonKey(name: r'onboarding', required: true, includeIfNull: false)

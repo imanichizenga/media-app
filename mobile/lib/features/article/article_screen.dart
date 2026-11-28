@@ -38,6 +38,7 @@ import '../content/feeds.dart';
 import '../content/list_screen.dart' show Initial;
 import '../content/share.dart';
 import '../saved/library.dart';
+import '../subscribe/subscribe.dart';
 import 'blocks.dart';
 
 /// One story. It opens with what its card already knew, and the rest arrives beneath.
@@ -207,6 +208,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
     void open(Story next, {String? heroTag}) =>
         openStory(context, next, heroTag: heroTag, from: 'article');
 
+    // A story for subscribers: everyone has its opening; a subscriber's whole story replaces it (ADR-0052).
+    final locked = article?.locked ?? false;
+    final full = locked && story != null
+        ? ref.watch(fullStoryProvider((story.id, widget.locale)))
+        : const AsyncValue<Article?>.data(null);
+    final shown = full.value ?? article;
+    final walled = locked && full.value == null;
+    final body = ArticleBody(
+      document: shown == null ? null : documentOf(shown),
+      data: shown == null ? null : BodyContext(assets: shown.assets, links: shown.links),
+    );
     final reading = Column(
       key: _body,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,14 +236,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> with WidgetsBindi
               .copyWith(textScaler: _Scaled(MediaQuery.textScalerOf(context), scale)),
           child: Quotable(
             onShare: story == null ? null : (words) => unawaited(shareQuote(ref, story, words)),
-            child: ArticleBody(
-              document: article == null ? null : documentOf(article),
-              data: article == null
-                  ? null
-                  : BodyContext(assets: article.assets, links: article.links),
-            ),
+            child: walled ? FadeOut(child: body) : body,
           ),
         ),
+        if (walled) Paywall(path: widget.path, locale: widget.locale, unlocking: full.isLoading),
         if (article != null && article.tags.isNotEmpty) ...[
           const SizedBox(height: NewsSpace.s2),
           Wrap(

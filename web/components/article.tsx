@@ -1,16 +1,17 @@
 import { Bone } from "@news/ui/base";
 import { ArticleBody } from "@news/ui/content";
 import { address, Picture, type VideoAsset } from "@news/ui/media";
-import { LivePill, type NewsEnv, RowCard, SectionHeading } from "@news/ui/news";
+import { LivePill, type NewsEnv, PremiumMark, RowCard, SectionHeading } from "@news/ui/news";
 import { VideoPlayer, YouTubeFacade } from "@news/ui/player";
 import type { ReactNode } from "react";
-import type { Article } from "@/lib/api";
+import { type Article, offer, orNull } from "@/lib/api";
 import { type T, words } from "@/lib/i18n";
 import { contentOf, dateOf } from "@/lib/view";
 import { Comments, CommentsButton, LikeButton, StoryStats } from "./account";
 import { SaveButton, ShareButton } from "./client";
 import { Frame } from "./frame";
 import { type Maybe, none } from "./parts";
+import { Paywall } from "./paywall";
 
 const bones = (widths: string[]) => widths.map((w) => <Bone key={w} className={w} />);
 const isVideo = (a: Article) => Boolean(a.video || a.youtube_id);
@@ -230,6 +231,7 @@ export function ArticleView({
           <header className="flex flex-col gap-3 lg:gap-4">
             <p className="flex items-center gap-2 text-label">
               {a?.is_live && <LivePill label={t("live")} />}
+              {a?.premium && <PremiumMark label={t("premium")} />}
               {a ? (
                 <a href={a.category.path} className="font-semibold hover:underline">
                   {a.category.name}
@@ -261,9 +263,10 @@ export function ArticleView({
               {live && a.live_ended_at && (
                 <p className="rounded-md bg-surface-sunken px-4 py-3 text-label">{t("liveEnded")}</p>
               )}
-              <div className="reads" data-body>
+              <div className="reads" data-body data-locked={a.locked ? "" : undefined}>
                 <ArticleBody document={a.body} context={contentOf(a, env)} />
               </div>
+              {a.locked && <Locked a={a} path={path} env={env} t={t} />}
               {a.story && (
                 <a
                   href={a.story.path}
@@ -309,6 +312,11 @@ export function ArticleView({
       </div>
     </Frame>
   );
+}
+/** The end of the opening of a story for subscribers, with what it costs (ADR-0052). */
+async function Locked({ a, path, env, t }: { a: Article; path: string; env: NewsEnv; t: T }) {
+  const o = await orNull(offer(env.locale));
+  return <Paywall post={a.id} path={path} locale={env.locale} t={t} offer={o} />;
 }
 const Related = ({ list, env }: { list: Maybe[]; env: NewsEnv }) => (
   <ul className="divide-y divide-border">

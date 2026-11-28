@@ -12,6 +12,8 @@ export type Site = Schemas["SiteConfig"];
 export type Nav = Schemas["NavigationItem"];
 export type Found = Schemas["Search"];
 export type Hit = Schemas["SearchHit"];
+export type Offer = Schemas["Offer"];
+export type Plan = Schemas["Plan"];
 
 export class Gone extends Error {}
 export class Unavailable extends Error {}
@@ -71,7 +73,8 @@ export const article = cache((locale: Locale, slug: string, path: string) =>
         ...o,
       }),
     300,
-    [pathTag(path), "latest-articles"],
+    // "premium": when the lock's rules change, every story for subscribers is made again (ADR-0052).
+    [pathTag(path), "latest-articles", "premium"],
   ),
 );
 export const related = cache((locale: Locale, slug: string) =>
@@ -204,3 +207,10 @@ export async function orNull<R>(promise: Promise<R>): Promise<R | null> {
     throw error;
   }
 }
+/** What readers may buy (ADR-0052): the same for everyone, made again when the newsroom changes a plan. */
+export const offer = cache((locale: Locale) =>
+  read((o) => client().GET("/api/v1/subscriptions/plans", { params: { query: { locale } }, ...o }), 300, [
+    "plans",
+    "site",
+  ]),
+);

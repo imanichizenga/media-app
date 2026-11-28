@@ -15,8 +15,11 @@ const hash = (text: string) => `'sha256-${createHash("sha256").update(text).dige
 /** Where browsers send what the policy refused (POST, logged by app/api/csp-report). */
 export const REPORTS = "/api/csp-report";
 
-/** The one Trusted Types policy: the navigation island reads our own documents (islands/navigate.ts). */
-export const TRUSTED_TYPES = "navigate worker";
+/**
+ * The Trusted Types policies, each reading only this site's own HTML: the navigation island its documents
+ * (islands/navigate.ts), and a subscriber's whole story (islands/subscribe.ts, ADR-0052).
+ */
+export const TRUSTED_TYPES = "navigate worker subscriber";
 
 /**
  * One policy for every page, with no nonce (ADR-0046): pages are kept by the CDN and seen by many readers, so a nonce

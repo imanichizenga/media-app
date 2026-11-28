@@ -14,6 +14,7 @@ import '../features/explore/explore_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/saved/saved_screen.dart';
+import '../features/subscribe/subscribe.dart';
 import '../features/system/not_found_screen.dart';
 import '../features/video/video_screen.dart';
 import '../features/you/you_screen.dart';
@@ -146,7 +147,21 @@ GoRouter router(Ref ref) {
   final router = GoRouter(
     navigatorKey: rootKey,
     initialLocation: '/',
-    routes: [...$appRoutes, ...content],
+    routes: [
+      ...$appRoutes,
+      // The plans (ADR-0052), over whatever is shown, before the website's addresses can claim the path.
+      GoRoute(
+        path: '/subscribe',
+        parentNavigatorKey: rootKey,
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          name: '/subscribe',
+          fullscreenDialog: true,
+          child: SubscribeScreen(next: state.uri.queryParameters['next'] ?? '/'),
+        ),
+      ),
+      ...content,
+    ],
     redirect: (context, state) {
       // Once, and only where the reader would otherwise have landed on Home: a link is never interrupted.
       final done = ref.read(settingsControllerProvider).onboarded;

@@ -1850,6 +1850,264 @@ abstract class Strings {
   /// In sw, this message translates to:
   /// **'Ongeza maelezo mafupi kukuhusu'**
   String get addBio;
+
+  /// No description provided for @premium.
+  ///
+  /// In sw, this message translates to:
+  /// **'Premium'**
+  String get premium;
+
+  /// No description provided for @paywallTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea kusoma habari hii'**
+  String get paywallTitle;
+
+  /// No description provided for @paywallText.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari hii ni ya wanachama. Jiunge upate habari zote, uchambuzi na ripoti maalum, bila kikomo.'**
+  String get paywallText;
+
+  /// No description provided for @paywallAction.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jiunge sasa'**
+  String get paywallAction;
+
+  /// No description provided for @paywallSignIn.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tayari ni mwanachama? Ingia'**
+  String get paywallSignIn;
+
+  /// No description provided for @paywallFree.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sio sasa, endelea na habari za bure'**
+  String get paywallFree;
+
+  /// No description provided for @paywallFrom.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kuanzia {v} kwa mwezi'**
+  String paywallFrom(String v);
+
+  /// No description provided for @paywallUnlocking.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tunafungua habari…'**
+  String get paywallUnlocking;
+
+  /// No description provided for @plansTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Chagua kifurushi chako'**
+  String get plansTitle;
+
+  /// No description provided for @plansLead.
+  ///
+  /// In sw, this message translates to:
+  /// **'Habari zote, bila kikomo, kwenye simu na kompyuta. Acha wakati wowote.'**
+  String get plansLead;
+
+  /// No description provided for @plansMonthly.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kila mwezi'**
+  String get plansMonthly;
+
+  /// No description provided for @plansYearly.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kila mwaka'**
+  String get plansYearly;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In sw, this message translates to:
+  /// **'/mwezi'**
+  String get perMonth;
+
+  /// No description provided for @perYear.
+  ///
+  /// In sw, this message translates to:
+  /// **'/mwaka'**
+  String get perYear;
+
+  /// No description provided for @plansEquivalent.
+  ///
+  /// In sw, this message translates to:
+  /// **'Sawa na {v} kwa mwezi'**
+  String plansEquivalent(String v);
+
+  /// No description provided for @plansContinue.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea'**
+  String get plansContinue;
+
+  /// No description provided for @plansNone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Hakuna vifurushi kwa sasa.'**
+  String get plansNone;
+
+  /// No description provided for @plansFine.
+  ///
+  /// In sw, this message translates to:
+  /// **'Bei ni kwa Shilingi za Tanzania. Kifurushi hakijirudii chenyewe: unalipa tena ukitaka kuendelea.'**
+  String get plansFine;
+
+  /// No description provided for @payTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Lipia {name}'**
+  String payTitle(String name);
+
+  /// No description provided for @payMobile.
+  ///
+  /// In sw, this message translates to:
+  /// **'Pesa kwa simu'**
+  String get payMobile;
+
+  /// No description provided for @payMobileHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'M-Pesa, Airtel Money, Mixx by Yas, Halopesa'**
+  String get payMobileHint;
+
+  /// No description provided for @payCard.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kadi ya benki'**
+  String get payCard;
+
+  /// No description provided for @payCardHint.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mastercard au Visa'**
+  String get payCardHint;
+
+  /// No description provided for @payPhone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Namba ya simu itakayolipa'**
+  String get payPhone;
+
+  /// No description provided for @payButton.
+  ///
+  /// In sw, this message translates to:
+  /// **'Lipa {v}'**
+  String payButton(String v);
+
+  /// No description provided for @payWaitTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Thibitisha kwenye simu yako'**
+  String get payWaitTitle;
+
+  /// No description provided for @payWaitText.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tumetuma ombi la malipo kwenda {name}. Weka PIN yako kuthibitisha.'**
+  String payWaitText(String name);
+
+  /// No description provided for @payCardRedirect.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tunakupeleka kwenye ukurasa salama wa malipo…'**
+  String get payCardRedirect;
+
+  /// No description provided for @payChecking.
+  ///
+  /// In sw, this message translates to:
+  /// **'Tunathibitisha malipo yako…'**
+  String get payChecking;
+
+  /// No description provided for @paySuccessTitle.
+  ///
+  /// In sw, this message translates to:
+  /// **'Karibu, sasa wewe ni mwanachama!'**
+  String get paySuccessTitle;
+
+  /// No description provided for @paySuccessText.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kifurushi chako kinadumu hadi {when}.'**
+  String paySuccessText(String when);
+
+  /// No description provided for @payContinue.
+  ///
+  /// In sw, this message translates to:
+  /// **'Endelea kusoma'**
+  String get payContinue;
+
+  /// No description provided for @payFailed.
+  ///
+  /// In sw, this message translates to:
+  /// **'Malipo hayakukamilika. Jaribu tena.'**
+  String get payFailed;
+
+  /// No description provided for @payExpired.
+  ///
+  /// In sw, this message translates to:
+  /// **'Muda wa malipo umeisha. Jaribu tena.'**
+  String get payExpired;
+
+  /// No description provided for @payUnavailable.
+  ///
+  /// In sw, this message translates to:
+  /// **'Malipo hayapatikani kwa sasa. Jaribu baadaye.'**
+  String get payUnavailable;
+
+  /// No description provided for @payPhoneInvalid.
+  ///
+  /// In sw, this message translates to:
+  /// **'Andika namba ya simu ya Tanzania.'**
+  String get payPhoneInvalid;
+
+  /// No description provided for @paySecure.
+  ///
+  /// In sw, this message translates to:
+  /// **'Malipo salama kupitia Snippe'**
+  String get paySecure;
+
+  /// No description provided for @payTryAgain.
+  ///
+  /// In sw, this message translates to:
+  /// **'Jaribu tena'**
+  String get payTryAgain;
+
+  /// No description provided for @signInToSubscribe.
+  ///
+  /// In sw, this message translates to:
+  /// **'Ingia ili ujiunge'**
+  String get signInToSubscribe;
+
+  /// No description provided for @subscribedUntil.
+  ///
+  /// In sw, this message translates to:
+  /// **'Mwanachama hadi {when}'**
+  String subscribedUntil(String when);
+
+  /// No description provided for @subscriptionMine.
+  ///
+  /// In sw, this message translates to:
+  /// **'Kifurushi changu'**
+  String get subscriptionMine;
+
+  /// No description provided for @subscriptionNone.
+  ///
+  /// In sw, this message translates to:
+  /// **'Bado si mwanachama'**
+  String get subscriptionNone;
+
+  /// No description provided for @subscriptionJoin.
+  ///
+  /// In sw, this message translates to:
+  /// **'Angalia vifurushi'**
+  String get subscriptionJoin;
 }
 
 class _StringsDelegate extends LocalizationsDelegate<Strings> {

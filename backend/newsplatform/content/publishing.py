@@ -96,6 +96,7 @@ def refresh(post: Post) -> None:
         setattr(live, name, UUID(snap[name[:-3]]) if snap[name[:-3]] else None)
     for name in ("youtube_id", "source_url", "is_sensitive", "content_warning", "engagement"):
         setattr(live, name, snap[name])
+    live.requires_subscription = snap.get("requires_subscription", False)  # older revisions have none
     live.youtube_seconds = snap.get("youtube_seconds", 0)  # older revisions have none
     for name in ("breaking_until", "live_ended_at"):
         setattr(live, name, datetime.fromisoformat(snap[name]) if snap.get(name) else None)
@@ -185,6 +186,7 @@ def build(
         "reading_minutes": blocks.reading_minutes(text.body),
         "published_at": _iso(post.published_at),
         "is_sensitive": post.is_sensitive,
+        "premium": post.requires_subscription,
         "breaking_until": _iso(post.breaking_until),
         "is_live": is_live(post),
     }

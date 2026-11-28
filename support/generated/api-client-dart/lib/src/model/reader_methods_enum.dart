@@ -6,7 +6,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 /// * `phone` - phone * `google` - google * `apple` - apple
-enum MethodsEnum {
+enum ReaderMethodsEnum {
   @JsonValue(r'phone')
   phone(r'phone'),
   @JsonValue(r'google')
@@ -14,7 +14,7 @@ enum MethodsEnum {
   @JsonValue(r'apple')
   apple(r'apple');
 
-  const MethodsEnum(this.value);
+  const ReaderMethodsEnum(this.value);
 
   final String value;
 

@@ -53,6 +53,8 @@ class Post(BaseModel):
     source_url = models.URLField(max_length=500, blank=True, default="")
     is_evergreen = models.BooleanField(default=False)
     is_sensitive = models.BooleanField(default=False)
+    # Subscribers only: everyone sees the card and the opening; the rest is for subscribers (subscriptions).
+    requires_subscription = models.BooleanField(default=False)
     content_warning = models.CharField(max_length=200, blank=True, default="")
     breaking_until = models.DateTimeField(null=True)
     # A live blog is live from its first publication until an editor ends it.

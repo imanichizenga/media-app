@@ -21,7 +21,7 @@ abstract class _$ReaderCWProxy {
 
   Reader locale(LocaleEnum locale);
 
-  Reader methods(List<MethodsEnum> methods);
+  Reader methods(List<ReaderMethodsEnum> methods);
 
   Reader onboarding(bool onboarding);
 
@@ -47,7 +47,7 @@ abstract class _$ReaderCWProxy {
     String phone,
     String email,
     LocaleEnum locale,
-    List<MethodsEnum> methods,
+    List<ReaderMethodsEnum> methods,
     bool onboarding,
     bool hideFromReaders,
     String bio,
@@ -84,7 +84,7 @@ class _$ReaderCWProxyImpl implements _$ReaderCWProxy {
   Reader locale(LocaleEnum locale) => this(locale: locale);
 
   @override
-  Reader methods(List<MethodsEnum> methods) => this(methods: methods);
+  Reader methods(List<ReaderMethodsEnum> methods) => this(methods: methods);
 
   @override
   Reader onboarding(bool onboarding) => this(onboarding: onboarding);
@@ -156,7 +156,7 @@ class _$ReaderCWProxyImpl implements _$ReaderCWProxy {
       methods: methods == const $CopyWithPlaceholder()
           ? _value.methods
           // ignore: cast_nullable_to_non_nullable
-          : methods as List<MethodsEnum>,
+          : methods as List<ReaderMethodsEnum>,
       onboarding: onboarding == const $CopyWithPlaceholder()
           ? _value.onboarding
           // ignore: cast_nullable_to_non_nullable
@@ -227,7 +227,7 @@ Reader _$ReaderFromJson(Map<String, dynamic> json) => $checkedCreate(
       methods: $checkedConvert(
         'methods',
         (v) => (v as List<dynamic>)
-            .map((e) => $enumDecode(_$MethodsEnumEnumMap, e))
+            .map((e) => $enumDecode(_$ReaderMethodsEnumEnumMap, e))
             .toList(),
       ),
       onboarding: $checkedConvert('onboarding', (v) => v as bool),
@@ -253,7 +253,9 @@ Map<String, dynamic> _$ReaderToJson(Reader instance) => <String, dynamic>{
   'phone': instance.phone,
   'email': instance.email,
   'locale': _$LocaleEnumEnumMap[instance.locale]!,
-  'methods': instance.methods.map((e) => _$MethodsEnumEnumMap[e]!).toList(),
+  'methods': instance.methods
+      .map((e) => _$ReaderMethodsEnumEnumMap[e]!)
+      .toList(),
   'onboarding': instance.onboarding,
   'hide_from_readers': instance.hideFromReaders,
   'bio': instance.bio,
@@ -263,8 +265,8 @@ Map<String, dynamic> _$ReaderToJson(Reader instance) => <String, dynamic>{
 
 const _$LocaleEnumEnumMap = {LocaleEnum.sw: 'sw', LocaleEnum.en: 'en'};
 
-const _$MethodsEnumEnumMap = {
-  MethodsEnum.phone: 'phone',
-  MethodsEnum.google: 'google',
-  MethodsEnum.apple: 'apple',
+const _$ReaderMethodsEnumEnumMap = {
+  ReaderMethodsEnum.phone: 'phone',
+  ReaderMethodsEnum.google: 'google',
+  ReaderMethodsEnum.apple: 'apple',
 };

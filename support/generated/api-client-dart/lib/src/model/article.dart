@@ -66,6 +66,8 @@ class Article {
 
     required this.isSensitive,
 
+    this.premium,
+
     required this.breakingUntil,
 
     required this.isLive,
@@ -99,6 +101,8 @@ class Article {
     required this.firstPublishedAt,
 
     required this.liveEndedAt,
+
+    this.locked,
 
     required this.translations,
   });
@@ -159,6 +163,10 @@ class Article {
   @JsonKey(name: r'is_sensitive', required: true, includeIfNull: false)
   final bool isSensitive;
 
+  /// For subscribers: the card and the opening are for everyone
+  @JsonKey(name: r'premium', required: false, includeIfNull: false)
+  final bool? premium;
+
   @JsonKey(name: r'breaking_until', required: true, includeIfNull: true)
   final DateTime? breakingUntil;
 
@@ -210,6 +218,10 @@ class Article {
   @JsonKey(name: r'live_ended_at', required: true, includeIfNull: true)
   final DateTime? liveEndedAt;
 
+  /// Only the opening of the body is here; the rest is for subscribers (see subscriptions)
+  @JsonKey(name: r'locked', required: false, includeIfNull: false)
+  final bool? locked;
+
   @JsonKey(name: r'translations', required: true, includeIfNull: false)
   final List<Translation> translations;
 
@@ -235,6 +247,7 @@ class Article {
           other.publishedAt == publishedAt &&
           other.modifiedAt == modifiedAt &&
           other.isSensitive == isSensitive &&
+          other.premium == premium &&
           other.breakingUntil == breakingUntil &&
           other.isLive == isLive &&
           other.body == body &&
@@ -252,6 +265,7 @@ class Article {
           other.seo == seo &&
           other.firstPublishedAt == firstPublishedAt &&
           other.liveEndedAt == liveEndedAt &&
+          other.locked == locked &&
           other.translations == translations;
 
   @override
@@ -274,6 +288,7 @@ class Article {
       publishedAt.hashCode +
       modifiedAt.hashCode +
       isSensitive.hashCode +
+      premium.hashCode +
       (breakingUntil == null ? 0 : breakingUntil.hashCode) +
       isLive.hashCode +
       body.hashCode +
@@ -291,6 +306,7 @@ class Article {
       seo.hashCode +
       (firstPublishedAt == null ? 0 : firstPublishedAt.hashCode) +
       (liveEndedAt == null ? 0 : liveEndedAt.hashCode) +
+      locked.hashCode +
       translations.hashCode;
 
   factory Article.fromJson(Map<String, dynamic> json) =>

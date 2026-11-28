@@ -1802,6 +1802,214 @@
                     }
                 }
             }
+        },
+        "/api/v1/subscriptions/checkout": {
+            "post": {
+                "operationId": "subscription_checkout",
+                "tags": [
+                    "subscriptions"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CheckoutRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/mine": {
+            "get": {
+                "operationId": "subscription_mine",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MySubscription"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/payments/{payment_id}": {
+            "get": {
+                "operationId": "subscription_payment",
+                "description": "Where a payment is, for the reader watching it. Asks Snippe now and then, in case its word is late.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "payment_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/plans": {
+            "get": {
+                "operationId": "subscription_plans",
+                "description": "What a reader may buy. The same for everyone.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Offer"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/subscriptions/posts/{post_id}": {
+            "get": {
+                "operationId": "subscription_story",
+                "description": "The whole of a story for subscribers, for a reader with paid time left (402 otherwise).",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "locale",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "en",
+                                "sw"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "post_id",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "security": [
+                    {
+                        "readerBearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Article"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -2076,6 +2284,10 @@
                     "is_sensitive": {
                         "type": "boolean"
                     },
+                    "premium": {
+                        "type": "boolean",
+                        "description": "For subscribers: the card and the opening are for everyone"
+                    },
                     "breaking_until": {
                         "type": [
                             "string",
@@ -2162,6 +2374,10 @@
                             "null"
                         ],
                         "format": "date-time"
+                    },
+                    "locked": {
+                        "type": "boolean",
+                        "description": "Only the opening of the body is here; the rest is for subscribers (see subscriptions)"
                     },
                     "translations": {
                         "type": "array",
@@ -2344,6 +2560,10 @@
                     "is_sensitive": {
                         "type": "boolean"
                     },
+                    "premium": {
+                        "type": "boolean",
+                        "description": "For subscribers: the card and the opening are for everyone"
+                    },
                     "breaking_until": {
                         "type": [
                             "string",
@@ -2454,6 +2674,31 @@
                 "required": [
                     "locale",
                     "path"
+                ]
+            },
+            "CheckoutRequest": {
+                "type": "object",
+                "properties": {
+                    "plan": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "method": {
+                        "$ref": "#/components/schemas/PaymentMethodEnum"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "return_path": {
+                        "type": "string",
+                        "description": "Where a card checkout comes back to, on the site",
+                        "maxLength": 300
+                    }
+                },
+                "required": [
+                    "method",
+                    "plan"
                 ]
             },
             "CodeRequestRequest": {
@@ -2970,14 +3215,35 @@
                     "terms_version"
                 ]
             },
-            "MethodsEnum": {
-                "enum": [
-                    "phone",
-                    "google",
-                    "apple"
-                ],
-                "type": "string",
-                "description": "* `phone` - phone\n* `google` - google\n* `apple` - apple"
+            "MySubscription": {
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "type": "boolean"
+                    },
+                    "plan": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Plan"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "active",
+                    "ends_at",
+                    "plan"
+                ]
             },
             "NavigationItem": {
                 "type": "object",
@@ -3043,6 +3309,35 @@
                     "body"
                 ]
             },
+            "Offer": {
+                "type": "object",
+                "properties": {
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "preview_paragraphs": {
+                        "type": "integer"
+                    },
+                    "methods": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PaymentMethodEnum"
+                        }
+                    },
+                    "plans": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Plan"
+                        }
+                    }
+                },
+                "required": [
+                    "enabled",
+                    "methods",
+                    "plans",
+                    "preview_paragraphs"
+                ]
+            },
             "OpenedRequest": {
                 "type": "object",
                 "properties": {
@@ -3097,6 +3392,145 @@
                         "maxLength": 254
                     }
                 }
+            },
+            "Payment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PaymentStatusEnum"
+                    },
+                    "method": {
+                        "$ref": "#/components/schemas/PaymentMethodEnum"
+                    },
+                    "amount": {
+                        "type": "integer"
+                    },
+                    "currency": {
+                        "type": "string"
+                    },
+                    "plan": {
+                        "type": "string"
+                    },
+                    "checkout_url": {
+                        "type": "string",
+                        "description": "Cards: send the reader here"
+                    },
+                    "completed_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "subscription": {
+                        "$ref": "#/components/schemas/MySubscription"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "checkout_url",
+                    "completed_at",
+                    "currency",
+                    "id",
+                    "method",
+                    "plan",
+                    "status",
+                    "subscription"
+                ]
+            },
+            "PaymentMethodEnum": {
+                "enum": [
+                    "mobile",
+                    "card"
+                ],
+                "type": "string",
+                "description": "* `mobile` - Mobile\n* `card` - Card"
+            },
+            "PaymentStatusEnum": {
+                "enum": [
+                    "pending",
+                    "completed",
+                    "failed",
+                    "expired",
+                    "voided"
+                ],
+                "type": "string",
+                "description": "* `pending` - Pending\n* `completed` - Completed\n* `failed` - Failed\n* `expired` - Expired\n* `voided` - Voided"
+            },
+            "Plan": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "interval": {
+                        "$ref": "#/components/schemas/PlanIntervalEnum"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "description": "Whole shillings"
+                    },
+                    "currency": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "tagline": {
+                        "type": "string"
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "badge": {
+                        "type": "string",
+                        "description": "A word on the card's top; empty for none"
+                    },
+                    "tone": {
+                        "type": "string",
+                        "description": "brand, ember, ocean, forest, violet or night"
+                    },
+                    "highlighted": {
+                        "type": "boolean"
+                    },
+                    "monthly_equivalent": {
+                        "type": "integer",
+                        "description": "A year's price over twelve; the month's own price otherwise"
+                    }
+                },
+                "required": [
+                    "badge",
+                    "code",
+                    "currency",
+                    "features",
+                    "highlighted",
+                    "id",
+                    "interval",
+                    "monthly_equivalent",
+                    "name",
+                    "price",
+                    "tagline",
+                    "tone"
+                ]
+            },
+            "PlanIntervalEnum": {
+                "enum": [
+                    "month",
+                    "year"
+                ],
+                "type": "string",
+                "description": "* `month` - Month\n* `year` - Year"
             },
             "PostState": {
                 "type": "object",
@@ -3851,7 +4285,7 @@
                     "methods": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/MethodsEnum"
+                            "$ref": "#/components/schemas/ReaderMethodsEnum"
                         }
                     },
                     "onboarding": {
@@ -3912,6 +4346,15 @@
                     "name",
                     "username"
                 ]
+            },
+            "ReaderMethodsEnum": {
+                "enum": [
+                    "phone",
+                    "google",
+                    "apple"
+                ],
+                "type": "string",
+                "description": "* `phone` - phone\n* `google` - google\n* `apple` - apple"
             },
             "Readers": {
                 "type": "object",

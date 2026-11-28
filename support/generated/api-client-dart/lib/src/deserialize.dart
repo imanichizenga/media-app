@@ -14,6 +14,7 @@ import 'package:news_api_client/src/model/card_byline.dart';
 import 'package:news_api_client/src/model/card_list.dart';
 import 'package:news_api_client/src/model/category_page.dart';
 import 'package:news_api_client/src/model/category_translation.dart';
+import 'package:news_api_client/src/model/checkout_request.dart';
 import 'package:news_api_client/src/model/code_request_request.dart';
 import 'package:news_api_client/src/model/code_sent.dart';
 import 'package:news_api_client/src/model/code_verify_request.dart';
@@ -30,11 +31,15 @@ import 'package:news_api_client/src/model/liked.dart';
 import 'package:news_api_client/src/model/logo.dart';
 import 'package:news_api_client/src/model/methods.dart';
 import 'package:news_api_client/src/model/model_export.dart';
+import 'package:news_api_client/src/model/my_subscription.dart';
 import 'package:news_api_client/src/model/navigation_item.dart';
 import 'package:news_api_client/src/model/new_comment_request.dart';
+import 'package:news_api_client/src/model/offer.dart';
 import 'package:news_api_client/src/model/opened_request.dart';
 import 'package:news_api_client/src/model/page_translation.dart';
 import 'package:news_api_client/src/model/patched_profile_request.dart';
+import 'package:news_api_client/src/model/payment.dart';
+import 'package:news_api_client/src/model/plan.dart';
 import 'package:news_api_client/src/model/post_state.dart';
 import 'package:news_api_client/src/model/provider_sign_in_request.dart';
 import 'package:news_api_client/src/model/public_author.dart';
@@ -144,6 +149,9 @@ ReturnType deserialize<ReturnType, BaseType>(
     case 'CategoryTranslation':
       return CategoryTranslation.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'CheckoutRequest':
+      return CheckoutRequest.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'CodeRequestRequest':
       return CodeRequestRequest.fromJson(value as Map<String, dynamic>)
           as ReturnType;
@@ -181,15 +189,19 @@ ReturnType deserialize<ReturnType, BaseType>(
       return Logo.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'Methods':
       return Methods.fromJson(value as Map<String, dynamic>) as ReturnType;
-    case 'MethodsEnum':
     case 'ModelExport':
       return ModelExport.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'MySubscription':
+      return MySubscription.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'NavigationItem':
       return NavigationItem.fromJson(value as Map<String, dynamic>)
           as ReturnType;
     case 'NewCommentRequest':
       return NewCommentRequest.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'Offer':
+      return Offer.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'OpenedRequest':
       return OpenedRequest.fromJson(value as Map<String, dynamic>)
           as ReturnType;
@@ -199,6 +211,13 @@ ReturnType deserialize<ReturnType, BaseType>(
     case 'PatchedProfileRequest':
       return PatchedProfileRequest.fromJson(value as Map<String, dynamic>)
           as ReturnType;
+    case 'Payment':
+      return Payment.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PaymentMethodEnum':
+    case 'PaymentStatusEnum':
+    case 'Plan':
+      return Plan.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'PlanIntervalEnum':
     case 'PostState':
       return PostState.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'PostTypeEnum':
@@ -253,6 +272,7 @@ ReturnType deserialize<ReturnType, BaseType>(
       return Reader.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'ReaderEntry':
       return ReaderEntry.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'ReaderMethodsEnum':
     case 'Readers':
       return Readers.fromJson(value as Map<String, dynamic>) as ReturnType;
     case 'RefreshRequest':

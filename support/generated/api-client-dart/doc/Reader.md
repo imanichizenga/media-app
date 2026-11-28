@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **phone** | **String** |  | 
 **email** | **String** |  | 
 **locale** | [**LocaleEnum**](LocaleEnum.md) |  | 
-**methods** | [**List&lt;MethodsEnum&gt;**](MethodsEnum.md) |  | 
+**methods** | [**List&lt;ReaderMethodsEnum&gt;**](ReaderMethodsEnum.md) |  | 
 **onboarding** | **bool** | A name and the terms are still to come. | 
 **hideFromReaders** | **bool** |  | 
 **bio** | **String** |  | 

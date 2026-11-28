@@ -74,7 +74,7 @@ def card(row: Publication) -> dict[str, Any]:
 
 def current(shape: dict[str, Any]) -> dict[str, Any]:
     """A card or article published before a field was added gets it here, until it is published again."""
-    if "rail_title" in shape and "short_name" in shape["category"]:
+    if "rail_title" in shape and "short_name" in shape["category"] and "premium" in shape:
         return shape
     from newsplatform.content.publishing import rail_title
 
@@ -85,6 +85,7 @@ def current(shape: dict[str, Any]) -> dict[str, Any]:
         **shape,
         "rail_title": shape.get("rail_title") or rail_title(shape["headline"]),
         "category": short(shape["category"]),
+        "premium": bool(shape.get("premium", False)),
     }
     if "breadcrumbs" in shape:
         upgraded["breadcrumbs"] = [short(c) for c in shape["breadcrumbs"]]

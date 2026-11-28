@@ -11,6 +11,7 @@ from newsplatform.pages import public_api as pages
 from newsplatform.seo import public_api as seo
 from newsplatform.site_config import brand_api as brand
 from newsplatform.site_config.api import AppConfigView, PublicConfigView, well_known
+from newsplatform.subscriptions import api as paid
 
 API = "api/v1/"
 CONTENT = API + "content/"  # one prefix, so one CDN purge covers it
@@ -59,6 +60,12 @@ urlpatterns = [
     path(API + "me/<slug:what>", engage.MyListView.as_view()),
     path(API + "push/key", push.PushKeyView.as_view()),
     path(API + "push/subscriptions", push.PushSubscriptionsView.as_view()),
+    path(API + "subscriptions/plans", paid.OfferView.as_view()),
+    path(API + "subscriptions/mine", paid.MineView.as_view()),
+    path(API + "subscriptions/checkout", paid.CheckoutView.as_view()),
+    path(API + "subscriptions/payments/<uuid:payment_id>", paid.PaymentView.as_view()),
+    path(API + "subscriptions/posts/<uuid:post_id>", paid.FullStoryView.as_view()),
+    path(API + "subscriptions/webhook", paid.webhook),
     path(API + "engagement/state", engage.StateView.as_view()),
     path(API + "engagement/posts/<uuid:post_id>/like", engage.LikeView.as_view()),
     path(API + "engagement/posts/<uuid:post_id>/bookmark", engage.BookmarkView.as_view()),

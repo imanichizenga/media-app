@@ -267,12 +267,16 @@ class AuthorFeedView(_FeedView):
 class ArticleView(PublicView):
     @extend_schema(operation_id="article", auth=[], parameters=[_LOCALE], responses=shapes.ArticleSerializer)
     def get(self, request: Request, slug: str) -> Response:
+        from newsplatform.subscriptions.services import locked
+
         row = selectors.article(locale_of(request), slug)
         tags = [f"post-{row.post_id}", f"category-{row.category_id}"]
         tags += [f"author-{a['id']}" for a in row.article["authors"]]
-        return self.cached(
-            {**selectors.current(row.article), "modified_at": row.modified_at.isoformat()}, tags
-        )
+        article = selectors.current(row.article)
+        if article["premium"]:
+            tags.append("premium")
+        # Shared by everyone, so a story for subscribers is its opening here (subscriptions/posts/{id}).
+        return self.cached({**locked(article), "modified_at": row.modified_at.isoformat()}, tags)
 
 
 class RelatedView(PublicView):

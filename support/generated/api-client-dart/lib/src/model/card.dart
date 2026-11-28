@@ -59,6 +59,8 @@ class Card {
 
     required this.isSensitive,
 
+    this.premium,
+
     required this.breakingUntil,
 
     required this.isLive,
@@ -120,6 +122,10 @@ class Card {
   @JsonKey(name: r'is_sensitive', required: true, includeIfNull: false)
   final bool isSensitive;
 
+  /// For subscribers: the card and the opening are for everyone
+  @JsonKey(name: r'premium', required: false, includeIfNull: false)
+  final bool? premium;
+
   @JsonKey(name: r'breaking_until', required: true, includeIfNull: true)
   final DateTime? breakingUntil;
 
@@ -148,6 +154,7 @@ class Card {
           other.publishedAt == publishedAt &&
           other.modifiedAt == modifiedAt &&
           other.isSensitive == isSensitive &&
+          other.premium == premium &&
           other.breakingUntil == breakingUntil &&
           other.isLive == isLive;
 
@@ -171,6 +178,7 @@ class Card {
       publishedAt.hashCode +
       modifiedAt.hashCode +
       isSensitive.hashCode +
+      premium.hashCode +
       (breakingUntil == null ? 0 : breakingUntil.hashCode) +
       isLive.hashCode;
 
